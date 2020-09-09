@@ -1,4 +1,4 @@
-# ULTIIMI ACQUISTI
+# ULTIMI ACQUISTI
 
 Questo bot permette di tenere traccia dei propri acquisti in un gruppo telegram
 
