@@ -67,4 +67,5 @@ class BotManager:
         self.disp.add_handler(CommandHandler("start", None))
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
+        self.disp.add_handler(CommandHandler("spesaannuale", self.purchase.year_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))

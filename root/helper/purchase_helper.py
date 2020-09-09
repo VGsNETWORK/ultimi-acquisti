@@ -28,10 +28,21 @@ def retrieve_sum_for_month(user_id: int, month: int) -> float:
     start, end = monthrange(current_date.year, month)
     start_date = datetime(current_date.year, current_date.month, start)
     end_date = datetime(current_date.year, current_date.month, end)
+    return retrieve_sum_between_date(user_id, start_date, end_date)
+
+def retrieve_sum_for_current_year(user_id: int) -> float:
+    return retrieve_sum_for_year(user_id, datetime.now().year)
+    
+def retrieve_sum_for_year(user_id: int, year: int) -> float:
+    start_date = datetime(year, 1, 1)
+    end_date = datetime(year, 12, 31)
+    return retrieve_sum_between_date(user_id, start_date, end_date)
+    
+
+
+def retrieve_sum_between_date(user_id: int, start_date: datetime, end_date: datetime) -> float:
     pipeline = [{"$match": {"user_id": user_id }}, 
                 {"$group": { "_id": "$user_id" , "total": { "$sum": "$price" }}}]
     res = list(Purchase.objects.filter(creation_date__lte=end_date)\
         .filter(creation_date__gte=start_date).aggregate(*pipeline))
     return 0.0 if len(res) == 0 else res[0]['total']
-
-
