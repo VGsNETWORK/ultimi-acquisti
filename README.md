@@ -18,3 +18,7 @@ Una volta aggiunto il bot nel gruppo è possibile eseguire alcune operazioni
 - Visualizzare la spesa di un messe specifico nell'anno corrente
 - Controllare che i messaggi vengano inviati tramite un gruppo
 - Controllare che i messaggi vengano inviati da un gruppo specifico
+- Cancellare i messaggi dopo un tot di tempo
+- Cancellare il messaggio se sbagliato
+- Nel caso di messaggio sbagliato contattare l'utente in privato se ha
+  fatto lo start del bot in privato, altrimenti dirgli di farlo
