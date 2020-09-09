@@ -1,0 +1,6 @@
+.vscode/
+build/
+*.pyc*
+*.log*
+message.json
+.env.json

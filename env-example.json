@@ -1,0 +1,10 @@
+{
+  "DBUSERNAME": "unixporn",
+  "DBPASSWORD": "unixporn",
+  "DBHOST": "127.0.0.1",
+  "DBNAME": "unixporn",
+  "CONNECTION": "mongodb://{}:{}@{}/{}",
+  "TELEGRAM_BOT_ADMIN": "USER_ID",
+  "ERROR_CHANNEL": "ERROR_CHANNEL",
+  "TOKEN": "BOT_TOKEN"
+}
