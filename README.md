@@ -16,3 +16,5 @@ Una volta aggiunto il bot nel gruppo è possibile eseguire alcune operazioni
 - ~~Visualizzazione delle spese mensili~~ 
 - Visualizzazione della spesa durante l'anno
 - Visualizzare la spesa di un messe specifico nell'anno corrente
+- Controllare che i messaggi vengano inviati tramite un gruppo
+- Controllare che i messaggi vengano inviati da un gruppo specifico
