@@ -17,3 +17,5 @@ PRICE_MESSAGE_NOT_FORMATTED = "Il messaggio non è formattato correttamente, ass
 MONTH_PURCHASES = "In questo mese hai speso un totale di %s €"
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo"
+
+ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo"

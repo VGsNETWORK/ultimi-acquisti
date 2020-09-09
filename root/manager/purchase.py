@@ -37,7 +37,7 @@ class PurchaseManager:
             result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
         
         if not result["error"]:
-            self.add_purchase(user, price)
+            self.add_purchase(user, price, message_id)
         message = result["error"] if result["error"] else PURCHASE_ADDED
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
@@ -51,8 +51,8 @@ class PurchaseManager:
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
-    def add_purchase(self, user, price):
+    def add_purchase(self, user, price, message_id):
         if not user_exists(user.id):
             create_user(user)
-        create_purchase(user.id, price)
+        create_purchase(user.id, price, message_id)
         

@@ -17,6 +17,7 @@ from root.manager.error import ErrorHandler
 from root.util.util import retrieve_key
 from root.manager.purchase import PurchaseManager
 from root.util.logger import Logger
+from root.helper.user_helper import is_admin, create_user, user_exists
 
 
 class BotManager:
@@ -41,10 +42,11 @@ class BotManager:
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):
-        admin = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
-        user_id = str(update.effective_user.id)
-        chat_id = update.effective_message.chat.id
-        if user_id == admin:
+        user_id = update.effective_user.id
+        if not user_exists(user_id):
+            create_user(update.effective_user)
+            return
+        if is_admin(user_id):
             context.bot.send_message(chat_id=chat_id, text="Riavvio il bot...")
             os.popen("sudo systemctl restart last-purchase")
     
@@ -64,5 +66,5 @@ class BotManager:
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("start", None))
         self.disp.add_handler(CommandHandler("restart", self.restart))
-        self.disp.add_handler(CommandHandler("imieiacquisti", self.purchase.month_purchase))
+        self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))

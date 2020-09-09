@@ -6,7 +6,7 @@ Una volta aggiunto il bot nel gruppo è possibile eseguire alcune operazioni
 
 - Mandando una foto e aggiungendo la didascalia  `#ultimiacquisti <prezzo>` sarà possibile registrare il proprio acquisto
 
-- Mandando il comando `/imieiacquisti` sarà possibile vedere la spesa totale del mese corrente
+- Mandando il comando `/spesamensile` sarà possibile vedere la spesa totale del mese corrente
 
 
 # TODO

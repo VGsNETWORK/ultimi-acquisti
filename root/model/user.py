@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from mongoengine import StringField, IntField
+from mongoengine import StringField, IntField, BooleanField
 from root.model.base_model import BaseModel
 
 
@@ -19,3 +19,4 @@ class User(BaseModel):
     first_name = StringField()
     last_name = StringField()
     user_id = IntField(required=True, unique=True)
+    is_admin = BooleanField(default=False)

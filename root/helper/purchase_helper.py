@@ -5,8 +5,8 @@ from mongoengine.errors import DoesNotExist
 from datetime import datetime
 from calendar import monthrange
 
-def create_purchase(user_id: int, price: float) -> None:
-    Purchase(user_id=user_id, price=price).save()
+def create_purchase(user_id: int, price: float, message_id: int) -> None:
+    Purchase(user_id=user_id, price=price, message_id=message_id).save()
 
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     try:
