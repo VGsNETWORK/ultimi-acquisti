@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 
 import re
+from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
-from telegram import Update
+from telegram import Update, Message
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, 
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED,
-                                    YEAR_PURCHASES)
+                                    YEAR_PURCHASES, CANCEL_PURCHASE_ERROR,
+                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
 from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, 
-                                         retrieve_sum_for_current_year)
+                                         retrieve_sum_for_current_year, delete_purchase)
 
 class PurchaseManager:
     def __init__(self):
@@ -18,12 +20,13 @@ class PurchaseManager:
         self.sender = TelegramSender()
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
+        message: Message = update.message if update.message else update.edited_message
         self.logger.info("Parsing purchase")
-        chat_id = update.message.chat.id
-        message_id = update.message.message_id
-        photo = update.message.photo
+        chat_id = message.chat.id
+        message_id = message.message_id
+        photo = message.photo
         user = update.effective_user
-        message = update.message.caption
+        message = message.caption
         if not photo:
             message = PRICE_MESSAGE_NOT_FORMATTED
             context.bot.send_message(chat_id=chat_id, text=message, 
@@ -59,7 +62,8 @@ class PurchaseManager:
         
     def send_purchase(self, update: Update, context: CallbackContext, price: float, message: str) -> None:
         chat_id = update.message.chat.id
-        message_id = update.message.message_id
+        telegram_message: Message = update.message if update.message else update.edited_message
+        message_id = telegram_message.message_id
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
@@ -67,4 +71,27 @@ class PurchaseManager:
         if not user_exists(user.id):
             create_user(user)
         create_purchase(user.id, price, message_id)
+
+    def delete_purchase(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        reply = message.reply_to_message
+        user_id = update.effective_user.id
+        chat_id = message.chat.id
+        message_id = message.message_id
+        if not reply:
+            context.bot.send_message(chat_id=chat_id, text=CANCEL_PURCHASE_ERROR, 
+                                 reply_to_message_id=message_id, parse_mode='HTML')
+            return
+        try:
+            message_id = reply.message_id
+            delete_purchase(user_id, message_id)
+            context.bot.send_message(chat_id=chat_id, text=PURCHASE_DELETED, 
+                                 reply_to_message_id=message_id, parse_mode='HTML')
+        except DoesNotExist:
+            message_id = message.message_id
+            context.bot.send_message(chat_id=chat_id, text=PURCHASE_NOT_FOUND, 
+                                 reply_to_message_id=message_id, parse_mode='HTML')
+
+
+
         

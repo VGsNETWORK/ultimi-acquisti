@@ -51,7 +51,8 @@ class BotManager:
             os.popen("sudo systemctl restart last-purchase")
     
     def parse_hashtag(self, update: Update,  context: CallbackContext):
-        message_text = update.message.caption
+        message: Message = update.message if update.message else update.edited_message
+        message_text = message.caption
         self.logger.info(f"parsing hashtag {message_text}")
         if "#ultimiacquisti" in message_text:
             self.purchase.purchase(update, context)
@@ -68,4 +69,5 @@ class BotManager:
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
         self.disp.add_handler(CommandHandler("spesaannuale", self.purchase.year_purchase))
+        self.disp.add_handler(CommandHandler("cancellaspesa", self.purchase.delete_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))
