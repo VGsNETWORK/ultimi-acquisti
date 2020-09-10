@@ -28,4 +28,6 @@ PURCHASE_NOT_FOUND = "Non riesco a trovare l'acquisto che hai fatto"
 
 PURCHASE_DELETED = "Acquisto cancellato con successo"
 
-GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot"
+GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot\n" \
+                    "Puoi creare il tuo bot personale con il codice al seguente link\n"\
+                        "https://gitlab.com/nautilor/ultimi-acquisti"

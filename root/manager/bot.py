@@ -42,6 +42,8 @@ class BotManager:
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
         user_id = update.effective_user.id
         if not user_exists(user_id):
             create_user(update.effective_user)
