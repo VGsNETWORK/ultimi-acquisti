@@ -14,7 +14,7 @@ from telegram.ext import (
 )
 
 from root.manager.error import ErrorHandler
-from root.util.util import retrieve_key
+from root.util.util import retrieve_key, is_group_allowed
 from root.manager.purchase import PurchaseManager
 from root.util.logger import Logger
 from root.helper.user_helper import is_admin, create_user, user_exists
@@ -52,12 +52,20 @@ class BotManager:
     
     def parse_hashtag(self, update: Update,  context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
+        message: Message = update.message if update.message else update.edited_message
         message_text = message.caption
         self.logger.info(f"parsing hashtag {message_text}")
         if "#ultimiacquisti" in message_text:
             self.purchase.purchase(update, context)
 
     def send_git_link(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
         chat_id = update.effective_message.chat.id
         context.bot.send_message(chat_id=chat_id, text="https://gitlab.com/nautilor/ultimi-acquisti")
 

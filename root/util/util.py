@@ -10,12 +10,22 @@ from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
 from root.util.telegram import TelegramSender
 from root.util.logger import Logger
 import pymongo
-from root.contants.messages import DB_CONNECTION_ERROR, DB_CONNECTION_SUCCESS, DB_GENERIC_ERROR
+from root.contants.messages import (DB_CONNECTION_ERROR, DB_CONNECTION_SUCCESS,
+                                    DB_GENERIC_ERROR, GROUP_NOT_ALLOWED)
 import requests
 from datetime import datetime
 
 logger = Logger()
 sender = TelegramSender()
+
+def is_group_allowed(chat_id: int):
+    groups = eval(retrieve_key("GROUP_ID"))
+    if chat_id in groups:
+        return True
+    else:
+        TOKEN = retrieve_key("TOKEN")
+        logger.warn(f"chat_id {chat_id} is not allowed")
+        sender.send_message(TOKEN, chat_id, GROUP_NOT_ALLOWED)
 
 def de_html(data):
     return sub("<.*?>|\n", "", str(data))

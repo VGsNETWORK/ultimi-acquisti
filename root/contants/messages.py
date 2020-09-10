@@ -27,3 +27,5 @@ CANCEL_PURCHASE_ERROR = "Caro utente per annullare un tuo acquisto devi quotare 
 PURCHASE_NOT_FOUND = "Non riesco a trovare l'acquisto che hai fatto"
 
 PURCHASE_DELETED = "Acquisto cancellato con successo"
+
+GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot"

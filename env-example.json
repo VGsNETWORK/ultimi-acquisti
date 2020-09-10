@@ -6,5 +6,6 @@
   "CONNECTION": "mongodb://{}:{}@{}/{}",
   "TELEGRAM_BOT_ADMIN": "USER_ID",
   "ERROR_CHANNEL": "ERROR_CHANNEL",
-  "TOKEN": "BOT_TOKEN"
+  "TOKEN": "BOT_TOKEN",
+  "GROUP_ID": "['GROUP_IDS']"
 }

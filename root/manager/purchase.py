@@ -4,6 +4,7 @@ import re
 from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
 from telegram import Update, Message
+from root.util.util import is_group_allowed
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, 
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED,
@@ -21,12 +22,14 @@ class PurchaseManager:
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        self.logger.info("Parsing purchase")
         chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
         message_id = message.message_id
         photo = message.photo
         user = update.effective_user
         message = message.caption
+        self.logger.info("Parsing purchase")
         if not photo:
             message = PRICE_MESSAGE_NOT_FORMATTED
             context.bot.send_message(chat_id=chat_id, text=message, 
@@ -49,12 +52,20 @@ class PurchaseManager:
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
     def month_purchase(self, update: Update, context: CallbackContext) -> None:
+        message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
         user_id = update.effective_user.id
         price  = retrieve_sum_for_current_month(user_id)
         message = (MONTH_PURCHASES % (f"%.2f" % price))
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
+        message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
         user_id = update.effective_user.id
         price  = retrieve_sum_for_current_year(user_id)
         message = (YEAR_PURCHASES % (f"%.2f" % price))
@@ -73,6 +84,10 @@ class PurchaseManager:
         create_purchase(user.id, price, message_id)
 
     def delete_purchase(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
         message: Message = update.message if update.message else update.edited_message
         reply = message.reply_to_message
         user_id = update.effective_user.id
