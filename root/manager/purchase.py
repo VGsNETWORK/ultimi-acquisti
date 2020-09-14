@@ -36,15 +36,25 @@ class PurchaseManager:
                                  reply_to_message_id=message_id, parse_mode='HTML')
             return
         try:
-            price = re.sub(",", ".", message)
-            price = re.sub("€", " ", price)
-            price = re.sub("\#ultimiacquisti ", "", price)
+            """
+            \d      -> matches a number
+            +       -> matches one or more of the previous
+            ()      -> capturing group
+            ?:      -> do not create a capture group (makes no sense but it does not work without)
+            [,\.]   -> matches . or ,
+            \d{1,2} -> matches one or two numbers
+            ?       -> makes the capturing group optional
+            """
+            price = re.findall(r"\d+(?:[,\.]\d{1,2})?", message)[0]
+            price = price.replace(",", ".")
             price = float(price)
             result = {"name": message, "price": price, "error": None}
             self.logger.info(f"The user purchase {price} worth of products")
         except ValueError:
             result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
-        
+        except IndexError:
+            result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
+            
         if not result["error"]:
             self.add_purchase(user, price, message_id)
         message = result["error"] if result["error"] else PURCHASE_ADDED
