@@ -20,6 +20,8 @@ YEAR_PURCHASES = "In questo anno hai speso un totale di %s €"
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo"
 
+PURCHASE_MODIFIED = "Acquisto modificato con successo"
+
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo"
 
 CANCEL_PURCHASE_ERROR = "Caro utente per annullare un tuo acquisto devi quotare il tuo messaggio con il comando"

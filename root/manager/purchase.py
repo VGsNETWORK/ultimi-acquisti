@@ -57,7 +57,9 @@ class PurchaseManager:
             
         if not result["error"]:
             self.add_purchase(user, price, message_id)
-        message = result["error"] if result["error"] else PURCHASE_ADDED
+            message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
+        else:
+            message = result["error"]
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
