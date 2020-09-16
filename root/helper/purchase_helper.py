@@ -5,8 +5,48 @@ from mongoengine.errors import DoesNotExist
 from datetime import datetime
 from calendar import monthrange
 from root.util.logger import Logger
+import re
 
 logger = Logger()
+
+def before(start, end, seq):
+    open_parens = 0
+    for char in seq:
+        if char == start:
+            open_parens += 1
+        elif char == end:
+            open_parens -= 1
+            if open_parens < 0:
+                return False
+    return open_parens == 0
+
+def convert_to_float(price: str) -> None:
+    logger.info(f"converting {price}")
+    dots = re.findall('\.', price)
+    commas = re.findall('\,', price)
+    apostrophes = re.findall("\'", price)
+    if len(commas) == 1 and len(dots) == 1:
+        if before(',', '.', price):
+            price  = price.replace(',', '')
+        else:
+            price  = price.replace('.', '').replace(',', '.')
+    elif len(commas) == 1 and len(apostrophes) == 1:
+        price  = price.replace('\'', '').replace(',', '.')
+    elif len(apostrophes) == 1:
+        price  = price.replace('\'', '')
+    elif len(commas) == 2:
+        price = price.replace(',', '', 1).replace(',', '.')
+    elif len(dots) == 2:
+        price = price.replace('.', '', 1)
+    elif len(commas) == 1:
+        if len(price.split(',')[1]) > 2:
+            price = price.replace(',', '')
+        else:
+            price = price.replace(',', '.')
+    elif len(dots) == 1:
+        if len(price.split('.')[1]) > 2:
+            price = price.replace('.', '')
+    return float(price)
 
 def create_purchase(user_id: int, price: float, message_id: int) -> None:
     try:

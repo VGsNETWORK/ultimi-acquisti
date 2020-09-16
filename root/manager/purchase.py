@@ -9,11 +9,11 @@ from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, 
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED,
                                     YEAR_PURCHASES, CANCEL_PURCHASE_ERROR,
-                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED)
+                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
 from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, 
-                                         retrieve_sum_for_current_year, delete_purchase)
+                                         retrieve_sum_for_current_year, delete_purchase, convert_to_float)
 
 class PurchaseManager:
     def __init__(self):
@@ -37,22 +37,33 @@ class PurchaseManager:
             return
         try:
             """
+            regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
             \d      -> matches a number
             +       -> matches one or more of the previous
             ()      -> capturing group
             ?:      -> do not create a capture group (makes no sense but it does not work without)
-            [,\.]   -> matches . or ,
+            [\.\',] -> matches . , '
+            \d{3}   -> martches 3 numbers
+            ?       -> makes the capturing group optional
+            ()      -> capturing group
+            ?:      -> do not create a capture group (makes no sense but it does not work without)
+            [\.,]   -> marches . or ,
+            \d{1,2} -> matches one or two numbers
+            ?       -> makes the capturing group optional
+            |       -> or operator, if the first regex returns nothing try the second one
+            [\.,]   -> marches . or ,
             \d{1,2} -> matches one or two numbers
             ?       -> makes the capturing group optional
             """
-            price = re.findall(r"\d+(?:[,\.]\d{1,2})?", message)[0]
-            price = price.replace(",", ".")
-            price = float(price)
+            price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?", message)[0]
+            price = convert_to_float(price)
             result = {"name": message, "price": price, "error": None}
             self.logger.info(f"The user purchase {price} worth of products")
-        except ValueError:
+        except ValueError as ve:
+            self.logger.error(ve)
             result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
-        except IndexError:
+        except IndexError as ie:
+            self.logger.error(ie)
             result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
             
         if not result["error"]:
