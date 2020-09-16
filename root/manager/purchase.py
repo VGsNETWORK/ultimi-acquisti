@@ -39,11 +39,11 @@ class PurchaseManager:
             """
             regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
             \d      -> matches a number
-            +       -> matches one or more of the previous
+            +       -> match one or more of the previous
             ()      -> capturing group
             ?:      -> do not create a capture group (makes no sense but it does not work without)
             [\.\',] -> matches . , '
-            \d{3}   -> martches 3 numbers
+            \d{3}   -> matches 3 numbers
             ?       -> makes the capturing group optional
             ()      -> capturing group
             ?:      -> do not create a capture group (makes no sense but it does not work without)
@@ -51,7 +51,7 @@ class PurchaseManager:
             \d{1,2} -> matches one or two numbers
             ?       -> makes the capturing group optional
             |       -> or operator, if the first regex returns nothing try the second one
-            [\.,]   -> marches . or ,
+            [\.,]   -> matches . or ,
             \d{1,2} -> matches one or two numbers
             ?       -> makes the capturing group optional
             """
