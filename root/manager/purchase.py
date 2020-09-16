@@ -50,12 +50,8 @@ class PurchaseManager:
             [\.,]   -> marches . or ,
             \d{1,2} -> matches one or two numbers
             ?       -> makes the capturing group optional
-            |       -> or operator, if the first regex returns nothing try the second one
-            [\.,]   -> matches . or ,
-            \d{1,2} -> matches one or two numbers
-            ?       -> makes the capturing group optional
             """
-            price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?", message)[0]
+            price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", message)[0]
             price = convert_to_float(price)
             result = {"name": message, "price": price, "error": None}
             self.logger.info(f"The user purchase {price} worth of products")
