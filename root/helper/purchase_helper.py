@@ -48,12 +48,12 @@ def convert_to_float(price: str) -> None:
             price = price.replace('.', '')
     return float(price)
 
-def create_purchase(user_id: int, price: float, message_id: int) -> None:
+def create_purchase(user_id: int, price: float, message_id: int, group_id: int) -> None:
     try:
         Purchase.objects.get(message_id=message_id).delete()
     except Exception:
         pass
-    Purchase(user_id=user_id, price=price, message_id=message_id).save()
+    Purchase(user_id=user_id, price=price, message_id=message_id, group_id=group_id).save()
 
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     try:
