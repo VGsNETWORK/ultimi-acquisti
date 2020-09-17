@@ -52,15 +52,18 @@ class PurchaseManager:
             ?       -> makes the capturing group optional
             """
             price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", message)[0]
-            price = convert_to_float(price)
-            result = {"name": message, "price": price, "error": None}
-            self.logger.info(f"The user purchase {price} worth of products")
+            if price:
+                price = convert_to_float(price)
+                result = {"name": message, "price": price, "error": None}
+                self.logger.info(f"The user purchase {price} worth of products")
+            else:
+                result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
         except ValueError as ve:
             self.logger.error(ve)
-            result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
+            result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
         except IndexError as ie:
             self.logger.error(ie)
-            result= {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
+            result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
             
         if not result["error"]:
             self.add_purchase(user, price, message_id, chat_id)
