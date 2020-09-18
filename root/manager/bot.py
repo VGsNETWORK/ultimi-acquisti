@@ -55,8 +55,6 @@ class BotManager:
     def parse_hashtag(self, update: Update,  context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
-        if not is_group_allowed(chat_id):
-            return
         message: Message = update.message if update.message else update.edited_message
         message_text = message.caption
         self.logger.info(f"parsing hashtag {message_text}")

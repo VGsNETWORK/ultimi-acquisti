@@ -89,9 +89,12 @@ def retrieve_sum_for_year(user_id: int, year: int) -> float:
     end_date = datetime(year, 12, 31)
     return retrieve_sum_between_date(user_id, start_date, end_date)
     
-def get_last_purchase(user_id: int, chat_id: int) -> Purchase:
+def get_last_purchase(user_id: int, chat_id: int = None) -> Purchase:
     try:
-        return Purchase.objects.order_by("-creation_date")[0]
+        if chat_id:
+            return Purchase.objects.filter(user_id=user_id, chat_id=chat_id).order_by("-creation_date")[0]
+        else:
+            return Purchase.objects.filter(user_id=user_id).order_by("-creation_date")[0]
     except DoesNotExist:
         return None
     except IndexError:

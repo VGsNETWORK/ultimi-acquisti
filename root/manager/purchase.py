@@ -7,7 +7,7 @@ from root.model.purchase import Purchase
 from telegram import Update, Message
 from root.util.util import is_group_allowed
 from telegram.ext import CallbackContext
-from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, 
+from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED, LAST_PURCHASE,
                                     YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
                                     PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
@@ -26,13 +26,17 @@ class PurchaseManager:
         message: Message = update.message if update.message else update.edited_message
         message_id = message.message_id
         chat_id = message.chat.id
-        if not is_group_allowed(chat_id):
-            return
+        chat_type = message.chat.type
         user = update.effective_user
         user_id = user.id
-        if not user_exists(user_id):
-            create_user(user)
-        purchase: Purchase = get_last_purchase(user_id, chat_id)
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
+            purchase: Purchase = get_last_purchase(user_id, chat_id)
+        else:
+            purchase: Purchase = get_last_purchase(user_id)
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
             message = (LAST_PURCHASE % (purchase.creation_date, purchase_chat_id, purchase.message_id))
@@ -42,9 +46,11 @@ class PurchaseManager:
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
-        # TODO: controllare che il comando sia stato eseguito in chat_privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
+        if message.chat.type == "private":
+            context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
+            return
         if not is_group_allowed(chat_id):
             return
         message_id = message.message_id
@@ -96,6 +102,7 @@ class PurchaseManager:
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
     def month_purchase(self, update: Update, context: CallbackContext) -> None:
+        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         if not is_group_allowed(chat_id):
@@ -106,6 +113,7 @@ class PurchaseManager:
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
+        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         if not is_group_allowed(chat_id):
@@ -128,6 +136,7 @@ class PurchaseManager:
         create_purchase(user.id, price, message_id, chat_id)
 
     def delete_purchase(self, update: Update, context: CallbackContext):
+        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         if not is_group_allowed(chat_id):
