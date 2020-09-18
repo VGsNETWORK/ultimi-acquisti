@@ -33,3 +33,7 @@ PURCHASE_DELETED = "Acquisto cancellato con successo"
 GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot\n" \
                     "Puoi creare il tuo bot personale con il codice al seguente link\n"\
                         "https://gitlab.com/nautilor/ultimi-acquisti"
+
+NO_PURCHASE = "Non hai ancora registrato alcun acquisto su questo bot"
+
+LAST_PURCHASE = 'Il tuo ultimo acquiso è stato effettuato in data %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'

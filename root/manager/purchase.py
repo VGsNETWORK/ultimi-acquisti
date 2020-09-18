@@ -3,16 +3,17 @@
 import re
 from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
+from root.model.purchase import Purchase
 from telegram import Update, Message
 from root.util.util import is_group_allowed
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, 
-                                    MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED,
-                                    YEAR_PURCHASES, CANCEL_PURCHASE_ERROR,
+                                    MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED, LAST_PURCHASE,
+                                    YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
                                     PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
-from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, 
+from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, get_last_purchase,
                                          retrieve_sum_for_current_year, delete_purchase, convert_to_float)
 
 class PurchaseManager:
@@ -20,7 +21,28 @@ class PurchaseManager:
         self.logger = Logger()
         self.sender = TelegramSender()
     
+    def last_purchase(self, update: Update, context: CallbackContext) -> None:
+        # TODO: controllare che il comando sia stato eseguito in chat_privata
+        message: Message = update.message if update.message else update.edited_message
+        message_id = message.message_id
+        chat_id = message.chat.id
+        if not is_group_allowed(chat_id):
+            return
+        user = update.effective_user
+        user_id = user.id
+        if not user_exists(user_id):
+            create_user(user)
+        purchase: Purchase = get_last_purchase(user_id, chat_id)
+        if purchase:
+            purchase_chat_id = str(purchase.chat_id).replace("-100", "")
+            message = (LAST_PURCHASE % (purchase.creation_date, purchase_chat_id, purchase.message_id))
+        else:
+            message = NO_PURCHASE
+        context.bot.send_message(chat_id=chat_id, text=message, 
+                                 reply_to_message_id=message_id, parse_mode='HTML')
+    
     def purchase(self, update: Update, context: CallbackContext) -> None:
+        # TODO: controllare che il comando sia stato eseguito in chat_privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         if not is_group_allowed(chat_id):
@@ -100,10 +122,10 @@ class PurchaseManager:
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
-    def add_purchase(self, user, price, message_id, group_id):
+    def add_purchase(self, user, price, message_id, chat_id):
         if not user_exists(user.id):
             create_user(user)
-        create_purchase(user.id, price, message_id, group_id)
+        create_purchase(user.id, price, message_id, chat_id)
 
     def delete_purchase(self, update: Update, context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message

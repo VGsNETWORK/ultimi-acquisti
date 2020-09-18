@@ -14,4 +14,4 @@ class Purchase(BaseModel):
     user_id = IntField()
     price = FloatField()
     message_id = IntField(unique=True)
-    group_id = IntField(unique=True)
+    chat_id = IntField(unique=True)

@@ -80,4 +80,5 @@ class BotManager:
         self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
         self.disp.add_handler(CommandHandler("spesaannuale", self.purchase.year_purchase))
         self.disp.add_handler(CommandHandler("cancellaspesa", self.purchase.delete_purchase))
+        self.disp.add_handler(CommandHandler("ultimoacquisto", self.purchase.last_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))

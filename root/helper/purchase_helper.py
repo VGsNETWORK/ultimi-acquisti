@@ -48,12 +48,12 @@ def convert_to_float(price: str) -> None:
             price = price.replace('.', '')
     return float(price)
 
-def create_purchase(user_id: int, price: float, message_id: int, group_id: int) -> None:
+def create_purchase(user_id: int, price: float, message_id: int, chat_id: int) -> None:
     try:
         Purchase.objects.get(message_id=message_id).delete()
     except Exception:
         pass
-    Purchase(user_id=user_id, price=price, message_id=message_id, group_id=group_id).save()
+    Purchase(user_id=user_id, price=price, message_id=message_id, chat_id=chat_id).save()
 
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     try:
@@ -89,7 +89,13 @@ def retrieve_sum_for_year(user_id: int, year: int) -> float:
     end_date = datetime(year, 12, 31)
     return retrieve_sum_between_date(user_id, start_date, end_date)
     
-
+def get_last_purchase(user_id: int, chat_id: int) -> Purchase:
+    try:
+        return Purchase.objects.order_by("-creation_date")[0]
+    except DoesNotExist:
+        return None
+    except IndexError:
+        return None
 
 def retrieve_sum_between_date(user_id: int, start_date: datetime, end_date: datetime) -> float:
     pipeline = [{"$match": {"user_id": user_id }}, 
