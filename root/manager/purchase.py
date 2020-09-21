@@ -5,7 +5,7 @@ from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
 from root.model.purchase import Purchase
 from telegram import Update, Message
-from root.util.util import is_group_allowed
+from root.util.util import is_group_allowed, format_date
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED, LAST_PURCHASE,
@@ -44,7 +44,7 @@ class PurchaseManager:
             message = MONTH_PURCHASE_REPORT
             for purchase in purchases:
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
-                                                       purchase.creation_date, purchase.price))
+                                                       format_date(purchase.creation_date), purchase.price))
                 message = f"{message}\n{template}"
         context.bot.send_message(chat_id=chat_id, text=message, 
                                  reply_to_message_id=message_id, parse_mode='HTML')
@@ -68,7 +68,7 @@ class PurchaseManager:
             purchase: Purchase = get_last_purchase(user_id)
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
-            message = (LAST_PURCHASE % (purchase.creation_date, purchase_chat_id, purchase.message_id))
+            message = (LAST_PURCHASE % (format_date(purchase.creation_date), purchase_chat_id, purchase.message_id))
         else:
             message = NO_PURCHASE
         context.bot.send_message(chat_id=chat_id, text=message, 
