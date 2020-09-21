@@ -9,20 +9,49 @@ from root.util.util import is_group_allowed
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
                                     MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED, LAST_PURCHASE,
+                                    MONTH_PURCHASE_REPORT, PURCHASE_REPORT_TEMPLATE,
                                     YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
                                     PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
 from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, get_last_purchase,
+                                         retrive_purchases_for_user, retrieve_month_purchases_for_user,
                                          retrieve_sum_for_current_year, delete_purchase, convert_to_float)
 
 class PurchaseManager:
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
+
+    def month_report(self, update: Update, context: CallbackContext) -> None:
+        message: Message = update.message if update.message else update.edited_message
+        message_id = message.message_id
+        chat_id = message.chat.id
+        chat_type = message.chat.type
+        user = update.effective_user
+        user_id = user.id
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
+            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id, chat_id)
+        else:
+            purchases: [Purchase] = retrive_purchases_for_user(user_id)
+        if not purchases:
+            message = NO_PURCHASE
+        else:
+            message = MONTH_PURCHASE_REPORT
+            for purchase in purchases:
+                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
+                                                       purchase.creation_date, purchase.price))
+                message = f"{message}\n{template}"
+        context.bot.send_message(chat_id=chat_id, text=message, 
+                                 reply_to_message_id=message_id, parse_mode='HTML')
+                    
+
     
     def last_purchase(self, update: Update, context: CallbackContext) -> None:
-        # TODO: controllare che il comando sia stato eseguito in chat_privata
         message: Message = update.message if update.message else update.edited_message
         message_id = message.message_id
         chat_id = message.chat.id

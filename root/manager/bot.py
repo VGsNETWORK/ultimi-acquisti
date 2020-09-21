@@ -76,6 +76,7 @@ class BotManager:
         self.disp.add_handler(CommandHandler("start", None))
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
+        self.disp.add_handler(CommandHandler("reportmensile", self.purchase.month_report))
         self.disp.add_handler(CommandHandler("spesaannuale", self.purchase.year_purchase))
         self.disp.add_handler(CommandHandler("cancellaspesa", self.purchase.delete_purchase))
         self.disp.add_handler(CommandHandler("ultimoacquisto", self.purchase.last_purchase))

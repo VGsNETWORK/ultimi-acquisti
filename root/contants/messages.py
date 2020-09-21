@@ -37,3 +37,7 @@ GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot\n
 NO_PURCHASE = "Non hai ancora registrato alcun acquisto su questo bot"
 
 LAST_PURCHASE = 'Il tuo ultimo acquiso è stato effettuato in data %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+
+MONTH_PURCHASE_REPORT = "In questo mese hai avuto le seguenti spese:\n"
+
+PURCHASE_REPORT_TEMPLATE = '- <a href="https://t.me/c/%s/%s">%s</a> per un totale di %s'
