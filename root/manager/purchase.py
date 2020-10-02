@@ -35,7 +35,7 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id, chat_id)
+            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id)
         else:
             purchases: [Purchase] = retrive_purchases_for_user(user_id)
         if not purchases:
@@ -63,7 +63,7 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-            purchase: Purchase = get_last_purchase(user_id, chat_id)
+            purchase: Purchase = get_last_purchase(user_id)
         else:
             purchase: Purchase = get_last_purchase(user_id)
         if purchase:

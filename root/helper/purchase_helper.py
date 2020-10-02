@@ -61,11 +61,11 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     except DoesNotExist:
         return None
     
-def retrieve_month_purchases_for_user(user_id: int, chat_id: int) -> [Purchase]:
+def retrieve_month_purchases_for_user(user_id: int) -> [Purchase]:
     try:
         current_date = datetime.now()
         start, end = monthrange(current_date.year, current_date.month)
-        start_date = datetime(current_date.year, current_date.month, start)
+        start_date = datetime(current_date.year, current_date.month, 1)
         end_date = datetime(current_date.year, current_date.month, end)
         return Purchase.objects.filter(user_id=user_id, creation_date__lte=end_date, creation_date__gte=start_date)
     except DoesNotExist:
@@ -87,31 +87,30 @@ def retrieve_sum_for_current_month(user_id: int) -> float:
 def retrieve_sum_for_month(user_id: int, month: int) -> float:
     current_date = datetime.now()
     start, end = monthrange(current_date.year, month)
-    start_date = datetime(current_date.year, current_date.month, start)
+    start_date = datetime(current_date.year, current_date.month, 1)
     end_date = datetime(current_date.year, current_date.month, end)
-    return retrieve_sum_between_date(user_id, chat_id, start_date, end_date)
+    return retrieve_sum_between_date(user_id, start_date, end_date)
 
-def retrieve_sum_for_current_year(user_id: int, chat_id: int = None) -> float:
-    return retrieve_sum_for_year(user_id, chat_id, datetime.now().year)
+def retrieve_sum_for_current_year(user_id: int) -> float:
+    return retrieve_sum_for_year(user_id, datetime.now().year)
     
-def retrieve_sum_for_year(user_id: int, year: int, chat_id: int = None) -> float:
+def retrieve_sum_for_year(user_id: int, year: int) -> float:
     start_date = datetime(year, 1, 1)
     end_date = datetime(year, 12, 31)
-    return retrieve_sum_between_date(user_id, chat_id, start_date, end_date)
+    return retrieve_sum_between_date(user_id, start_date, end_date)
     
-def get_last_purchase(user_id: int, chat_id: int = None) -> Purchase:
+def get_last_purchase(user_id: int) -> Purchase:
     try:
-        if chat_id:
-            return Purchase.objects.filter(user_id=user_id, chat_id=chat_id).order_by("-creation_date")[0]
-        else:
-            return Purchase.objects.filter(user_id=user_id).order_by("-creation_date")[0]
+        return Purchase.objects.filter(user_id=user_id).order_by("-creation_date")[0]
     except DoesNotExist:
         return None
     except IndexError:
         return None
 
-def retrieve_sum_between_date(user_id: int, chat_id: int, start_date: datetime, end_date: datetime) -> float:
-    pipeline = [{"$match": {"user_id": user_id, "chat_id": chat_id }}, 
+def retrieve_sum_between_date(user_id: int, start_date: datetime, end_date: datetime) -> float:
+    print(end_date)
+    print(start_date)
+    pipeline = [{"$match": {"user_id": user_id }}, 
                 {"$group": { "_id": "$user_id" , "total": { "$sum": "$price" }}}]
     res = list(Purchase.objects.filter(creation_date__lte=end_date)\
         .filter(creation_date__gte=start_date).aggregate(*pipeline))
