@@ -23,7 +23,7 @@ def format_date(date: datetime) -> str:
 
 def is_group_allowed(chat_id: int):
     groups = eval(retrieve_key("GROUP_ID"))
-    if chat_id in groups:
+    if str(chat_id) in groups:
         return True
     else:
         TOKEN = retrieve_key("TOKEN")
