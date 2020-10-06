@@ -73,7 +73,7 @@ class BotManager:
         """[add handlers for the various operations]"""
         self.disp.add_error_handler(self.error.handle_error)
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
-        self.disp.add_handler(CommandHandler("start", None))
+        #self.disp.add_handler(CommandHandler("start", None))
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("spesamensile", self.purchase.month_purchase))
         self.disp.add_handler(CommandHandler("reportmensile", self.purchase.month_report))

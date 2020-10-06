@@ -8,7 +8,7 @@ from telegram import Update, Message
 from root.util.util import is_group_allowed, format_date
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
-                                    MONTH_PURCHASES, PRICE_MESSAGE_NOT_FORMATTED, LAST_PURCHASE,
+                                    MONTH_PURCHASES, LAST_PURCHASE,
                                     MONTH_PURCHASE_REPORT, PURCHASE_REPORT_TEMPLATE,
                                     YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
                                     PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
@@ -25,10 +25,10 @@ class PurchaseManager:
 
     def month_report(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        message_id = message.message_id
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
+        first_name = user.first_name
         user_id = user.id
         if not chat_type == "private":
             if not user_exists(user_id):
@@ -39,25 +39,24 @@ class PurchaseManager:
         else:
             purchases: [Purchase] = retrive_purchases_for_user(user_id)
         if not purchases:
-            message = NO_PURCHASE
+            message = NO_PURCHASE % (user_id, first_name)
         else:
-            message = MONTH_PURCHASE_REPORT
+            message = MONTH_PURCHASE_REPORT % (user_id, first_name)
             for purchase in purchases:
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date), purchase.price))
                 message = f"{message}\n{template}"
-        context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+        context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
                     
 
     
     def last_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        message_id = message.message_id
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
         user_id = user.id
+        first_name = user.first_name
         if not chat_type == "private":
             if not user_exists(user_id):
                 create_user(user)
@@ -68,11 +67,11 @@ class PurchaseManager:
             purchase: Purchase = get_last_purchase(user_id)
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
-            message = (LAST_PURCHASE % (format_date(purchase.creation_date), purchase_chat_id, purchase.message_id))
+            message = (LAST_PURCHASE % (user_id, first_name, format_date(purchase.creation_date), purchase_chat_id, purchase.message_id))
         else:
-            message = NO_PURCHASE
+            message = NO_PURCHASE % (user_id, first_name)
         context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+                                 reply_to_message_id=purchase.message_id, parse_mode='HTML')
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
@@ -83,15 +82,9 @@ class PurchaseManager:
         if not is_group_allowed(chat_id):
             return
         message_id = message.message_id
-        photo = message.photo
         user = update.effective_user
         message = message.caption
         self.logger.info("Parsing purchase")
-        if not photo:
-            message = PRICE_MESSAGE_NOT_FORMATTED
-            context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
-            return
         try:
             """
             regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
@@ -114,14 +107,16 @@ class PurchaseManager:
                 result = {"name": message, "price": price, "error": None}
                 self.logger.info(f"The user purchase {price} worth of products")
             else:
-                result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
+                result = {"name": message, "price": 0.00, "error": None}
         except ValueError as ve:
             self.logger.error(ve)
-            result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
+            # TODO: send to log channel
+            return
         except IndexError as ie:
             self.logger.error(ie)
-            result = {"name": message, "price": 0.00, "error": PRICE_MESSAGE_NOT_FORMATTED}
-            
+            # TODO: send to log channel
+            return
+
         if not result["error"]:
             self.add_purchase(user, price, message_id, chat_id)
             message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
@@ -137,8 +132,9 @@ class PurchaseManager:
         if not is_group_allowed(chat_id):
             return
         user_id = update.effective_user.id
+        first_name = update.effective_user.first_name
         price  = retrieve_sum_for_current_month(user_id)
-        message = (MONTH_PURCHASES % (f"%.2f" % price))
+        message = (MONTH_PURCHASES % (user_id, first_name, (f"%.2f" % price)))
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
@@ -148,16 +144,15 @@ class PurchaseManager:
         if not is_group_allowed(chat_id):
             return
         user_id = update.effective_user.id
+        first_name = update.effective_user.first_name
         price  = retrieve_sum_for_current_year(user_id)
-        message = (YEAR_PURCHASES % (f"%.2f" % price))
+        message = (YEAR_PURCHASES % (user_id, first_name, (f"%.2f" % price)))
         self.send_purchase(update, context, price, message)
         
     def send_purchase(self, update: Update, context: CallbackContext, price: float, message: str) -> None:
-        chat_id = update.message.chat.id
         telegram_message: Message = update.message if update.message else update.edited_message
-        message_id = telegram_message.message_id
-        context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+        chat_id = telegram_message.chat.id
+        context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
     
     def add_purchase(self, user, price, message_id, chat_id):
         if not user_exists(user.id):
@@ -174,20 +169,20 @@ class PurchaseManager:
         reply = message.reply_to_message
         user_id = update.effective_user.id
         chat_id = message.chat.id
+        first_name = update.effective_user.first_name
         message_id = message.message_id
         if not reply:
-            context.bot.send_message(chat_id=chat_id, text=CANCEL_PURCHASE_ERROR, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+            message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
+            context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
             return
         try:
             message_id = reply.message_id
             delete_purchase(user_id, message_id)
-            context.bot.send_message(chat_id=chat_id, text=PURCHASE_DELETED, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+            context.bot.send_message(chat_id=chat_id, text=PURCHASE_DELETED, parse_mode='HTML')
         except DoesNotExist:
             message_id = message.message_id
-            context.bot.send_message(chat_id=chat_id, text=PURCHASE_NOT_FOUND, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
+            message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
+            context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
 
 
 
