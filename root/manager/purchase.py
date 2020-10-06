@@ -43,6 +43,7 @@ class PurchaseManager:
         else:
             message = MONTH_PURCHASE_REPORT % (user_id, first_name)
             for purchase in purchases:
+                creation_date = purchase.creation_date
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date), purchase.price))
                 message = f"{message}\n{template}"
@@ -64,7 +65,8 @@ class PurchaseManager:
                 return
             purchase: Purchase = get_last_purchase(user_id)
         else:
-            purchase: Purchase = get_last_purchase(user_id)
+            context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
+            return
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
             message = (LAST_PURCHASE % (user_id, first_name, format_date(purchase.creation_date), purchase_chat_id, purchase.message_id))

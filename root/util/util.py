@@ -19,7 +19,7 @@ logger = Logger()
 sender = TelegramSender()
 
 def format_date(date: datetime) -> str:
-    return f"{date.year}/{date.month}/{date.day} {date.hour}:{date.minute}"
+    return f"{date.day}/{date.month}/{date.year} {date.hour}:{date.minute}"
 
 def is_group_allowed(chat_id: int):
     groups = eval(retrieve_key("GROUP_ID"))

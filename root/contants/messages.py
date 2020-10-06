@@ -14,9 +14,9 @@ USER_ERROR = "Hey, durante la gestione del tuo messaggio si sono verificati degl
 PRICE_MESSAGE_NOT_FORMATTED = "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine " \
                               "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
 
-MONTH_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, in questo mese hai speso un totale di %s €."
+MONTH_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, nel mese corrente hai speso un totale di %s €."
 
-YEAR_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, in questo anno hai speso un totale di %s €."
+YEAR_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, questo anno hai speso un totale di %s €."
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo!"
 
@@ -24,7 +24,7 @@ PURCHASE_MODIFIED = "Acquisto modificato con successo!"
 
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
 
-CANCEL_PURCHASE_ERROR = "<a href=\"tg://user?id=%s\">%s</a>, per annullare un tuo acquisto devi quotare il tuo messaggio con il comando."
+CANCEL_PURCHASE_ERROR = "<a href=\"tg://user?id=%s\">%s</a>, per annullare un tuo acquisto devi quotarlo!"
 
 PURCHASE_NOT_FOUND = "<a href=\"tg://user?id=%s\">%s</a>, non riesco a trovare l'acquisto che hai fatto."
 
