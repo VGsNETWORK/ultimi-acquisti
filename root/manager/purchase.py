@@ -126,23 +126,33 @@ class PurchaseManager:
                                  reply_to_message_id=message_id, parse_mode='HTML')
     
     def month_purchase(self, update: Update, context: CallbackContext) -> None:
-        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
-        if not is_group_allowed(chat_id):
-            return
-        user_id = update.effective_user.id
-        first_name = update.effective_user.first_name
+        chat_type = message.chat.type
+        user = message.from_user
+        user_id = user.id
+        first_name = user.first_name
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
         price  = retrieve_sum_for_current_month(user_id)
         message = (MONTH_PURCHASES % (user_id, first_name, (f"%.2f" % price)))
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
-        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
-        if not is_group_allowed(chat_id):
-            return
+        user = message.from_user
+        user_id = user.id
+        first_name = user.first_name
+        chat_type = message.chat.type
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
         user_id = update.effective_user.id
         first_name = update.effective_user.first_name
         price  = retrieve_sum_for_current_year(user_id)
@@ -160,11 +170,17 @@ class PurchaseManager:
         create_purchase(user.id, price, message_id, chat_id)
 
     def delete_purchase(self, update: Update, context: CallbackContext):
-        # TODO: Controllare se il messaggio viene da un gruppo o una chat privata
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
-        if not is_group_allowed(chat_id):
-            return
+        user = message.from_user
+        user_id = user.id
+        first_name = user.first_name
+        chat_type = message.chat.type
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
         message: Message = update.message if update.message else update.edited_message
         reply = message.reply_to_message
         user_id = update.effective_user.id
