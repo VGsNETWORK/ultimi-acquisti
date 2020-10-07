@@ -45,7 +45,7 @@ class PurchaseManager:
             for purchase in purchases:
                 creation_date = purchase.creation_date
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
-                                                       format_date(purchase.creation_date), purchase.price))
+                                                       format_date(purchase.creation_date, False), (f"%.2f" % purchase.price)))
                 message = f"{message}\n{template}"
         context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
                     

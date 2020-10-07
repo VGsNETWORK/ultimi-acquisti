@@ -18,8 +18,11 @@ from datetime import datetime
 logger = Logger()
 sender = TelegramSender()
 
-def format_date(date: datetime) -> str:
-    return f"{date.day}/{date.month}/{date.year} {date.hour}:{date.minute}"
+def format_date(date: datetime, show_year: bool = True) -> str:
+    if show_year:
+        return f"{date.day}/{date.month}/{date.year} {date.hour}:{date.minute}"
+    else:
+        return f'{date.day} {date.strftime("%b")} {date.hour}:{date.minute}'
 
 def is_group_allowed(chat_id: int):
     groups = eval(retrieve_key("GROUP_ID"))
