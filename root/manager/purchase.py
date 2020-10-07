@@ -5,7 +5,7 @@ from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
 from root.model.purchase import Purchase
 from telegram import Update, Message
-from root.util.util import is_group_allowed, format_date
+from root.util.util import is_group_allowed, format_date, get_current_month, get_current_year, get_month_string
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
                                     MONTH_PURCHASES, LAST_PURCHASE,
@@ -43,7 +43,6 @@ class PurchaseManager:
         else:
             message = MONTH_PURCHASE_REPORT % (user_id, first_name)
             for purchase in purchases:
-                creation_date = purchase.creation_date
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date, False), (f"%.2f" % purchase.price)))
                 message = f"{message}\n{template}"
@@ -140,7 +139,8 @@ class PurchaseManager:
             if not is_group_allowed(chat_id):
                 return
         price  = retrieve_sum_for_current_month(user_id)
-        message = (MONTH_PURCHASES % (user_id, first_name, (f"%.2f" % price)))
+        date = f"{get_current_month( False, True)} {get_current_year()}"
+        message = (MONTH_PURCHASES % (user_id, first_name, date, (f"%.2f" % price)))
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
@@ -158,7 +158,7 @@ class PurchaseManager:
         user_id = update.effective_user.id
         first_name = update.effective_user.first_name
         price  = retrieve_sum_for_current_year(user_id)
-        message = (YEAR_PURCHASES % (user_id, first_name, (f"%.2f" % price)))
+        message = (YEAR_PURCHASES % (user_id, first_name, get_current_year(), (f"%.2f" % price)))
         self.send_purchase(update, context, price, message)
         
     def send_purchase(self, update: Update, context: CallbackContext, price: float, message: str) -> None:

@@ -14,9 +14,9 @@ USER_ERROR = "Hey, durante la gestione del tuo messaggio si sono verificati degl
 PRICE_MESSAGE_NOT_FORMATTED = "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine " \
                               "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
 
-MONTH_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, nel mese corrente hai speso un totale di %s €."
+MONTH_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, a %s hai speso un totale di <code>%s €</code>."
 
-YEAR_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, questo anno hai speso un totale di %s €."
+YEAR_PURCHASES = "<a href=\"tg://user?id=%s\">%s</a>, nel %s hai speso un totale di <code>%s €</code>."
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo!"
 
@@ -40,4 +40,4 @@ LAST_PURCHASE = '<a href=\"tg://user?id=%s\">%s</a>, il tuo ultimo acquisto è s
 
 MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, in questo mese hai avuto le seguenti spese:\n"
 
-PURCHASE_REPORT_TEMPLATE = '- <a href="https://t.me/c/%s/%s">%s</a> per un totale di %s'
+PURCHASE_REPORT_TEMPLATE = '• <a href="https://t.me/c/%s/%s">%s</a><code>    %s €</code>'
