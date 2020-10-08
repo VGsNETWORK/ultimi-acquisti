@@ -79,8 +79,6 @@ def generate_id():
     return f"{date}-{uuid}"
 
 def get_month_string(month: int, short: bool = True, lower: bool = False):
-    date = datetime.now()
-    month = date.month
     month = short_month[month] if short else long_month[month]
     return month.lower() if lower else month
 

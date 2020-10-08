@@ -3,8 +3,9 @@
 import re
 from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
+from datetime import datetime
 from root.model.purchase import Purchase
-from telegram import Update, Message
+from telegram import Update, Message, InlineKeyboardButton, InlineKeyboardMarkup
 from root.util.util import (is_group_allowed, format_date, get_current_month, 
                             get_current_year, get_month_string, retrieve_key)
 from telegram.ext import CallbackContext
@@ -23,8 +24,11 @@ class PurchaseManager:
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
+        self.month = 1
 
     def month_report(self, update: Update, context: CallbackContext) -> None:
+        current_date = datetime.now()
+        self.month = current_date.month
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         chat_type = message.chat.type
@@ -36,22 +40,65 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id)
-        else:
-            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id)
+        keyboard = self.build_keyboard()
+        message = self.retrieve_purchase(user)
+        context.bot.send_message(chat_id=chat_id, text=message,
+         reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
+    
+    def build_keyboard(self):
+        print(self.month)
+        if self.month > 1 and self.month < 12:
+            return[[self.create_button("Previous", str(f"previous_page"), "previous_page"),
+                     self.create_button("Next", str(f"next_page"), "next_page")]]
+        elif self.month == 1:
+            return[[self.create_button("Next", str(f"next_page"), "next_page")]]
+        elif self.month == 12:
+            return[[self.create_button("Previous", str(f"previous_page"), "previous_page")]]
+    
+    def retrieve_purchase(self, user):
+        user_id = user.id
+        first_name = user.first_name
+        purchases = retrieve_month_purchases_for_user(user_id, self.month)
         if not purchases:
             message = NO_PURCHASE % (user_id, first_name)
         else:
-            date = f"{get_current_month(False, True)} {get_current_year()}"
+            date = f"{get_month_string(self.month, False, True)} {get_current_year()}"
             message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
             for purchase in purchases:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
-                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
+                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.user_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date, False), price))
                 message = f"{message}\n{template}"
-        context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
-                    
+        return message
 
+    def previous_page(self, update: Update, context: CallbackContext):
+        self.month -= 1
+        user = update.effective_user
+        first_name = user.first_name
+        user_id = user.id
+        message = self.retrieve_purchase(user)
+        callback = update.callback_query.data
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(text=message, chat_id=chat_id, disable_web_page_preview=True,
+                                          message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+    
+    def next_page(self, update: Update, context: CallbackContext):
+        self.month += 1
+        user = update.effective_user
+        first_name = user.first_name
+        user_id = user.id
+        message = self.retrieve_purchase(user)
+        callback = update.callback_query.data
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(text=message, chat_id=chat_id, disable_web_page_preview=True,
+                                          message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+
+    def create_button(self, message: str, callback: str, query: str):
+        return InlineKeyboardButton(message, callback_data=callback)
     
     def last_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message

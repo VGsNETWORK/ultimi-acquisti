@@ -65,13 +65,14 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
         return Purchase.objects.filter(user_id=user_id)
     except DoesNotExist:
         return None
-    
-def retrieve_month_purchases_for_user(user_id: int) -> [Purchase]:
+
+def retrieve_month_purchases_for_user(user_id: int, month: int = None) -> [Purchase]:
     try:
         current_date = datetime.now()
-        start, end = monthrange(current_date.year, current_date.month)
-        start_date = datetime(current_date.year, current_date.month, 1)
-        end_date = datetime(current_date.year, current_date.month, end)
+        month = month if month else current_date.month
+        start, end = monthrange(current_date.year, month)
+        start_date = datetime(current_date.year, month, 1)
+        end_date = datetime(current_date.year, month, end)
         return Purchase.objects.filter(user_id=user_id, creation_date__lte=end_date, creation_date__gte=start_date)
     except DoesNotExist:
         return None

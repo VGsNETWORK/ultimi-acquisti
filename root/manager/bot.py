@@ -7,6 +7,7 @@ from telegram import Message, Update
 from telegram.ext import (
     CallbackContext,
     CommandHandler,
+    CallbackQueryHandler,
     Dispatcher,
     Filters,
     MessageHandler,
@@ -81,3 +82,5 @@ class BotManager:
         self.disp.add_handler(CommandHandler("cancellaspesa", self.purchase.delete_purchase))
         self.disp.add_handler(CommandHandler("ultimoacquisto", self.purchase.last_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))
+        self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.previous_page, pattern="previous_page"))
+        self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.next_page, pattern="next_page"))
