@@ -38,7 +38,7 @@ class PurchaseManager:
                 return
             purchases: [Purchase] = retrieve_month_purchases_for_user(user_id)
         else:
-            purchases: [Purchase] = retrive_purchases_for_user(user_id)
+            purchases: [Purchase] = retrieve_month_purchases_for_user(user_id)
         if not purchases:
             message = NO_PURCHASE % (user_id, first_name)
         else:
