@@ -10,10 +10,11 @@ from root.util.util import (is_group_allowed, format_date, get_current_month,
                             get_current_year, get_month_string, retrieve_key)
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
-                                    MONTH_PURCHASES, LAST_PURCHASE,
+                                    MONTH_PURCHASES, LAST_PURCHASE, NO_MONTH_PURCHASE,
                                     MONTH_PURCHASE_REPORT, PURCHASE_REPORT_TEMPLATE,
                                     YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
-                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED)
+                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED,
+                                    MONTH_PURCHASE_TOTAL)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
 from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, get_last_purchase,
@@ -33,7 +34,6 @@ class PurchaseManager:
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
-        first_name = user.first_name
         user_id = user.id
         if not chat_type == "private":
             if not user_exists(user_id):
@@ -46,38 +46,41 @@ class PurchaseManager:
          reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
     
     def build_keyboard(self):
-        print(self.month)
         if self.month > 1 and self.month < 12:
-            return[[self.create_button("Previous", str(f"previous_page"), "previous_page"),
-                     self.create_button("Next", str(f"next_page"), "next_page")]]
+            return[[self.create_button("Indietro", str(f"previous_page"), "previous_page"),
+                     self.create_button("Avanti", str(f"next_page"), "next_page")]]
         elif self.month == 1:
-            return[[self.create_button("Next", str(f"next_page"), "next_page")]]
+            return[[self.create_button("Avanti", str(f"next_page"), "next_page")]]
         elif self.month == 12:
-            return[[self.create_button("Previous", str(f"previous_page"), "previous_page")]]
+            return[[self.create_button("Indietro", str(f"previous_page"), "previous_page")]]
     
     def retrieve_purchase(self, user):
+        if self.month > 12:
+            self.month = 12
+        if self.month < 1:
+            self.month = 1
         user_id = user.id
         first_name = user.first_name
         purchases = retrieve_month_purchases_for_user(user_id, self.month)
+        date = f"{get_month_string(self.month, False, True)} {get_current_year()}"
         if not purchases:
-            message = NO_PURCHASE % (user_id, first_name)
+            message = NO_MONTH_PURCHASE % (user_id, first_name, date)
         else:
-            date = f"{get_month_string(self.month, False, True)} {get_current_year()}"
             message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
             for purchase in purchases:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
-                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.user_id).replace("-100", ""), purchase.message_id, 
+                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date, False), price))
                 message = f"{message}\n{template}"
+            footer = retrieve_sum_for_current_month(user_id)
+            footer = MONTH_PURCHASE_TOTAL % (f"%.2f" % footer).replace(".", ",")
+            message = f"{message}\n\n{footer}"
         return message
 
     def previous_page(self, update: Update, context: CallbackContext):
         self.month -= 1
         user = update.effective_user
-        first_name = user.first_name
-        user_id = user.id
         message = self.retrieve_purchase(user)
-        callback = update.callback_query.data
         keyboard = self.build_keyboard()
         message_id = update._effective_message.message_id
         chat_id = update._effective_chat.id
@@ -87,10 +90,7 @@ class PurchaseManager:
     def next_page(self, update: Update, context: CallbackContext):
         self.month += 1
         user = update.effective_user
-        first_name = user.first_name
-        user_id = user.id
         message = self.retrieve_purchase(user)
-        callback = update.callback_query.data
         keyboard = self.build_keyboard()
         message_id = update._effective_message.message_id
         chat_id = update._effective_chat.id
@@ -126,6 +126,7 @@ class PurchaseManager:
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
+        date = message.date
         chat_id = message.chat.id
         if message.chat.type == "private":
             context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
@@ -134,7 +135,7 @@ class PurchaseManager:
             return
         message_id = message.message_id
         user = update.effective_user
-        message = message.caption
+        message = message.caption if message.caption else message.text
         self.logger.info("Parsing purchase")
         try:
             """
@@ -152,7 +153,8 @@ class PurchaseManager:
             \d{1,2} -> matches one or two numbers
             ?       -> makes the capturing group optional
             """
-            price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", message)[0]
+            price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", message)
+            price = price[0] if len(price) != 0 else 0.00
             if price:
                 price = convert_to_float(price)
                 result = {"name": message, "price": price, "error": None}
@@ -169,8 +171,8 @@ class PurchaseManager:
             return
 
         if not result["error"]:
-            creation_date = None if update.message else message.date
-            self.add_purchase(user, price, message_id, chat_id, creation_date)
+            date = None if update.message else date
+            self.add_purchase(user, price, message_id, chat_id, date)
             message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
         else:
             message = result["error"]

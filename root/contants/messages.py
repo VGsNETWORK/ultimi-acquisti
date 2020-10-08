@@ -36,8 +36,12 @@ GROUP_NOT_ALLOWED = "Questo gruppo non è abilitato all'utilizzo di questo bot.\
 
 NO_PURCHASE = "<a href=\"tg://user?id=%s\">%s</a>, non hai ancora registrato alcun acquisto su questo bot."
 
+NO_MONTH_PURCHASE = "<a href=\"tg://user?id=%s\">%s</a>, nel mese di <b>%s</b> non hai registrato alcun acquisto."
+
 LAST_PURCHASE = '<a href=\"tg://user?id=%s\">%s</a>, il tuo ultimo acquisto è stato effettuato in data %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
 
-MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, a %s hai avuto le seguenti spese:\n"
+MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, nel mese di <b>%s</b> hai avuto le seguenti spese:\n"
 
 PURCHASE_REPORT_TEMPLATE = '• <a href="https://t.me/c/%s/%s">%s</a><code>    %s €</code>'
+
+MONTH_PURCHASE_TOTAL = "per un totale di <code>%s €</code>."

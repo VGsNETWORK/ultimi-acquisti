@@ -55,9 +55,8 @@ class BotManager:
     
     def parse_hashtag(self, update: Update,  context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message
-        chat_id = message.chat.id
         message: Message = update.message if update.message else update.edited_message
-        message_text = message.caption
+        message_text = message.caption if message.caption else message.text
         self.logger.info(f"parsing hashtag {message_text}")
         if "#ultimiacquisti" in message_text:
             self.purchase.purchase(update, context)
@@ -82,5 +81,6 @@ class BotManager:
         self.disp.add_handler(CommandHandler("cancellaspesa", self.purchase.delete_purchase))
         self.disp.add_handler(CommandHandler("ultimoacquisto", self.purchase.last_purchase))
         self.disp.add_handler(MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag))
+        self.disp.add_handler(MessageHandler(Filters.regex("^#ultimiacquisti"), self.parse_hashtag))
         self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.previous_page, pattern="previous_page"))
         self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.next_page, pattern="next_page"))
