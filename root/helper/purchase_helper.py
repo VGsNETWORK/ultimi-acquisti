@@ -113,8 +113,6 @@ def get_last_purchase(user_id: int) -> Purchase:
         return None
 
 def retrieve_sum_between_date(user_id: int, start_date: datetime, end_date: datetime) -> float:
-    print(end_date)
-    print(start_date)
     pipeline = [{"$match": {"user_id": user_id }}, 
                 {"$group": { "_id": "$user_id" , "total": { "$sum": "$price" }}}]
     res = list(Purchase.objects.filter(creation_date__lte=end_date)\

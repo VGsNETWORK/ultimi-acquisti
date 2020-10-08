@@ -42,10 +42,12 @@ class PurchaseManager:
         if not purchases:
             message = NO_PURCHASE % (user_id, first_name)
         else:
-            message = MONTH_PURCHASE_REPORT % (user_id, first_name)
+            date = f"{get_current_month(False, True)} {get_current_year()}"
+            message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
             for purchase in purchases:
+                price = (f"%.2f" % purchase.price).replace(".", ",")
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
-                                                       format_date(purchase.creation_date, False), (f"%.2f" % purchase.price)))
+                                                       format_date(purchase.creation_date, False), price))
                 message = f"{message}\n{template}"
         context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
                     
@@ -142,7 +144,8 @@ class PurchaseManager:
                 return
         price  = retrieve_sum_for_current_month(user_id)
         date = f"{get_current_month( False, True)} {get_current_year()}"
-        message = (MONTH_PURCHASES % (user_id, first_name, date, (f"%.2f" % price)))
+        price = (f"%.2f" % price).replace(".", ",")
+        message = (MONTH_PURCHASES % (user_id, first_name, date, price))
         self.send_purchase(update, context, price, message)
         
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
@@ -160,7 +163,8 @@ class PurchaseManager:
         user_id = update.effective_user.id
         first_name = update.effective_user.first_name
         price  = retrieve_sum_for_current_year(user_id)
-        message = (YEAR_PURCHASES % (user_id, first_name, get_current_year(), (f"%.2f" % price)))
+        price = (f"%.2f" % price).replace(".", ",")
+        message = (YEAR_PURCHASES % (user_id, first_name, get_current_year(), price))
         self.send_purchase(update, context, price, message)
         
     def send_purchase(self, update: Update, context: CallbackContext, price: float, message: str) -> None:

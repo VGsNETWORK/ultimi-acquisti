@@ -38,6 +38,6 @@ NO_PURCHASE = "<a href=\"tg://user?id=%s\">%s</a>, non hai ancora registrato alc
 
 LAST_PURCHASE = '<a href=\"tg://user?id=%s\">%s</a>, il tuo ultimo acquisto è stato effettuato in data %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
 
-MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, in questo mese hai avuto le seguenti spese:\n"
+MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, a %s hai avuto le seguenti spese:\n"
 
 PURCHASE_REPORT_TEMPLATE = '• <a href="https://t.me/c/%s/%s">%s</a><code>    %s €</code>'
