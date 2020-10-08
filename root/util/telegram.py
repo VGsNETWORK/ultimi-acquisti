@@ -7,6 +7,7 @@ from root.util.logger import Logger
 """ This class is responsible of sending messages to a channel """
 
 
+# ALL the methods here should use the standard telegram token from the bot
 class TelegramSender:
     def __init__(self):
         self._logger = Logger()
@@ -20,6 +21,11 @@ class TelegramSender:
             return
         self._bot = Bot(token)
         self._token = token
+    
+    def send_to_log(self, message):
+        TOKEN = retrieve_key('TOKEN')
+        LOG_CHANNEL = retrieve_key("ERROR_CHANNEL")
+        self.send_message(TOKEN, LOG_CHANNEL, message)
 
     """ send message to a chat """
 

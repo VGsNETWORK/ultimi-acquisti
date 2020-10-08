@@ -5,7 +5,8 @@ from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
 from root.model.purchase import Purchase
 from telegram import Update, Message
-from root.util.util import is_group_allowed, format_date, get_current_month, get_current_year, get_month_string
+from root.util.util import (is_group_allowed, format_date, get_current_month, 
+                            get_current_year, get_month_string, retrieve_key)
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
                                     MONTH_PURCHASES, LAST_PURCHASE,
@@ -111,15 +112,16 @@ class PurchaseManager:
                 result = {"name": message, "price": 0.00, "error": None}
         except ValueError as ve:
             self.logger.error(ve)
-            # TODO: send to log channel
+            self.sender.send_to_log(ve)
             return
         except IndexError as ie:
             self.logger.error(ie)
-            # TODO: send to log channel
+            self.sender.send_to_log(ie)
             return
 
         if not result["error"]:
-            self.add_purchase(user, price, message_id, chat_id)
+            creation_date = None if update.message else message.date
+            self.add_purchase(user, price, message_id, chat_id, creation_date)
             message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
         else:
             message = result["error"]
@@ -166,10 +168,10 @@ class PurchaseManager:
         chat_id = telegram_message.chat.id
         context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
     
-    def add_purchase(self, user, price, message_id, chat_id):
+    def add_purchase(self, user, price, message_id, chat_id, creation_date = None):
         if not user_exists(user.id):
             create_user(user)
-        create_purchase(user.id, price, message_id, chat_id)
+        create_purchase(user.id, price, message_id, chat_id, creation_date)
 
     def delete_purchase(self, update: Update, context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message
