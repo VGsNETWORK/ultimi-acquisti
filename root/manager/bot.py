@@ -84,3 +84,4 @@ class BotManager:
         self.disp.add_handler(MessageHandler(Filters.regex("^#ultimiacquisti"), self.parse_hashtag))
         self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.previous_page, pattern="previous_page"))
         self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.next_page, pattern="next_page"))
+        self.disp.add_handler(CallbackQueryHandler(callback=self.purchase.expand_report, pattern="expand_report"))
