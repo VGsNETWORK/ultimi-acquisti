@@ -6,7 +6,7 @@ from root.util.logger import Logger
 from datetime import datetime
 from root.model.purchase import Purchase
 from telegram import Update, Message, InlineKeyboardButton, InlineKeyboardMarkup
-from root.util.util import (is_group_allowed, format_date, get_current_month, 
+from root.util.util import (is_group_allowed, get_current_month,
                             get_current_year, get_month_string, retrieve_key)
 from telegram.ext import CallbackContext
 from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
@@ -19,7 +19,8 @@ from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
 from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_month, get_last_purchase,
                                          retrive_purchases_for_user, retrieve_month_purchases_for_user,
-                                         retrieve_sum_for_current_year, delete_purchase, convert_to_float)
+                                         retrieve_sum_for_current_month, retrieve_sum_for_current_year,
+                                         delete_purchase, convert_to_float)
 
 class PurchaseManager:
     def __init__(self):
@@ -45,7 +46,7 @@ class PurchaseManager:
         keyboard = self.build_keyboard()
         message = self.retrieve_purchase(user)
         context.bot.send_message(chat_id=chat_id, text=message,
-         reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
+            reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
     
     def build_keyboard(self):
         if self.month > 1 and self.month < self.current_month:
@@ -75,8 +76,10 @@ class PurchaseManager:
             message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
             for purchase in purchases:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
+                creation_date = purchase.creation_date
+                creation_date = creation_date.strftime(f'%d {get_month_string(creation_date.month)} %I:%M')
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
-                                                       format_date(purchase.creation_date, False), price))
+                                                    creation_date, price))
                 message = f"{message}\n{template}"
             footer = retrieve_sum_for_month(user_id, self.month)
             footer = MONTH_PURCHASE_TOTAL % (f"%.2f" % footer).replace(".", ",")
@@ -127,8 +130,8 @@ class PurchaseManager:
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
             date = purchase.creation_date
-            time = f"{date.hour}:{date.minute}"
-            date = f"{date.day}/{date.month}/{date.year}"
+            time = date.strftime('%I:%M')
+            date = date.strftime('%d/%m/%Y')
             message = (LAST_PURCHASE % (user_id, first_name, date, time, purchase_chat_id, purchase.message_id))
         else:
             message = NO_PURCHASE % (user_id, first_name)
@@ -137,7 +140,7 @@ class PurchaseManager:
     
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        date = message.date
+        date = None if update.message else message.date
         chat_id = message.chat.id
         if message.chat.type == "private":
             context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
@@ -182,7 +185,6 @@ class PurchaseManager:
             return
 
         if not result["error"]:
-            date = None if update.message else date
             self.add_purchase(user, price, message_id, chat_id, date)
             message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
         else:
@@ -202,7 +204,7 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        price  = retrieve_sum_for_month(user_id)
+        price  = retrieve_sum_for_current_month(user_id)
         date = f"{get_current_month( False, True)} {get_current_year()}"
         price = (f"%.2f" % price).replace(".", ",")
         message = (MONTH_PURCHASES % (user_id, first_name, date, price))

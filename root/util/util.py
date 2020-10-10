@@ -49,12 +49,6 @@ short_month = {
     13: "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚"
 }
 
-def format_date(date: datetime, show_year: bool = True) -> str:
-    if show_year:
-        return f"{date.day}/{date.month}/{date.year} {date.hour}:{date.minute}"
-    else:
-        return f'{date.day} {get_month_string(date.month)} {date.hour}:{date.minute}'
-
 def is_group_allowed(chat_id: int):
     groups = eval(retrieve_key("GROUP_ID"))
     if str(chat_id) in groups:
