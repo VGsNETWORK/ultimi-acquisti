@@ -61,15 +61,15 @@ class PurchaseManager:
     
     def build_keyboard(self):
         if self.month > 1 and self.month < self.current_month:
-            return [[self.create_button(get_month_string(self.month - 1, False, False ), 
+            return [[self.create_button(f"⬅️  {get_month_string(self.month - 1, False, False )}", 
                         str(f"previous_page"), "previous_page"),
-                    self.create_button(get_month_string(self.month + 1, False, False ),
+                    self.create_button(f"{get_month_string(self.month + 1, False, False )}  ➡️",
                         str(f"next_page"), "next_page")]]
         elif self.month == 1:
-            return [[self.create_button(get_month_string(self.month + 1, False, False ), 
+            return [[self.create_button(f"{get_month_string(self.month + 1, False, False )}  ➡️", 
                 str(f"next_page"), "next_page")]]
         elif self.month == self.current_month:
-            return [[self.create_button(get_month_string(self.month - 1, False, False ), 
+            return [[self.create_button(f"⬅️  {get_month_string(self.month - 1, False, False )}", 
                 str(f"previous_page"), "previous_page")]]
     
     def retrieve_purchase(self, user):
