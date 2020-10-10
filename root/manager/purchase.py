@@ -17,7 +17,7 @@ from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED,
                                     MONTH_PURCHASE_TOTAL)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
-from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_current_month, get_last_purchase,
+from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_month, get_last_purchase,
                                          retrive_purchases_for_user, retrieve_month_purchases_for_user,
                                          retrieve_sum_for_current_year, delete_purchase, convert_to_float)
 
@@ -78,7 +78,7 @@ class PurchaseManager:
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                        format_date(purchase.creation_date, False), price))
                 message = f"{message}\n{template}"
-            footer = retrieve_sum_for_current_month(user_id)
+            footer = retrieve_sum_for_month(user_id, self.month)
             footer = MONTH_PURCHASE_TOTAL % (f"%.2f" % footer).replace(".", ",")
             message = f"{message}\n\n{footer}"
         return message
@@ -202,7 +202,7 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        price  = retrieve_sum_for_current_month(user_id)
+        price  = retrieve_sum_for_month(user_id)
         date = f"{get_current_month( False, True)} {get_current_year()}"
         price = (f"%.2f" % price).replace(".", ",")
         message = (MONTH_PURCHASES % (user_id, first_name, date, price))
