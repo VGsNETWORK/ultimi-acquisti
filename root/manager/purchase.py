@@ -26,10 +26,12 @@ class PurchaseManager:
         self.logger = Logger()
         self.sender = TelegramSender()
         self.month = 1
+        self.current_month = 1
 
     def month_report(self, update: Update, context: CallbackContext) -> None:
         current_date = datetime.now()
         self.month = current_date.month
+        self.current_month = current_date.month
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         chat_type = message.chat.type
@@ -46,13 +48,17 @@ class PurchaseManager:
          reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
     
     def build_keyboard(self):
-        if self.month > 1 and self.month < 12:
-            return[[self.create_button("Indietro", str(f"previous_page"), "previous_page"),
-                     self.create_button("Avanti", str(f"next_page"), "next_page")]]
+        if self.month > 1 and self.month < self.current_month:
+            return[[self.create_button(get_month_string(self.month - 1, False, False ), 
+                        str(f"previous_page"), "previous_page"),
+                    self.create_button(get_month_string(self.month + 1, False, False ),
+                        str(f"next_page"), "next_page")]]
         elif self.month == 1:
-            return[[self.create_button("Avanti", str(f"next_page"), "next_page")]]
-        elif self.month == 12:
-            return[[self.create_button("Indietro", str(f"previous_page"), "previous_page")]]
+            return[[self.create_button(get_month_string(self.month + 1, False, False ), 
+                str(f"next_page"), "next_page")]]
+        elif self.month == self.current_month:
+            return[[self.create_button(get_month_string(self.month - 1, False, False ), 
+                str(f"previous_page"), "previous_page")]]
     
     def retrieve_purchase(self, user):
         if self.month > 12:
@@ -78,6 +84,7 @@ class PurchaseManager:
         return message
 
     def previous_page(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
         self.month -= 1
         user = update.effective_user
         message = self.retrieve_purchase(user)
@@ -88,6 +95,7 @@ class PurchaseManager:
                                           message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
     
     def next_page(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
         user = update.effective_user
         message = self.retrieve_purchase(user)
@@ -118,7 +126,10 @@ class PurchaseManager:
             return
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
-            message = (LAST_PURCHASE % (user_id, first_name, format_date(purchase.creation_date), purchase_chat_id, purchase.message_id))
+            date = purchase.creation_date
+            time = f"{date.hour}:{date.minute}"
+            date = f"{date.day}/{date.month}/{date.year}"
+            message = (LAST_PURCHASE % (user_id, first_name, date, time, purchase_chat_id, purchase.message_id))
         else:
             message = NO_PURCHASE % (user_id, first_name)
         context.bot.send_message(chat_id=chat_id, text=message, 
@@ -251,6 +262,7 @@ class PurchaseManager:
         try:
             message_id = reply.message_id
             delete_purchase(user_id, message_id)
+            context.bot.delete_message(chat_id=chat_id, message_id=message_id)
             context.bot.send_message(chat_id=chat_id, text=PURCHASE_DELETED, parse_mode='HTML')
         except DoesNotExist:
             message_id = message.message_id

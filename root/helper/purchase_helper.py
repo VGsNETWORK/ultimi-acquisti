@@ -50,7 +50,6 @@ def convert_to_float(price: str) -> None:
 
 def create_purchase(user_id: int, price: float, message_id: int, chat_id: int, creation_date: datetime = None) -> None:
     try:
-
         Purchase.objects.get(message_id=message_id).update(set__price=price)
         return
     except Exception:
