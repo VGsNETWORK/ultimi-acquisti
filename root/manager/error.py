@@ -15,11 +15,11 @@ class ErrorHandler:
         self.logger = Logger()
     
     def handle_error(self, update: Update, context: CallbackContext):
+        chat_id: retrieve_key("ERROR_CHANNEL")
         admins = retrieve_admins()
         if update.effective_message:
             update.effective_message.reply_text(USER_ERROR)
         trace = "".join(traceback.format_tb(sys.exc_info()[2]))
         self.logger.error(trace)
         text = TELEGRAM_ERROR % context.error
-        for admin in admins:
-            context.bot.send_message(admin.user_id, text, parse_mode="HTML")
+        context.bot.send_message(chat_id, text, parse_mode="HTML")
