@@ -50,10 +50,11 @@ def convert_to_float(price: str) -> None:
 
 def create_purchase(user_id: int, price: float, message_id: int, chat_id: int, creation_date: datetime = None) -> None:
     try:
-        Purchase.objects.get(message_id=message_id).update(set__price=price)
+        logger.info(f"modifying purchase {message_id}")
+        Purchase.objects(message_id=message_id).update(set__price=price, set__creation_date=creation_date)
         return
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"Unable to update purchase due to {e}")
     if creation_date:
         Purchase(user_id=user_id, price=price, message_id=message_id, chat_id=chat_id, creation_date=creation_date).save()
     else:
