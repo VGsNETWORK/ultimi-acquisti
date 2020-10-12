@@ -44,4 +44,4 @@ MONTH_PURCHASE_REPORT = "<a href=\"tg://user?id=%s\">%s</a>, nel mese di <b>%s</
 
 PURCHASE_REPORT_TEMPLATE = '• <a href="https://t.me/c/%s/%s">%s</a>        <code>%s €</code>'
 
-MONTH_PURCHASE_TOTAL = "per un totale di <code>%s €</code>."
+MONTH_PURCHASE_TOTAL = "per un totale di      <code>%s €</code>."

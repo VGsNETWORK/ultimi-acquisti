@@ -2,6 +2,7 @@
 
 import re
 from mongoengine.errors import DoesNotExist
+from dateutil import tz
 from root.util.logger import Logger
 from datetime import datetime
 from root.model.purchase import Purchase
@@ -28,6 +29,7 @@ class PurchaseManager:
         self.sender = TelegramSender()
         self.month = 1
         self.current_month = 1
+        self.to_zone = tz.gettz("Europe/Rome")
 
     def month_report(self, update: Update, context: CallbackContext, expand: bool = False) -> None:
         current_date = datetime.now()
@@ -88,7 +90,7 @@ class PurchaseManager:
             for purchase in purchases:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
                 creation_date = purchase.creation_date
-                creation_date = creation_date.strftime(f'%d {get_month_string(creation_date.month)} %I:%M')
+                creation_date = creation_date.strftime(f'%d {get_month_string(creation_date.month)}, %H:%M')
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                     creation_date, price))
                 message = f"{message}\n{template}"
@@ -141,7 +143,7 @@ class PurchaseManager:
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
             date = purchase.creation_date
-            time = date.strftime('%I:%M')
+            time = date.strftime('%H:%M')
             date = date.strftime('%d/%m/%Y')
             message = (LAST_PURCHASE % (user_id, first_name, date, time, purchase_chat_id, purchase.message_id))
         else:
@@ -152,6 +154,10 @@ class PurchaseManager:
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
         date = None if update.message else message.date
+        self.logger.info(f"received date {date}")
+        date = date.astimezone(self.to_zone) if date else None
+        date = self.to_zone.fromutc(date) if date else None
+        self.logger.info(f"formatted date {date}")
         chat_id = message.chat.id
         if message.chat.type == "private":
             context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
