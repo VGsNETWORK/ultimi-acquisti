@@ -91,6 +91,7 @@ class PurchaseManager:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
                 creation_date = purchase.creation_date
                 creation_date = creation_date.strftime(f'%d {get_month_string(creation_date.month)}, %H:%M')
+                price = " " * (12 - len(price)) + price
                 template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
                                                     creation_date, price))
                 message = f"{message}\n{template}"
