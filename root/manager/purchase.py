@@ -7,21 +7,45 @@ from root.util.logger import Logger
 from datetime import datetime
 from root.model.purchase import Purchase
 from telegram import Update, Message, InlineKeyboardButton, InlineKeyboardMarkup
-from root.util.util import (is_group_allowed, get_current_month,
-                            get_current_year, get_month_string, retrieve_key)
+from root.util.util import (
+    is_group_allowed,
+    get_current_month,
+    get_current_year,
+    get_month_string,
+    retrieve_key,
+)
 from telegram.ext import CallbackContext
-from root.contants.messages import (PRICE_MESSAGE_NOT_FORMATTED, PURCHASE_ADDED, ONLY_GROUP,
-                                    MONTH_PURCHASES, LAST_PURCHASE, NO_MONTH_PURCHASE,
-                                    MONTH_PURCHASE_REPORT, PURCHASE_REPORT_TEMPLATE,
-                                    YEAR_PURCHASES, CANCEL_PURCHASE_ERROR, NO_PURCHASE,
-                                    PURCHASE_NOT_FOUND, PURCHASE_DELETED, PURCHASE_MODIFIED,
-                                    MONTH_PURCHASE_TOTAL)
+from root.contants.messages import (
+    PRICE_MESSAGE_NOT_FORMATTED,
+    PURCHASE_ADDED,
+    ONLY_GROUP,
+    MONTH_PURCHASES,
+    LAST_PURCHASE,
+    NO_MONTH_PURCHASE,
+    MONTH_PURCHASE_REPORT,
+    PURCHASE_REPORT_TEMPLATE,
+    YEAR_PURCHASES,
+    CANCEL_PURCHASE_ERROR,
+    NO_PURCHASE,
+    PURCHASE_NOT_FOUND,
+    PURCHASE_DELETED,
+    PURCHASE_MODIFIED,
+    MONTH_PURCHASE_TOTAL,
+)
 from root.util.telegram import TelegramSender
 from root.helper.user_helper import user_exists, create_user
-from root.helper.purchase_helper import (create_purchase, retrieve_sum_for_month, get_last_purchase,
-                                         retrive_purchases_for_user, retrieve_month_purchases_for_user,
-                                         retrieve_sum_for_current_month, retrieve_sum_for_current_year,
-                                         delete_purchase, convert_to_float)
+from root.helper.purchase_helper import (
+    create_purchase,
+    retrieve_sum_for_month,
+    get_last_purchase,
+    retrive_purchases_for_user,
+    retrieve_month_purchases_for_user,
+    retrieve_sum_for_current_month,
+    retrieve_sum_for_current_year,
+    delete_purchase,
+    convert_to_float,
+)
+
 
 class PurchaseManager:
     def __init__(self):
@@ -31,7 +55,9 @@ class PurchaseManager:
         self.current_month = 1
         self.to_zone = tz.gettz("Europe/Rome")
 
-    def month_report(self, update: Update, context: CallbackContext, expand: bool = False) -> None:
+    def month_report(
+        self, update: Update, context: CallbackContext, expand: bool = False
+    ) -> None:
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month
@@ -52,28 +78,62 @@ class PurchaseManager:
         keyboard = self.build_keyboard()
         message = self.retrieve_purchase(user)
         if expand:
-            context.bot.edit_message_text(text=message, chat_id=chat_id, disable_web_page_preview=True,
-                                          message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+            context.bot.edit_message_text(
+                text=message,
+                chat_id=chat_id,
+                disable_web_page_preview=True,
+                message_id=message_id,
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode="HTML",
+            )
             return
-        context.bot.send_message(chat_id=chat_id, text=message,
-            reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='HTML')
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=message,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
         self.month_report(update, context, True)
-    
+
     def build_keyboard(self):
         if self.month > 1 and self.month < self.current_month:
-            return [[self.create_button(f"⬅️  {get_month_string(self.month - 1, False, False )}", 
-                        str(f"previous_page"), "previous_page"),
-                    self.create_button(f"{get_month_string(self.month + 1, False, False )}  ➡️",
-                        str(f"next_page"), "next_page")]]
+            return [
+                [
+                    self.create_button(
+                        f"⬅️  {get_month_string(self.month - 1, False, False )}",
+                        str(f"previous_page"),
+                        "previous_page",
+                    ),
+                    self.create_button(
+                        f"{get_month_string(self.month + 1, False, False )}  ➡️",
+                        str(f"next_page"),
+                        "next_page",
+                    ),
+                ]
+            ]
         elif self.month == 1:
-            return [[self.create_button(f"{get_month_string(self.month + 1, False, False )}  ➡️", 
-                str(f"next_page"), "next_page")]]
+            return [
+                [
+                    self.create_button(
+                        f"{get_month_string(self.month + 1, False, False )}  ➡️",
+                        str(f"next_page"),
+                        "next_page",
+                    )
+                ]
+            ]
         elif self.month == self.current_month:
-            return [[self.create_button(f"⬅️  {get_month_string(self.month - 1, False, False )}", 
-                str(f"previous_page"), "previous_page")]]
-    
+            return [
+                [
+                    self.create_button(
+                        f"⬅️  {get_month_string(self.month - 1, False, False )}",
+                        str(f"previous_page"),
+                        "previous_page",
+                    )
+                ]
+            ]
+
     def retrieve_purchase(self, user):
         if self.month > 12:
             self.month = 12
@@ -90,10 +150,16 @@ class PurchaseManager:
             for purchase in purchases:
                 price = (f"%.2f" % purchase.price).replace(".", ",")
                 creation_date = purchase.creation_date
-                creation_date = creation_date.strftime(f'%d {get_month_string(creation_date.month)}, %H:%M')
+                creation_date = creation_date.strftime(
+                    f"%d {get_month_string(creation_date.month)}, %H:%M"
+                )
                 price = " " * (12 - len(price)) + price
-                template = (PURCHASE_REPORT_TEMPLATE % (str(purchase.chat_id).replace("-100", ""), purchase.message_id, 
-                                                    creation_date, price))
+                template = PURCHASE_REPORT_TEMPLATE % (
+                    str(purchase.chat_id).replace("-100", ""),
+                    purchase.message_id,
+                    creation_date,
+                    price,
+                )
                 message = f"{message}\n{template}"
             footer = retrieve_sum_for_month(user_id, self.month)
             footer = MONTH_PURCHASE_TOTAL % (f"%.2f" % footer).replace(".", ",")
@@ -108,9 +174,15 @@ class PurchaseManager:
         keyboard = self.build_keyboard()
         message_id = update._effective_message.message_id
         chat_id = update._effective_chat.id
-        context.bot.edit_message_text(text=message, chat_id=chat_id, disable_web_page_preview=True,
-                                          message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
-    
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+
     def next_page(self, update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
@@ -119,12 +191,18 @@ class PurchaseManager:
         keyboard = self.build_keyboard()
         message_id = update._effective_message.message_id
         chat_id = update._effective_chat.id
-        context.bot.edit_message_text(text=message, chat_id=chat_id, disable_web_page_preview=True,
-                                          message_id=message_id, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="HTML")
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
 
     def create_button(self, message: str, callback: str, query: str):
         return InlineKeyboardButton(message, callback_data=callback)
-    
+
     def last_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
@@ -139,29 +217,44 @@ class PurchaseManager:
                 return
             purchase: Purchase = get_last_purchase(user_id)
         else:
-            context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
+            context.bot.send_message(
+                chat_id=chat_id, text=ONLY_GROUP, parse_mode="HTML"
+            )
             return
         if purchase:
             purchase_chat_id = str(purchase.chat_id).replace("-100", "")
             date = purchase.creation_date
-            time = date.strftime('%H:%M')
-            date = date.strftime('%d/%m/%Y')
-            message = (LAST_PURCHASE % (user_id, first_name, date, time, purchase_chat_id, purchase.message_id))
+            time = date.strftime("%H:%M")
+            date = date.strftime("%d/%m/%Y")
+            message = LAST_PURCHASE % (
+                user_id,
+                first_name,
+                date,
+                time,
+                purchase_chat_id,
+                purchase.message_id,
+            )
         else:
             message = NO_PURCHASE % (user_id, first_name)
-        context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=purchase.message_id, parse_mode='HTML')
-    
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=message,
+            reply_to_message_id=purchase.message_id,
+            parse_mode="HTML",
+        )
+
     def purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
         date = None if update.message else message.date
         self.logger.info(f"received date {date}")
-        date = date.astimezone(self.to_zone) if date else None
-        date = self.to_zone.fromutc(date) if date else None
+        local = date.astimezone(self.to_zone) if date else None
+        date = date + local.utcoffset() if date else None
         self.logger.info(f"formatted date {date}")
         chat_id = message.chat.id
         if message.chat.type == "private":
-            context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode='HTML')
+            context.bot.send_message(
+                chat_id=chat_id, text=ONLY_GROUP, parse_mode="HTML"
+            )
             return
         if not is_group_allowed(chat_id):
             return
@@ -207,9 +300,13 @@ class PurchaseManager:
             message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
         else:
             message = result["error"]
-        context.bot.send_message(chat_id=chat_id, text=message, 
-                                 reply_to_message_id=message_id, parse_mode='HTML')
-    
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=message,
+            reply_to_message_id=message_id,
+            parse_mode="HTML",
+        )
+
     def month_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
@@ -222,16 +319,24 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        price  = retrieve_sum_for_current_month(user_id)
+        price = retrieve_sum_for_current_month(user_id)
         date = f"{get_current_month( False, True)} {get_current_year()}"
         price = (f"%.2f" % price).replace(".", ",")
-        message = (MONTH_PURCHASES % (user_id, first_name, date, price))
-        telegram_message: Message = update.message if update.message else update.edited_message
+        message = MONTH_PURCHASES % (user_id, first_name, date, price)
+        telegram_message: Message = (
+            update.message if update.message else update.edited_message
+        )
         chat_id = telegram_message.chat.id
-        keyboard = [[self.create_button("Espandi", str(f"expand_report"), "expand_report")]]
-        context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML', 
-                reply_markup=InlineKeyboardMarkup(keyboard))
-        
+        keyboard = [
+            [self.create_button("Espandi", str(f"expand_report"), "expand_report")]
+        ]
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=message,
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
+
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
@@ -246,17 +351,21 @@ class PurchaseManager:
                 return
         user_id = update.effective_user.id
         first_name = update.effective_user.first_name
-        price  = retrieve_sum_for_current_year(user_id)
+        price = retrieve_sum_for_current_year(user_id)
         price = (f"%.2f" % price).replace(".", ",")
-        message = (YEAR_PURCHASES % (user_id, first_name, get_current_year(), price))
+        message = YEAR_PURCHASES % (user_id, first_name, get_current_year(), price)
         self.send_purchase(update, context, price, message)
-        
-    def send_purchase(self, update: Update, context: CallbackContext, price: float, message: str) -> None:
-        telegram_message: Message = update.message if update.message else update.edited_message
+
+    def send_purchase(
+        self, update: Update, context: CallbackContext, price: float, message: str
+    ) -> None:
+        telegram_message: Message = (
+            update.message if update.message else update.edited_message
+        )
         chat_id = telegram_message.chat.id
-        context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
-    
-    def add_purchase(self, user, price, message_id, chat_id, creation_date = None):
+        context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+
+    def add_purchase(self, user, price, message_id, chat_id, creation_date=None):
         if not user_exists(user.id):
             create_user(user)
         create_purchase(user.id, price, message_id, chat_id, creation_date)
@@ -281,18 +390,16 @@ class PurchaseManager:
         message_id = message.message_id
         if not reply:
             message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-            context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
+            context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
             return
         try:
             message_id = reply.message_id
             delete_purchase(user_id, message_id)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-            context.bot.send_message(chat_id=chat_id, text=PURCHASE_DELETED, parse_mode='HTML')
+            context.bot.send_message(
+                chat_id=chat_id, text=PURCHASE_DELETED, parse_mode="HTML"
+            )
         except DoesNotExist:
             message_id = message.message_id
             message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-            context.bot.send_message(chat_id=chat_id, text=message, parse_mode='HTML')
-
-
-
-        
+            context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")

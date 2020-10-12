@@ -7,8 +7,8 @@ from root.model.base_model import BaseModel
 class Purchase(BaseModel):
 
     """[This class represent a Purchage]
-        @price = the price spent
-        @user_id = The telegram user id
+    @price = the price spent
+    @user_id = The telegram user id
     """
 
     user_id = IntField()

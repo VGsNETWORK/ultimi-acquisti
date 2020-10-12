@@ -9,6 +9,7 @@ import re
 
 logger = Logger()
 
+
 def before(start, end, seq):
     open_parens = 0
     for char in seq:
@@ -20,51 +21,71 @@ def before(start, end, seq):
                 return False
     return open_parens == 0
 
+
 def convert_to_float(price: str) -> None:
     logger.info(f"converting {price}")
-    dots = re.findall('\.', price)
-    commas = re.findall('\,', price)
-    apostrophes = re.findall("\'", price)
+    dots = re.findall("\.", price)
+    commas = re.findall("\,", price)
+    apostrophes = re.findall("'", price)
     if len(commas) == 1 and len(dots) == 1:
-        if before(',', '.', price):
-            price  = price.replace(',', '')
+        if before(",", ".", price):
+            price = price.replace(",", "")
         else:
-            price  = price.replace('.', '').replace(',', '.')
+            price = price.replace(".", "").replace(",", ".")
     elif len(commas) == 1 and len(apostrophes) == 1:
-        price  = price.replace('\'', '').replace(',', '.')
+        price = price.replace("'", "").replace(",", ".")
     elif len(apostrophes) == 1:
-        price  = price.replace('\'', '')
+        price = price.replace("'", "")
     elif len(commas) == 2:
-        price = price.replace(',', '', 1).replace(',', '.')
+        price = price.replace(",", "", 1).replace(",", ".")
     elif len(dots) == 2:
-        price = price.replace('.', '', 1)
+        price = price.replace(".", "", 1)
     elif len(commas) == 1:
-        if len(price.split(',')[1]) > 2:
-            price = price.replace(',', '')
+        if len(price.split(",")[1]) > 2:
+            price = price.replace(",", "")
         else:
-            price = price.replace(',', '.')
+            price = price.replace(",", ".")
     elif len(dots) == 1:
-        if len(price.split('.')[1]) > 2:
-            price = price.replace('.', '')
+        if len(price.split(".")[1]) > 2:
+            price = price.replace(".", "")
     return float(price)
 
-def create_purchase(user_id: int, price: float, message_id: int, chat_id: int, creation_date: datetime = None) -> None:
+
+def create_purchase(
+    user_id: int,
+    price: float,
+    message_id: int,
+    chat_id: int,
+    creation_date: datetime = None,
+) -> None:
     try:
         logger.info(f"modifying purchase {message_id}")
-        Purchase.objects(message_id=message_id).update(set__price=price, set__creation_date=creation_date)
+        Purchase.objects(message_id=message_id).update(
+            set__price=price, set__creation_date=creation_date
+        )
         return
     except Exception as e:
         logger.error(f"Unable to update purchase due to {e}")
     if creation_date:
-        Purchase(user_id=user_id, price=price, message_id=message_id, chat_id=chat_id, creation_date=creation_date).save()
+        Purchase(
+            user_id=user_id,
+            price=price,
+            message_id=message_id,
+            chat_id=chat_id,
+            creation_date=creation_date,
+        ).save()
     else:
-        Purchase(user_id=user_id, price=price, message_id=message_id, chat_id=chat_id).save()
+        Purchase(
+            user_id=user_id, price=price, message_id=message_id, chat_id=chat_id
+        ).save()
+
 
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     try:
         return Purchase.objects.filter(user_id=user_id)
     except DoesNotExist:
         return None
+
 
 def retrieve_month_purchases_for_user(user_id: int, month: int = None) -> [Purchase]:
     try:
@@ -73,24 +94,31 @@ def retrieve_month_purchases_for_user(user_id: int, month: int = None) -> [Purch
         start, end = monthrange(current_date.year, month)
         start_date = datetime(current_date.year, month, 1)
         end_date = datetime(current_date.year, month, end)
-        return Purchase.objects.filter(user_id=user_id, creation_date__lte=end_date, 
-                creation_date__gte=start_date).order_by("creation_date")
+        return Purchase.objects.filter(
+            user_id=user_id, creation_date__lte=end_date, creation_date__gte=start_date
+        ).order_by("creation_date")
     except DoesNotExist:
         return None
+
 
 def delete_purchase(user_id: int, message_id: int) -> None:
     logger.info(f"finding purchase {message_id} for user {user_id}")
     Purchase.objects.filter(user_id=user_id).get(message_id=message_id).delete()
 
+
 def retrieve_sum_for_user(user_id: int) -> float:
-    pipeline = [{"$match": {"user_id": user_id}}, 
-                    {"$group": {"_id": "$user_id", "total": {"$sum": "$price"}}}]
+    pipeline = [
+        {"$match": {"user_id": user_id}},
+        {"$group": {"_id": "$user_id", "total": {"$sum": "$price"}}},
+    ]
     res = list(Purchase.objects.aggregate(*pipeline))
-    return 0.0 if len(res) == 0 else res[0]['total']
+    return 0.0 if len(res) == 0 else res[0]["total"]
+
 
 def retrieve_sum_for_current_month(user_id: int, month: int = None) -> float:
     month = datetime.now().month
     return retrieve_sum_for_month(user_id, month)
+
 
 def retrieve_sum_for_month(user_id: int, month: int) -> float:
     current_date = datetime.now()
@@ -99,14 +127,17 @@ def retrieve_sum_for_month(user_id: int, month: int) -> float:
     end_date = datetime(current_date.year, month, end)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
+
 def retrieve_sum_for_current_year(user_id: int) -> float:
     return retrieve_sum_for_year(user_id, datetime.now().year)
-    
+
+
 def retrieve_sum_for_year(user_id: int, year: int) -> float:
     start_date = datetime(year, 1, 1)
     end_date = datetime(year, 12, 31)
     return retrieve_sum_between_date(user_id, start_date, end_date)
-    
+
+
 def get_last_purchase(user_id: int) -> Purchase:
     try:
         return Purchase.objects.filter(user_id=user_id).order_by("-creation_date")[0]
@@ -115,9 +146,17 @@ def get_last_purchase(user_id: int) -> Purchase:
     except IndexError:
         return None
 
-def retrieve_sum_between_date(user_id: int, start_date: datetime, end_date: datetime) -> float:
-    pipeline = [{"$match": {"user_id": user_id }}, 
-                {"$group": { "_id": "$user_id" , "total": { "$sum": "$price" }}}]
-    res = list(Purchase.objects.filter(creation_date__lte=end_date)\
-        .filter(creation_date__gte=start_date).aggregate(*pipeline))
-    return 0.0 if len(res) == 0 else res[0]['total']
+
+def retrieve_sum_between_date(
+    user_id: int, start_date: datetime, end_date: datetime
+) -> float:
+    pipeline = [
+        {"$match": {"user_id": user_id}},
+        {"$group": {"_id": "$user_id", "total": {"$sum": "$price"}}},
+    ]
+    res = list(
+        Purchase.objects.filter(creation_date__lte=end_date)
+        .filter(creation_date__gte=start_date)
+        .aggregate(*pipeline)
+    )
+    return 0.0 if len(res) == 0 else res[0]["total"]

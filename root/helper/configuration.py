@@ -9,11 +9,12 @@ from mongoengine import DoesNotExist
 import os
 import json
 
+
 class ConfigurationHelper:
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
-        
+
     def load_configurations(self):
         ADMIN = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
         TOKEN = retrieve_key("TOKEN")
@@ -28,7 +29,7 @@ class ConfigurationHelper:
         for configuration in configurations:
             os.system(f'export {configuration.code}="{configuration.value}"')
             os.environ[configuration.code] = configuration.value
-            
+
     def update_configuration(self, code, value):
         self.logger.info(f"updating configuration {code}")
         try:
@@ -39,4 +40,3 @@ class ConfigurationHelper:
         except DoesNotExist:
             self.logger.warn("configuration not found, creating it")
             Configuration(code=code, value=value).save()
-            

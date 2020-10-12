@@ -21,9 +21,9 @@ class TelegramSender:
             return
         self._bot = Bot(token)
         self._token = token
-    
+
     def send_to_log(self, message):
-        TOKEN = retrieve_key('TOKEN')
+        TOKEN = retrieve_key("TOKEN")
         LOG_CHANNEL = retrieve_key("ERROR_CHANNEL")
         self.send_message(TOKEN, LOG_CHANNEL, message)
 
