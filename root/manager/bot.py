@@ -71,6 +71,9 @@ class BotManager:
         context.bot.send_message(
             chat_id=chat_id, text="https://gitlab.com/nautilor/ultimi-acquisti"
         )
+    
+    def empty_button(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
 
     def add_handler(self):
         """[add handlers for the various operations]"""
@@ -112,6 +115,9 @@ class BotManager:
         )
         self.disp.add_handler(
             CallbackQueryHandler(callback=self.purchase.previous_year, pattern="previous_year")
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=self.empty_button, pattern="empty_button")
         )
         self.disp.add_handler(
             CallbackQueryHandler(
