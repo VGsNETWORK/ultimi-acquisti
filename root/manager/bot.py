@@ -108,6 +108,12 @@ class BotManager:
             CallbackQueryHandler(callback=self.purchase.next_page, pattern="next_page")
         )
         self.disp.add_handler(
+            CallbackQueryHandler(callback=self.purchase.next_year, pattern="next_year")
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=self.purchase.previous_year, pattern="previous_year")
+        )
+        self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.purchase.expand_report, pattern="expand_report"
             )

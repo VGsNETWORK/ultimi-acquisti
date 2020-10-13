@@ -87,13 +87,14 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
         return None
 
 
-def retrieve_month_purchases_for_user(user_id: int, month: int = None) -> [Purchase]:
+def retrieve_month_purchases_for_user(user_id: int, month: int = None, year: int = None) -> [Purchase]:
     try:
         current_date = datetime.now()
         month = month if month else current_date.month
-        start, end = monthrange(current_date.year, month)
-        start_date = datetime(current_date.year, month, 1)
-        end_date = datetime(current_date.year, month, end)
+        year = year if year else current_date.year
+        start, end = monthrange(year, month)
+        start_date = datetime(year, month, 1)
+        end_date = datetime(year, month, end)
         return Purchase.objects.filter(
             user_id=user_id, creation_date__lte=end_date, creation_date__gte=start_date
         ).order_by("creation_date")
@@ -115,16 +116,17 @@ def retrieve_sum_for_user(user_id: int) -> float:
     return 0.0 if len(res) == 0 else res[0]["total"]
 
 
-def retrieve_sum_for_current_month(user_id: int, month: int = None) -> float:
+def retrieve_sum_for_current_month(user_id: int) -> float:
     month = datetime.now().month
     return retrieve_sum_for_month(user_id, month)
 
 
-def retrieve_sum_for_month(user_id: int, month: int) -> float:
+def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
     current_date = datetime.now()
-    start, end = monthrange(current_date.year, month)
-    start_date = datetime(current_date.year, month, 1)
-    end_date = datetime(current_date.year, month, end)
+    year = year if year else current_date.year
+    start, end = monthrange(year, month)
+    start_date = datetime(year, month, 1)
+    end_date = datetime(year, month, end)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
 

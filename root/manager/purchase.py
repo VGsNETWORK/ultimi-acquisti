@@ -53,6 +53,8 @@ class PurchaseManager:
         self.sender = TelegramSender()
         self.month = 1
         self.current_month = 1
+        self.current_year = 1970
+        self.year = 1970
         self.to_zone = tz.gettz("Europe/Rome")
 
     def month_report(
@@ -61,6 +63,8 @@ class PurchaseManager:
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month
+        self.year = current_date.year
+        self.current_year = current_date.year
         message: Message = update.message if update.message else update.edited_message
         if not message:
             context.bot.answer_callback_query(update.callback_query.id)
@@ -98,8 +102,9 @@ class PurchaseManager:
         self.month_report(update, context, True)
 
     def build_keyboard(self):
-        if self.month > 1 and self.month < self.current_month:
-            return [
+        keyboard = []
+        if self.year == self.current_year and self.month > 1 and self.month < self.current_month:
+            keyboard = [
                 [
                     self.create_button(
                         f"⬅️  {get_month_string(self.month - 1, False, False )}",
@@ -110,11 +115,26 @@ class PurchaseManager:
                         f"{get_month_string(self.month + 1, False, False )}  ➡️",
                         str(f"next_page"),
                         "next_page",
+                    )
+                ]
+            ]
+        elif not self.year == self.current_year and self.month > 1 and self.month < 12:
+            keyboard = [
+                [
+                    self.create_button(
+                        f"⬅️  {get_month_string(self.month - 1, False, False )}",
+                        str(f"previous_page"),
+                        "previous_page",
                     ),
+                    self.create_button(
+                        f"{get_month_string(self.month + 1, False, False )}  ➡️",
+                        str(f"next_page"),
+                        "next_page",
+                    )
                 ]
             ]
         elif self.month == 1:
-            return [
+            keyboard = [
                 [
                     self.create_button(
                         f"{get_month_string(self.month + 1, False, False )}  ➡️",
@@ -123,8 +143,8 @@ class PurchaseManager:
                     )
                 ]
             ]
-        elif self.month == self.current_month:
-            return [
+        elif not self.year == self.current_year and self.month == 12:
+            keyboard = [
                 [
                     self.create_button(
                         f"⬅️  {get_month_string(self.month - 1, False, False )}",
@@ -133,6 +153,42 @@ class PurchaseManager:
                     )
                 ]
             ]
+        elif self.year == self.current_year and self.month == self.current_month:
+            keyboard = [
+                [
+                    self.create_button(
+                        f"⬅️  {get_month_string(self.month - 1, False, False )}",
+                        str(f"previous_page"),
+                        "previous_page",
+                    )
+                ]
+            ]
+        if self.year == self.current_year:
+            keyboard.append(
+                [
+                    self.create_button(
+                        f"⬅️ {self.year}",
+                        str(f"previous_year"),
+                        "previous_year",
+                    )
+                ]
+            )
+        else:
+            keyboard.append(
+                [
+                    self.create_button(
+                        f"⬅️ {self.year - 1}",
+                        str(f"previous_year"),
+                        "previous_year",
+                    ),
+                    self.create_button(
+                        f"{self.year + 1}  ➡️",
+                        str(f"next_year"),
+                        "next_year",
+                    )
+                ]
+            )
+        return keyboard
 
     def retrieve_purchase(self, user):
         if self.month > 12:
@@ -141,8 +197,8 @@ class PurchaseManager:
             self.month = 1
         user_id = user.id
         first_name = user.first_name
-        purchases = retrieve_month_purchases_for_user(user_id, self.month)
-        date = f"{get_month_string(self.month, False, True)} {get_current_year()}"
+        purchases = retrieve_month_purchases_for_user(user_id, self.month, self.year)
+        date = f"{get_month_string(self.month, False, True)} {self.year}"
         if not purchases:
             message = NO_MONTH_PURCHASE % (user_id, first_name, date)
         else:
@@ -161,7 +217,7 @@ class PurchaseManager:
                     price,
                 )
                 message = f"{message}\n{template}"
-            footer = retrieve_sum_for_month(user_id, self.month)
+            footer = retrieve_sum_for_month(user_id, self.month, self.year)
             footer = (f"%.2f" % footer).replace(".", ",")
             footer = " " * (8 - len(footer)) + footer
             footer = MONTH_PURCHASE_TOTAL % footer
@@ -188,6 +244,41 @@ class PurchaseManager:
     def next_page(self, update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+    def previous_year(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year -= 1
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+
+    def next_year(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year += 1
+        if self.year == self.current_year:
+            self.month = self.current_month
         user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
