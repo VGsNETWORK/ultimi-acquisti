@@ -103,7 +103,11 @@ class PurchaseManager:
 
     def build_keyboard(self):
         keyboard = []
-        if self.year == self.current_year and self.month > 1 and self.month < self.current_month:
+        if (
+            self.year == self.current_year
+            and self.month > 1
+            and self.month < self.current_month
+        ):
             keyboard = [
                 [
                     self.create_button(
@@ -120,7 +124,7 @@ class PurchaseManager:
                         f"{get_month_string(self.month + 1, False, False )}  ▶️",
                         str(f"next_page"),
                         "next_page",
-                    )
+                    ),
                 ]
             ]
         elif not self.year == self.current_year and self.month > 1 and self.month < 12:
@@ -140,7 +144,7 @@ class PurchaseManager:
                         f"{get_month_string(self.month + 1, False, False )}  ▶️",
                         str(f"next_page"),
                         "next_page",
-                    )
+                    ),
                 ]
             ]
         elif self.month == 1:
@@ -160,7 +164,7 @@ class PurchaseManager:
                         f"{get_month_string(self.month + 1, False, False )}  ▶️",
                         str(f"next_page"),
                         "next_page",
-                    )
+                    ),
                 ]
             ]
         elif not self.year == self.current_year and self.month == 12:
@@ -180,7 +184,7 @@ class PurchaseManager:
                         f"❌",
                         str(f"empty_button"),
                         "empty_button",
-                    )
+                    ),
                 ]
             ]
         elif self.year == self.current_year and self.month == self.current_month:
@@ -200,7 +204,7 @@ class PurchaseManager:
                         f"❌",
                         str(f"empty_button"),
                         "empty_button",
-                    )
+                    ),
                 ]
             ]
         if self.year == self.current_year:
@@ -220,7 +224,7 @@ class PurchaseManager:
                         f"❌",
                         str(f"empty_button"),
                         "empty_button",
-                    )
+                    ),
                 ]
             )
         else:
@@ -240,7 +244,7 @@ class PurchaseManager:
                         f"{get_month_string(self.month, True, False )} {self.year + 1}  ▶️",
                         str(f"next_year"),
                         "next_year",
-                    )
+                    ),
                 ]
             )
         return keyboard
@@ -312,6 +316,7 @@ class PurchaseManager:
             reply_markup=InlineKeyboardMarkup(keyboard),
             parse_mode="HTML",
         )
+
     def previous_year(self, update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
@@ -334,6 +339,8 @@ class PurchaseManager:
         self.year += 1
         if self.year == self.current_year:
             self.month = self.current_month
+        if self.year > self.current_year:
+            self.year = self.current_year
         user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
