@@ -162,7 +162,9 @@ class PurchaseManager:
                 )
                 message = f"{message}\n{template}"
             footer = retrieve_sum_for_month(user_id, self.month)
-            footer = MONTH_PURCHASE_TOTAL % (f"%.2f" % footer).replace(".", ",")
+            footer = (f"%.2f" % footer).replace(".", ",")
+            footer = " " * (8 - len(footer)) + footer
+            footer = MONTH_PURCHASE_TOTAL % footer
             message = f"{message}\n\n{footer}"
         return message
 
