@@ -339,7 +339,8 @@ class PurchaseManager:
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year == self.current_year:
-            self.month = self.current_month
+            if self.month > self.current_month:
+                self.month = self.current_month
         if self.year > self.current_year:
             self.year = self.current_year
         user = update.effective_user
