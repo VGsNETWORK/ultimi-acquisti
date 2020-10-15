@@ -116,7 +116,7 @@ class PurchaseManager:
                         "previous_page",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{get_month_string(self.month, False, False).upper()}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -136,7 +136,7 @@ class PurchaseManager:
                         "previous_page",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{get_month_string(self.month, False, False).upper()}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -156,7 +156,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{get_month_string(self.month, False, False).upper()}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -176,7 +176,7 @@ class PurchaseManager:
                         "previous_page",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{get_month_string(self.month, False, False).upper()}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -196,7 +196,7 @@ class PurchaseManager:
                         "previous_page",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{get_month_string(self.month, False, False).upper()}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -216,7 +216,7 @@ class PurchaseManager:
                         "previous_year",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{self.year}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -236,7 +236,7 @@ class PurchaseManager:
                         "previous_year",
                     ),
                     self.create_button(
-                        f" ",
+                        f"{self.year}",
                         str(f"empty_button"),
                         "empty_button",
                     ),
