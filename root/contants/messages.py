@@ -22,6 +22,10 @@ MONTH_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, a %s hai speso un totale di <code>%s €</code>.'
 )
 
+MONTH_USER_PURCHASES = (
+    '<a href="tg://user?id=%s">%s</a> a %s ha speso un totale di <code>%s €</code>.'
+)
+
 YEAR_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, nel %s hai speso un totale di <code>%s €</code>.'
 )
