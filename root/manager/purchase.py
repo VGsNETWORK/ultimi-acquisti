@@ -26,6 +26,7 @@ from root.contants.messages import (
     MONTH_PURCHASE_REPORT,
     PURCHASE_REPORT_TEMPLATE,
     YEAR_PURCHASES,
+    YEAR_USER_PURCHASES,
     CANCEL_PURCHASE_ERROR,
     NO_PURCHASE,
     PURCHASE_NOT_FOUND,
@@ -500,6 +501,8 @@ class PurchaseManager:
 
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
+        template: str = YEAR_USER_PURCHASES if message.reply_to_message else YEAR_PURCHASES
+        message = message.reply_to_message if message.reply_to_message else message
         chat_id = message.chat.id
         user = message.from_user
         user_id = user.id
@@ -514,7 +517,7 @@ class PurchaseManager:
         first_name = update.effective_user.first_name
         price = retrieve_sum_for_current_year(user_id)
         price = (f"%.2f" % price).replace(".", ",")
-        message = YEAR_PURCHASES % (user_id, first_name, get_current_year(), price)
+        message = template % (user_id, first_name, get_current_year(), price)
         self.send_purchase(update, context, price, message)
 
     def send_purchase(
