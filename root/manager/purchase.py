@@ -113,7 +113,7 @@ class PurchaseManager:
             keyboard = [
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month - 1, False, False )}",
+                        f"{get_month_string(self.month - 1, False, False )}   ◄",
                         str(f"previous_page"),
                         "previous_page",
                     ),
@@ -123,7 +123,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"{get_month_string(self.month + 1, False, False )}   ►",
+                        f"  ►  {get_month_string(self.month + 1, False, False )}",
                         str(f"next_page"),
                         "next_page",
                     ),
@@ -133,7 +133,7 @@ class PurchaseManager:
             keyboard = [
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month - 1, False, False )}",
+                        f"{get_month_string(self.month - 1, False, False )}   ◄",
                         str(f"previous_page"),
                         "previous_page",
                     ),
@@ -143,7 +143,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"{get_month_string(self.month + 1, False, False )}   ►",
+                        f"►   {get_month_string(self.month + 1, False, False )}",
                         str(f"next_page"),
                         "next_page",
                     ),
@@ -163,7 +163,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"{get_month_string(self.month + 1, False, False )}   ►",
+                        f"►   {get_month_string(self.month + 1, False, False )}",
                         str(f"next_page"),
                         "next_page",
                     ),
@@ -173,7 +173,7 @@ class PurchaseManager:
             keyboard = [
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month - 1, False, False )}",
+                        f"{get_month_string(self.month - 1, False, False )}   ◄",
                         str(f"previous_page"),
                         "previous_page",
                     ),
@@ -193,7 +193,7 @@ class PurchaseManager:
             keyboard = [
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month - 1, False, False )}",
+                        f"{get_month_string(self.month - 1, False, False )}   ◄",
                         str(f"previous_page"),
                         "previous_page",
                     ),
@@ -213,7 +213,7 @@ class PurchaseManager:
             keyboard.append(
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month, True, False )} {self.year - 1}",
+                        f"{get_month_string(self.month, True, False )} {self.year - 1}   ◄",
                         str(f"previous_year"),
                         "previous_year",
                     ),
@@ -230,10 +230,14 @@ class PurchaseManager:
                 ]
             )
         else:
+            if self.year + 1 == self.current_year and self.month > self.current_month:
+                month = self.current_month
+            else:
+                month = self.month
             keyboard.append(
                 [
                     self.create_button(
-                        f"◄   {get_month_string(self.month, True, False )} {self.year - 1}",
+                        f"{get_month_string(self.month, True, False )} {self.year - 1}   ◄",
                         str(f"previous_year"),
                         "previous_year",
                     ),
@@ -243,7 +247,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"{get_month_string(self.month, True, False )} {self.year + 1}   ►",
+                        f"►   {get_month_string(month, True, False )} {self.year + 1}",
                         str(f"next_year"),
                         "next_year",
                     ),
@@ -468,7 +472,9 @@ class PurchaseManager:
 
     def month_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        template: str = MONTH_USER_PURCHASES if message.reply_to_message else MONTH_PURCHASES
+        template: str = (
+            MONTH_USER_PURCHASES if message.reply_to_message else MONTH_PURCHASES
+        )
         expand = False if message.reply_to_message else True
         message = message.reply_to_message if message.reply_to_message else message
         chat_id = message.chat.id
@@ -501,7 +507,9 @@ class PurchaseManager:
 
     def year_purchase(self, update: Update, context: CallbackContext) -> None:
         message: Message = update.message if update.message else update.edited_message
-        template: str = YEAR_USER_PURCHASES if message.reply_to_message else YEAR_PURCHASES
+        template: str = (
+            YEAR_USER_PURCHASES if message.reply_to_message else YEAR_PURCHASES
+        )
         message = message.reply_to_message if message.reply_to_message else message
         chat_id = message.chat.id
         user = message.from_user

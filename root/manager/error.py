@@ -17,7 +17,6 @@ class ErrorHandler:
 
     def handle_error(self, update: Update, context: CallbackContext):
         chat_id = retrieve_key("ERROR_CHANNEL")
-        admins = retrieve_admins()
         if update.effective_message:
             update.effective_message.reply_text(USER_ERROR)
         trace = "".join(traceback.format_tb(sys.exc_info()[2]))

@@ -48,6 +48,7 @@ def convert_to_float(price: str) -> None:
     elif len(dots) == 1:
         if len(price.split(".")[1]) > 2:
             price = price.replace(".", "")
+    print(price)
     return float(price)
 
 
@@ -88,7 +89,9 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
         return None
 
 
-def retrieve_month_purchases_for_user(user_id: int, month: int = None, year: int = None) -> [Purchase]:
+def retrieve_month_purchases_for_user(
+    user_id: int, month: int = None, year: int = None
+) -> [Purchase]:
     try:
         current_date = datetime.now()
         month = month if month else current_date.month
