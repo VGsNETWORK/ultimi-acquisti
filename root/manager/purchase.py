@@ -53,10 +53,11 @@ class PurchaseManager:
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
-        self.month = 1
-        self.current_month = 1
-        self.current_year = 1970
-        self.year = 1970
+        current_date = datetime.now()
+        self.month = current_date.month
+        self.current_month = current_date.month
+        self.current_year = current_date.year
+        self.year = current_date.year
         self.to_zone = tz.gettz("Europe/Rome")
 
     def month_report(
