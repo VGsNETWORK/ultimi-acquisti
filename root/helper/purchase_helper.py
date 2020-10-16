@@ -48,7 +48,6 @@ def convert_to_float(price: str) -> None:
     elif len(dots) == 1:
         if len(price.split(".")[1]) > 2:
             price = price.replace(".", "")
-    print(price)
     return float(price)
 
 
