@@ -150,12 +150,13 @@ class PurchaseManager:
                 ]
             ]
         elif self.month == 1:
+            message = f"{get_month_string(12, True, False )} {self.year - 1}   ◄"
             keyboard = [
                 [
                     self.create_button(
-                        f"🔚",
-                        str(f"empty_button"),
-                        "empty_button",
+                        f"{message}",
+                        str(f"previous_start_year"),
+                        "previous_start_year",
                     ),
                     self.create_button(
                         f"{get_month_string(self.month, False, False).upper()}",
@@ -170,6 +171,7 @@ class PurchaseManager:
                 ]
             ]
         elif not self.year == self.current_year and self.month == 12:
+            message = f"►   {get_month_string(1, True, False )} {self.year + 1}"
             keyboard = [
                 [
                     self.create_button(
@@ -183,9 +185,9 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"🔚",
-                        str(f"empty_button"),
-                        "empty_button",
+                        f"{message}",
+                        str(f"next_start_year"),
+                        "next_start_year",
                     ),
                 ]
             ]
@@ -327,6 +329,52 @@ class PurchaseManager:
     def previous_year(self, update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+
+    def next_start_year(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year += 1
+        self.month = 1
+        if self.year == self.current_year:
+            if self.month > self.current_month:
+                self.month = self.current_month
+        if self.year > self.current_year:
+            self.year = self.current_year
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update._effective_message.message_id
+        chat_id = update._effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+
+    def previous_start_year(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year -= 1
+        self.month = 12
+        if self.year == self.current_year:
+            if self.month > self.current_month:
+                self.month = self.current_month
+        if self.year > self.current_year:
+            self.year = self.current_year
         user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
