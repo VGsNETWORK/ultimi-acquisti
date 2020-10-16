@@ -513,8 +513,6 @@ class PurchaseManager:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        user_id = update.effective_user.id
-        first_name = update.effective_user.first_name
         price = retrieve_sum_for_current_year(user_id)
         price = (f"%.2f" % price).replace(".", ",")
         message = template % (user_id, first_name, get_current_year(), price)
