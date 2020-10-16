@@ -59,6 +59,7 @@ def create_purchase(
     creation_date: datetime = None,
 ) -> None:
     try:
+        Purchase.objects().get(message_id=message_id)
         logger.info(f"modifying purchase {message_id}")
         Purchase.objects(message_id=message_id).update(
             set__price=price, set__creation_date=creation_date
