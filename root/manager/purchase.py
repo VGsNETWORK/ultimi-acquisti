@@ -153,7 +153,7 @@ class PurchaseManager:
             keyboard = [
                 [
                     self.create_button(
-                        f"❌",
+                        f"🔚",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -183,7 +183,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"❌",
+                        f"🔚",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -203,7 +203,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"❌",
+                        f"🔚",
                         str(f"empty_button"),
                         "empty_button",
                     ),
@@ -223,7 +223,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"❌",
+                        f"🔚",
                         str(f"empty_button"),
                         "empty_button",
                     ),
