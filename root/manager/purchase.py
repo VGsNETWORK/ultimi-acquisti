@@ -125,7 +125,7 @@ class PurchaseManager:
                         "empty_button",
                     ),
                     self.create_button(
-                        f"  ►  {get_month_string(self.month + 1, False, False )}",
+                        f"►   {get_month_string(self.month + 1, False, False )}",
                         str(f"next_page"),
                         "next_page",
                     ),
