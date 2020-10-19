@@ -20,6 +20,10 @@ from root.contants.messages import (
     PURCHASE_ADDED,
     ONLY_GROUP,
     MONTH_PURCHASES,
+    MONTH_COMPARE_HE_WON,
+    MONTH_COMPARE_YOU_WON,
+    MONTH_COMPARE_PRICE,
+    MONTH_COMPARE_NO_PURCHASE,
     LAST_PURCHASE,
     NO_MONTH_PURCHASE,
     MONTH_USER_PURCHASES,
@@ -33,6 +37,7 @@ from root.contants.messages import (
     PURCHASE_DATE_ERROR,
     PURCHASE_DELETED,
     PURCHASE_MODIFIED,
+    MONTH_COMPARE_TIE,
     MONTH_PURCHASE_TOTAL,
 )
 from root.util.telegram import TelegramSender
@@ -60,6 +65,38 @@ class PurchaseManager:
         self.current_year = current_date.year
         self.year = current_date.year
         self.to_zone = tz.gettz("Europe/Rome")
+
+    def month_compare(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        rmessage: Message = message.reply_to_message
+        if not rmessage:
+            return
+        chat_id = message.chat.id
+        ruser = rmessage.from_user
+        user = message.from_user
+        ruser_id = ruser.id
+        user_id = user.id
+        rfirst_name = ruser.first_name
+        upurchase = retrieve_sum_for_current_month(user_id)
+        rpurchase = retrieve_sum_for_current_month(ruser_id)
+        date = f"{get_current_month(False, True)} {get_current_year()}"
+        message = MONTH_COMPARE_PRICE % (
+            date,
+            ruser_id,
+            rfirst_name,
+            rpurchase,
+            upurchase,
+        )
+        if upurchase > rpurchase:
+            message = f"{message}{MONTH_COMPARE_YOU_WON % (upurchase - rpurchase)}"
+        elif upurchase < rpurchase:
+            message = f"{message}{MONTH_COMPARE_HE_WON % (rpurchase - upurchase)}"
+        else:
+            if not int(rpurchase) == 0:
+                message = f"{message}{MONTH_COMPARE_TIE}"
+            else:
+                message = f"{message}{MONTH_COMPARE_NO_PURCHASE}"
+        context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
 
     def month_report(
         self, update: Update, context: CallbackContext, expand: bool = False

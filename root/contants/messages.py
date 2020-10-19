@@ -75,3 +75,13 @@ PURCHASE_DATE_ERROR = (
     "Purtroppo la data che mi hai fornito non rispetta il formato DD/MM/YYYY "
     "oppure è una data futura al giorno corrente quindi è stata utilizzata la data corrente"
 )
+
+MONTH_COMPARE_PRICE = 'Nel mese di <b>%s</b> <a href="tg://user?id=%s">%s</a> ha speso <code>%s €</code>.\nTu hai speso <code>%s €</code>.\n'
+
+MONTH_COMPARE_YOU_WON = "Lo hai battuto di <code>%s €</code>."
+
+MONTH_COMPARE_HE_WON = "Ti ha battuto di <code>%s €</code>."
+
+MONTH_COMPARE_TIE = "Avete speso lo stesso quantitativo."
+
+MONTH_COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti."
