@@ -90,9 +90,13 @@ class PurchaseManager:
             (f"%.2f" % rpurchase).replace(".", ","),
         )
         if upurchase > rpurchase:
-            message = f"{message}{MONTH_COMPARE_YOU_WON % (upurchase - rpurchase)}"
+            diff = upurchase - rpurchase
+            diff = (f"%.2f" % diff).replace(".", ",")
+            message = f"{message}{MONTH_COMPARE_YOU_WON % diff}"
         elif upurchase < rpurchase:
-            message = f"{message}{MONTH_COMPARE_HE_WON % (rpurchase - upurchase)}"
+            diff = rpurchase - upurchase
+            diff = (f"%.2f" % diff).replace(".", ",")
+            message = f"{message}{MONTH_COMPARE_HE_WON % diff}"
         else:
             if not int(rpurchase) == 0:
                 message = f"{message}{MONTH_COMPARE_TIE}"
