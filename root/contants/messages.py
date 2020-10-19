@@ -71,17 +71,27 @@ PURCHASE_REPORT_TEMPLATE = (
 MONTH_PURCHASE_TOTAL = "per un totale di   <code>%s</code><code>%s €</code>."
 
 PURCHASE_DATE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato agiunto con successo.\n'
-    "Purtroppo la data che mi hai fornito non rispetta il formato DD/MM/YYYY "
-    "oppure è una data futura al giorno corrente quindi è stata utilizzata la data corrente"
+    '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n'
+    "❗️ Purtroppo la data che mi hai fornito presenta una delle seguenti anomalie:\n"
+    "  - non rispetta il formato <code>DD/MM/YYYY</code>\n"
+    "  - è una data futura\n"
+    "per questo motivo ho collocato l'acquisto alla data di oggi."
 )
 
 MONTH_COMPARE_PRICE = 'Nel mese di <b>%s</b> <a href="tg://user?id=%s">%s</a> ha speso <code>%s €</code>.\n<a href="tg://user?id=%s">%s</a>, hai speso <code>%s €</code>.\n'
 
-MONTH_COMPARE_YOU_WON = "Lo hai battuto di <code>%s €</code>."
+MONTH_COMPARE_PRICE = (
+    "Nel mese di <b>%s</b>...\n"
+    '- <a href="tg://user?id=%s">%s</a>, hai speso <code>%s €</code>\n'
+    "- <i>%s</i> ha speso <code>%s €</code>\n\n"
+)
 
-MONTH_COMPARE_HE_WON = "Ti ha battuto di <code>%s €</code>."
+MONTH_COMPARE_YOU_WON = "Hai <b>vinto</b> di <code>%s €</code>! 🥳"
 
-MONTH_COMPARE_TIE = "Avete speso lo stesso quantitativo."
+MONTH_COMPARE_HE_WON = "Hai <b>perso</b> di <code>%s €</code>! 😞"
 
-MONTH_COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti."
+MONTH_COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
+
+MONTH_COMPARE_NO_PURCHASE = (
+    "Nessuno dei due ha effettuato acquisti finora.\n<b>Che stiamo aspettando?! 😡</b>"
+)

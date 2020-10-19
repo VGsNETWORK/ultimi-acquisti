@@ -83,12 +83,11 @@ class PurchaseManager:
         date = f"{get_current_month(False, True)} {get_current_year()}"
         message = MONTH_COMPARE_PRICE % (
             date,
-            ruser_id,
-            rfirst_name,
-            rpurchase,
             user_id,
             first_name,
-            upurchase,
+            (f"%.2f" % upurchase).replace(".", ","),
+            rfirst_name,
+            (f"%.2f" % rpurchase).replace(".", ","),
         )
         if upurchase > rpurchase:
             message = f"{message}{MONTH_COMPARE_YOU_WON % (upurchase - rpurchase)}"
@@ -566,6 +565,8 @@ class PurchaseManager:
                     custom_date_error = True
                 else:
                     date = mdate
+            else:
+                custom_date_error = True
 
         if not result["error"]:
             self.add_purchase(user, price, message_id, chat_id, date)
