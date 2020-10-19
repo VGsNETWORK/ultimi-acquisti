@@ -78,17 +78,15 @@ PURCHASE_DATE_ERROR = (
     "per questo motivo ho collocato l'acquisto alla data di oggi."
 )
 
-MONTH_COMPARE_PRICE = 'Nel mese di <b>%s</b> <a href="tg://user?id=%s">%s</a> ha speso <code>%s €</code>.\n<a href="tg://user?id=%s">%s</a>, hai speso <code>%s €</code>.\n'
-
 MONTH_COMPARE_PRICE = (
     "Nel mese di <b>%s</b>...\n"
-    '- <a href="tg://user?id=%s">%s</a>, hai speso <code>%s €</code>\n'
-    "- <i>%s</i> ha speso <code>%s €</code>\n\n"
+    '- <a href="tg://user?id=%s">%s</a>, hai speso  <code>%s €</code>\n'
+    "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
-MONTH_COMPARE_YOU_WON = "Hai <b>vinto</b> di <code>%s €</code>! 🥳"
+MONTH_COMPARE_YOU_WON = "Hai <b>vinto</b> di  <code>%s €</code>! 🥳"
 
-MONTH_COMPARE_HE_WON = "Hai <b>perso</b> di <code>%s €</code>! 😞"
+MONTH_COMPARE_HE_WON = "Hai <b>perso</b> di  <code>%s €</code>! 😞"
 
 MONTH_COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
 
