@@ -76,7 +76,7 @@ PURCHASE_DATE_ERROR = (
     "oppure è una data futura al giorno corrente quindi è stata utilizzata la data corrente"
 )
 
-MONTH_COMPARE_PRICE = 'Nel mese di <b>%s</b> <a href="tg://user?id=%s">%s</a> ha speso <code>%s €</code>.\nTu hai speso <code>%s €</code>.\n'
+MONTH_COMPARE_PRICE = 'Nel mese di <b>%s</b> <a href="tg://user?id=%s">%s</a> ha speso <code>%s €</code>.\n<a href="tg://user?id=%s">%s</a>, hai speso <code>%s €</code>.\n'
 
 MONTH_COMPARE_YOU_WON = "Lo hai battuto di <code>%s €</code>."
 

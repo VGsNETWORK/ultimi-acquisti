@@ -77,6 +77,7 @@ class PurchaseManager:
         ruser_id = ruser.id
         user_id = user.id
         rfirst_name = ruser.first_name
+        first_name = user.first_name
         upurchase = retrieve_sum_for_current_month(user_id)
         rpurchase = retrieve_sum_for_current_month(ruser_id)
         date = f"{get_current_month(False, True)} {get_current_year()}"
@@ -85,6 +86,8 @@ class PurchaseManager:
             ruser_id,
             rfirst_name,
             rpurchase,
+            user_id,
+            first_name,
             upurchase,
         )
         if upurchase > rpurchase:
