@@ -69,3 +69,9 @@ PURCHASE_REPORT_TEMPLATE = (
 )
 
 MONTH_PURCHASE_TOTAL = "per un totale di   <code>%s</code><code>%s €</code>."
+
+PURCHASE_DATE_ERROR = (
+    '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato agiunto con successo.\n'
+    "Purtroppo la data che mi hai fornito non rispetta il formato DD/MM/YYYY "
+    "oppure è una data futura al giorno corrente quindi è stata utilizzata la data corrente"
+)

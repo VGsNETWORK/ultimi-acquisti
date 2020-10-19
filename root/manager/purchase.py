@@ -30,6 +30,7 @@ from root.contants.messages import (
     CANCEL_PURCHASE_ERROR,
     NO_PURCHASE,
     PURCHASE_NOT_FOUND,
+    PURCHASE_DATE_ERROR,
     PURCHASE_DELETED,
     PURCHASE_MODIFIED,
     MONTH_PURCHASE_TOTAL,
@@ -456,6 +457,7 @@ class PurchaseManager:
         )
 
     def purchase(self, update: Update, context: CallbackContext) -> None:
+        custom_date_error = False
         message: Message = update.message if update.message else update.edited_message
         date = None if update.message else message.date
         self.logger.info(f"received date {date}")
@@ -507,9 +509,33 @@ class PurchaseManager:
             self.sender.send_to_log(ie)
             return
 
+        mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", message)
+        mdate = mdate[0] if len(mdate) != 0 else None
+        if mdate:
+            mdate = mdate[0]
+            try:
+                mdate = datetime.strptime(mdate, "%d/%m/%Y")
+            except ValueError:
+                try:
+                    mdate = datetime.strptime(mdate, "%d/%m/%y")
+                except ValueError:
+                    mdate = None
+            if mdate:
+                cdate = datetime.now()
+                if mdate > cdate:
+                    custom_date_error = True
+                else:
+                    date = mdate
+
         if not result["error"]:
             self.add_purchase(user, price, message_id, chat_id, date)
-            message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
+            if not custom_date_error:
+                message = PURCHASE_ADDED if update.message else PURCHASE_MODIFIED
+            else:
+                message = PURCHASE_DATE_ERROR % (
+                    user.id,
+                    update.message.from_user.username,
+                )
         else:
             message = result["error"]
         context.bot.send_message(
