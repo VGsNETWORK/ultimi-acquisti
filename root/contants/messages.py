@@ -84,12 +84,18 @@ MONTH_COMPARE_PRICE = (
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
-MONTH_COMPARE_YOU_WON = "Hai <b>vinto</b> di  <code>%s €</code>! 🥳"
+YEAR_COMPARE_PRICE = (
+    "Durante il <b>%s</b>...\n"
+    '- <a href="tg://user?id=%s">%s</a>, hai speso  <code>%s €</code>\n'
+    "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
+)
 
-MONTH_COMPARE_HE_WON = "Hai <b>perso</b> di  <code>%s €</code>! 😞"
+COMPARE_YOU_WON = "Hai <b>vinto</b> di  <code>%s €</code>! 🥳"
 
-MONTH_COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
+COMPARE_HE_WON = "Hai <b>perso</b> di  <code>%s €</code>! 😞"
 
-MONTH_COMPARE_NO_PURCHASE = (
+COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
+
+COMPARE_NO_PURCHASE = (
     "Nessuno dei due ha effettuato acquisti finora.\n<b>Che stiamo aspettando?! 😡</b>"
 )

@@ -20,10 +20,11 @@ from root.contants.messages import (
     PURCHASE_ADDED,
     ONLY_GROUP,
     MONTH_PURCHASES,
-    MONTH_COMPARE_HE_WON,
-    MONTH_COMPARE_YOU_WON,
+    COMPARE_HE_WON,
+    YEAR_COMPARE_PRICE
+    COMPARE_YOU_WON,
     MONTH_COMPARE_PRICE,
-    MONTH_COMPARE_NO_PURCHASE,
+    COMPARE_NO_PURCHASE,
     LAST_PURCHASE,
     NO_MONTH_PURCHASE,
     MONTH_USER_PURCHASES,
@@ -37,7 +38,7 @@ from root.contants.messages import (
     PURCHASE_DATE_ERROR,
     PURCHASE_DELETED,
     PURCHASE_MODIFIED,
-    MONTH_COMPARE_TIE,
+    COMPARE_TIE,
     MONTH_PURCHASE_TOTAL,
 )
 from root.util.telegram import TelegramSender
@@ -92,16 +93,53 @@ class PurchaseManager:
         if upurchase > rpurchase:
             diff = upurchase - rpurchase
             diff = (f"%.2f" % diff).replace(".", ",")
-            message = f"{message}{MONTH_COMPARE_YOU_WON % diff}"
+            message = f"{message}{COMPARE_YOU_WON % diff}"
         elif upurchase < rpurchase:
             diff = rpurchase - upurchase
             diff = (f"%.2f" % diff).replace(".", ",")
-            message = f"{message}{MONTH_COMPARE_HE_WON % diff}"
+            message = f"{message}{COMPARE_HE_WON % diff}"
         else:
             if not int(rpurchase) == 0:
-                message = f"{message}{MONTH_COMPARE_TIE}"
+                message = f"{message}{COMPARE_TIE}"
             else:
-                message = f"{message}{MONTH_COMPARE_NO_PURCHASE}"
+                message = f"{message}{COMPARE_NO_PURCHASE}"
+        context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+
+    def year_compare(self, update: Update, context: CallbackContext):
+        message: Message = update.message if update.message else update.edited_message
+        rmessage: Message = message.reply_to_message
+        if not rmessage:
+            return
+        chat_id = message.chat.id
+        ruser = rmessage.from_user
+        user = message.from_user
+        ruser_id = ruser.id
+        user_id = user.id
+        rfirst_name = ruser.first_name
+        first_name = user.first_name
+        upurchase = retrieve_sum_for_current_year(user_id)
+        rpurchase = retrieve_sum_for_current_year(ruser_id)
+        message = YEAR_COMPARE_PRICE % (
+            {get_current_year(),
+            user_id,
+            first_name,
+            (f"%.2f" % upurchase).replace(".", ","),
+            rfirst_name,
+            (f"%.2f" % rpurchase).replace(".", ","),
+        )
+        if upurchase > rpurchase:
+            diff = upurchase - rpurchase
+            diff = (f"%.2f" % diff).replace(".", ",")
+            message = f"{message}{COMPARE_YOU_WON % diff}"
+        elif upurchase < rpurchase:
+            diff = rpurchase - upurchase
+            diff = (f"%.2f" % diff).replace(".", ",")
+            message = f"{message}{COMPARE_HE_WON % diff}"
+        else:
+            if not int(rpurchase) == 0:
+                message = f"{message}{COMPARE_TIE}"
+            else:
+                message = f"{message}{COMPARE_NO_PURCHASE}"
         context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
 
     def month_report(
