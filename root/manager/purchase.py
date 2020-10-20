@@ -13,6 +13,7 @@ from root.util.util import (
     get_current_year,
     get_month_string,
     retrieve_key,
+    format_price,
 )
 from telegram.ext import CallbackContext
 from root.contants.messages import (
@@ -62,6 +63,8 @@ from root.helper.purchase_helper import (
     - Quando viene inserita la data manuale per acquisto nel caso sia formatta male o futura chiedere conferma all'utente riguardo l'inserimento a data attuale
     - Breakdance
 """
+
+
 class PurchaseManager:
     def __init__(self):
         self.logger = Logger()
@@ -92,17 +95,17 @@ class PurchaseManager:
             date,
             user_id,
             first_name,
-            (f"%.2f" % upurchase).replace(".", ","),
+            format_price(upurchase),
             rfirst_name,
-            (f"%.2f" % rpurchase).replace(".", ","),
+            format_price(rpurchase),
         )
         if upurchase > rpurchase:
             diff = upurchase - rpurchase
-            diff = (f"%.2f" % diff).replace(".", ",")
+            diff = format_price(diff)
             message = f"{message}{COMPARE_YOU_WON % diff}"
         elif upurchase < rpurchase:
             diff = rpurchase - upurchase
-            diff = (f"%.2f" % diff).replace(".", ",")
+            diff = format_price(diff)
             message = f"{message}{COMPARE_HE_WON % diff}"
         else:
             if not int(rpurchase) == 0:
@@ -129,17 +132,17 @@ class PurchaseManager:
             get_current_year(),
             user_id,
             first_name,
-            (f"%.2f" % upurchase).replace(".", ","),
+            format_price(upurchase),
             rfirst_name,
-            (f"%.2f" % rpurchase).replace(".", ","),
+            format_price(rpurchase),
         )
         if upurchase > rpurchase:
             diff = upurchase - rpurchase
-            diff = (f"%.2f" % diff).replace(".", ",")
+            diff = format_price(diff)
             message = f"{message}{COMPARE_YOU_WON % diff}"
         elif upurchase < rpurchase:
             diff = rpurchase - upurchase
-            diff = (f"%.2f" % diff).replace(".", ",")
+            diff = format_price(diff)
             message = f"{message}{COMPARE_HE_WON % diff}"
         else:
             if not int(rpurchase) == 0:
@@ -360,12 +363,12 @@ class PurchaseManager:
         else:
             message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
             for purchase in purchases:
-                price = (f"%.2f" % purchase.price).replace(".", ",")
+                price = format_price(purchase.price)
                 creation_date = purchase.creation_date
                 creation_date = creation_date.strftime(
                     f"%d {get_month_string(creation_date.month)}, %H:%M"
                 )
-                spaces = " " * (9 - len(price))
+                spaces = " " * (11 - len(price))
                 template = PURCHASE_REPORT_TEMPLATE % (
                     str(purchase.chat_id).replace("-100", ""),
                     purchase.message_id,
@@ -375,8 +378,8 @@ class PurchaseManager:
                 )
                 message = f"{message}\n{template}"
             footer = retrieve_sum_for_month(user_id, self.month, self.year)
-            footer = (f"%.2f" % footer).replace(".", ",")
-            spaces = " " * (8 - len(footer))
+            footer = format_price(footer)
+            spaces = " " * (10 - len(footer))
             footer = MONTH_PURCHASE_TOTAL % (spaces, footer)
             message = f"{message}\n\n{footer}"
         return message
@@ -653,7 +656,7 @@ class PurchaseManager:
                 return
         price = retrieve_sum_for_current_month(user_id)
         date = f"{get_current_month( False, True)} {get_current_year()}"
-        price = (f"%.2f" % price).replace(".", ",")
+        price = format_price(price)
         message = template % (user_id, first_name, date, price)
         telegram_message: Message = (
             update.message if update.message else update.edited_message
@@ -686,7 +689,7 @@ class PurchaseManager:
             if not is_group_allowed(chat_id):
                 return
         price = retrieve_sum_for_current_year(user_id)
-        price = (f"%.2f" % price).replace(".", ",")
+        price = format_price(price)
         message = template % (user_id, first_name, get_current_year(), price)
         self.send_purchase(update, context, price, message)
 

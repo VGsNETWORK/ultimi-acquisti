@@ -54,6 +54,16 @@ short_month = {
 }
 
 
+def format_price(price: float) -> str:
+    price = (f"%.2f" % price).replace(".", ",")
+    price = price.split(",")
+    if len(price) > 1:
+        price[0] = "{0:,}".format(int(price[0])).replace(",", ".")
+    else:
+        price = "{0:,}".format(int(price)).replace(",", ".").replace(",", ".")
+    return ",".join(price)
+
+
 def is_group_allowed(chat_id: int):
     groups = eval(retrieve_key("GROUP_ID"))
     if str(chat_id) in groups:
