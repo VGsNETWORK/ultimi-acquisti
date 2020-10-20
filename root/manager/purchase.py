@@ -21,7 +21,7 @@ from root.contants.messages import (
     ONLY_GROUP,
     MONTH_PURCHASES,
     COMPARE_HE_WON,
-    YEAR_COMPARE_PRICE
+    YEAR_COMPARE_PRICE,
     COMPARE_YOU_WON,
     MONTH_COMPARE_PRICE,
     COMPARE_NO_PURCHASE,
@@ -55,7 +55,13 @@ from root.helper.purchase_helper import (
     convert_to_float,
 )
 
-
+""" TODO: 
+    - Rifattorizzare il codice togliendo le ripetizioni di codice e migliorando dove possibile
+    - Dividere le varie funzionalità in file diversi in modo da snellire le quasi 1000 righe di codice
+    - Il comparamese/comparaanno posso avere in input rispettivamente mese/anno o anno per fare comparazioni al di fuori di anno/mese corrente
+    - Quando viene inserita la data manuale per acquisto nel caso sia formatta male o futura chiedere conferma all'utente riguardo l'inserimento a data attuale
+    - Breakdance
+"""
 class PurchaseManager:
     def __init__(self):
         self.logger = Logger()
@@ -120,7 +126,7 @@ class PurchaseManager:
         upurchase = retrieve_sum_for_current_year(user_id)
         rpurchase = retrieve_sum_for_current_year(ruser_id)
         message = YEAR_COMPARE_PRICE % (
-            {get_current_year(),
+            get_current_year(),
             user_id,
             first_name,
             (f"%.2f" % upurchase).replace(".", ","),
