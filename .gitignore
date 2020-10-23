@@ -5,3 +5,4 @@ build/
 message.json
 .env.json
 .deploy.json
+*.session

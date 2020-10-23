@@ -99,15 +99,8 @@ class BotManager:
         self.disp.add_handler(
             CommandHandler("comparamese", self.purchase.month_compare)
         )
-        self.disp.add_handler(
-            CommandHandler("comparaanno", self.purchase.year_compare)
-        )
-        self.disp.add_handler(
-            MessageHandler(Filters.caption_entity("hashtag"), self.parse_hashtag)
-        )
-        self.disp.add_handler(
-            MessageHandler(Filters.regex("^#ultimiacquisti"), self.parse_hashtag)
-        )
+        self.disp.add_handler(CommandHandler("comparaanno", self.purchase.year_compare))
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.purchase.previous_page, pattern="previous_page"

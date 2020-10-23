@@ -16,6 +16,7 @@ class ErrorHandler:
         self.logger = Logger()
 
     def handle_error(self, update: Update, context: CallbackContext):
+        print(update)
         chat_id = retrieve_key("ERROR_CHANNEL")
         if update.effective_message:
             update.effective_message.reply_text(USER_ERROR)

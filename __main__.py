@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
+import threading
 from root.util.util import db_connect
 from root.manager.bot import BotManager
 from root.helper.configuration import ConfigurationHelper
+from root.manager.mtbot import Mtbot
 
 
 """
@@ -29,12 +31,20 @@ from root.helper.configuration import ConfigurationHelper
               Guess there's only one thing to do...
             / 
 ...     bug
-* bug proceed to evolve into feature due to develop laziness* 
+* bug proceed to evolve into feature due to develop laziness * 
 """
 
-if __name__ == "__main__":
+
+def main():
     db_connect()
-    configuation = ConfigurationHelper()
-    configuation.load_configurations()
+    configuration = ConfigurationHelper()
+    configuration.load_configurations()
     bot = BotManager()
-    bot.connect()
+    bot_thread = threading.Thread(target=bot.connect, name="mtproto")
+    bot_thread.start()
+    mtbot = Mtbot()
+    mtbot.run()
+
+
+if __name__ == "__main__":
+    main()
