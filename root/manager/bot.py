@@ -16,7 +16,7 @@ from telegram.ext import (
 
 from root.manager.error import ErrorHandler
 from root.util.util import retrieve_key, is_group_allowed
-from root.manager.purchase import PurchaseManager
+from root.manager.purchase_ import PurchaseManager
 from root.manager.purchase.compare import year_compare, month_compare
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
