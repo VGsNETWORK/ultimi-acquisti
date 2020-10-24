@@ -17,6 +17,9 @@ from telegram.ext import (
 from root.manager.error import ErrorHandler
 from root.util.util import retrieve_key, is_group_allowed
 from root.manager.purchase import PurchaseManager
+from root.manager.purchase.compare import year_compare, month_compare
+from root.manager.purchase.last import last_purchase
+from root.manager.purchase.delete import delete_purchase
 from root.util.logger import Logger
 from root.helper.user_helper import is_admin, create_user, user_exists
 
@@ -79,8 +82,11 @@ class BotManager:
         """[add handlers for the various operations]"""
         self.disp.add_error_handler(self.error.handle_error)
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
-        # self.disp.add_handler(CommandHandler("start", None))
         self.disp.add_handler(CommandHandler("restart", self.restart))
+        self.disp.add_handler(CommandHandler("cancellaspesa", delete_purchase))
+        self.disp.add_handler(CommandHandler("ultimoacquisto", last_purchase))
+        self.disp.add_handler(CommandHandler("comparamese", month_compare))
+        self.disp.add_handler(CommandHandler("comparaanno", year_compare))
         self.disp.add_handler(
             CommandHandler("spesamensile", self.purchase.month_purchase)
         )
@@ -90,17 +96,6 @@ class BotManager:
         self.disp.add_handler(
             CommandHandler("spesaannuale", self.purchase.year_purchase)
         )
-        self.disp.add_handler(
-            CommandHandler("cancellaspesa", self.purchase.delete_purchase)
-        )
-        self.disp.add_handler(
-            CommandHandler("ultimoacquisto", self.purchase.last_purchase)
-        )
-        self.disp.add_handler(
-            CommandHandler("comparamese", self.purchase.month_compare)
-        )
-        self.disp.add_handler(CommandHandler("comparaanno", self.purchase.year_compare))
-
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.purchase.previous_page, pattern="previous_page"
