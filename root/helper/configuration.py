@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-from root.util.logger import Logger
-from root.model.configuration import Configuration
-from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
-from root.util.telegram import TelegramSender
-from root.util.util import retrieve_key
-from mongoengine import DoesNotExist
+
 import os
-import json
+from mongoengine import DoesNotExist
+from pymongo.errors import OperationFailure
+from root.model.configuration import Configuration
+from root.util.logger import Logger
+from root.util.telegram import TelegramSender
 
 
 class ConfigurationHelper:
@@ -16,8 +15,6 @@ class ConfigurationHelper:
         self.sender = TelegramSender()
 
     def load_configurations(self):
-        ADMIN = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
-        TOKEN = retrieve_key("TOKEN")
         self.logger.info("loading configurations from database")
         try:
             configurations = Configuration.objects()

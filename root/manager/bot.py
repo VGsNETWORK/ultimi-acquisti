@@ -16,7 +16,8 @@ from telegram.ext import (
 
 from root.manager.error import ErrorHandler
 from root.util.util import retrieve_key, is_group_allowed
-from root.manager.purchase_ import PurchaseManager
+from root.manager.purchase.month_report import MonthReport
+from root.manager.purchase.year_report import YearReport
 from root.manager.purchase.compare import year_compare, month_compare
 from root.manager.purchase.month_purchase import month_purchase
 from root.manager.purchase.year_purchase import year_purchase
@@ -33,7 +34,8 @@ class BotManager:
         self.TOKEN: str = None
         self.logger = Logger()
         self.error = ErrorHandler()
-        self.purchase = PurchaseManager()
+        self.month_report = MonthReport()
+        self.year_report = YearReport()
 
     def connect(self):
         """[run the telegram bot]"""
@@ -91,34 +93,54 @@ class BotManager:
         self.disp.add_handler(CommandHandler("comparaanno", year_compare))
         self.disp.add_handler(CommandHandler("spesaannuale", year_purchase))
         self.disp.add_handler(CommandHandler("spesamensile", month_purchase))
+
         self.disp.add_handler(
-            CommandHandler("reportmensile", self.purchase.month_report)
+            CommandHandler("reportannuale", self.year_report.year_report)
         )
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.purchase.previous_page, pattern="previous_page"
-            )
-        )
-        self.disp.add_handler(
-            CallbackQueryHandler(callback=self.purchase.next_page, pattern="next_page")
-        )
-        self.disp.add_handler(
-            CallbackQueryHandler(callback=self.purchase.next_year, pattern="next_year")
-        )
-        self.disp.add_handler(
-            CallbackQueryHandler(
-                callback=self.purchase.previous_year, pattern="previous_year"
+                callback=self.year_report.previous_year, pattern="year_previous_year"
             )
         )
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.purchase.next_start_year, pattern="next_start_year"
+                callback=self.year_report.next_year, pattern="year_next_year"
+            )
+        )
+
+        self.disp.add_handler(
+            CommandHandler("reportmensile", self.month_report.month_report)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=self.month_report.previous_page, pattern="month_previous_page"
             )
         )
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.purchase.previous_start_year,
-                pattern="previous_start_year",
+                callback=self.month_report.next_page, pattern="month_next_page"
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=self.month_report.next_year, pattern="month_next_year"
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=self.month_report.previous_year, pattern="month_previous_year"
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=self.month_report.next_start_year,
+                pattern="month_next_start_year",
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=self.month_report.previous_start_year,
+                pattern="month_previous_start_year",
             )
         )
         self.disp.add_handler(
@@ -126,6 +148,6 @@ class BotManager:
         )
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.purchase.expand_report, pattern="expand_report"
+                callback=self.month_report.expand_report, pattern="expand_report"
             )
         )

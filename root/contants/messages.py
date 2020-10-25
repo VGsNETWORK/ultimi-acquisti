@@ -1,15 +1,27 @@
+#!/usr/bin/env python3
+
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
-DB_CONNECTION_ERROR = "Impossibile stabilire un collegamento con il database, alcune funzionalità non funzioneranno come dovrebbero."
+DB_CONNECTION_ERROR = (
+    "Impossibile stabilire un collegamento con il database,"
+    " alcune funzionalità non funzioneranno come dovrebbero."
+)
 
 DB_CONNECTION_SUCCESS = "Connesso al database..."
 
-DB_GENERIC_ERROR = "Errore sconosciuto durante il collegamento al database, controlla i file di log per risolvere il problema."
+DB_GENERIC_ERROR = (
+    "Errore sconosciuto durante il collegamento al database,"
+    " controlla i file di log per risolvere il problema."
+)
 
-TELEGRAM_ERROR = "Durante la gestione di un update è successo questo errore:\n\n<code>%s</code>\n\nRisolviamo al più presto 😡"
+TELEGRAM_ERROR = (
+    "Durante la gestione di un update è successo questo errore:"
+    "\n\n<code>%s</code>\n\nRisolviamo al più presto 😡"
+)
 
 USER_ERROR = (
-    "Hey, durante la gestione del tuo messaggio si sono verificati degli errori. I nostri sviluppatori sono stati informati "
+    "Hey, durante la gestione del tuo messaggio si sono verificati degli errori."
+    " I nostri sviluppatori sono stati informati "
     "e verranno risolti il prima possibile."
 )
 
@@ -56,19 +68,43 @@ GROUP_NOT_ALLOWED = (
     "https://gitlab.com/nautilor/ultimi-acquisti"
 )
 
-NO_PURCHASE = '<a href="tg://user?id=%s">%s</a>, non hai ancora registrato alcun acquisto su questo bot.'
+NO_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>,'
+    " non hai ancora registrato alcun acquisto su questo bot."
+)
 
-NO_MONTH_PURCHASE = '<a href="tg://user?id=%s">%s</a>, nel mese di <b>%s</b> non hai registrato alcun acquisto.'
+NO_MONTH_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>, nel mese di <b>%s</b>'
+    " non hai registrato alcun acquisto."
+)
 
-LAST_PURCHASE = '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è stato effettuato in data %s alle %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+NO_YEAR_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>, durante il <b>%s</b>'
+    " non hai registrato alcun acquisto."
+)
 
-MONTH_PURCHASE_REPORT = '<a href="tg://user?id=%s">%s</a>, nel mese di <b>%s</b> hai avuto le seguenti spese:\n'
+LAST_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è'
+    ' stato effettuato in data %s alle %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+)
+
+MONTH_PURCHASE_REPORT = (
+    '<a href="tg://user?id=%s">%s</a>,'
+    " nel mese di <b>%s</b> hai avuto le seguenti spese:\n"
+)
+
+YEAR_PURCHASE_REPORT = (
+    '<a href="tg://user?id=%s">%s</a>,'
+    " durante il <b>%s</b> hai avuto le seguenti spese:\n"
+)
+
+YEAR_PURCHASE_TEMPLATE = "• <code>%s</code>   <code>%s</code><code>%s €</code>"
 
 PURCHASE_REPORT_TEMPLATE = (
     '• <a href="https://t.me/c/%s/%s">%s</a>   <code>%s</code><code>%s €</code>'
 )
 
-MONTH_PURCHASE_TOTAL = "per un totale di   <code>%s</code><code>%s €</code>."
+REPORT_PURCHASE_TOTAL = "per un totale di   <code>%s</code><code>%s €</code>."
 
 PURCHASE_DATE_ERROR = (
     '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n'
