@@ -18,6 +18,8 @@ from root.manager.error import ErrorHandler
 from root.util.util import retrieve_key, is_group_allowed
 from root.manager.purchase_ import PurchaseManager
 from root.manager.purchase.compare import year_compare, month_compare
+from root.manager.purchase.month_purchase import month_purchase
+from root.manager.purchase.year_purchase import year_purchase
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
 from root.util.logger import Logger
@@ -87,14 +89,10 @@ class BotManager:
         self.disp.add_handler(CommandHandler("ultimoacquisto", last_purchase))
         self.disp.add_handler(CommandHandler("comparamese", month_compare))
         self.disp.add_handler(CommandHandler("comparaanno", year_compare))
-        self.disp.add_handler(
-            CommandHandler("spesamensile", self.purchase.month_purchase)
-        )
+        self.disp.add_handler(CommandHandler("spesaannuale", year_purchase))
+        self.disp.add_handler(CommandHandler("spesamensile", month_purchase))
         self.disp.add_handler(
             CommandHandler("reportmensile", self.purchase.month_report)
-        )
-        self.disp.add_handler(
-            CommandHandler("spesaannuale", self.purchase.year_purchase)
         )
         self.disp.add_handler(
             CallbackQueryHandler(

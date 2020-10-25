@@ -7,6 +7,7 @@ from os import environ
 from mongoengine import connect
 from pymongo.mongo_client import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
+from telegram import InlineKeyboardButton
 from root.util.telegram import TelegramSender
 from root.util.logger import Logger
 import pymongo
@@ -52,6 +53,10 @@ short_month = {
     12: "Dic",
     13: "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚",
 }
+
+
+def create_button(message: str, callback: str, query: str):
+    return InlineKeyboardButton(message, callback_data=callback)
 
 
 def format_price(price: float) -> str:

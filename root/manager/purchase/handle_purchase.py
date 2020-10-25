@@ -21,13 +21,13 @@ from root.contants.messages import (
 logger = Logger()
 
 
-def add_purchase(self, user, price, message_id, chat_id, creation_date=None):
+def add_purchase(user, price, message_id, chat_id, creation_date=None):
     if not user_exists(user.id):
         create_user(user)
     create_purchase(user.id, price, message_id, chat_id, creation_date)
 
 
-def handle_purchase(self, client: Client, message: Message):
+def handle_purchase(client: Client, message: Message):
     custom_date_error = False
     logger.info("Received message from mtproto")
     caption = message.caption if message.caption else message.text
@@ -47,7 +47,7 @@ def handle_purchase(self, client: Client, message: Message):
     message_id = message.message_id
     user = message.from_user
     caption = message.caption if message.caption else message.text
-    self.logger.info("Parsing purchase")
+    logger.info("Parsing purchase")
     try:
         """
         regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
@@ -69,16 +69,16 @@ def handle_purchase(self, client: Client, message: Message):
         if price:
             price = convert_to_float(price)
             result = {"name": caption, "price": price, "error": None}
-            self.logger.info(f"The user purchase {price} worth of products")
+            logger.info(f"The user purchase {price} worth of products")
         else:
             result = {"name": caption, "price": 0.00, "error": None}
     except ValueError as ve:
-        self.logger.error(ve)
-        self.sender.send_to_log(ve)
+        logger.error(ve)
+        sender.send_to_log(ve)
         return
     except IndexError as ie:
-        self.logger.error(ie)
-        self.sender.send_to_log(ie)
+        logger.error(ie)
+        sender.send_to_log(ie)
         return
     mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", caption)
     mdate = mdate[0] if len(mdate) != 0 else None
@@ -108,7 +108,7 @@ def handle_purchase(self, client: Client, message: Message):
         else:
             custom_date_error = True
     if not result["error"]:
-        self.add_purchase(user, price, message_id, chat_id, date)
+        add_purchase(user, price, message_id, chat_id, date)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
         else:

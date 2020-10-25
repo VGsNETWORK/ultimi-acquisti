@@ -9,7 +9,7 @@ from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED
 
 
-def delete_purchase(self, update: Update, context: CallbackContext):
+def delete_purchase(update: Update, context: CallbackContext):
     message: Message = update.message if update.message else update.edited_message
     chat_id = message.chat.id
     user = message.from_user
