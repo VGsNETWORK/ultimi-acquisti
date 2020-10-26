@@ -136,6 +136,6 @@ COMPARE_NO_PURCHASE = (
     "Nessuno dei due ha effettuato acquisti finora.\n<b>Che stiamo aspettando?! 😡</b>"
 )
 
-COMPARE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio"
+COMPARE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
 
-COMPARE_BOT = "Non puoi lanciare questo comando quotando un bot"
+COMPARE_BOT = "Non puoi lanciare questo comando quotando un bot!"
