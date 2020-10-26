@@ -2,12 +2,20 @@
 
 from telegram import Update, Message
 from telegram.ext import CallbackContext
+from datetime import datetime
 from root.helper.purchase_helper import (
     retrieve_sum_for_current_month,
     retrieve_sum_for_current_year,
+    retrieve_sum_for_month,
+    retrieve_sum_for_year,
 )
 from root.util.logger import Logger
-from root.util.util import get_current_year, get_current_month, format_price
+from root.util.util import (
+    get_current_year,
+    get_current_month,
+    format_price,
+    get_month_string,
+)
 from root.contants.messages import (
     MONTH_COMPARE_PRICE,
     COMPARE_HE_WON,
@@ -26,16 +34,39 @@ logger = Logger()
 
 
 def month_compare(update: Update, context: CallbackContext):
-    compare(update, context, retrieve_sum_for_current_month, True)
+    compare(update, context, retrieve_sum_for_month, True)
 
 
 def year_compare(update: Update, context: CallbackContext):
-    compare(update, context, retrieve_sum_for_current_year, False)
+    compare(update, context, retrieve_sum_for_year, False)
 
 
 def compare(update: Update, context: CallbackContext, function: callable, month: bool):
+    cdate = datetime.now()
+    custom_year = cdate.year
+    custom_month = cdate.month
     message: Message = update.message if update.message else update.edited_message
     rmessage: Message = message.reply_to_message
+    if not month:
+        custom_year = message.text if message.text else message.caption
+        custom_year = custom_year.split(" ")
+        if len(custom_year) > 1:
+            try:
+                custom_year = int(custom_year[1])
+            except ValueError:
+                custom_year = cdate.year
+    else:
+        custom_date = message.text if message.text else message.caption
+        custom_date = custom_date.split(" ")
+        if len(custom_date) > 1:
+            try:
+                custom_date = custom_date[1]
+                custom_date = custom_date.split("/")
+                custom_month = int(custom_date[0])
+                custom_year = int(custom_date[1])
+            except Exception as e:
+                custom_year = cdate.year
+                custom_month = cdate.month
     if not rmessage:
         return
     chat_id = message.chat.id
@@ -51,11 +82,11 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
         return
     rfirst_name = ruser.first_name
     first_name = user.first_name
-    upurchase = function(user_id)
-    rpurchase = function(ruser_id)
     if not month:
+        upurchase = function(user_id, custom_year)
+        rpurchase = function(ruser_id, custom_year)
         message = YEAR_COMPARE_PRICE % (
-            get_current_year(),
+            custom_year,
             user_id,
             first_name,
             format_price(upurchase),
@@ -63,7 +94,10 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
             format_price(rpurchase),
         )
     else:
-        date = f"{get_current_month(False, True)} {get_current_year()}"
+        logger.info(f"{custom_year}, {custom_month}")
+        upurchase = function(user_id, custom_month, custom_year)
+        rpurchase = function(ruser_id, custom_month, custom_year)
+        date = f"{get_month_string(custom_month, False, True)} {custom_year}"
         message = MONTH_COMPARE_PRICE % (
             date,
             user_id,
