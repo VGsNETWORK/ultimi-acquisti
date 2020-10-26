@@ -42,7 +42,9 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         update.message if update.message else update.edited_message
     )
     chat_id = telegram_message.chat.id
-    keyboard = [[create_button("Espandi", str(f"expand_report"), "expand_report")]]
+    keyboard = [
+        [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
+    ]
     sender.send_and_delete(
         context,
         chat_id,

@@ -78,7 +78,7 @@ class YearReport:
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
-        self.month_report(update, context, True)
+        self.year_report(update, context, True)
 
     def build_keyboard(self):
         keyboard = []

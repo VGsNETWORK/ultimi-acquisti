@@ -20,6 +20,7 @@ sender = TelegramSender()
 def year_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
     template: str = YEAR_USER_PURCHASES if message.reply_to_message else YEAR_PURCHASES
+    expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message
     chat_id = message.chat.id
     user = message.from_user
@@ -33,5 +34,22 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             return
     price = retrieve_sum_for_current_year(user_id)
     price = format_price(price)
-    message = template % (user_id, first_name, get_current_year(), price)
-    sender.send_and_delete(context, chat_id, message)
+    keyboard = [
+        [
+            create_button(
+                "Maggiori dettagli...", "expand_year_report", "expand_year_report"
+            )
+        ]
+    ]
+    message = template % (
+        user_id,
+        first_name,
+        get_current_year(),
+        price,
+    )
+    sender.send_and_delete(
+        context,
+        chat_id,
+        message,
+        reply_markup=InlineKeyboardMarkup(keyboard) if expand else None,
+    )
