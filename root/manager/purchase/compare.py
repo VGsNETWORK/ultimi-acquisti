@@ -58,7 +58,7 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
         if len(custom_year) > 1:
             try:
                 custom_year = int(custom_year[1])
-            except ValueError:
+            except Exception as e:
                 custom_year = cdate.year
     else:
         custom_date = message.text if message.text else message.caption
