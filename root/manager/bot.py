@@ -25,6 +25,7 @@ from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
 from root.util.logger import Logger
 from root.helper.user_helper import is_admin, create_user, user_exists
+from root.util.telegram import TelegramSender
 
 
 class BotManager:
@@ -33,6 +34,7 @@ class BotManager:
         self.disp: Dispatcher = None
         self.TOKEN: str = None
         self.logger = Logger()
+        self.sender = TelegramSender()
         self.error = ErrorHandler()
         self.month_report = MonthReport()
         self.year_report = YearReport()
@@ -45,10 +47,7 @@ class BotManager:
         self.add_handler()
         self.logger.info("Il bot si sta avviando...")
         admin = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
-        if not is_develop():
-            self.updater.bot.send_message(
-                chat_id=admin, text="Bot avviato con succcesso..."
-            )
+        self.logger.info("Start polling...")
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):
@@ -59,7 +58,9 @@ class BotManager:
             create_user(update.effective_user)
             return
         if is_admin(user_id):
-            context.bot.send_message(chat_id=chat_id, text="Riavvio il bot...")
+            self.sender.send_and_delete(
+                context, chat_id, "Riavvio il bot...", timeout=10
+            )
             os.popen("sudo systemctl restart last-purchase")
 
     def parse_hashtag(self, update: Update, context: CallbackContext):
@@ -76,8 +77,8 @@ class BotManager:
         if not is_group_allowed(chat_id):
             return
         chat_id = update.effective_message.chat.id
-        context.bot.send_message(
-            chat_id=chat_id, text="https://gitlab.com/nautilor/ultimi-acquisti"
+        self.sender.send_and_delete(
+            context, chat_id=chat_id, text="https://gitlab.com/nautilor/ultimi-acquisti"
         )
 
     def empty_button(self, update: Update, context: CallbackContext):

@@ -12,6 +12,9 @@ from root.util.util import (
     format_price,
     create_button,
 )
+from root.util.telegram import TelegramSender
+
+sender = TelegramSender()
 
 
 def year_purchase(update: Update, context: CallbackContext) -> None:
@@ -31,4 +34,4 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
     price = retrieve_sum_for_current_year(user_id)
     price = format_price(price)
     message = template % (user_id, first_name, get_current_year(), price)
-    context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+    sender.send_and_delete(context, chat_id, message)

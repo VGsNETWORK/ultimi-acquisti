@@ -56,8 +56,11 @@ short_month = {
 
 
 def is_develop():
-    profile = retrieve_key("PROFILE")
-    return profile == "develop"
+    try:
+        profile = retrieve_key("PROFILE")
+        return profile == "develop"
+    except KeyError:
+        return False
 
 
 def create_button(message: str, callback: str, query: str):

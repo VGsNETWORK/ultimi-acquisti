@@ -18,6 +18,9 @@ from root.contants.messages import (
     COMPARE_YOURSELF,
     COMPARE_BOT,
 )
+from root.util.telegram import TelegramSender
+
+sender = TelegramSender()
 
 logger = Logger()
 
@@ -41,10 +44,10 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
     ruser_id = ruser.id
     user_id = user.id
     if ruser_id == user_id:
-        context.bot.send_message(chat_id=chat_id, text=COMPARE_YOURSELF)
+        sender.send_and_delete(context, chat_id, COMPARE_YOURSELF)
         return
     if ruser.is_bot:
-        context.bot.send_message(chat_id=chat_id, text=COMPARE_BOT)
+        sender.send_and_delete(context, chat_id, COMPARE_BOT)
         return
     rfirst_name = ruser.first_name
     first_name = user.first_name
@@ -82,4 +85,4 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
             message = f"{message}{COMPARE_TIE}"
         else:
             message = f"{message}{COMPARE_NO_PURCHASE}"
-    context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+    sender.send_and_delete(context, chat_id, message)

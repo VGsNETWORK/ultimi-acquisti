@@ -7,6 +7,9 @@ from mongoengine.errors import DoesNotExist
 import root.helper.purchase_helper as purchase_helper
 from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED
+from root.util.telegram import TelegramSender
+
+sender = TelegramSender()
 
 
 def delete_purchase(update: Update, context: CallbackContext):
@@ -29,16 +32,14 @@ def delete_purchase(update: Update, context: CallbackContext):
     message_id = message.message_id
     if not reply:
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+        sender.send_and_delete(context, chat_id, message)
         return
     try:
         message_id = reply.message_id
         purchase_helper.delete_purchase(user_id, message_id)
         context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-        context.bot.send_message(
-            chat_id=chat_id, text=PURCHASE_DELETED, parse_mode="HTML"
-        )
+        sender.send_and_delete(context, chat_id, PURCHASE_DELETED)
     except DoesNotExist:
         message_id = message.message_id
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
+        sender.send_and_delete(context, chat_id, message)

@@ -3,6 +3,8 @@
 from telegram import Bot
 from telegram.error import Unauthorized, BadRequest
 from root.util.logger import Logger
+from time import sleep
+import threading
 
 """ This class is responsible of sending messages to a channel """
 
@@ -52,3 +54,31 @@ class TelegramSender:
             self._logger.error("403 Unauthorized, bot token is wrong")
         except BadRequest:
             self._logger.error("400 Bad Request")
+
+    def send_and_delete(
+        self,
+        context,
+        chat_id,
+        text,
+        reply_markup=None,
+        reply_to_message_id=None,
+        parse_mode="HTML",
+        timeout=10,
+    ):
+        message = context.bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            disable_web_page_preview=True,
+            parse_mode=parse_mode,
+            reply_to_message_id=reply_to_message_id,
+            reply_markup=reply_markup,
+        )
+        thread = threading.Thread(
+            target=self.delete_message,
+            args=(context, chat_id, message.message_id, timeout),
+        )
+        thread.start()
+
+    def delete_message(self, context, chat_id, message_id, timeout=0):
+        sleep(timeout)
+        context.bot.delete_message(chat_id=chat_id, message_id=message_id)

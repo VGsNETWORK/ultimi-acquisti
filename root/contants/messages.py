@@ -38,13 +38,9 @@ MONTH_USER_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a> a %s ha speso un totale di <code>%s €</code>.'
 )
 
-YEAR_PURCHASES = (
-    '<a href="tg://user?id=%s">%s</a>, nel %s hai speso un totale di <code>%s €</code>.'
-)
+YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.'
 
-YEAR_USER_PURCHASES = (
-    '<a href="tg://user?id=%s">%s</a> nel %s ha speso un totale di <code>%s €</code>.'
-)
+YEAR_USER_PURCHASES = '<a href="tg://user?id=%s">%s</a> nel <b>%s</b> ha speso un totale di <code>%s €</code>.'
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo!"
 

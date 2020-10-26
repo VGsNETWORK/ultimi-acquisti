@@ -69,11 +69,12 @@ class YearReport:
                 parse_mode="HTML",
             )
             return
-        context.bot.send_message(
-            chat_id=chat_id,
-            text=message,
+        self.sender.send_and_delete(
+            context,
+            chat_id,
+            message,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
+            timeout=180,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:

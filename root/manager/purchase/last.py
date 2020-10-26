@@ -8,11 +8,14 @@ from root.model.purchase import Purchase
 from root.helper.purchase_helper import get_last_purchase
 from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import ONLY_GROUP, LAST_PURCHASE, NO_PURCHASE
+from root.util.telegram import TelegramSender
 
+
+sender = TelegramSender()
 logger = Logger()
 
 
-def last_purchase(self, update: Update, context: CallbackContext) -> None:
+def last_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
     chat_id = message.chat.id
     chat_type = message.chat.type
@@ -26,7 +29,7 @@ def last_purchase(self, update: Update, context: CallbackContext) -> None:
             return
         purchase: Purchase = get_last_purchase(user_id)
     else:
-        context.bot.send_message(chat_id=chat_id, text=ONLY_GROUP, parse_mode="HTML")
+        sender.send_and_delete(context, chat_id, ONLY_GROUP)
         return
     if purchase:
         purchase_chat_id = str(purchase.chat_id).replace("-100", "")
@@ -43,9 +46,6 @@ def last_purchase(self, update: Update, context: CallbackContext) -> None:
         )
     else:
         message = NO_PURCHASE % (user_id, first_name)
-    context.bot.send_message(
-        chat_id=chat_id,
-        text=message,
-        reply_to_message_id=purchase.message_id,
-        parse_mode="HTML",
-    )
+        sender.send_and_delete(
+            context, chat_id, message, reply_to_message_id=purchase.message_id
+        )

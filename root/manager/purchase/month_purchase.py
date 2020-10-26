@@ -12,6 +12,9 @@ from root.util.util import (
     format_price,
     create_button,
 )
+from root.util.telegram import TelegramSender
+
+sender = TelegramSender()
 
 
 def month_purchase(update: Update, context: CallbackContext) -> None:
@@ -40,9 +43,9 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     )
     chat_id = telegram_message.chat.id
     keyboard = [[create_button("Espandi", str(f"expand_report"), "expand_report")]]
-    context.bot.send_message(
-        chat_id=chat_id,
-        text=message,
-        parse_mode="HTML",
+    sender.send_and_delete(
+        context,
+        chat_id,
+        message,
         reply_markup=InlineKeyboardMarkup(keyboard) if expand else None,
     )
