@@ -15,7 +15,7 @@ from telegram.ext import (
 )
 
 from root.manager.error import ErrorHandler
-from root.util.util import retrieve_key, is_group_allowed
+from root.util.util import retrieve_key, is_group_allowed, is_develop
 from root.manager.purchase.month_report import MonthReport
 from root.manager.purchase.year_report import YearReport
 from root.manager.purchase.compare import year_compare, month_compare
@@ -45,9 +45,10 @@ class BotManager:
         self.add_handler()
         self.logger.info("Il bot si sta avviando...")
         admin = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
-        self.updater.bot.send_message(
-            chat_id=admin, text="Bot avviato con succcesso..."
-        )
+        if not is_develop():
+            self.updater.bot.send_message(
+                chat_id=admin, text="Bot avviato con succcesso..."
+            )
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):

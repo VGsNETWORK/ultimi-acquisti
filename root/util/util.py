@@ -55,6 +55,11 @@ short_month = {
 }
 
 
+def is_develop():
+    profile = retrieve_key("PROFILE")
+    return profile == "develop"
+
+
 def create_button(message: str, callback: str, query: str):
     return InlineKeyboardButton(message, callback_data=callback)
 
@@ -148,7 +153,8 @@ def db_connect():
         # host=HOST, port=PORT)
         client.server_info()
         logger.info(DB_CONNECTION_SUCCESS)
-        sender.send_message(TOKEN, ADMIN, DB_CONNECTION_SUCCESS)
+        if not is_develop():
+            sender.send_message(TOKEN, ADMIN, DB_CONNECTION_SUCCESS)
     except ServerSelectionTimeoutError:
         logger.error(DB_CONNECTION_ERROR)
         sender.send_message(TOKEN, ADMIN, DB_CONNECTION_ERROR)

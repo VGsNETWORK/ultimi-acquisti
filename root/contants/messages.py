@@ -98,7 +98,7 @@ YEAR_PURCHASE_REPORT = (
     " durante il <b>%s</b> hai avuto le seguenti spese:\n"
 )
 
-YEAR_PURCHASE_TEMPLATE = "• <code>%s</code>   <code>%s</code><code>%s €</code>"
+YEAR_PURCHASE_TEMPLATE = "•  <code>%s</code>   <code>%s</code><code>%s €</code>"
 
 PURCHASE_REPORT_TEMPLATE = (
     '• <a href="https://t.me/c/%s/%s">%s</a>   <code>%s</code><code>%s €</code>'
@@ -135,3 +135,7 @@ COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
 COMPARE_NO_PURCHASE = (
     "Nessuno dei due ha effettuato acquisti finora.\n<b>Che stiamo aspettando?! 😡</b>"
 )
+
+COMPARE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio"
+
+COMPARE_BOT = "Non puoi lanciare questo comando quotando un bot"

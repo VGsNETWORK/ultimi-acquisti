@@ -15,6 +15,8 @@ from root.contants.messages import (
     COMPARE_TIE,
     COMPARE_YOU_WON,
     YEAR_COMPARE_PRICE,
+    COMPARE_YOURSELF,
+    COMPARE_BOT,
 )
 
 logger = Logger()
@@ -38,6 +40,12 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
     user = message.from_user
     ruser_id = ruser.id
     user_id = user.id
+    if ruser_id == user_id:
+        context.bot.send_message(chat_id=chat_id, text=COMPARE_YOURSELF)
+        return
+    if ruser.is_bot:
+        context.bot.send_message(chat_id=chat_id, text=COMPARE_BOT)
+        return
     rfirst_name = ruser.first_name
     first_name = user.first_name
     upurchase = function(user_id)
