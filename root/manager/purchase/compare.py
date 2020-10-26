@@ -25,6 +25,7 @@ from root.contants.messages import (
     YEAR_COMPARE_PRICE,
     COMPARE_YOURSELF,
     COMPARE_BOT,
+    ONLY_GROUP,
 )
 from root.util.telegram import TelegramSender
 
@@ -46,6 +47,10 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
     custom_year = cdate.year
     custom_month = cdate.month
     message: Message = update.message if update.message else update.edited_message
+    chat_id = message.chat.id
+    if message.chat.type == "private":
+        sender.send_and_delete(context, chat_id, ONLY_GROUP)
+        return
     rmessage: Message = message.reply_to_message
     if not month:
         custom_year = message.text if message.text else message.caption
@@ -69,7 +74,6 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
                 custom_month = cdate.month
     if not rmessage:
         return
-    chat_id = message.chat.id
     ruser = rmessage.from_user
     user = message.from_user
     ruser_id = ruser.id
