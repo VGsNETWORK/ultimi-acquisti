@@ -63,7 +63,7 @@ class TelegramSender:
         reply_markup=None,
         reply_to_message_id=None,
         parse_mode="HTML",
-        timeout=10,
+        timeout=360,
     ):
         message = context.bot.send_message(
             chat_id=chat_id,

@@ -30,13 +30,9 @@ PRICE_MESSAGE_NOT_FORMATTED = (
     "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
 )
 
-MONTH_PURCHASES = (
-    '<a href="tg://user?id=%s">%s</a>, a %s hai speso un totale di <code>%s €</code>.'
-)
+MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.'
 
-MONTH_USER_PURCHASES = (
-    '<a href="tg://user?id=%s">%s</a> a %s ha speso un totale di <code>%s €</code>.'
-)
+MONTH_USER_PURCHASES = '<a href="tg://user?id=%s">%s</a> a <b>%s</b> ha speso un totale di <code>%s €</code>.'
 
 YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.'
 
@@ -81,7 +77,7 @@ NO_YEAR_PURCHASE = (
 
 LAST_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è'
-    ' stato effettuato in data %s alle %s, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+    ' stato effettuato in data <b>%s alle %s</b>, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
 )
 
 MONTH_PURCHASE_REPORT = (
@@ -90,8 +86,7 @@ MONTH_PURCHASE_REPORT = (
 )
 
 YEAR_PURCHASE_REPORT = (
-    '<a href="tg://user?id=%s">%s</a>,'
-    " durante il <b>%s</b> hai avuto le seguenti spese:\n"
+    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai avuto le seguenti spese:\n'
 )
 
 YEAR_PURCHASE_TEMPLATE = "•  <code>%s</code>   <code>%s</code><code>%s €</code>"
