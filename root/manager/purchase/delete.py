@@ -6,7 +6,7 @@ from root.util.util import is_group_allowed
 from mongoengine.errors import DoesNotExist
 import root.helper.purchase_helper as purchase_helper
 from root.helper.user_helper import user_exists, create_user
-from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED
+from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED, ONLY_GROUP
 from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
@@ -19,6 +19,9 @@ def delete_purchase(update: Update, context: CallbackContext):
     user_id = user.id
     first_name = user.first_name
     chat_type = message.chat.type
+    if message.chat.type == "private":
+        sender.send_and_delete(context, chat_id, ONLY_GROUP)
+        return
     if not chat_type == "private":
         if not user_exists(user_id):
             create_user(user)
