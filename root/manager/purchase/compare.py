@@ -48,6 +48,7 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
     custom_year = cdate.year
     custom_month = cdate.month
     message: Message = update.message if update.message else update.edited_message
+    sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
     if message.chat.type == "private":
         sender.send_and_delete(context, chat_id, ONLY_GROUP)

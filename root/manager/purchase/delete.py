@@ -15,6 +15,7 @@ sender = TelegramSender()
 
 def delete_purchase(update: Update, context: CallbackContext):
     message: Message = update.message if update.message else update.edited_message
+    sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
     user = message.from_user
     if not user_exists(user.id):

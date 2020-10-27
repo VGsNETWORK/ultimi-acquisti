@@ -17,6 +17,7 @@ logger = Logger()
 
 def last_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
+    sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
     chat_type = message.chat.type
     user = update.effective_user

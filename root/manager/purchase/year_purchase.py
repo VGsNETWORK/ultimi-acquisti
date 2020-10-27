@@ -21,6 +21,7 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
     expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message
+    sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
     user = message.from_user
     user_id = user.id

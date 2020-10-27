@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from telegram import Bot
+from telegram import Bot, Update, Message
+from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from root.util.logger import Logger
 from time import sleep
@@ -78,6 +79,12 @@ class TelegramSender:
             args=(context, chat_id, message.message_id, timeout),
         )
         thread.start()
+
+    def delete_if_private(
+        self, update: Update, context: CallbackContext, message: Message
+    ):
+        if message.chat.type == "private":
+            self.delete_message(context, message.chat.id, message.message_id)
 
     def delete_message(self, context, chat_id, message_id, timeout=0):
         sleep(timeout)

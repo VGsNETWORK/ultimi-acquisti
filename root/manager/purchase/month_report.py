@@ -46,6 +46,7 @@ class MonthReport:
         self.year = current_date.year
         self.current_year = current_date.year
         message: Message = update.message if update.message else update.edited_message
+        self.sender.delete_if_private(update, context, message)
         if not message:
             context.bot.answer_callback_query(update.callback_query.id)
             message = update.effective_message

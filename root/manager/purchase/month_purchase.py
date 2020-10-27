@@ -22,6 +22,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message
     chat_id = message.chat.id
+    sender.delete_if_private(update, context, message)
     chat_type = message.chat.type
     user = message.from_user
     user_id = user.id
