@@ -19,9 +19,6 @@ sender = TelegramSender()
 
 def month_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
-    template: str = (
-        MONTH_USER_PURCHASES if message.reply_to_message else MONTH_PURCHASES
-    )
     expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message
     chat_id = message.chat.id
@@ -37,7 +34,10 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     price = retrieve_sum_for_current_month(user_id)
     date = f"{get_current_month( False, True)} {get_current_year()}"
     price = format_price(price)
-    message = template % (user_id, first_name, date, price)
+    if not message.reply_to_message:
+        message = MONTH_PURCHASES % (user_id, first_name, date, price)
+    else:
+        message = MONTH_USER_PURCHASES % (first_name, date, price)
     telegram_message: Message = (
         update.message if update.message else update.edited_message
     )

@@ -2,6 +2,7 @@
 
 from telegram import Update, Message
 from telegram.ext import CallbackContext
+from root.helper.user_helper import create_user, user_exists
 from datetime import datetime
 from root.helper.purchase_helper import (
     retrieve_sum_for_current_month,
@@ -82,6 +83,10 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
         return
     ruser = rmessage.from_user
     user = message.from_user
+    if not user_exists(user.id):
+        create_user(user)
+    if not user_exists(ruser.id):
+        create_user(ruser)
     ruser_id = ruser.id
     user_id = user.id
     if ruser_id == user_id:
@@ -104,7 +109,6 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
             format_price(rpurchase),
         )
     else:
-        logger.info(f"{custom_year}, {custom_month}")
         upurchase = function(user_id, custom_month, custom_year)
         rpurchase = function(ruser_id, custom_month, custom_year)
         date = f"{get_month_string(custom_month, False, True)} {custom_year}"

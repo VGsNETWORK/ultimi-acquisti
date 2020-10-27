@@ -19,7 +19,6 @@ sender = TelegramSender()
 
 def year_purchase(update: Update, context: CallbackContext) -> None:
     message: Message = update.message if update.message else update.edited_message
-    template: str = YEAR_USER_PURCHASES if message.reply_to_message else YEAR_PURCHASES
     expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message
     chat_id = message.chat.id
@@ -41,12 +40,20 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             )
         ]
     ]
-    message = template % (
-        user_id,
-        first_name,
-        get_current_year(),
-        price,
-    )
+    if not message.reply_to_message:
+        message = YEAR_PURCHASES % (
+            user_id,
+            first_name,
+            get_current_year(),
+            price,
+        )
+    else:
+        message = YEAR_USER_PURCHASES % (
+            first_name,
+            get_current_year(),
+            price,
+        )
+
     sender.send_and_delete(
         context,
         chat_id,

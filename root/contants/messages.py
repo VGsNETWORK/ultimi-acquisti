@@ -32,11 +32,11 @@ PRICE_MESSAGE_NOT_FORMATTED = (
 
 MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.'
 
-MONTH_USER_PURCHASES = '<a href="tg://user?id=%s">%s</a> a <b>%s</b> ha speso un totale di <code>%s €</code>.'
+MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
 YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.'
 
-YEAR_USER_PURCHASES = '<a href="tg://user?id=%s">%s</a> nel <b>%s</b> ha speso un totale di <code>%s €</code>.'
+YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s €</code>."
 
 PURCHASE_ADDED = "Acquisto aggiunto con successo!"
 

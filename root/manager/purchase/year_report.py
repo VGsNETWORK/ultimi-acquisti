@@ -4,6 +4,7 @@ from datetime import datetime
 
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update
+from root.helper.user_helper import create_user, user_exists
 from telegram.ext import CallbackContext
 from root.contants.messages import (
     YEAR_PURCHASE_REPORT,
@@ -125,6 +126,8 @@ class YearReport:
         return keyboard
 
     def retrieve_purchase(self, user):
+        if not user_exists(user.id):
+            create_user(user)
         user_id = user.id
         first_name = user.first_name
         purchases = [

@@ -233,6 +233,8 @@ class MonthReport:
         return keyboard
 
     def retrieve_purchase(self, user):
+        if not user_exists(user.id):
+            create_user(user)
         if self.month > 12:
             self.month = 12
         if self.month < 1:

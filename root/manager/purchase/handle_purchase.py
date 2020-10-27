@@ -46,6 +46,8 @@ def handle_purchase(client: Client, message: Message):
         return
     message_id = message.message_id
     user = message.from_user
+    if not user_exists(user.id):
+        create_user(user)
     caption = message.caption if message.caption else message.text
     logger.info("Parsing purchase")
     try:
