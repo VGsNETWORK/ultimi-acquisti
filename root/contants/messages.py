@@ -112,7 +112,7 @@ MONTH_COMPARE_PRICE = (
 )
 
 YEAR_COMPARE_PRICE = (
-    "Durante il <b>%s</b>...\n"
+    "Nel <b>%s</b>...\n"
     '- <a href="tg://user?id=%s">%s</a>, hai speso  <code>%s €</code>\n'
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )

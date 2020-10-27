@@ -60,6 +60,9 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
                 custom_year = int(custom_year[1])
             except Exception as e:
                 custom_year = cdate.year
+        else:
+            custom_year = cdate.year
+            custom_month = cdate.month
     else:
         custom_date = message.text if message.text else message.caption
         custom_date = custom_date.split(" ")
@@ -72,6 +75,9 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
             except Exception as e:
                 custom_year = cdate.year
                 custom_month = cdate.month
+        else:
+            custom_year = cdate.year
+            custom_month = cdate.month
     if not rmessage:
         return
     ruser = rmessage.from_user
