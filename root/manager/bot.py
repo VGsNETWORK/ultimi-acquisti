@@ -46,7 +46,6 @@ class BotManager:
         self.disp = self.updater.dispatcher
         self.add_handler()
         self.logger.info("Il bot si sta avviando...")
-        admin = str(retrieve_key("TELEGRAM_BOT_ADMIN"))
         self.logger.info("Start polling...")
         self.updater.start_polling(clean=True)
 
@@ -62,14 +61,6 @@ class BotManager:
                 context, chat_id, "Riavvio il bot...", timeout=10
             )
             os.popen("sudo systemctl restart last-purchase")
-
-    def parse_hashtag(self, update: Update, context: CallbackContext):
-        message: Message = update.message if update.message else update.edited_message
-        message: Message = update.message if update.message else update.edited_message
-        message_text = message.caption if message.caption else message.text
-        self.logger.info(f"parsing hashtag {message_text}")
-        if "#ultimiacquisti" in message_text:
-            self.purchase.purchase(update, context)
 
     def send_git_link(self, update: Update, context: CallbackContext):
         message: Message = update.message if update.message else update.edited_message
