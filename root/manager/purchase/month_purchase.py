@@ -19,6 +19,7 @@ from root.util.util import (
     is_group_allowed,
     format_price,
     create_button,
+    get_month_string,
 )
 from root.util.telegram import TelegramSender
 
@@ -49,10 +50,11 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         pprice = retrieve_sum_for_month(user_id, month - 1, year)
         diff = pprice - price if pprice > price else price - pprice
         diff = format_price(diff)
+        mstring = get_month_string(month - 1, False, True)
         append = (
-            MONTH_PREVIOUS_PURCHASES_LOWER % diff
+            MONTH_PREVIOUS_PURCHASES_LOWER % (mstring, format_price(pprice), diff)
             if pprice > price
-            else MONTH_PREVIOUS_PURCHASES_HIGER % diff
+            else MONTH_PREVIOUS_PURCHASES_HIGER % (mstring, format_price(pprice), diff)
         )
         price = format_price(price)
         message = MONTH_PURCHASES % (user_id, first_name, date, price)
