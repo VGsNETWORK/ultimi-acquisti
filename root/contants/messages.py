@@ -30,11 +30,27 @@ PRICE_MESSAGE_NOT_FORMATTED = (
     "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
 )
 
-MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.'
+MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
+
+MONTH_PREVIOUS_PURCHASES_HIGER = (
+    "📈 Hai speso <code>%s €</code> in più rispetto al mese precendente."
+)
+
+MONTH_PREVIOUS_PURCHASES_LOWER = (
+    "📉 Hai speso <code>%s €</code> in meno rispetto al mese precendente."
+)
 
 MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
-YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.'
+YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
+
+YEAR_PREVIOUS_PURCHASES_HIGER = (
+    "📈 Hai speso <code>%s €</code> in più rispetto all'anno precendente."
+)
+
+YEAR_PREVIOUS_PURCHASES_LOWER = (
+    "📉 Hai speso <code>%s €</code> in meno rispetto allanno precendente."
+)
 
 YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s €</code>."
 

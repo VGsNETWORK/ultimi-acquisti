@@ -2,9 +2,17 @@
 
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from root.contants.messages import MONTH_USER_PURCHASES, MONTH_PURCHASES
+from root.contants.messages import (
+    MONTH_USER_PURCHASES,
+    MONTH_PURCHASES,
+    MONTH_PREVIOUS_PURCHASES_HIGER,
+    MONTH_PREVIOUS_PURCHASES_LOWER,
+)
 from root.helper.user_helper import create_user, user_exists
-from root.helper.purchase_helper import retrieve_sum_for_current_month
+from root.helper.purchase_helper import (
+    retrieve_sum_for_current_month,
+    retrieve_sum_for_month,
+)
 from root.util.util import (
     get_current_month,
     get_current_year,
@@ -34,10 +42,23 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
             return
     price = retrieve_sum_for_current_month(user_id)
     date = f"{get_current_month( False, True)} {get_current_year()}"
-    price = format_price(price)
     if not message.reply_to_message:
+        month = get_current_month(number=True)
+        year = get_current_year()
+        year = year - 1 if month == 1 else year
+        pprice = retrieve_sum_for_month(user_id, month - 1, year)
+        diff = pprice - price if pprice > price else price - pprice
+        diff = format_price(diff)
+        append = (
+            MONTH_PREVIOUS_PURCHASES_LOWER % diff
+            if pprice > price
+            else MONTH_PREVIOUS_PURCHASES_HIGER % diff
+        )
+        price = format_price(price)
         message = MONTH_PURCHASES % (user_id, first_name, date, price)
+        message += append
     else:
+        price = format_price(price)
         message = MONTH_USER_PURCHASES % (first_name, date, price)
     telegram_message: Message = (
         update.message if update.message else update.edited_message

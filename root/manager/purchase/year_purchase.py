@@ -2,9 +2,17 @@
 
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from root.contants.messages import YEAR_USER_PURCHASES, YEAR_PURCHASES
+from root.contants.messages import (
+    YEAR_USER_PURCHASES,
+    YEAR_PURCHASES,
+    YEAR_PREVIOUS_PURCHASES_HIGER,
+    YEAR_PREVIOUS_PURCHASES_LOWER,
+)
 from root.helper.user_helper import create_user, user_exists
-from root.helper.purchase_helper import retrieve_sum_for_current_year
+from root.helper.purchase_helper import (
+    retrieve_sum_for_current_year,
+    retrieve_sum_for_year,
+)
 from root.util.util import (
     get_current_month,
     get_current_year,
@@ -33,7 +41,6 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         if not is_group_allowed(chat_id):
             return
     price = retrieve_sum_for_current_year(user_id)
-    price = format_price(price)
     keyboard = [
         [
             create_button(
@@ -42,13 +49,25 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         ]
     ]
     if not message.reply_to_message:
+        year = get_current_year() - 1
+        pprice = retrieve_sum_for_year(user_id, year)
+        diff = pprice - price if pprice > price else price - pprice
+        diff = format_price(diff)
+        append = (
+            YEAR_PREVIOUS_PURCHASES_LOWER % diff
+            if pprice > price
+            else YEAR_PREVIOUS_PURCHASES_LOWER % diff
+        )
+        price = format_price(price)
         message = YEAR_PURCHASES % (
             user_id,
             first_name,
             get_current_year(),
             price,
         )
+        message += append
     else:
+        price = format_price(price)
         message = YEAR_USER_PURCHASES % (
             first_name,
             get_current_year(),

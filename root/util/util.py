@@ -108,9 +108,11 @@ def get_month_string(month: int, short: bool = True, lower: bool = False):
     return month.lower() if lower else month
 
 
-def get_current_month(short: bool = True, lower: bool = False):
+def get_current_month(short: bool = True, lower: bool = False, number=False):
     date = datetime.now()
-    return get_month_string(date.month, short, lower)
+    if not number:
+        return get_month_string(date.month, short, lower)
+    return date.month
 
 
 def get_current_year(short: bool = True, lower: bool = False):
