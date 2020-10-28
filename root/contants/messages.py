@@ -117,15 +117,13 @@ YEAR_COMPARE_PRICE = (
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
-COMPARE_YOU_WON = "Hai <b>vinto</b> di  <code>%s €</code>! 🥳"
+COMPARE_YOU_WON = "🥳  Hai <b>vinto</b> di  <code>%s €</code>!"
 
-COMPARE_HE_WON = "Hai <b>perso</b> di  <code>%s €</code>! 😞"
+COMPARE_HE_WON = "😞  Hai <b>perso</b> di  <code>%s €</code>!"
 
-COMPARE_TIE = "I vostri portafogli sono ugualmente leggeri... 💸"
+COMPARE_TIE = "💸  I vostri portafogli sono ugualmente leggeri..."
 
-COMPARE_NO_PURCHASE = (
-    "Nessuno dei due ha effettuato acquisti finora.\n<b>Che stiamo aspettando?! 😡</b>"
-)
+COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
 COMPARE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
 
