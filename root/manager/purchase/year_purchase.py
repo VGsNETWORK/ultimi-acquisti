@@ -55,7 +55,7 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         diff = format_price(diff)
         append = (
             YEAR_PREVIOUS_PURCHASES_LOWER % (year, format_price(pprice), diff)
-            if pprice > price
+            if price > pprice
             else YEAR_PREVIOUS_PURCHASES_HIGER % (year, format_price(pprice), diff)
         )
         price = format_price(price)

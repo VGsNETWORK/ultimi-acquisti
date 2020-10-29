@@ -42,7 +42,6 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         if not is_group_allowed(chat_id):
             return
     price = retrieve_sum_for_current_month(user_id)
-    date = f"{get_current_month( False, True)} {get_current_year()}"
     if not message.reply_to_message:
         month = get_current_month(number=True)
         year = get_current_year()
@@ -50,17 +49,25 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         pprice = retrieve_sum_for_month(user_id, month - 1, year)
         diff = pprice - price if pprice > price else price - pprice
         diff = format_price(diff)
-        mstring = get_month_string(month - 1, False, True)
+        mstring = (
+            date
+        ) = f"{get_month_string(month -1, False, True)} {get_current_year()}"
         append = (
             MONTH_PREVIOUS_PURCHASES_LOWER % (mstring, format_price(pprice), diff)
-            if pprice > price
+            if price > pprice
             else MONTH_PREVIOUS_PURCHASES_HIGER % (mstring, format_price(pprice), diff)
         )
         price = format_price(price)
-        message = MONTH_PURCHASES % (user_id, first_name, date, price)
+        message = MONTH_PURCHASES % (
+            user_id,
+            first_name,
+            get_current_month(False, True),
+            price,
+        )
         message += append
     else:
         price = format_price(price)
+        date = f"{get_current_month( False, True)} {get_current_year()}"
         message = MONTH_USER_PURCHASES % (first_name, date, price)
     telegram_message: Message = (
         update.message if update.message else update.edited_message

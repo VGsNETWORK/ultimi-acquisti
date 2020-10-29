@@ -32,17 +32,17 @@ PRICE_MESSAGE_NOT_FORMATTED = (
 
 MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
 
-MONTH_PREVIOUS_PURCHASES_HIGER = "📈 A <b>%s</b> hai speso <code>%s €</code>, <code>%s €</code> in più rispetto a questo mese."
+MONTH_PREVIOUS_PURCHASES_HIGER = "📉 A <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in più rispetto a questo mese."
 
-MONTH_PREVIOUS_PURCHASES_LOWER = "📉 A <b>%s</b> hai speso <code>%s €</code>, <code>%s €</code> in meno rispetto a questo mese."
+MONTH_PREVIOUS_PURCHASES_LOWER = "📈 A <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in meno rispetto a questo mese."
 
 MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
 YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
 
-YEAR_PREVIOUS_PURCHASES_HIGER = "📈 Nel <b>%s</b> hai speso <code>%s €</code>, <code>%s €</code> in più rispetto a quest'anno."
+YEAR_PREVIOUS_PURCHASES_HIGER = "📉 Nel <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in più rispetto a quest'anno."
 
-YEAR_PREVIOUS_PURCHASES_LOWER = "📉 Nel <b>%s</b> hai speso <code>%s €</code>, <code>%s €</code> in meno rispetto a quest'anno."
+YEAR_PREVIOUS_PURCHASES_LOWER = "📈 Nel <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in meno rispetto a quest'anno."
 
 YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s €</code>."
 
