@@ -9,6 +9,7 @@ from root.contants.messages import (
     YEAR_PURCHASES,
     YEAR_PREVIOUS_PURCHASES_HIGER,
     YEAR_PREVIOUS_PURCHASES_LOWER,
+    NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
@@ -55,6 +56,9 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             )
         ]
     ]
+    if user.is_bot:
+        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        return
     self_quote = update.effective_user.id == user_id
     if expand or self_quote:
         year = get_current_year() - 1

@@ -9,6 +9,7 @@ from root.contants.messages import (
     MONTH_PURCHASES,
     MONTH_PREVIOUS_PURCHASES_HIGER,
     MONTH_PREVIOUS_PURCHASES_LOWER,
+    NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
@@ -51,6 +52,9 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
             return
     price = retrieve_sum_for_current_month(user_id)
     self_quote = update.effective_user.id == user_id
+    if user.is_bot:
+        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        return
     if expand or self_quote:
         month = get_current_month(number=True)
         year = get_current_year()
