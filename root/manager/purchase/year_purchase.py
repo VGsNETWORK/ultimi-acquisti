@@ -55,7 +55,8 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             )
         ]
     ]
-    if expand:
+    self_quote = update.effective_user.id == user_id
+    if expand or self_quote:
         year = get_current_year() - 1
         pprice = retrieve_sum_for_year(user_id, year)
         diff = pprice - price if pprice > price else price - pprice
@@ -85,5 +86,5 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         context,
         chat_id,
         message,
-        reply_markup=InlineKeyboardMarkup(keyboard) if expand else None,
+        reply_markup=InlineKeyboardMarkup(keyboard) if expand or self_quote else None,
     )

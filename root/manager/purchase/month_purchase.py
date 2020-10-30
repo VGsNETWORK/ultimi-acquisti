@@ -50,7 +50,8 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         if not is_group_allowed(chat_id):
             return
     price = retrieve_sum_for_current_month(user_id)
-    if expand:
+    self_quote = update.effective_user.id == user_id
+    if expand or self_quote:
         month = get_current_month(number=True)
         year = get_current_year()
         year = year - 1 if month == 1 else year
@@ -88,5 +89,5 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         context,
         chat_id,
         message,
-        reply_markup=InlineKeyboardMarkup(keyboard) if expand else None,
+        reply_markup=InlineKeyboardMarkup(keyboard) if expand or self_quote else None,
     )
