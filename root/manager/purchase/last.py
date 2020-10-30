@@ -32,6 +32,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
     else:
         sender.send_and_delete(context, chat_id, ONLY_GROUP)
         return
+    purchase = get_last_purchase(user_id)
     if purchase:
         purchase_chat_id = str(purchase.chat_id).replace("-100", "")
         date = purchase.creation_date
@@ -45,8 +46,12 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             purchase_chat_id,
             purchase.message_id,
         )
+        try:
+            sender.send_and_delete(
+                context, chat_id, message, reply_to_message_id=purchase.message_id
+            )
+        except Exception:
+            sender.send_and_delete(context, chat_id, message)
     else:
         message = NO_PURCHASE % (user_id, first_name)
-        sender.send_and_delete(
-            context, chat_id, message, reply_to_message_id=purchase.message_id
-        )
+        sender.send_and_delete(context, chat_id, message)
