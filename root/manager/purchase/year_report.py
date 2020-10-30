@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
 
+""" File with class to show the year report """
+
+from datetime import datetime
 from dateutil import tz
-from telegram import InlineKeyboardMarkup, Message, Update
-from root.helper.user_helper import create_user, user_exists
+from telegram import InlineKeyboardMarkup, Message, Update, User, InlineKeyboardButton
 from telegram.ext import CallbackContext
+from root.helper.user_helper import create_user, user_exists
 from root.contants.messages import (
     YEAR_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
-    NO_MONTH_PURCHASE,
-    PURCHASE_REPORT_TEMPLATE,
+    NO_YEAR_PURCHASE,
     YEAR_PURCHASE_TEMPLATE,
 )
+from root.model.purchase import Purchase
 from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
-from root.helper.user_helper import create_user, user_exists
 from root.util.logger import Logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
@@ -26,6 +27,8 @@ from root.util.util import (
 
 
 class YearReport:
+    """ Class used to display the year report of a user """
+
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
@@ -39,6 +42,13 @@ class YearReport:
     def year_report(
         self, update: Update, context: CallbackContext, expand: bool = False
     ) -> None:
+        """Show the year report of a user
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+            expand (bool, optional): if the call comes from a purchase message. Defaults to False.
+        """
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month
@@ -49,7 +59,7 @@ class YearReport:
             context.bot.answer_callback_query(update.callback_query.id)
             message = update.effective_message
         else:
-            self.sender.delete_if_private(update, context, message)
+            self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
@@ -81,9 +91,20 @@ class YearReport:
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
+        """The callback to indicate to expand the year purchase message into the report
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         self.year_report(update, context, True)
 
-    def build_keyboard(self):
+    def build_keyboard(self) -> [[InlineKeyboardButton]]:
+        """Create the keyboard for the report
+
+        Returns:
+            [[InlineKeyboardButton]]: Array of Arrays of Keyboard Buttons
+        """
         keyboard = []
         if self.year == self.current_year:
             keyboard = [
@@ -127,7 +148,15 @@ class YearReport:
             ]
         return keyboard
 
-    def retrieve_purchase(self, user):
+    def retrieve_purchase(self, user: User) -> [Purchase]:
+        """Retrieve of the purchases for the user
+
+        Args:
+            user (User): The user to query
+
+        Returns:
+            [Purchase]: The list of purchases
+        """
         if not user_exists(user.id):
             create_user(user)
         user_id = user.id
@@ -159,6 +188,12 @@ class YearReport:
         return message
 
     def previous_year(self, update: Update, context: CallbackContext):
+        """Go to the previous year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         user = update.effective_user
@@ -176,6 +211,12 @@ class YearReport:
         )
 
     def next_year(self, update: Update, context: CallbackContext):
+        """Go to the next year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year >= self.current_year:

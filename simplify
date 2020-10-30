@@ -1,0 +1,239 @@
+************* Module root.util.util
+root/util/util.py:236:11: W0703: Catching too general exception Exception (broad-except)
+************* Module root.util.telegram
+root/util/telegram.py:82:4: R0913: Too many arguments (8/5) (too-many-arguments)
+root/util/telegram.py:128:4: R0201: Method could be a function (no-self-use)
+root/util/telegram.py:7:0: W0611: Unused Update imported from telegram (unused-import)
+************* Module root.util.logger
+root/util/logger.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+root/util/logger.py:6:0: W0105: String statement has no effect (pointless-string-statement)
+root/util/logger.py:22:4: R0201: Method could be a function (no-self-use)
+root/util/logger.py:30:4: R0201: Method could be a function (no-self-use)
+root/util/logger.py:44:8: W1505: Using deprecated method warn() (deprecated-method)
+root/util/logger.py:38:4: R0201: Method could be a function (no-self-use)
+root/util/logger.py:46:4: R0201: Method could be a function (no-self-use)
+************* Module root.manager.error
+root/manager/error.py:14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
+************* Module root.manager.bot
+root/manager/bot.py:29:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+root/manager/bot.py:87:4: R0201: Method could be a function (no-self-use)
+************* Module root.manager.purchase.compare
+root/manager/purchase/compare.py:56:0: R0914: Too many local variables (21/15) (too-many-locals)
+root/manager/purchase/compare.py:83:19: W0703: Catching too general exception Exception (broad-except)
+root/manager/purchase/compare.py:97:19: W0703: Catching too general exception Exception (broad-except)
+root/manager/purchase/compare.py:56:0: R0912: Too many branches (20/12) (too-many-branches)
+root/manager/purchase/compare.py:56:0: R0915: Too many statements (73/50) (too-many-statements)
+************* Module root.manager.purchase.handle_purchase
+root/manager/purchase/handle_purchase.py:49:0: R0912: Too many branches (25/12) (too-many-branches)
+root/manager/purchase/handle_purchase.py:49:0: R0915: Too many statements (72/50) (too-many-statements)
+root/manager/purchase/handle_purchase.py:8:0: W0611: Unused filters imported from pyrogram (unused-import)
+root/manager/purchase/handle_purchase.py:9:0: W0611: Unused MessageHandler imported from pyrogram.handlers (unused-import)
+************* Module root.manager.purchase.month_purchase
+root/manager/purchase/month_purchase.py:31:0: R0914: Too many local variables (19/15) (too-many-locals)
+************* Module root.model.base_model
+root/model/base_model.py:1:0: R0401: Cyclic import (root.util.telegram -> root.util.util) (cyclic-import)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:44
+==root.manager.purchase.year_report:42
+        self, update: Update, context: CallbackContext, expand: bool = False
+    ) -> None:
+        """Show the month report of a user
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+            expand (bool, optional): if the call comes from a purchase message. Defaults to False.
+        """
+        current_date = datetime.now()
+        self.month = current_date.month
+        self.current_month = current_date.month
+        self.year = current_date.year
+        self.current_year = current_date.year
+        message: Message = update.message if update.message else update.edited_message
+        if not message:
+            context.bot.answer_callback_query(update.callback_query.id)
+            message = update.effective_message
+        else:
+            self.sender.delete_if_private(context, message)
+        chat_id = message.chat.id
+        chat_type = message.chat.type
+        user = update.effective_user
+        user_id = user.id
+        message_id = message.message_id
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return
+        keyboard = self.build_keyboard()
+        message = self.retrieve_purchase(user)
+        if expand:
+            context.bot.edit_message_text(
+                text=message,
+                chat_id=chat_id,
+                disable_web_page_preview=True,
+                message_id=message_id,
+                reply_markup=InlineKeyboardMarkup(keyboard),
+                parse_mode="HTML",
+            )
+            return
+        self.sender.send_and_delete( (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:349
+==root.manager.purchase.year_report:189
+    def previous_year(self, update: Update, context: CallbackContext):
+        """Go to the previous year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year -= 1
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        )
+ (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 4 files
+==root.manager.purchase.month_report:386
+==root.manager.purchase.month_report:415
+==root.manager.purchase.month_report:443
+==root.manager.purchase.year_report:222
+            self.year = self.current_year
+        user = update.effective_user
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+        ) (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:219
+==root.manager.purchase.year_report:115
+                    ),
+                    create_button(
+                        f"{self.year}",
+                        str("empty_button"),
+                        "empty_button",
+                    ),
+                    create_button(
+                        "🔚",
+                        str("empty_button"),
+                        "empty_button",
+                    ),
+                ] (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:33
+==root.manager.purchase.year_report:31
+    def __init__(self):
+        self.logger = Logger()
+        self.sender = TelegramSender()
+        current_date = datetime.now()
+        self.month = current_date.month
+        self.current_month = current_date.month
+        self.current_year = current_date.year
+        self.year = current_date.year
+        self.to_zone = tz.gettz("Europe/Rome")
+ (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:20
+==root.manager.purchase.year_report:18
+from root.util.logger import Logger
+from root.util.telegram import TelegramSender
+from root.util.util import (
+    create_button,
+    format_price,
+    get_month_string,
+    is_group_allowed,
+)
+
+ (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.last:27
+==root.manager.purchase.month_purchase:44
+    user_id = user.id
+    first_name = user.first_name
+    if not chat_type == "private":
+        if not user_exists(user_id):
+            create_user(user)
+        if not is_group_allowed(chat_id):
+            return (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:219
+==root.manager.purchase.year_report:135
+                    ),
+                    create_button(
+                        f"{self.year}",
+                        str("empty_button"),
+                        "empty_button",
+                    ),
+                    create_button( (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 3 files
+==root.manager.purchase.month_report:243
+==root.manager.purchase.year_report:115
+==root.manager.purchase.year_report:135
+                    ),
+                    create_button(
+                        f"{self.year}",
+                        str("empty_button"),
+                        "empty_button",
+                    ),
+                    create_button( (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_purchase:86
+==root.manager.purchase.year_purchase:83
+    sender.send_and_delete(
+        context,
+        chat_id,
+        message,
+        reply_markup=InlineKeyboardMarkup(keyboard) if expand else None,
+    ) (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_report:297
+==root.manager.purchase.year_report:183
+            footer = format_price(footer)
+            spaces = " " * (10 - len(footer))
+            footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
+            message = f"{message}\n\n{footer}"
+        return message
+ (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 2 files
+==root.manager.purchase.month_purchase:72
+==root.manager.purchase.year_purchase:72
+            price,
+        )
+        message += append
+    else:
+        price = format_price(price) (duplicate-code)
+root/model/base_model.py:1:0: R0801: Similar lines in 6 files
+==root.manager.purchase.delete:35
+==root.manager.purchase.last:29
+==root.manager.purchase.month_purchase:46
+==root.manager.purchase.month_report:69
+==root.manager.purchase.year_purchase:44
+==root.manager.purchase.year_report:67
+        if not chat_type == "private":
+            if not user_exists(user_id):
+                create_user(user)
+            if not is_group_allowed(chat_id):
+                return (duplicate-code)
+
+------------------------------------------------------------------
+Your code has been rated at 9.66/10 (previous run: 9.66/10, +0.00)
+

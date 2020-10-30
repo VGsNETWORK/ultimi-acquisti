@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 
-import os
-import re
+""" File that contains the class to start the bot with the bot api """
 
+import os
 from telegram import Message, Update
 from telegram.ext import (
     CallbackContext,
     CommandHandler,
     CallbackQueryHandler,
     Dispatcher,
-    Filters,
-    MessageHandler,
     Updater,
 )
 
 from root.manager.error import ErrorHandler
-from root.util.util import retrieve_key, is_group_allowed, is_develop
+from root.util.util import retrieve_key, is_group_allowed
 from root.manager.purchase.month_report import MonthReport
 from root.manager.purchase.year_report import YearReport
 from root.manager.purchase.compare import year_compare, month_compare
@@ -29,10 +27,12 @@ from root.util.telegram import TelegramSender
 
 
 class BotManager:
+    """The class to manage the bot"""
+
     def __init__(self):
         self.updater: Updater = None
         self.disp: Dispatcher = None
-        self.TOKEN: str = None
+        self.token: str = None
         self.logger = Logger()
         self.sender = TelegramSender()
         self.error = ErrorHandler()
@@ -40,9 +40,9 @@ class BotManager:
         self.year_report = YearReport()
 
     def connect(self):
-        """[run the telegram bot]"""
-        self.TOKEN = retrieve_key("TOKEN")
-        self.updater = Updater(self.TOKEN, use_context=True)
+        """Run the telegram bot"""
+        self.token = retrieve_key("TOKEN")
+        self.updater = Updater(self.token, use_context=True)
         self.disp = self.updater.dispatcher
         self.add_handler()
         self.logger.info("Il bot si sta avviando...")
@@ -50,6 +50,12 @@ class BotManager:
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):
+        """Restart the bot by using systemctl
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         user_id = update.effective_user.id
@@ -63,6 +69,12 @@ class BotManager:
             os.popen("sudo systemctl restart last-purchase")
 
     def send_git_link(self, update: Update, context: CallbackContext):
+        """Send the link to the gitlab page of this project
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         if not is_group_allowed(chat_id):
@@ -73,10 +85,16 @@ class BotManager:
         )
 
     def empty_button(self, update: Update, context: CallbackContext):
+        """The Callback called when the button does nothing
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
 
     def add_handler(self):
-        """[add handlers for the various operations]"""
+        """Add handlers for the various operations"""
         self.disp.add_error_handler(self.error.handle_error)
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))

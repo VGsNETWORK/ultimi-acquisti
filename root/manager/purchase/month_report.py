@@ -4,7 +4,7 @@
 
 from datetime import datetime
 from dateutil import tz
-from telegram import InlineKeyboardMarkup, Message, Update, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, Message, Update, InlineKeyboardButton, User
 from telegram.ext import CallbackContext
 from root.model.purchase import Purchase
 from root.contants.messages import (
@@ -49,7 +49,7 @@ class MonthReport:
         Args:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
-            expand (bool, optional): if the call comes from a month purchase message. Defaults to False.
+            expand (bool, optional): if the call comes from a purchase message. Defaults to False.
         """
         current_date = datetime.now()
         self.month = current_date.month
@@ -61,7 +61,7 @@ class MonthReport:
             context.bot.answer_callback_query(update.callback_query.id)
             message = update.effective_message
         else:
-            self.sender.delete_if_private(update, context, message)
+            self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
@@ -256,11 +256,11 @@ class MonthReport:
             )
         return keyboard
 
-    def retrieve_purchase(self, user) -> [Purchase]:
+    def retrieve_purchase(self, user: User) -> [Purchase]:
         """Retrieve of the purchases for the user
 
         Args:
-            user ([type]): The user to query
+            user (User): The user to query
 
         Returns:
             [Purchase]: The list of purchases

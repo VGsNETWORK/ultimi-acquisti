@@ -36,10 +36,10 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
-    expand = False if message.reply_to_message else True
+    expand = not message.reply_to_message
     message = message.reply_to_message if message.reply_to_message else message
     chat_id = message.chat.id
-    sender.delete_if_private(update, context, message)
+    sender.delete_if_private(context, message)
     chat_type = message.chat.type
     user = message.from_user
     user_id = user.id

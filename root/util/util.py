@@ -112,12 +112,12 @@ def is_group_allowed(chat_id: int) -> bool:
        bool:  If the group has access to the bot
     """
     groups = ast.literal_eval(retrieve_key("GROUP_ID"))
-    if str(chat_id) in groups:
-        return True
-    else:
+    if not str(chat_id) in groups:
         token = retrieve_key("TOKEN")
         logger.warn(f"chat_id {chat_id} is not allowed")
         sender.send_message(token, chat_id, GROUP_NOT_ALLOWED)
+        return False
+    return True
 
 
 def de_html(data: object) -> str:

@@ -22,7 +22,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
-    sender.delete_if_private(update, context, message)
+    sender.delete_if_private(context, message)
     chat_id = message.chat.id
     user = message.from_user
     if not user_exists(user.id):

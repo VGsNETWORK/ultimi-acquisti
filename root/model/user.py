@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 
+""" Class of a User mongoengine model """
+
 from mongoengine import StringField, IntField, BooleanField
 from root.model.base_model import BaseModel
 
 
 class User(BaseModel):
+    """The class representing users stored on the collection
 
-    """[This class represent a user]
-    @username = The telegram username
-    @first_name = The telegram first name
-    @last_name = The telegram last name
-    @user_id = The telegram user id
-    @rtb = The number of rtb (Rock The Ban) the user got
-    @sed = How many sed commands the user sent
+    Args:
+        BaseModel ([BaseModel]): extends the BaseModel class to get the generic document properties
     """
 
     username = StringField()
