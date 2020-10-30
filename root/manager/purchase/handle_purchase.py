@@ -14,6 +14,7 @@ from root.util.telegram import TelegramSender
 from root.helper.purchase_helper import create_purchase
 from root.helper.purchase_helper import convert_to_float
 from root.helper.user_helper import user_exists, create_user
+from root.util.util import retrieve_key
 from root.contants.messages import (
     ONLY_GROUP,
     PURCHASE_MODIFIED,
@@ -47,6 +48,8 @@ def add_purchase(
 
 
 def handle_purchase(client: Client, message: Message) -> None:
+    token = retrieve_key("TOKEN")
+    log_channel = retrieve_key("ERROR_CHANNEL")
     """handle a new or a modified purchase
 
     Args:
@@ -99,11 +102,11 @@ def handle_purchase(client: Client, message: Message) -> None:
             result = {"name": caption, "price": 0.00, "error": None}
     except ValueError as value_error:
         logger.error(value_error)
-        sender.send_to_log(value_error)
+        sender.send_message(token, log_channel, value_error)
         return
     except IndexError as index_error:
         logger.error(index_error)
-        sender.send_to_log(index_error)
+        sender.send_message(token, log_channel, index_error)
         return
     mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", caption)
     mdate = mdate[0] if len(mdate) != 0 else None

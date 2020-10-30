@@ -8,7 +8,6 @@ from telegram import Bot, Message
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from root.util.logger import Logger
-from root.util.util import retrieve_key
 
 
 class TelegramSender:
@@ -29,16 +28,6 @@ class TelegramSender:
             return
         self._bot = Bot(token)
         self._token = token
-
-    def send_to_log(self, message: str):
-        """Send a message to the log channel
-
-        Args:
-            message (str): The message to send
-        """
-        token = retrieve_key("TOKEN")
-        log_channel = retrieve_key("ERROR_CHANNEL")
-        self.send_message(token, log_channel, message)
 
     def send_message(self, token: str, chat_id: int, message: str, **kwargs):
         """send a message to a designed chat

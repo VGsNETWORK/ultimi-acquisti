@@ -158,9 +158,7 @@ def get_month_string(month: int, short: bool = True, lower: bool = False) -> str
     return month.lower() if lower else month
 
 
-def get_current_month(
-    short: bool = True, lower: bool = False, number=False
-) -> str / int:
+def get_current_month(short: bool = True, lower: bool = False, number=False) -> object:
     """Return a string representation or an integer number of the current month
 
     Args:
