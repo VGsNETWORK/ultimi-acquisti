@@ -50,7 +50,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         if not is_group_allowed(chat_id):
             return
     price = retrieve_sum_for_current_month(user_id)
-    if not message.reply_to_message:
+    if expand:
         month = get_current_month(number=True)
         year = get_current_year()
         year = year - 1 if month == 1 else year

@@ -55,7 +55,7 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             )
         ]
     ]
-    if not message.reply_to_message:
+    if expand:
         year = get_current_year() - 1
         pprice = retrieve_sum_for_year(user_id, year)
         diff = pprice - price if pprice > price else price - pprice

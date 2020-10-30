@@ -22,9 +22,10 @@ from root.contants.messages import (
     COMPARE_TIE,
     COMPARE_YOU_WON,
     YEAR_COMPARE_PRICE,
-    COMPARE_YOURSELF,
-    COMPARE_BOT,
+    NO_QUOTE_YOURSELF,
+    NO_QUOTE_BOT,
     ONLY_GROUP,
+    NO_QUOTE_FOUND,
 )
 from root.util.telegram import TelegramSender
 
@@ -70,6 +71,9 @@ def compare(
     message: Message = update.message if update.message else update.edited_message
     sender.delete_if_private(context, message)
     chat_id = message.chat.id
+    if not message.reply_to_message:
+        sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
+        return
     if message.chat.type == "private":
         sender.send_and_delete(context, chat_id, ONLY_GROUP)
         return
@@ -111,10 +115,10 @@ def compare(
     ruser_id = ruser.id
     user_id = user.id
     if ruser_id == user_id:
-        sender.send_and_delete(context, chat_id, COMPARE_YOURSELF)
+        sender.send_and_delete(context, chat_id, NO_QUOTE_YOURSELF)
         return
     if ruser.is_bot:
-        sender.send_and_delete(context, chat_id, COMPARE_BOT)
+        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
         return
     rfirst_name = ruser.first_name
     first_name = user.first_name

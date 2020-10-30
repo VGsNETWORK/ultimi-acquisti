@@ -43,24 +43,24 @@ MONTH_PREVIOUS_PURCHASES_HIGER = (
 )
 
 MONTH_PREVIOUS_PURCHASES_LOWER = (
-    "📈 A <i>%s</i> hai speso <code>%s €</code>,"
+    "📈 A <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in meno rispetto a questo mese."
 )
 
 MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
 YEAR_PURCHASES = (
-    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b>'
+    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> '
     "hai speso un totale di <code>%s €</code>.\n\n"
 )
 
 YEAR_PREVIOUS_PURCHASES_HIGER = (
-    "📉 Nel <i>%s</i> hai speso <code>%s €</code>,"
+    "📉 Nel <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in più rispetto a quest'anno."
 )
 
 YEAR_PREVIOUS_PURCHASES_LOWER = (
-    "📈 Nel <i>%s</i> hai speso <code>%s €</code>,"
+    "📈 Nel <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in meno rispetto a quest'anno."
 )
 
@@ -104,8 +104,8 @@ NO_YEAR_PURCHASE = (
 )
 
 LAST_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è'
-    " stato effettuato in data <b>%s alle %s</b>,"
+    '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è '
+    "stato effettuato in data <b>%s alle %s</b>, "
     'puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
 )
 
@@ -146,14 +146,16 @@ YEAR_COMPARE_PRICE = (
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
-COMPARE_YOU_WON = "🥳  Hai <b>vinto</b> di  <code>%s €</code>!"
+COMPARE_YOU_WON = "🥳 Hai <b>vinto</b> di  <code>%s €</code>!"
 
-COMPARE_HE_WON = "😞  Hai <b>perso</b> di  <code>%s €</code>!"
+COMPARE_HE_WON = "😞 Hai <b>perso</b> di  <code>%s €</code>!"
 
-COMPARE_TIE = "💸  I vostri portafogli sono ugualmente leggeri..."
+COMPARE_TIE = "💸 I vostri portafogli sono ugualmente leggeri..."
 
 COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
-COMPARE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
+NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
 
-COMPARE_BOT = "Non puoi lanciare questo comando quotando un bot!"
+NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"
+
+NO_QUOTE_FOUND = "Per lanciare questo comando prova a quotare un utente..."
