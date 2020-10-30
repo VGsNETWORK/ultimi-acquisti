@@ -1,31 +1,51 @@
 #!/usr/bin/env python3
 
-from root.model.purchase import Purchase
-from mongoengine.errors import DoesNotExist
+""" File with various functions to help handle purchases """
+
+import re
 from datetime import datetime
 from calendar import monthrange
+from mongoengine.errors import DoesNotExist
 from root.util.logger import Logger
-import re
+from root.model.purchase import Purchase
 
 logger = Logger()
 
 
-def before(start, end, seq):
+def before(to_check: str, to_check_with: str, to_check_from: str) -> bool:
+    """Check if a string is before another
+
+    Args:
+        to_check (str): The string to check
+        to_check_with (str): The string to check with
+        to_check_from (str): The string to check from
+
+    Returns:
+        bool: if the to_check is before
+    """
     open_parens = 0
-    for char in seq:
-        if char == start:
+    for char in to_check_from:
+        if char == to_check:
             open_parens += 1
-        elif char == end:
+        elif char == to_check_with:
             open_parens -= 1
             if open_parens < 0:
                 return False
     return open_parens == 0
 
 
-def convert_to_float(price: str) -> None:
+def convert_to_float(price: str) -> float:
+    """Convert a string number into a valid float
+
+    Args:
+        price (str): The string price to convert into a float
+
+    Returns:
+       float : The price converted into a float
+    """
     logger.info(f"converting {price}")
-    dots = re.findall("\.", price)
-    commas = re.findall("\,", price)
+    dots = re.findall("\\.", price)
+    commas = re.findall("\\,", price)
     apostrophes = re.findall("'", price)
     if len(commas) == 1 and len(dots) == 1:
         if before(",", ".", price):
@@ -58,15 +78,24 @@ def create_purchase(
     chat_id: int,
     creation_date: datetime = None,
 ) -> None:
+    """Store a new purchase from a user in the database or modify an existing one
+
+    Args:
+        user_id (int): The user_id of who purchase the item
+        price (float): The price of the item
+        message_id (int): The Telegram message_if of the purchase
+        chat_id (int): The chat where the purchase was posted
+        creation_date (datetime, optional): When the post was created. Defaults to None.
+    """
     try:
         Purchase.objects().get(message_id=message_id)
-        logger.info(f"modifying purchase {message_id}")
+        logger.info(f"try to modifying purchase {message_id}")
         Purchase.objects(message_id=message_id).update(
             set__price=price, set__creation_date=creation_date
         )
         return
-    except Exception as e:
-        logger.error(f"Unable to update purchase due to {e}")
+    except DoesNotExist:
+        pass
     if creation_date:
         Purchase(
             user_id=user_id,
@@ -82,6 +111,14 @@ def create_purchase(
 
 
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
+    """retrieve all purchases for a user
+
+    Args:
+        user_id (int): The user_id to use for the query
+
+    Returns:
+        [Purchase]: List of purchases
+    """
     try:
         return Purchase.objects.filter(user_id=user_id)
     except DoesNotExist:
@@ -91,11 +128,21 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
 def retrieve_month_purchases_for_user(
     user_id: int, month: int = None, year: int = None
 ) -> [Purchase]:
+    """Retrieve all purchases in a month
+
+    Args:
+        user_id (int): The user_id to use for the query
+        month (int, optional): month to query. Defaults to None.
+        year (int, optional): year to query. Defaults to None.
+
+    Returns:
+        [Purchase]: List of purchases
+    """
     try:
         current_date = datetime.now()
         month = month if month else current_date.month
         year = year if year else current_date.year
-        start, end = monthrange(year, month)
+        _, end = monthrange(year, month)
         start_date = datetime(year, month, 1)
         end_date = datetime(year, month, end)
         return Purchase.objects.filter(
@@ -106,11 +153,25 @@ def retrieve_month_purchases_for_user(
 
 
 def delete_purchase(user_id: int, message_id: int) -> None:
+    """Delete a purchase a user made
+
+    Args:
+        user_id (int): The user who purchase the item
+        message_id (int): The purchase to delete
+    """
     logger.info(f"finding purchase {message_id} for user {user_id}")
     Purchase.objects.filter(user_id=user_id).get(message_id=message_id).delete()
 
 
 def retrieve_sum_for_user(user_id: int) -> float:
+    """Return how much the user has spent up until now
+
+    Args:
+        user_id (int): The user_id to use for the query
+
+    Returns:
+        float: How much the user has spent up until now
+    """
     pipeline = [
         {"$match": {"user_id": user_id}},
         {"$group": {"_id": "$user_id", "total": {"$sum": "$price"}}},
@@ -120,30 +181,73 @@ def retrieve_sum_for_user(user_id: int) -> float:
 
 
 def retrieve_sum_for_current_month(user_id: int) -> float:
+    """How much the user has spent in this month
+
+    Args:
+        user_id (int): The user_id to use for the query
+
+    Returns:
+        float: How much the user has spent int this month
+    """
     month = datetime.now().month
     return retrieve_sum_for_month(user_id, month)
 
 
 def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
+    """How much the user has spent in a specific month and year
+
+    Args:
+        user_id (int): The user_id to use for the query
+        month (int): The month to query
+        year (int, optional): The year to query. Defaults to None.
+
+    Returns:
+        float: [description]
+    """
     current_date = datetime.now()
     year = year if year else current_date.year
-    start, end = monthrange(year, month)
+    _, end = monthrange(year, month)
     start_date = datetime(year, month, 1)
     end_date = datetime(year, month, end)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
 
 def retrieve_sum_for_current_year(user_id: int) -> float:
+    """How much the user has spent in this year
+
+    Args:
+        user_id (int): The user_id to use for the query
+
+    Returns:
+        float: How much the user has spent in a this year
+    """
     return retrieve_sum_for_year(user_id, datetime.now().year)
 
 
 def retrieve_sum_for_year(user_id: int, year: int) -> float:
+    """How much the user has spent in a specific year
+
+    Args:
+        user_id (int): The user_id to use for the query
+        year (int): The year to query
+
+    Returns:
+        float: How much the user has spent in a specific year
+    """
     start_date = datetime(year, 1, 1)
     end_date = datetime(year, 12, 31)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
 
 def get_last_purchase(user_id: int) -> Purchase:
+    """Retrieve the last purchase from a user
+
+    Args:
+        user_id (int): The user_id to use for the query
+
+    Returns:
+        Purchase: The last purchase from the user
+    """
     try:
         return Purchase.objects.filter(user_id=user_id).order_by("-creation_date")[0]
     except DoesNotExist:
@@ -155,6 +259,16 @@ def get_last_purchase(user_id: int) -> Purchase:
 def retrieve_sum_between_date(
     user_id: int, start_date: datetime, end_date: datetime
 ) -> float:
+    """Retrieve the sum spent between two dates
+
+    Args:
+        user_id (int): The user_id to use for the query
+        start_date (datetime): The start date
+        end_date (datetime): The end date
+
+    Returns:
+        float: The sum of all the purchases
+    """
     pipeline = [
         {"$match": {"user_id": user_id}},
         {"$group": {"_id": "$user_id", "total": {"$sum": "$price"}}},

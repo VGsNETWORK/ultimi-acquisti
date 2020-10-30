@@ -1,5 +1,7 @@
 #!/usr/bin/env/python3
 
+""" File to show the sum of all the purchases in a month """
+
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from root.contants.messages import (
@@ -27,6 +29,12 @@ sender = TelegramSender()
 
 
 def month_purchase(update: Update, context: CallbackContext) -> None:
+    """send the sum of all purchases
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
     message: Message = update.message if update.message else update.edited_message
     expand = False if message.reply_to_message else True
     message = message.reply_to_message if message.reply_to_message else message

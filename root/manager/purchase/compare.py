@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 
+""" File containing functions to compare prices with other users """
+
+from datetime import datetime
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
-from datetime import datetime
 from root.helper.purchase_helper import (
-    retrieve_sum_for_current_month,
-    retrieve_sum_for_current_year,
     retrieve_sum_for_month,
     retrieve_sum_for_year,
 )
 from root.util.logger import Logger
 from root.util.util import (
-    get_current_year,
-    get_current_month,
     format_price,
     get_month_string,
 )
@@ -35,15 +33,37 @@ sender = TelegramSender()
 logger = Logger()
 
 
-def month_compare(update: Update, context: CallbackContext):
+def month_compare(update: Update, context: CallbackContext) -> None:
+    """Compare the month with an user
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
     compare(update, context, retrieve_sum_for_month, True)
 
 
-def year_compare(update: Update, context: CallbackContext):
+def year_compare(update: Update, context: CallbackContext) -> None:
+    """Compare the year with an user
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
     compare(update, context, retrieve_sum_for_year, False)
 
 
-def compare(update: Update, context: CallbackContext, function: callable, month: bool):
+def compare(
+    update: Update, context: CallbackContext, function: callable, month: bool
+) -> None:
+    """General compare function used to compare month/year
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+        function (callable): The function to call wich retrieves the sum
+        month (bool): If you have to compare the month or the year
+    """
     cdate = datetime.now()
     custom_year = cdate.year
     custom_month = cdate.month
@@ -60,7 +80,7 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
         if len(custom_year) > 1:
             try:
                 custom_year = int(custom_year[1])
-            except Exception as e:
+            except Exception:
                 custom_year = cdate.year
         else:
             custom_year = cdate.year
@@ -74,7 +94,7 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
                 custom_date = custom_date.split("/")
                 custom_month = int(custom_date[0])
                 custom_year = int(custom_date[1])
-            except Exception as e:
+            except Exception:
                 custom_year = cdate.year
                 custom_month = cdate.month
         else:
@@ -130,7 +150,7 @@ def compare(update: Update, context: CallbackContext, function: callable, month:
         diff = format_price(diff)
         message = f"{message}{COMPARE_HE_WON % diff}"
     else:
-        if not int(rpurchase) == 0:
+        if int(rpurchase) != 0:
             message = f"{message}{COMPARE_TIE}"
         else:
             message = f"{message}{COMPARE_NO_PURCHASE}"

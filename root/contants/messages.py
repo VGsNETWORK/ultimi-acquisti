@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+""" This class contains all the messages used in the bot """
+
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
 DB_CONNECTION_ERROR = (
@@ -30,19 +32,37 @@ PRICE_MESSAGE_NOT_FORMATTED = (
     "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
 )
 
-MONTH_PURCHASES = '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
+MONTH_PURCHASES = (
+    '<a href="tg://user?id=%s">%s</a>, a '
+    "<b>%s</b> hai speso un totale di <code>%s €</code>.\n\n"
+)
 
-MONTH_PREVIOUS_PURCHASES_HIGER = "📉 A <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in più rispetto a questo mese."
+MONTH_PREVIOUS_PURCHASES_HIGER = (
+    "📉 A <i>%s</i> hai speso <code>%s €</code>, "
+    "<code>%s</code> in più rispetto a questo mese."
+)
 
-MONTH_PREVIOUS_PURCHASES_LOWER = "📈 A <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in meno rispetto a questo mese."
+MONTH_PREVIOUS_PURCHASES_LOWER = (
+    "📈 A <i>%s</i> hai speso <code>%s €</code>,"
+    "<code>%s</code> in meno rispetto a questo mese."
+)
 
 MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
-YEAR_PURCHASES = '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai speso un totale di <code>%s €</code>.\n\n'
+YEAR_PURCHASES = (
+    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b>'
+    "hai speso un totale di <code>%s €</code>.\n\n"
+)
 
-YEAR_PREVIOUS_PURCHASES_HIGER = "📉 Nel <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in più rispetto a quest'anno."
+YEAR_PREVIOUS_PURCHASES_HIGER = (
+    "📉 Nel <i>%s</i> hai speso <code>%s €</code>,"
+    "<code>%s</code> in più rispetto a quest'anno."
+)
 
-YEAR_PREVIOUS_PURCHASES_LOWER = "📈 Nel <i>%s</i> hai speso <code>%s €</code>, <code>%s</code> in meno rispetto a quest'anno."
+YEAR_PREVIOUS_PURCHASES_LOWER = (
+    "📈 Nel <i>%s</i> hai speso <code>%s €</code>,"
+    "<code>%s</code> in meno rispetto a quest'anno."
+)
 
 YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s €</code>."
 
@@ -85,7 +105,8 @@ NO_YEAR_PURCHASE = (
 
 LAST_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è'
-    ' stato effettuato in data <b>%s alle %s</b>, puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+    " stato effettuato in data <b>%s alle %s</b>,"
+    'puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
 )
 
 MONTH_PURCHASE_REPORT = (

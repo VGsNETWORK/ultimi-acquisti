@@ -10,7 +10,7 @@ import threading
 """ This class is responsible of sending messages to a channel """
 
 
-# ALL the methods here should use the standard telegram token from the bot
+# ALL the functions here should use the standard telegram token from the bot
 class TelegramSender:
     def __init__(self):
         self._logger = Logger()

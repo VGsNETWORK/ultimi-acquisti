@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+""" File to retrieve the last purchase of the user """
+
 from telegram import Update, Message
 from telegram.ext import CallbackContext
+from telegram.error import BadRequest
 from root.util.logger import Logger
 from root.util.util import is_group_allowed
 from root.model.purchase import Purchase
@@ -16,6 +19,7 @@ logger = Logger()
 
 
 def last_purchase(update: Update, context: CallbackContext) -> None:
+    """ Retrieve the last purchase of the user who typed the command """
     message: Message = update.message if update.message else update.edited_message
     sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
@@ -50,7 +54,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             sender.send_and_delete(
                 context, chat_id, message, reply_to_message_id=purchase.message_id
             )
-        except Exception:
+        except BadRequest:
             sender.send_and_delete(context, chat_id, message)
     else:
         message = NO_PURCHASE % (user_id, first_name)

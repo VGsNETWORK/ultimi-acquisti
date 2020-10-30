@@ -1,12 +1,15 @@
 #!usr/bin/env python3
 
+""" File to handle a new or and edited purchase """
+
 import re
 from datetime import datetime
 from pyrogram.types import Message
-from root.util.logger import Logger
 from pyrogram import Client, filters
-from root.util.util import is_group_allowed
 from pyrogram.handlers import MessageHandler
+from pyrogram.client import User
+from root.util.logger import Logger
+from root.util.util import is_group_allowed
 from root.util.telegram import TelegramSender
 from root.helper.purchase_helper import create_purchase
 from root.helper.purchase_helper import convert_to_float
@@ -19,15 +22,37 @@ from root.contants.messages import (
 )
 
 logger = Logger()
+sender = TelegramSender()
 
 
-def add_purchase(user, price, message_id, chat_id, creation_date=None):
+def add_purchase(
+    user: User,
+    price: float,
+    message_id: float,
+    chat_id: float,
+    creation_date: datetime = None,
+) -> None:
+    """add a new purchase
+
+    Args:
+        user (User): The user who purchased the item
+        price (float): The price of the item
+        message_id (float): The message_id of the post
+        chat_id (float): The chat where the post was made
+        creation_date (datetime, optional): The creation_date of the post. Defaults to None.
+    """
     if not user_exists(user.id):
         create_user(user)
     create_purchase(user.id, price, message_id, chat_id, creation_date)
 
 
-def handle_purchase(client: Client, message: Message):
+def handle_purchase(client: Client, message: Message) -> None:
+    """handle a new or a modified purchase
+
+    Args:
+        client (Client): The bot who recevied the update
+        message (Message): The message received
+    """
     custom_date_error = False
     logger.info("Received message from mtproto")
     caption = message.caption if message.caption else message.text
@@ -51,21 +76,19 @@ def handle_purchase(client: Client, message: Message):
     caption = message.caption if message.caption else message.text
     logger.info("Parsing purchase")
     try:
-        """
-        regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
-        \d      -> matches a number
-        +       -> match one or more of the previous
-        ()      -> capturing group
-        ?:      -> do not create a capture group (makes no sense but it does not work without)
-        [\.\',] -> matches . , '
-        \d{3}   -> matches 3 numbers
-        ?       -> makes the capturing group optional
-        ()      -> capturing group
-        ?:      -> do not create a capture group (makes no sense but it does not work without)
-        [\.,]   -> marches . or ,
-        \d{1,2} -> matches one or two numbers
-        ?       -> makes the capturing group optional
-        """
+        # regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
+        # \d      -> matches a number
+        # +       -> match one or more of the previous
+        # ()      -> capturing group
+        # ?:      -> do not create a capture group (makes no sense but it does not work without)
+        # [\.\',] -> matches . , '
+        # \d{3}   -> matches 3 numbers
+        # ?       -> makes the capturing group optional
+        # ()      -> capturing group
+        # ?:      -> do not create a capture group (makes no sense but it does not work without)
+        # [\.,]   -> marches . or ,
+        # \d{1,2} -> matches one or two numbers
+        # ?       -> makes the capturing group optional
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         price = price[0] if len(price) != 0 else 0.00
         if price:
@@ -74,13 +97,13 @@ def handle_purchase(client: Client, message: Message):
             logger.info(f"The user purchase {price} worth of products")
         else:
             result = {"name": caption, "price": 0.00, "error": None}
-    except ValueError as ve:
-        logger.error(ve)
-        sender.send_to_log(ve)
+    except ValueError as value_error:
+        logger.error(value_error)
+        sender.send_to_log(value_error)
         return
-    except IndexError as ie:
-        logger.error(ie)
-        sender.send_to_log(ie)
+    except IndexError as index_error:
+        logger.error(index_error)
+        sender.send_to_log(index_error)
         return
     mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", caption)
     mdate = mdate[0] if len(mdate) != 0 else None

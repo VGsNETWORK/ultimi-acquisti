@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
+""" File with class to show the month report """
 
+from datetime import datetime
 from dateutil import tz
-from telegram import InlineKeyboardMarkup, Message, Update
+from telegram import InlineKeyboardMarkup, Message, Update, InlineKeyboardButton
 from telegram.ext import CallbackContext
+from root.model.purchase import Purchase
 from root.contants.messages import (
     MONTH_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
@@ -27,6 +29,8 @@ from root.util.util import (
 
 
 class MonthReport:
+    """ Class used to display the month report of a user """
+
     def __init__(self):
         self.logger = Logger()
         self.sender = TelegramSender()
@@ -40,6 +44,13 @@ class MonthReport:
     def month_report(
         self, update: Update, context: CallbackContext, expand: bool = False
     ) -> None:
+        """Show the month report of a user
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+            expand (bool, optional): if the call comes from a month purchase message. Defaults to False.
+        """
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month
@@ -78,9 +89,20 @@ class MonthReport:
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
+        """The callback to indicate to expand the month purchase message into the report
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         self.month_report(update, context, True)
 
-    def build_keyboard(self):
+    def build_keyboard(self) -> [[InlineKeyboardButton]]:
+        """Create the keyboard for the report
+
+        Returns:
+            [[InlineKeyboardButton]]: Array of Arrays of Keyboard Buttons
+        """
         keyboard = []
         if (
             self.year == self.current_year
@@ -234,7 +256,15 @@ class MonthReport:
             )
         return keyboard
 
-    def retrieve_purchase(self, user):
+    def retrieve_purchase(self, user) -> [Purchase]:
+        """Retrieve of the purchases for the user
+
+        Args:
+            user ([type]): The user to query
+
+        Returns:
+            [Purchase]: The list of purchases
+        """
         if not user_exists(user.id):
             create_user(user)
         if self.month > 12:
@@ -272,6 +302,12 @@ class MonthReport:
         return message
 
     def previous_page(self, update: Update, context: CallbackContext):
+        """Go to the previous page
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.month -= 1
         user = update.effective_user
@@ -289,6 +325,12 @@ class MonthReport:
         )
 
     def next_page(self, update: Update, context: CallbackContext):
+        """Go to the next page
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
         user = update.effective_user
@@ -306,6 +348,12 @@ class MonthReport:
         )
 
     def previous_year(self, update: Update, context: CallbackContext):
+        """Go to the previous year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         user = update.effective_user
@@ -323,6 +371,12 @@ class MonthReport:
         )
 
     def next_start_year(self, update: Update, context: CallbackContext):
+        """Go to the next year but at the start
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         self.month = 1
@@ -346,6 +400,12 @@ class MonthReport:
         )
 
     def previous_start_year(self, update: Update, context: CallbackContext):
+        """Go to the previous year but at the end
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         self.month = 12
@@ -369,6 +429,12 @@ class MonthReport:
         )
 
     def next_year(self, update: Update, context: CallbackContext):
+        """Go to the next year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year == self.current_year:

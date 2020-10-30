@@ -1,19 +1,26 @@
 #!/usr/bin/env python3
 
+""" File containing the function to delete a purchase """
+
 from telegram import Update, Message
 from telegram.ext import CallbackContext
-from root.util.util import is_group_allowed
 from mongoengine.errors import DoesNotExist
+from root.util.util import is_group_allowed
 from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
-from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED, ONLY_GROUP
 from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
 
 
-def delete_purchase(update: Update, context: CallbackContext):
+def delete_purchase(update: Update, context: CallbackContext) -> None:
+    """delete a purchase from a user
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
     message: Message = update.message if update.message else update.edited_message
     sender.delete_if_private(update, context, message)
     chat_id = message.chat.id
