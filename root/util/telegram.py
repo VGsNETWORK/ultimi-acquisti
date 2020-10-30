@@ -126,4 +126,7 @@ class TelegramSender:
             timeout (int, optional): The time to wait before deleting the message. Defaults to 0.
         """
         sleep(timeout)
-        context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        try:
+            context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        except BadRequest:
+            pass
