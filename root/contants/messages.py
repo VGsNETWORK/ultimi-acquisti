@@ -105,8 +105,13 @@ NO_YEAR_PURCHASE = (
 
 LAST_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è '
-    "stato effettuato in data <b>%s alle %s</b>, "
-    'puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>'
+    "stato effettuato in data <b>%s alle %s</b>. "
+    'Puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>!'
+)
+
+LAST_PURCHASE_USER = (
+    "<i>%s</i> ha effettuato il suo ultimo acquisto in data <b>%s alle %s</b>. "
+    'Puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>!'
 )
 
 MONTH_PURCHASE_REPORT = (
@@ -148,7 +153,7 @@ YEAR_COMPARE_PRICE = (
 
 COMPARE_YOU_WON = "🥳 Hai <b>vinto</b> di  <code>%s €</code>!"
 
-COMPARE_HE_WON = "😞 Hai <b>perso</b> di  <code>%s €</code>!"
+COMPARE_HE_WON = "😞 Hai <b>perso</b> di  <code>%s €</code>..."
 
 COMPARE_TIE = "💸 I vostri portafogli sono ugualmente leggeri..."
 
