@@ -6,6 +6,7 @@ from datetime import datetime
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, InlineKeyboardButton, User
 from telegram.ext import CallbackContext
+from root.helper.redis_message import add_message, is_owner
 from root.model.purchase import Purchase
 from root.contants.messages import (
     MONTH_PURCHASE_REPORT,
@@ -75,15 +76,17 @@ class MonthReport:
         keyboard = self.build_keyboard()
         message = self.retrieve_purchase(user)
         if expand:
-            context.bot.edit_message_text(
-                text=message,
-                chat_id=chat_id,
-                disable_web_page_preview=True,
-                message_id=message_id,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode="HTML",
-            )
+            if is_owner(message_id, user_id):
+                context.bot.edit_message_text(
+                    text=message,
+                    chat_id=chat_id,
+                    disable_web_page_preview=True,
+                    message_id=message_id,
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode="HTML",
+                )
             return
+        add_message(message_id, user_id)
         self.sender.send_and_delete(
             context, chat_id, message, InlineKeyboardMarkup(keyboard), timeout=300
         )
@@ -309,12 +312,15 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
-        self.month -= 1
         user = update.effective_user
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
+        self.month -= 1
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -332,12 +338,15 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
-        self.month += 1
         user = update.effective_user
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
+        self.month += 1
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -355,12 +364,15 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
-        self.year -= 1
         user = update.effective_user
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
+        self.year -= 1
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -378,6 +390,12 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
+        user = update.effective_user
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
         self.year += 1
         self.month = 1
         if self.year == self.current_year:
@@ -385,11 +403,8 @@ class MonthReport:
                 self.month = self.current_month
         if self.year > self.current_year:
             self.year = self.current_year
-        user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -407,6 +422,12 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
+        user = update.effective_user
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
         self.year -= 1
         self.month = 12
         if self.year == self.current_year:
@@ -414,11 +435,8 @@ class MonthReport:
                 self.month = self.current_month
         if self.year > self.current_year:
             self.year = self.current_year
-        user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -436,17 +454,20 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
+        user = update.effective_user
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            return
         self.year += 1
         if self.year == self.current_year:
             if self.month > self.current_month:
                 self.month = self.current_month
         if self.year > self.current_year:
             self.year = self.current_year
-        user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

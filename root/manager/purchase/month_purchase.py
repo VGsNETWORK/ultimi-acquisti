@@ -16,6 +16,7 @@ from root.helper.purchase_helper import (
     retrieve_sum_for_current_month,
     retrieve_sum_for_month,
 )
+from root.helper.redis_message import add_message
 from root.util.util import (
     get_current_month,
     get_current_year,
@@ -42,6 +43,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     chat_id = message.chat.id
     sender.delete_if_private(context, message)
     chat_type = message.chat.type
+    message_id = message.message_id
     user = message.from_user
     user_id = user.id
     first_name = user.first_name
@@ -89,6 +91,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
     ]
+    add_message(message_id, user_id)
     sender.send_and_delete(
         context,
         chat_id,
