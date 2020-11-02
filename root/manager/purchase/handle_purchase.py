@@ -145,4 +145,4 @@ def handle_purchase(client: Client, message: Message) -> None:
             )
     else:
         message = result["error"]
-    sender.send_and_deproto(client, chat_id, message, message_id)
+    sender.send_and_deproto(client, chat_id, message, message_id, timeout=10)
