@@ -80,7 +80,7 @@ PURCHASE_NOT_FOUND = (
     '<a href="tg://user?id=%s">%s</a>, non riesco a trovare l\'acquisto che hai fatto.'
 )
 
-PURCHASE_DELETED = "Acquisto cancellato con successo!"
+PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!</i>"
 
 GROUP_NOT_ALLOWED = (
     "Questo gruppo non è abilitato all'utilizzo di questo bot.\n"

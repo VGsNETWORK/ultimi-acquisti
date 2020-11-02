@@ -52,7 +52,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         message_id = reply.message_id
         purchase_helper.delete_purchase(user_id, message_id)
         context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-        sender.send_and_delete(context, chat_id, PURCHASE_DELETED)
+        sender.send_and_delete(context, chat_id, PURCHASE_DELETED, timeout=10)
     except DoesNotExist:
         message_id = message.message_id
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
