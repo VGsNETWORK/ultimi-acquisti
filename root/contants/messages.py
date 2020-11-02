@@ -166,3 +166,5 @@ NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"
 NO_QUOTE_FOUND = "Per lanciare questo comando prova a quotare un utente..."
 
 NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"
+
+SESSION_ENDED = "La sessione di questo messaggio è scaduta..."

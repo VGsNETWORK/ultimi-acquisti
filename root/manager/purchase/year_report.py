@@ -15,6 +15,7 @@ from root.contants.messages import (
     NO_YEAR_PURCHASE,
     YEAR_PURCHASE_TEMPLATE,
     NOT_MESSAGE_OWNER,
+    SESSION_ENDED,
 )
 from root.model.purchase import Purchase
 from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
@@ -74,21 +75,30 @@ class YearReport:
         keyboard = self.build_keyboard()
         message = self.retrieve_purchase(user)
         if expand:
-            if is_owner(message_id, user_id):
-                context.bot.answer_callback_query(update.callback_query.id)
-                context.bot.edit_message_text(
-                    text=message,
-                    chat_id=chat_id,
-                    disable_web_page_preview=True,
-                    message_id=message_id,
-                    reply_markup=InlineKeyboardMarkup(keyboard),
-                    parse_mode="HTML",
-                )
-            else:
+            try:
+                if is_owner(message_id, user_id):
+                    context.bot.answer_callback_query(update.callback_query.id)
+                    context.bot.edit_message_text(
+                        text=message,
+                        chat_id=chat_id,
+                        disable_web_page_preview=True,
+                        message_id=message_id,
+                        reply_markup=InlineKeyboardMarkup(keyboard),
+                        parse_mode="HTML",
+                    )
+                else:
+                    context.bot.answer_callback_query(
+                        update.callback_query.id,
+                        text=NOT_MESSAGE_OWNER,
+                        show_alert=True,
+                    )
+                return
+            except ValueError:
                 context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                    update.callback_query.id, text=SESSION_ENDED, show_alert=True
                 )
-            return
+                self.sender.delete_message(context, chat_id, message_id)
+                return
         add_message(message_id, user_id)
         self.sender.send_and_delete(
             context,
@@ -206,10 +216,17 @@ class YearReport:
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
-        if not is_owner(message_id, user_id):
+        try:
+            if not is_owner(message_id, user_id):
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                )
+                return
+        except ValueError:
             context.bot.answer_callback_query(
-                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                update.callback_query.id, text=SESSION_ENDED, show_alert=True
             )
+            self.sender.delete_message(context, chat_id, message_id)
             return
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
@@ -235,10 +252,17 @@ class YearReport:
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
-        if not is_owner(message_id, user_id):
+        try:
+            if not is_owner(message_id, user_id):
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                )
+                return
+        except ValueError:
             context.bot.answer_callback_query(
-                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                update.callback_query.id, text=SESSION_ENDED, show_alert=True
             )
+            self.sender.delete_message(context, chat_id, message_id)
             return
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
