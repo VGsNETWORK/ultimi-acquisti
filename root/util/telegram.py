@@ -8,6 +8,7 @@ from telegram import Bot, Message
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from root.util.logger import Logger
+from root.helper.redis_message import delete_message
 
 
 class TelegramSender:
@@ -127,6 +128,7 @@ class TelegramSender:
         """
         sleep(timeout)
         try:
+            delete_message(message_id)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
         except BadRequest:
             pass

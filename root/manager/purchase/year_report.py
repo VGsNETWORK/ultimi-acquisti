@@ -8,11 +8,13 @@ from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User, InlineKeyboardButton
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
+from root.helper.redis_message import add_message, is_owner
 from root.contants.messages import (
     YEAR_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
     NO_YEAR_PURCHASE,
     YEAR_PURCHASE_TEMPLATE,
+    NOT_MESSAGE_OWNER,
 )
 from root.model.purchase import Purchase
 from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
@@ -56,7 +58,6 @@ class YearReport:
         self.current_year = current_date.year
         message: Message = update.message if update.message else update.edited_message
         if not message:
-            context.bot.answer_callback_query(update.callback_query.id)
             message = update.effective_message
         else:
             self.sender.delete_if_private(context, message)
@@ -73,15 +74,22 @@ class YearReport:
         keyboard = self.build_keyboard()
         message = self.retrieve_purchase(user)
         if expand:
-            context.bot.edit_message_text(
-                text=message,
-                chat_id=chat_id,
-                disable_web_page_preview=True,
-                message_id=message_id,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode="HTML",
-            )
+            if is_owner(message_id, user_id):
+                context.bot.answer_callback_query(update.callback_query.id)
+                context.bot.edit_message_text(
+                    text=message,
+                    chat_id=chat_id,
+                    disable_web_page_preview=True,
+                    message_id=message_id,
+                    reply_markup=InlineKeyboardMarkup(keyboard),
+                    parse_mode="HTML",
+                )
+            else:
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                )
             return
+        add_message(message_id, user_id)
         self.sender.send_and_delete(
             context,
             chat_id,
@@ -194,13 +202,19 @@ class YearReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
-        self.year -= 1
         user = update.effective_user
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
+            return
+        context.bot.answer_callback_query(update.callback_query.id)
+        self.year -= 1
+        message = self.retrieve_purchase(user)
+        keyboard = self.build_keyboard()
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -217,15 +231,21 @@ class YearReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
+        user = update.effective_user
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
+        user_id = user.id
+        if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
+            return
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year >= self.current_year:
             self.year = self.current_year
-        user = update.effective_user
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

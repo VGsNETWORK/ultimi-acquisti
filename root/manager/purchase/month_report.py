@@ -13,6 +13,7 @@ from root.contants.messages import (
     REPORT_PURCHASE_TOTAL,
     NO_MONTH_PURCHASE,
     PURCHASE_REPORT_TEMPLATE,
+    NOT_MESSAGE_OWNER,
 )
 from root.helper.purchase_helper import (
     retrieve_month_purchases_for_user,
@@ -59,7 +60,6 @@ class MonthReport:
         self.current_year = current_date.year
         message: Message = update.message if update.message else update.edited_message
         if not message:
-            context.bot.answer_callback_query(update.callback_query.id)
             message = update.effective_message
         else:
             self.sender.delete_if_private(context, message)
@@ -77,6 +77,7 @@ class MonthReport:
         message = self.retrieve_purchase(user)
         if expand:
             if is_owner(message_id, user_id):
+                context.bot.answer_callback_query(update.callback_query.id)
                 context.bot.edit_message_text(
                     text=message,
                     chat_id=chat_id,
@@ -84,6 +85,10 @@ class MonthReport:
                     message_id=message_id,
                     reply_markup=InlineKeyboardMarkup(keyboard),
                     parse_mode="HTML",
+                )
+            else:
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
                 )
             return
         add_message(message_id, user_id)
@@ -311,13 +316,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.month -= 1
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
@@ -337,13 +345,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
@@ -363,13 +374,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
@@ -389,13 +403,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         self.month = 1
         if self.year == self.current_year:
@@ -421,13 +438,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         self.month = 12
         if self.year == self.current_year:
@@ -453,13 +473,16 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        context.bot.answer_callback_query(update.callback_query.id)
         user = update.effective_user
         message_id = update.effective_message.message_id
         chat_id = update.effective_chat.id
         user_id = user.id
         if not is_owner(message_id, user_id):
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+            )
             return
+        context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year == self.current_year:
             if self.month > self.current_month:

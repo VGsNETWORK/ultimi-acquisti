@@ -45,7 +45,7 @@ def add_message(message_id: int, user_id: int) -> None:
         message_id (int): The message_id of the message
         user_id (int): The user who typed the command
     """
-    message_key = f"{MESSAGE_PREFIX}_{message_id+1}"
+    message_key = f"{MESSAGE_PREFIX}_{message_id + 1}"
     red.set(message_key, user_id)
 
 
