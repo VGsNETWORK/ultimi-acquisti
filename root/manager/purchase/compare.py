@@ -104,6 +104,10 @@ def compare(
         else:
             custom_year = cdate.year
             custom_month = cdate.month
+    if len(str(custom_year)) == 2:
+        custom_year = int(f"20{custom_year}")
+    if custom_year > cdate.year:
+        custom_year = cdate.year
     if not rmessage:
         return
     ruser = rmessage.from_user
