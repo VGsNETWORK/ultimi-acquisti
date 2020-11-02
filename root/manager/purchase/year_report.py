@@ -186,7 +186,8 @@ class YearReport:
             message = NO_YEAR_PURCHASE % (user_id, first_name, self.year)
         else:
             message = YEAR_PURCHASE_REPORT % (user_id, first_name, self.year)
-            for i in range(0, 12):
+            mrange = self.current_month if self.year == self.current_year else 12
+            for i in range(0, mrange):
                 price = format_price(purchases[i])
                 month = get_month_string(i + 1, False)
                 spaces = 11 - len(price)
