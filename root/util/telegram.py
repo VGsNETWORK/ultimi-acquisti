@@ -137,7 +137,7 @@ class TelegramSender:
         )
         thread.start()
 
-    def delete_if_private(self, cofrom pyrogram.handlers import MessageHandlerntext: CallbackContext, message: Message):
+    def delete_if_private(self, context: CallbackContext, message: Message):
         """delete a message if it has been sent over a private chat
 
         Args:
