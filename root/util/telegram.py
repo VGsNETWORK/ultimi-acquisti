@@ -7,6 +7,8 @@ from time import sleep
 from telegram import Bot, Message
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
+from pyrogram import Client
+from pyrogram.types import Message as ProtoMessage
 from root.util.logger import Logger
 from root.helper.redis_message import delete_message
 
@@ -69,6 +71,37 @@ class TelegramSender:
         except BadRequest:
             self._logger.error("400 Bad Request")
 
+    def send_and_deproto(
+        self,
+        client: Client,
+        chat_id: int,
+        text: str,
+        reply_to_message_id: int = None,
+        parse_mode: str = "HTML",
+        timeout: int = 360,
+    ):
+        """Send a message and create a thread to delete it after the timeout
+
+        Args:
+            client (Client): The mtproto bot instance
+            chat_id (int): The chat where to send the message
+            text (str): The text of the message
+            reply_to_message_id (int, optional): The message to reply to. Defaults to None.
+            parse_mode (str, optional): How to parse the message. Defaults to "HTML".
+            timeout (int, optional): [description]. Defaults to 360.
+        """
+        message: ProtoMessage = client.send_message(
+            chat_id=chat_id,
+            text=text,
+            reply_to_message_id=reply_to_message_id,
+            parse_mode=parse_mode,
+        )
+        thread = threading.Thread(
+            target=self.deproto_message,
+            args=(client, chat_id, message.message_id, timeout),
+        )
+        thread.start()
+
     def send_and_delete(
         self,
         context: CallbackContext,
@@ -84,7 +117,7 @@ class TelegramSender:
         Args:
             context (CallbackContext): The context of the bot used to send the message
             chat_id (int): The chat where to send the message
-            text (str): The message of the text
+            text (str): The text of the message
             reply_markup ([type], optional): The keyboard to send. Defaults to None.
             reply_to_message_id (int, optional): The message to reply to. Defaults to None.
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
@@ -104,7 +137,7 @@ class TelegramSender:
         )
         thread.start()
 
-    def delete_if_private(self, context: CallbackContext, message: Message):
+    def delete_if_private(self, cofrom pyrogram.handlers import MessageHandlerntext: CallbackContext, message: Message):
         """delete a message if it has been sent over a private chat
 
         Args:
@@ -130,5 +163,23 @@ class TelegramSender:
         try:
             delete_message(message_id)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        except BadRequest:
+            pass
+
+    def deproto_message(
+        self, client: Client, chat_id: int, message_id: int, timeout: int = 0
+    ):
+        """Delete the message after the timeoutupdate,
+
+        Args:
+            client (Client): The mtproto bot instance
+            chat_id (int): The chat where to delete the message
+            message_id (int): The message to delete
+            timeout (int, optional): The time to wait before deleting the message. Defaults to 0.
+        """
+        sleep(timeout)
+        try:
+            delete_message(message_id)
+            client.delete_messages(chat_id=chat_id, message_ids=message_id)
         except BadRequest:
             pass

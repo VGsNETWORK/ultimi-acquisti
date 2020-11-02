@@ -5,8 +5,7 @@
 import re
 from datetime import datetime
 from pyrogram.types import Message
-from pyrogram import Client, filters
-from pyrogram.handlers import MessageHandler
+from pyrogram import Client
 from pyrogram.client import User
 from root.util.logger import Logger
 from root.util.util import is_group_allowed
@@ -48,14 +47,14 @@ def add_purchase(
 
 
 def handle_purchase(client: Client, message: Message) -> None:
-    token = retrieve_key("TOKEN")
-    log_channel = retrieve_key("ERROR_CHANNEL")
     """handle a new or a modified purchase
 
     Args:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    token = retrieve_key("TOKEN")
+    log_channel = retrieve_key("ERROR_CHANNEL")
     custom_date_error = False
     logger.info("Received message from mtproto")
     caption = message.caption if message.caption else message.text
@@ -146,9 +145,4 @@ def handle_purchase(client: Client, message: Message) -> None:
             )
     else:
         message = result["error"]
-    client.send_message(
-        chat_id=chat_id,
-        text=message,
-        reply_to_message_id=message_id,
-        parse_mode="HTML",
-    )
+    sender.send_and_deproto(client, chat_id, message, message_id)
