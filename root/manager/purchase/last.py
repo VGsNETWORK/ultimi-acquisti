@@ -59,7 +59,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
         date = purchase.creation_date
         time = date.strftime("%H:%M")
         date = date.strftime("%d/%m/%Y")
-        if not message.reply_to_message:
+        if not message.reply_to_message or user.id == user_id:
             message = LAST_PURCHASE % (
                 user_id,
                 first_name,

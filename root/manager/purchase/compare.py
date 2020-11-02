@@ -71,11 +71,11 @@ def compare(
     message: Message = update.message if update.message else update.edited_message
     sender.delete_if_private(context, message)
     chat_id = message.chat.id
-    if not message.reply_to_message:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
-        return
     if message.chat.type == "private":
         sender.send_and_delete(context, chat_id, ONLY_GROUP)
+        return
+    if not message.reply_to_message:
+        sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
         return
     rmessage: Message = message.reply_to_message
     if not month:

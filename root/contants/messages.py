@@ -66,9 +66,9 @@ YEAR_PREVIOUS_PURCHASES_LOWER = (
 
 YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s €</code>."
 
-PURCHASE_ADDED = "Acquisto aggiunto con successo!"
+PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
-PURCHASE_MODIFIED = "Acquisto modificato con successo!"
+PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
 
@@ -104,8 +104,8 @@ NO_YEAR_PURCHASE = (
 )
 
 LAST_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, il tuo ultimo acquisto è '
-    "stato effettuato in data <b>%s alle %s</b>. "
+    '<a href="tg://user?id=%s">%s</a>, hai effettuato il tuo ultimo acquisto '
+    "in data <b>%s alle %s</b>. "
     'Puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>!'
 )
 
@@ -167,4 +167,7 @@ NO_QUOTE_FOUND = "Per lanciare questo comando prova a quotare un utente..."
 
 NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"
 
-SESSION_ENDED = "La sessione di questo messaggio è scaduta..."
+SESSION_ENDED = (
+    "Il bot è stato riavviato per motivi tecnici, la sessione "
+    "di questo messaggio è scaduta."
+)
