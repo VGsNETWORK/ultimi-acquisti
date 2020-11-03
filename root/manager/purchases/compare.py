@@ -3,15 +3,15 @@
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from root.contants.messages import (
-    COMPARE_HE_WON, 
-    COMPARE_NO_PURCHASE, 
-    COMPARE_TIE, 
-    COMPARE_YOU_WON, 
-    YEAR_COMPARE_PRICE, 
+    COMPARE_HE_WON,
+    COMPARE_NO_PURCHASE,
+    COMPARE_TIE,
+    COMPARE_YOU_WON,
+    YEAR_COMPARE_PRICE,
     MONTH_COMPARE_PRICE
 )
 from root.helper.purchase_helper import (
-    retrieve_sum_for_current_month, 
+    retrieve_sum_for_current_month,
     retrieve_sum_for_current_year
 )
 from root.util.util import get_current_month, get_current_year
@@ -42,7 +42,6 @@ def compare(update: Update, context: CallbackContext, template: str, use_month: 
     else:
         upurchase = retrieve_sum_for_current_year(user_id)
         rpurchase = retrieve_sum_for_current_year(ruser_id)
-    
     date = get_current_year()
     if use_month:
         date = f"{get_current_month(False, True)} {date}"
