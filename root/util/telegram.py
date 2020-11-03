@@ -98,8 +98,9 @@ class TelegramSender:
             parse_mode=parse_mode,
         )
         create_process(
-            target=self.delete_message,
-            args=(context, chat_id, message.message_id, timeout)
+            name_prefix=message.message_id,
+            target=self.deproto_message,
+            args=(client, chat_id, message.message_id, timeout)
         )
 
     def send_and_delete(
@@ -132,6 +133,7 @@ class TelegramSender:
             reply_markup=reply_markup,
         )
         create_process(
+            name_prefix=message.message_id,
             target=self.delete_message,
             args=(context, chat_id, message.message_id, timeout)
         )

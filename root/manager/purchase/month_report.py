@@ -20,6 +20,7 @@ from root.helper.purchase_helper import (
     retrieve_month_purchases_for_user,
     retrieve_sum_for_month,
 )
+from root.helper.process_helper import restart_process
 from root.helper.user_helper import create_user, user_exists
 from root.util.logger import Logger
 from root.util.telegram import TelegramSender

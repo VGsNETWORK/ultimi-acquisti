@@ -40,12 +40,12 @@ def restart_process(key: str) -> None:
     create_process(key, target, args)
 
 
-def create_process(name_prefix: str, target: function, args: tuple) -> None:
+def create_process(name_prefix: str, target: callable, args: tuple) -> None:
     """Create a new background process and start it
 
     Args:
         name_prefix (str): The name prefix used to identify the process
-        target (function): The target to execute by the process
+        target (callable): The target to execute by the process
         args (tuple): The arguments to pass to the target
     """
     name: str = PROCESS_NAME % name_prefix
