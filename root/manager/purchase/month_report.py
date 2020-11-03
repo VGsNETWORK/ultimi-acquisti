@@ -79,6 +79,7 @@ class MonthReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
+                    restart_process(message_id)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
@@ -342,6 +343,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.month -= 1
         message = self.retrieve_purchase(user)
@@ -378,6 +380,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
         message = self.retrieve_purchase(user)
@@ -414,6 +417,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         message = self.retrieve_purchase(user)
@@ -450,6 +454,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         self.month = 1
@@ -492,6 +497,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         self.month = 12
@@ -534,6 +540,7 @@ class MonthReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year == self.current_year:

@@ -18,6 +18,7 @@ from root.contants.messages import (
     SESSION_ENDED,
 )
 from root.model.purchase import Purchase
+from root.helper.process_helper import restart_process
 from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
 from root.util.logger import Logger
 from root.util.telegram import TelegramSender
@@ -77,6 +78,7 @@ class YearReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
+                    restart_process(message_id)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
@@ -229,6 +231,7 @@ class YearReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         message = self.retrieve_purchase(user)
@@ -265,6 +268,7 @@ class YearReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
+        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.year += 1
         if self.year >= self.current_year:

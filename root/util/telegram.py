@@ -11,6 +11,7 @@ from pyrogram import Client
 from pyrogram.types import Message as ProtoMessage
 from root.util.logger import Logger
 from root.helper.redis_message import delete_message
+from root.helper.process_helper import create_process
 
 
 class TelegramSender:
@@ -96,11 +97,10 @@ class TelegramSender:
             reply_to_message_id=reply_to_message_id,
             parse_mode=parse_mode,
         )
-        thread = threading.Thread(
-            target=self.deproto_message,
-            args=(client, chat_id, message.message_id, timeout),
+        create_process(
+            target=self.delete_message,
+            args=(context, chat_id, message.message_id, timeout)
         )
-        thread.start()
 
     def send_and_delete(
         self,
@@ -123,7 +123,7 @@ class TelegramSender:
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
             timeout (int, optional): The timeout after the message will be deleted. Defaults to 360.
         """
-        message = context.bot.send_message(
+        message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=text,
             disable_web_page_preview=True,
@@ -131,11 +131,10 @@ class TelegramSender:
             reply_to_message_id=reply_to_message_id,
             reply_markup=reply_markup,
         )
-        thread = threading.Thread(
+        create_process(
             target=self.delete_message,
-            args=(context, chat_id, message.message_id, timeout),
+            args=(context, chat_id, message.message_id, timeout)
         )
-        thread.start()
 
     def delete_if_private(self, context: CallbackContext, message: Message):
         """delete a message if it has been sent over a private chat
