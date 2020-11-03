@@ -5,7 +5,7 @@
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.util import is_group_allowed
 from root.model.purchase import Purchase
 from root.helper.purchase_helper import get_last_purchase
@@ -21,11 +21,11 @@ from root.util.telegram import TelegramSender
 
 
 sender = TelegramSender()
-logger = Logger()
 
 
 def last_purchase(update: Update, context: CallbackContext) -> None:
     """ Retrieve the last purchase of the user who typed the command """
+    logger.info("received command last purchase")
     message: Message = update.message if update.message else update.edited_message
     sender.delete_if_private(context, message)
     chat_id = message.chat.id

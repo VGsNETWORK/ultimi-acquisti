@@ -2,14 +2,13 @@
 
 """ This File contains a class with various telegram tools """
 
-import threading
 from time import sleep
 from telegram import Bot, Message
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from pyrogram import Client
 from pyrogram.types import Message as ProtoMessage
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.helper.redis_message import delete_message
 from root.helper.process_helper import create_process
 
@@ -18,7 +17,6 @@ class TelegramSender:
     """ This class contains a class with various telegram tools """
 
     def __init__(self):
-        self._logger = Logger()
         self._token = None
         self._bot = None
 
@@ -43,12 +41,12 @@ class TelegramSender:
         """
         self._bot_init(token)
         try:
-            self._logger.info("sending message to chat {}".format(chat_id))
+            logger.info("sending message to chat {}".format(chat_id))
             self._bot.send_message(chat_id=chat_id, text=message, **kwargs)
         except Unauthorized:
-            self._logger.error("403 Unauthorized, bot token is wrong")
+            logger.error("403 Unauthorized, bot token is wrong")
         except BadRequest:
-            self._logger.error("400 Bad Request")
+            logger.error("400 Bad Request")
 
     def send_photo(
         self, token: str, chat_id: int, photo: bytes, caption: str, **kwargs
@@ -63,14 +61,14 @@ class TelegramSender:
         """
         self._bot_init(token)
         try:
-            self._logger.info("sending photo to chat {}".format(chat_id))
+            logger.info("sending photo to chat {}".format(chat_id))
             self._bot.send_photo(
                 chat_id=chat_id, photo=photo, caption=caption, **kwargs
             )
         except Unauthorized:
-            self._logger.error("403 Unauthorized, bot token is wrong")
+            logger.error("403 Unauthorized, bot token is wrong")
         except BadRequest:
-            self._logger.error("400 Bad Request")
+            logger.error("400 Bad Request")
 
     def send_and_deproto(
         self,
@@ -100,7 +98,7 @@ class TelegramSender:
         create_process(
             name_prefix=message.message_id,
             target=self.deproto_message,
-            args=(client, chat_id, message.message_id, timeout)
+            args=(client, chat_id, message.message_id, timeout),
         )
 
     def send_and_delete(
@@ -135,7 +133,7 @@ class TelegramSender:
         create_process(
             name_prefix=message.message_id,
             target=self.delete_message,
-            args=(context, chat_id, message.message_id, timeout)
+            args=(context, chat_id, message.message_id, timeout),
         )
 
     def delete_if_private(self, context: CallbackContext, message: Message):

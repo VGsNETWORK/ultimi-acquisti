@@ -10,7 +10,7 @@ from root.helper.purchase_helper import (
     retrieve_sum_for_month,
     retrieve_sum_for_year,
 )
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.util import (
     format_price,
     get_month_string,
@@ -31,8 +31,6 @@ from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
 
-logger = Logger()
-
 
 def month_compare(update: Update, context: CallbackContext) -> None:
     """Compare the month with an user
@@ -41,6 +39,7 @@ def month_compare(update: Update, context: CallbackContext) -> None:
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    logger.info("received command month compare")
     compare(update, context, retrieve_sum_for_month, True)
 
 
@@ -51,6 +50,7 @@ def year_compare(update: Update, context: CallbackContext) -> None:
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    logger.info("received command year compare")
     compare(update, context, retrieve_sum_for_year, False)
 
 

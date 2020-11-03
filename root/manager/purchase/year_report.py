@@ -20,7 +20,7 @@ from root.contants.messages import (
 from root.model.purchase import Purchase
 from root.helper.process_helper import restart_process
 from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
     create_button,
@@ -34,7 +34,6 @@ class YearReport:
     """ Class used to display the year report of a user """
 
     def __init__(self):
-        self.logger = Logger()
         self.sender = TelegramSender()
         current_date = datetime.now()
         self.month = current_date.month
@@ -53,6 +52,7 @@ class YearReport:
             context (CallbackContext): The context of the telegram bot
             expand (bool, optional): if the call comes from a purchase message. Defaults to False.
         """
+        logger.info("Received year report command")
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month

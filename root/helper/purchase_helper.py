@@ -6,10 +6,8 @@ import re
 from datetime import datetime
 from calendar import monthrange
 from mongoengine.errors import DoesNotExist
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.model.purchase import Purchase
-
-logger = Logger()
 
 
 def before(to_check: str, to_check_with: str, to_check_from: str) -> bool:

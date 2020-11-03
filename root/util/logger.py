@@ -1,52 +1,50 @@
 #!/usr/bin/env python3
 
+""" File with the logger class used by the various files """
+
 import logging
 import configparser
 
-""" File with the logger class used by the various files """
+
+CONFIG = configparser.ConfigParser()
+CONFIG.read("logger.conf")
+FORMAT = "%(asctime)-15s %(levelname)s:%(funcName)-8s %(message)s"
+FILE = "server.log"
+LEVEL = logging.INFO
+logging.basicConfig(filename=FILE, filemode="a", format=FORMAT, level=LEVEL)
 
 
-class Logger:
-    """ Class used to log messages in a file """
+def info(message: str):
+    """Log a message of at level INFO
 
-    def __init__(self):
-        self._config = configparser.ConfigParser()
-        self._config.read("logger.conf")
-        self._format = "%(asctime)-15s %(levelname)s:%(funcName)-8s %(message)s"
-        self._file = "server.log"
-        self._level = logging.INFO
-        logging.basicConfig(
-            filename=self._file, filemode="a", format=self._format, level=self._level
-        )
+    Args:
+        message ([str]): The message to log
+    """
+    logging.info(message)
 
-    def info(self, message: str):
-        """Log a message of at level INFO
 
-        Args:
-            message ([str]): The message to log
-        """
-        logging.info(message)
+def error(message: str):
+    """Log a message of at level ERROR
 
-    def error(self, message: str):
-        """Log a message of at level ERROR
+    Args:
+        message ([str]): The message to log
+    """
+    logging.error(message)
 
-        Args:
-            message ([str]): The message to log
-        """
-        logging.error(message)
 
-    def warn(self, message: str):
-        """Log a message of at level WARNING
+def warn(message: str):
+    """Log a message of at level WARNING
 
-        Args:
-            message ([str]): The message to log
-        """
-        logging.warn(message)
+    Args:
+        message ([str]): The message to log
+    """
+    logging.warning(message)
 
-    def debug(self, message: str):
-        """Log a message of at level DEBUG
 
-        Args:
-            message ([str]): The message to log
-        """
-        logging.debug(message)
+def debug(message: str):
+    """Log a message of at level DEBUG
+
+    Args:
+        message ([str]): The message to log
+    """
+    logging.debug(message)

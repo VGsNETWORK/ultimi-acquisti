@@ -7,7 +7,7 @@ from datetime import datetime
 from pyrogram.types import Message
 from pyrogram import Client
 from pyrogram.client import User
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.util import is_group_allowed
 from root.util.telegram import TelegramSender
 from root.helper.purchase_helper import create_purchase
@@ -21,7 +21,6 @@ from root.contants.messages import (
     PURCHASE_ADDED,
 )
 
-logger = Logger()
 sender = TelegramSender()
 
 

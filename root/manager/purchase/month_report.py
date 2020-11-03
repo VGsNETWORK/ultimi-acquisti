@@ -22,7 +22,7 @@ from root.helper.purchase_helper import (
 )
 from root.helper.process_helper import restart_process
 from root.helper.user_helper import create_user, user_exists
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
     create_button,
@@ -36,7 +36,6 @@ class MonthReport:
     """ Class used to display the month report of a user """
 
     def __init__(self):
-        self.logger = Logger()
         self.sender = TelegramSender()
         current_date = datetime.now()
         self.month = current_date.month
@@ -55,6 +54,7 @@ class MonthReport:
             context (CallbackContext): The context of the telegram bot
             expand (bool, optional): if the call comes from a purchase message. Defaults to False.
         """
+        logger.info("received month report command")
         current_date = datetime.now()
         self.month = current_date.month
         self.current_month = current_date.month

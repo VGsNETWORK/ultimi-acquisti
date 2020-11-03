@@ -21,7 +21,7 @@ from root.manager.purchase.month_purchase import month_purchase
 from root.manager.purchase.year_purchase import year_purchase
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
 
@@ -33,7 +33,6 @@ class BotManager:
         self.updater: Updater = None
         self.disp: Dispatcher = None
         self.token: str = None
-        self.logger = Logger()
         self.sender = TelegramSender()
         self.error = ErrorHandler()
         self.month_report = MonthReport()
@@ -45,8 +44,8 @@ class BotManager:
         self.updater = Updater(self.token, use_context=True)
         self.disp = self.updater.dispatcher
         self.add_handler()
-        self.logger.info("Il bot si sta avviando...")
-        self.logger.info("Start polling...")
+        logger.info("Il bot si sta avviando...")
+        logger.info("Start polling...")
         self.updater.start_polling(clean=True)
 
     def restart(self, update: Update, context: CallbackContext):

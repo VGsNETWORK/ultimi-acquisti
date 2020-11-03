@@ -3,11 +3,10 @@
 """ File to handle messages to delete and who owns them """
 
 import redis
-from root.util.logger import Logger
+import root.util.logger as logger
 
 MESSAGE_PREFIX = "ultimi_acquisti"
 red = redis.Redis(db=1)
-logger = Logger()
 
 
 def is_owner(message_id: int, user_id: int) -> bool:

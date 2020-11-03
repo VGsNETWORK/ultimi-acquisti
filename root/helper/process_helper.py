@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-from multiprocessing import Process, active_children
-from root.util.logger import Logger
+""" File to handle background process created by the bot """
+
+from multiprocessing import active_children
+from root.model.cprocess import CProcess as Process
+import root.util.logger as logger
 
 PROCESS_NAME = "ultimi_acquisti_process_%s"
 
-logger = Logger()
 
 def find_process(name_prefix: str) -> Process:
     """Retrieve a process using a prefix name as a key

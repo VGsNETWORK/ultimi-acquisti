@@ -13,7 +13,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
 from telegram import InlineKeyboardButton
 from root.util.telegram import TelegramSender
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.contants.messages import (
     DB_CONNECTION_ERROR,
     DB_CONNECTION_SUCCESS,
@@ -21,7 +21,6 @@ from root.contants.messages import (
     GROUP_NOT_ALLOWED,
 )
 
-logger = Logger()
 sender = TelegramSender()
 
 long_month = {

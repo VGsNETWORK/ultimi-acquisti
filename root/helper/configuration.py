@@ -6,7 +6,7 @@ import os
 from mongoengine import DoesNotExist
 from pymongo.errors import OperationFailure
 from root.model.configuration import Configuration
-from root.util.logger import Logger
+import root.util.logger as logger
 from root.util.telegram import TelegramSender
 
 
@@ -14,12 +14,11 @@ class ConfigurationHelper:
     """ Class to manage the bot configurations """
 
     def __init__(self):
-        self.logger = Logger()
         self.sender = TelegramSender()
 
     def load_configurations(self) -> None:
         """ Load configuration from the database """
-        self.logger.info("loading configurations from database")
+        logger.info("loading configurations from database")
         try:
             configurations = Configuration.objects()
         except OperationFailure:
@@ -35,12 +34,12 @@ class ConfigurationHelper:
             code ([str]): The key of the row to update
             value ([str]): The new value
         """
-        self.logger.info(f"updating configuration {code}")
+        logger.info(f"updating configuration {code}")
         try:
             configuration = Configuration.objects().get(code=code)
             configuration.value = value
             configuration.save()
-            self.logger.info("updated succesfully")
+            logger.info("updated succesfully")
         except DoesNotExist:
-            self.logger.warn("configuration not found, creating it")
+            logger.warn("configuration not found, creating it")
             Configuration(code=code, value=value).save()
