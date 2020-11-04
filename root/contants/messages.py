@@ -99,8 +99,8 @@ NO_MONTH_PURCHASE = (
 )
 
 NO_YEAR_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, durante il <b>%s</b>'
-    " non hai registrato alcun acquisto."
+    '<a href="tg://user?id=%s">%s</a>, durante il <b>%s</b> '
+    "non hai registrato alcun acquisto."
 )
 
 LAST_PURCHASE = (
@@ -170,4 +170,47 @@ NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"
 SESSION_ENDED = (
     "Il bot è stato riavviato per motivi tecnici, la sessione "
     "di questo messaggio è scaduta."
+)
+
+
+HOW_TO_PAGE_ONE = (
+    "Per far sì che il bot riconosca un tuo acquisto è necessario "
+    "inviare nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n"
+    "Indicando anche una cifra numerica, il bot registrerà l'acquisto con l'importo indicato. "
+    "Se nel testo è presente più di un numero, solo il primo verrà preso "
+    "in considerazione e assegnato come costo."
+)
+
+HOW_TO_PAGE_TWO = (
+    "Il bot supporta molteplici formati per l'inserimento dell'importo:\n\n"
+    "   •  <code>22</code>\n"
+    "   •  <code>22,50 €</code>\n"
+    "   •  <code>22.50</code>\n"
+    "   •  <code>2250,10</code>\n"
+    "   •  <code>€ 2,250.10</code>\n"
+    "   •  <code>2.250,10€</code>\n"
+    "   •  <code>2'250.10</code>\n\n"
+    "sono tutti formati validi."
+)
+
+HOW_TO_PAGE_THREE = (
+    "Omettendo l'importo, il bot aggiungerà un acquisto con importo di "
+    "default di <code>0,00€</code> (utile per i regali o se non si vuole rivelare il "
+    "prezzo di un certo acquisto – nel secondo caso, tieni presente che "
+    "questo avrà ripercussioni sui totali mensili e annuali).\n\n"
+    "Il restante testo inserito al di fuori dell'hashtag e del prezzo sarà "
+    "ignorato dal bot, quindi sentiti libero di aggiungere una qualsiasi "
+    "descrizione riguardante il tuo acquisto."
+)
+
+HOW_TO_PAGE_FOUR = (
+    "Tieni presente che puoi cambiare, aggiungere o rimuovere l'importo di "
+    "un acquisto in qualsiasi momento; per farlo ti basterà:\n"
+    "   • cercare il messaggio relativo al tuo acquisto;\n"
+    "   • cliccarci sopra (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
+    "   • selezionare <b>Modifica</b>;\n"
+    "   • dopo aver apportato le modifiche, confermare.\n\n"
+    "Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva, "
+    "sempre con la stessa procedura; ti basterà aggiungere l'hashtag <code>#ultimiacquisti</code> "
+    "in fase di modifica del messaggio."
 )

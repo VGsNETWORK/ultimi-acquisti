@@ -52,6 +52,8 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    if message.from_user.is_bot:
+        return
     token = retrieve_key("TOKEN")
     log_channel = retrieve_key("ERROR_CHANNEL")
     custom_date_error = False

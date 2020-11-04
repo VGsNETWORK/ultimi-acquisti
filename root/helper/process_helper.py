@@ -25,6 +25,22 @@ def find_process(name_prefix: str) -> Process:
     return None
 
 
+def stop_process(key: str) -> None:
+    """Stop a background process identified by a key
+
+    Args:
+        key (str): The identifier of the process
+    """
+    key = str(key)
+    logger.info(f"restarting process with {key}")
+    process: Process = find_process(key)
+    if not process:
+        logger.warn(f"Unable to find the process with name {PROCESS_NAME % key}")
+        return
+    process.terminate()
+    process.shutdown()
+
+
 def restart_process(key: str) -> None:
     """Restart a background process identified by a key
 

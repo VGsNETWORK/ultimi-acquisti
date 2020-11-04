@@ -22,6 +22,7 @@ from root.manager.purchase.year_purchase import year_purchase
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
 import root.util.logger as logger
+from root.manager.help import help_navigate, help_init, help_end
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
 
@@ -96,6 +97,13 @@ class BotManager:
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))
+        self.disp.add_handler(CommandHandler("howto", help_init))
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=help_navigate, pattern="how_to_page")
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=help_end, pattern="how_to_end")
+        )
         self.disp.add_handler(CommandHandler("cancellaspesa", delete_purchase))
         self.disp.add_handler(CommandHandler("ultimoacquisto", last_purchase))
         self.disp.add_handler(CommandHandler("comparamese", month_compare))
