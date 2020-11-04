@@ -12,7 +12,7 @@ from telegram.ext import (
     Updater,
 )
 
-from root.manager.error import ErrorHandler
+from root.manager.error import handle_error
 from root.util.util import retrieve_key, is_group_allowed
 from root.manager.purchase.month_report import MonthReport
 from root.manager.purchase.year_report import YearReport
@@ -34,7 +34,6 @@ class BotManager:
         self.disp: Dispatcher = None
         self.token: str = None
         self.sender = TelegramSender()
-        self.error = ErrorHandler()
         self.month_report = MonthReport()
         self.year_report = YearReport()
 
@@ -94,7 +93,7 @@ class BotManager:
 
     def add_handler(self):
         """Add handlers for the various operations"""
-        self.disp.add_error_handler(self.error.handle_error)
+        self.disp.add_error_handler(handle_error)
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("cancellaspesa", delete_purchase))
