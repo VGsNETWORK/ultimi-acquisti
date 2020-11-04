@@ -32,6 +32,7 @@ def restart_process(key: str) -> None:
         key (str): The identifier of the process
     """
     key = str(key)
+    logger.info(f"restarting process with {key}")
     process: Process = find_process(key)
     if not process:
         logger.warn(f"Unable to find the process with name {PROCESS_NAME % key}")
@@ -39,6 +40,9 @@ def restart_process(key: str) -> None:
     target = process.target
     args = process.args
     process.terminate()
+    process.shutdown()
+    # process.kill()
+    # process.close()
     create_process(key, target, args)
 
 
@@ -51,5 +55,7 @@ def create_process(name_prefix: str, target: callable, args: tuple) -> None:
         args (tuple): The arguments to pass to the target
     """
     name: str = PROCESS_NAME % name_prefix
-    process: Process = Process(target=target, args=args, name=name)
+    process: Process = Process(group=None, target=target, args=args, name=name)
+    process.daemon = True
+    logger.info(f"starting process {name} with {args}")
     process.start()

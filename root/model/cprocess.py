@@ -2,7 +2,7 @@
 
 """ Custom class for Background Process """
 
-from multiprocessing import Process
+from multiprocessing import Process, Event
 
 
 class CProcess(Process):
@@ -14,3 +14,10 @@ class CProcess(Process):
         super().__init__(group=group, target=target, args=args, name=name)
         self.target = target
         self.args = args
+        self.exit = Event()
+
+    def shutdown(self):
+        """shutdown process"""
+        self._popen.terminate()
+        self._popen.kill()
+        self.exit.set()
