@@ -178,10 +178,7 @@ HOW_TO_PAGE_ONE = (
     "inviare nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n"
     "Indicando anche una cifra numerica, il bot registrerà l'acquisto con l'importo indicato. "
     "Se nel testo è presente più di un numero, solo il primo verrà preso "
-    "in considerazione e assegnato come costo."
-)
-
-HOW_TO_PAGE_TWO = (
+    "in considerazione e assegnato come costo.\n\n"
     "Il bot supporta molteplici formati per l'inserimento dell'importo:\n\n"
     "   •  <code>22</code>\n"
     "   •  <code>22,50 €</code>\n"
@@ -193,7 +190,7 @@ HOW_TO_PAGE_TWO = (
     "sono tutti formati validi."
 )
 
-HOW_TO_PAGE_THREE = (
+HOW_TO_PAGE_TWO = (
     "Omettendo l'importo, il bot aggiungerà un acquisto con importo di "
     "default di <code>0,00€</code> (utile per i regali o se non si vuole rivelare il "
     "prezzo di un certo acquisto – nel secondo caso, tieni presente che "
@@ -203,7 +200,7 @@ HOW_TO_PAGE_THREE = (
     "descrizione riguardante il tuo acquisto."
 )
 
-HOW_TO_PAGE_FOUR = (
+HOW_TO_PAGE_THREE = (
     "Tieni presente che puoi cambiare, aggiungere o rimuovere l'importo di "
     "un acquisto in qualsiasi momento; per farlo ti basterà:\n"
     "   • cercare il messaggio relativo al tuo acquisto;\n"

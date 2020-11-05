@@ -10,13 +10,12 @@ from root.contants.messages import (
     HOW_TO_PAGE_ONE,
     HOW_TO_PAGE_TWO,
     HOW_TO_PAGE_THREE,
-    HOW_TO_PAGE_FOUR,
 )
 from root.helper.process_helper import restart_process
 from root.helper.process_helper import stop_process
 
 sender = TelegramSender()
-PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE, HOW_TO_PAGE_FOUR]
+PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE]
 
 
 def help_init(update: Update, context: CallbackContext):
@@ -106,7 +105,7 @@ def build_keyboard(page: int):
         keyboard = [
             [
                 create_button(
-                    "Avanti",
+                    "AVANTI   ►",
                     str(f"how_to_page_{page+1}"),
                     f"how_to_page_{page+1}",
                 )
@@ -131,7 +130,7 @@ def build_keyboard(page: int):
                     f"how_to_page_{page-1}",
                 ),
                 create_button(
-                    "Avanti",
+                    "AVANTI   ►",
                     str(f"how_to_page_{page+1}"),
                     f"how_to_page_{page+1}",
                 ),
@@ -141,10 +140,11 @@ def build_keyboard(page: int):
     keyboard.append(
         [
             create_button(
-                "Concludi",
+                "Ho Capito",
                 str("how_to_end"),
                 "how_to_end",
             ),
         ]
     )
+    message = f"<b>FUNZIONAMENTO {page}/{len(PAGES) - 1}</b>\n\n{message}"
     return message, keyboard
