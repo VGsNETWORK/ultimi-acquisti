@@ -140,11 +140,11 @@ def build_keyboard(page: int):
     keyboard.append(
         [
             create_button(
-                "Ho Capito",
+                "Ho capito",
                 str("how_to_end"),
                 "how_to_end",
             ),
         ]
     )
-    message = f"<b>FUNZIONAMENTO {page}/{len(PAGES) - 1}</b>\n\n{message}"
+    message = f"<b>FUNZIONAMENTO  ({page}/{len(PAGES) - 1})</b>\n\n\n{message}"
     return message, keyboard
