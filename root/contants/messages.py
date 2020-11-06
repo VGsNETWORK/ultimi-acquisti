@@ -174,12 +174,11 @@ SESSION_ENDED = (
 
 
 HOW_TO_PAGE_ONE = (
-    "Per far sì che il bot riconosca un tuo acquisto è necessario "
-    "inviare nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n"
-    "Indicando anche una cifra numerica, il bot registrerà l'acquisto con l'importo indicato. "
-    "Se nel testo è presente più di un numero, solo il primo verrà preso "
-    "in considerazione e assegnato come costo.\n\n"
-    "Il bot supporta molteplici formati per l'inserimento dell'importo:\n\n"
+    "Per far sì che io possa riconoscere un tuo <i>acquisto</i> è necessario che tu"
+    "invii nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n\n"
+    "Indicando anche una cifra numerica, registrerò l'<i>acquisto</i> con l'importo indicato. "
+    "Nel caso in cui ce ne sia più di uno, ricorda che prenderò in considerazione solo il primo.\n\n"
+    "Puoi inserire l'importo in molteplici formati:\n\n"
     "   •  <code>22</code>\n"
     "   •  <code>22,50 €</code>\n"
     "   •  <code>22.50</code>\n"
@@ -187,22 +186,22 @@ HOW_TO_PAGE_ONE = (
     "   •  <code>€ 2,250.10</code>\n"
     "   •  <code>2.250,10€</code>\n"
     "   •  <code>2'250.10</code>\n\n"
-    "sono tutti formati validi."
+    "sono solo alcuni di quelli riconosciuti."
 )
 
 HOW_TO_PAGE_TWO = (
-    "Omettendo l'importo, il bot aggiungerà un acquisto con importo di "
-    "default di <code>0,00€</code> (utile per i regali o se non si vuole rivelare il "
+    "Se ometti l'importo, il tuo acquisto sarà salvato con un importo di "
+    "default di <code>0,00€</code> (utile per i regali o se non vuoi rivelare il "
     "prezzo di un certo acquisto – nel secondo caso, tieni presente che "
     "questo avrà ripercussioni sui totali mensili e annuali).\n\n"
-    "Il restante testo inserito al di fuori dell'hashtag e del prezzo sarà "
-    "ignorato dal bot, quindi sentiti libero di aggiungere una qualsiasi "
+    "Tutto quello che aggiungerai al di fuori dell'importo verrà ignorato, "
+    "quindi sentiti pure libero di inserire una qualsiasi "
     "descrizione riguardante il tuo acquisto."
 )
 
 HOW_TO_PAGE_THREE = (
     "Tieni presente che puoi cambiare, aggiungere o rimuovere l'importo di "
-    "un acquisto in qualsiasi momento; per farlo ti basterà:\n"
+    "un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n"
     "   • cercare il messaggio relativo al tuo acquisto;\n"
     "   • cliccarci sopra (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
     "   • selezionare <b>Modifica</b>;\n"

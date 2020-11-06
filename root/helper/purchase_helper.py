@@ -254,6 +254,21 @@ def get_last_purchase(user_id: int) -> Purchase:
         return None
 
 
+def purchase_exists(message_id: int) -> None:
+    """Check if the message_id is a purchase
+
+    Args:
+        message_id (int): The message_id of the purchase
+
+    Returns:
+        bool: If The purchase exists
+    """
+    try:
+        return bool(Purchase.objects.get(message_id=message_id))
+    except DoesNotExist:
+        return False
+
+
 def retrieve_sum_between_date(
     user_id: int, start_date: datetime, end_date: datetime
 ) -> float:

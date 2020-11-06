@@ -3,6 +3,7 @@
 """ This File contains a class with various telegram tools """
 
 from time import sleep
+from os import environ
 from telegram import Bot, Message
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
@@ -179,6 +180,7 @@ class TelegramSender:
         sleep(timeout)
         try:
             delete_message(message_id)
-            client.delete_messages(chat_id=chat_id, message_ids=message_id)
+            self._bot_init(environ["TOKEN"])
+            self._bot.delete_message(chat_id=chat_id, message_id=message_id)
         except BadRequest:
             pass
