@@ -2,14 +2,15 @@
 
 """ Docstring """
 
-from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery
+from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
-from root.util.util import create_button
+from root.util.util import create_button, retrieve_key
 from root.contants.messages import (
     HOW_TO_PAGE_ONE,
     HOW_TO_PAGE_TWO,
     HOW_TO_PAGE_THREE,
+    HOW_TO_DEEP_LINK,
 )
 from root.helper.process_helper import restart_process
 from root.helper.process_helper import stop_process
@@ -56,6 +57,34 @@ def help_navigate(update: Update, context: CallbackContext):
     bot_help(update, context, page, True)
 
 
+def send_redirect(update: Update, context: CallbackContext) -> None:
+    """When is summoned
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
+    bot_name = retrieve_key("BOT_NAME")
+    user: User = update.effective_user
+    user_id: int = user.id
+    chat_id: int = update.effective_chat.id
+    first_name: str = user.first_name
+    message = HOW_TO_DEEP_LINK % (user_id, first_name, bot_name)
+    button = create_button(
+        message="GUIDA",
+        callback="help_redirect",
+        query="help_redirect",
+        url=f"t.me/{bot_name}?start=how_to",
+    )
+    sender.send_and_delete(
+        context,
+        chat_id,
+        message,
+        reply_markup=InlineKeyboardMarkup([[button]]),
+        timeout=60,
+    )
+
+
 def bot_help(
     update: Update, context: CallbackContext, page: int = 1, edit: bool = False
 ):
@@ -76,6 +105,7 @@ def bot_help(
     if not edit:
         sender.delete_if_private(context, message)
     if not chat_type == "private":
+        send_redirect(update, context)
         return
     message, keyboard = build_keyboard(page)
     if edit:

@@ -55,11 +55,11 @@ short_month = {
 }
 
 
-def is_develop():
+def is_develop() -> bool:
     """Chek if the profile is set to develop
 
     Returns:
-        [type]: If the profile is set to develop
+        bool: If the profile is set to develop
     """
     try:
         profile = retrieve_key("PROFILE")
@@ -68,19 +68,22 @@ def is_develop():
         return False
 
 
-def create_button(message: str, callback: str, query: str) -> InlineKeyboardButton:
+def create_button(
+    message: str, callback: str, query: str, url: str = None
+) -> InlineKeyboardButton:
     """Create a Telegram Inline Button
 
     Args:
         message (str): The text to show
         callback (str): The callback that the button will use
         query (str): The query string of the button
+        url(str)[Optional]: The url of the button (default: None)
 
     Returns:
         InlineKeyboardButton: The Telegram Inline Button to use
     """
     logger.info(f"creating button {query}")
-    return InlineKeyboardButton(message, callback_data=callback)
+    return InlineKeyboardButton(message, callback_data=callback, url=url)
 
 
 def format_price(price: float) -> str:

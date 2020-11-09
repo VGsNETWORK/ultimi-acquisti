@@ -77,7 +77,8 @@ CANCEL_PURCHASE_ERROR = (
 )
 
 PURCHASE_NOT_FOUND = (
-    '<a href="tg://user?id=%s">%s</a>, non riesco a trovare l\'acquisto che hai fatto.'
+    '<a href="tg://user?id=%s">%s</a>, non riesco a'
+    "trovare l'acquisto che hai fatto..."
 )
 
 PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!</i>"
@@ -170,6 +171,11 @@ NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"
 SESSION_ENDED = (
     "Il bot è stato riavviato per motivi tecnici, la sessione "
     "di questo messaggio è scaduta."
+)
+
+HOW_TO_DEEP_LINK = (
+    '<a href="tg://user?id=%s">%s</a>, puoi visualizzare la guida all\'utilizzo del bot '
+    f'<a href="t.me/%s?start=how_to">QUI</a>.'
 )
 
 

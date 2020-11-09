@@ -10,7 +10,12 @@ from pyrogram import Client
 from root.util.util import is_group_allowed
 from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
-from root.contants.messages import CANCEL_PURCHASE_ERROR, PURCHASE_DELETED, ONLY_GROUP
+from root.contants.messages import (
+    CANCEL_PURCHASE_ERROR,
+    PURCHASE_DELETED,
+    ONLY_GROUP,
+    PURCHASE_NOT_FOUND,
+)
 from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
@@ -33,7 +38,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     first_name = user.first_name
     chat_type = message.chat.type
     if message.chat.type == "private":
-        sender.send_and_delete(context, chat_id, ONLY_GROUP)
+        sender.send_and_delete(context, chat_id, ONLY_GROUP, timeout=10)
         return
     if not chat_type == "private":
         if not user_exists(user_id):
@@ -48,7 +53,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     message_id = message.message_id
     if not reply:
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message)
+        sender.send_and_delete(context, chat_id, message, timeout=10)
         return
     try:
         message_id = reply.message_id
@@ -57,8 +62,8 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         sender.send_and_delete(context, chat_id, PURCHASE_DELETED, timeout=10)
     except DoesNotExist:
         message_id = message.message_id
-        message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message)
+        message = PURCHASE_NOT_FOUND % (user_id, first_name)
+        sender.send_and_delete(context, chat_id, message, timeout=10)
 
 
 def remove_purchase(client: Client, message: PyroMessage) -> None:

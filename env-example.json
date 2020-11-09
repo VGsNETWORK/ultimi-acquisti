@@ -8,5 +8,6 @@
   "ERROR_CHANNEL": "ERROR_CHANNEL",
   "TOKEN": "BOT_TOKEN",
   "GROUP_ID": "['GROUPS_ID']",
-  "PROFILE": "develop"
+  "PROFILE": "develop",
+  "BOT_NAME": "TESTBOT"
 }
