@@ -174,10 +174,10 @@ SESSION_ENDED = (
 
 
 HOW_TO_PAGE_ONE = (
-    "Per far sì che io possa riconoscere un tuo <i>acquisto</i> è necessario che tu"
+    "Per far sì che io possa riconoscere un tuo <i>acquisto</i> è necessario che tu "
     "invii nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n\n"
     "Indicando anche una cifra numerica, registrerò l'<i>acquisto</i> con l'importo indicato. "
-    "Nel caso in cui ce ne sia più di uno, ricorda che prenderò in considerazione solo il primo.\n\n"
+    "Nel caso in cui ce ne sia più di uno, ricorda che prenderò in considerazione solo il primo.\n"
     "Puoi inserire l'importo in molteplici formati:\n\n"
     "   •  <code>22</code>\n"
     "   •  <code>22,50 €</code>\n"

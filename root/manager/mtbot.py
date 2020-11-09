@@ -7,7 +7,8 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.handlers import MessageHandler
 from pyrogram.filters import create
-from root.manager.purchase.handle_purchase import handle_purchase, remove_purchase
+from root.manager.purchase.handle_purchase import handle_purchase
+from root.manager.purchase.delete import remove_purchase
 import root.util.logger as logger
 from root.util.util import retrieve_key
 from root.helper.purchase_helper import purchase_exists

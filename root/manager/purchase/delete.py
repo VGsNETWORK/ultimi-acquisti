@@ -5,6 +5,8 @@
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from mongoengine.errors import DoesNotExist
+from pyrogram.types import Message as PyroMessage
+from pyrogram import Client
 from root.util.util import is_group_allowed
 from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
@@ -57,3 +59,17 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         message_id = message.message_id
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
         sender.send_and_delete(context, chat_id, message)
+
+
+def remove_purchase(client: Client, message: PyroMessage) -> None:
+    """Remove a purchase after the #ultimiacquisti has been removed
+
+    Args:
+        client (Client): The mtproto client
+        message (PyroMessage): The mtproto Message
+    """
+    message_id: int = message.message_id
+    user_id: int = message.from_user.id
+    chat_id = message.chat.id
+    purchase_helper.delete_purchase(user_id, message_id)
+    sender.send_and_deproto(client, chat_id, PURCHASE_DELETED, message_id, timeout=10)

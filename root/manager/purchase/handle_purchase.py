@@ -147,8 +147,3 @@ def handle_purchase(client: Client, message: Message) -> None:
     else:
         message = result["error"]
     sender.send_and_deproto(client, chat_id, message, message_id, timeout=10)
-
-
-def remove_purchase(client: Client, message: Message):
-    # TODO: remove purchase but do not delete the message
-    pass
