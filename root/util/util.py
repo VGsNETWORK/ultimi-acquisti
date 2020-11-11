@@ -55,6 +55,18 @@ short_month = {
 }
 
 
+def has_number(content: str) -> bool:
+    """Check if a string contains a number
+
+    Args:
+        content (str): The string to parse
+
+    Returns:
+        bool: True if found, False otherwise
+    """
+    return any(char.isdigit() for char in content)
+
+
 def is_develop() -> bool:
     """Chek if the profile is set to develop
 

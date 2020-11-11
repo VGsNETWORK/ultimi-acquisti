@@ -4,22 +4,21 @@
 
 import re
 from datetime import datetime
-from pyrogram.types import Message
+
+import root.util.logger as logger
 from pyrogram import Client
 from pyrogram.client import User
-import root.util.logger as logger
-from root.util.util import is_group_allowed
-from root.util.telegram import TelegramSender
-from root.helper.purchase_helper import create_purchase
-from root.helper.purchase_helper import convert_to_float
-from root.helper.user_helper import user_exists, create_user
-from root.util.util import retrieve_key
+from pyrogram.types import Message
 from root.contants.messages import (
     ONLY_GROUP,
-    PURCHASE_MODIFIED,
-    PURCHASE_DATE_ERROR,
     PURCHASE_ADDED,
+    PURCHASE_DATE_ERROR,
+    PURCHASE_MODIFIED,
 )
+from root.helper.purchase_helper import convert_to_float, create_purchase
+from root.helper.user_helper import create_user, user_exists
+from root.util.telegram import TelegramSender
+from root.util.util import has_number, is_group_allowed, retrieve_key
 
 sender = TelegramSender()
 
@@ -92,6 +91,18 @@ def handle_purchase(client: Client, message: Message) -> None:
         # [\.,]   -> marches . or ,
         # \d{1,2} -> matches one or two numbers
         # ?       -> makes the capturing group optional
+
+        caption = caption.split(" ")
+        caption.remove("#ultimiacquisti")
+        mdate = next(
+            (mdate for mdate in caption if ("/" in mdate and has_number(mdate))), None
+        )
+        if mdate:
+            caption.remove(mdate)
+        else:
+            mdate = "NO_DATE_TO_PARSE"
+        caption = " ".join(caption)
+
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         price = price[0] if len(price) != 0 else 0.00
         if price:
@@ -108,7 +119,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         logger.error(index_error)
         sender.send_message(token, log_channel, index_error)
         return
-    mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", caption)
+    mdate = re.findall(r"(\d(\d)?\/\d(\d)?\/\d{2}(\d{2})?)", mdate)
     mdate = mdate[0] if len(mdate) != 0 else None
     if mdate:
         cdate = datetime.now()
