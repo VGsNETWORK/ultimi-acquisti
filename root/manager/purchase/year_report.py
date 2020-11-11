@@ -189,23 +189,27 @@ class YearReport:
         else:
             message = YEAR_PURCHASE_REPORT % (user_id, first_name, self.year)
             mrange = self.current_month if self.year == self.current_year else 12
+            spacer = [len(format_price(price)) for price in purchases]
+            footer = retrieve_sum_for_year(user_id, self.year)
+            footer = format_price(footer)
+            spacer.append(len(footer))
+            spacer.sort()
+            spacer = spacer[-1]
             for i in range(0, mrange):
                 price = format_price(purchases[i])
                 month = get_month_string(i + 1, False)
-                spaces = 11 - len(price)
-                spaces += 9 - len(month)
-                spaces = " " * spaces
+                spaces = " " * (spacer - len(price))
                 template = YEAR_PURCHASE_TEMPLATE % (
-                    month,
                     spaces,
                     price,
+                    month,
                 )
                 message = f"{message}\n{template}"
-            footer = retrieve_sum_for_year(user_id, self.year)
-            footer = format_price(footer)
-            spaces = " " * (10 - len(footer))
+            spaces = " " * (spacer - len(footer))
             footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
-            message = f"{message}\n\n{footer}"
+            line = "—" * (spacer + 2)
+            message = f"{message}\n<code>{line}</code>"
+            message = f"{message}\n{footer}"
         return message
 
     def previous_year(self, update: Update, context: CallbackContext):

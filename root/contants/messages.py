@@ -124,13 +124,13 @@ YEAR_PURCHASE_REPORT = (
     '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai avuto le seguenti spese:\n'
 )
 
-YEAR_PURCHASE_TEMPLATE = "•  <code>%s</code>   <code>%s</code><code>%s €</code>"
+YEAR_PURCHASE_TEMPLATE = "<code>%s</code><code>%s €</code>             %s"
 
 PURCHASE_REPORT_TEMPLATE = (
-    '• <a href="https://t.me/c/%s/%s">%s</a>   <code>%s</code><code>%s €</code>'
+    '<code>%s</code><code>%s €</code>             <a href="https://t.me/c/%s/%s">%s</a>'
 )
 
-REPORT_PURCHASE_TOTAL = "per un totale di   <code>%s</code><code>%s €</code>."
+REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"
 
 PURCHASE_DATE_ERROR = (
     '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n'

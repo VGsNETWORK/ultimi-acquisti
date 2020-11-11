@@ -299,26 +299,34 @@ class MonthReport:
             message = NO_MONTH_PURCHASE % (user_id, first_name, date)
         else:
             message = MONTH_PURCHASE_REPORT % (user_id, first_name, date)
+
+            spacer = [len(format_price(purchase.price)) for purchase in purchases]
+            footer = retrieve_sum_for_month(user_id, self.month, self.year)
+            footer = format_price(footer)
+            spacer.append(len(footer))
+            spacer.sort()
+            spacer = spacer[-1]
+
             for purchase in purchases:
                 price = format_price(purchase.price)
                 creation_date = purchase.creation_date
                 creation_date = creation_date.strftime(
                     f"%d {get_month_string(creation_date.month)}, %H:%M"
                 )
-                spaces = " " * (11 - len(price))
+                spaces = " " * (spacer - len(price))
                 template = PURCHASE_REPORT_TEMPLATE % (
+                    spaces,
+                    price,
                     str(purchase.chat_id).replace("-100", ""),
                     purchase.message_id,
                     creation_date,
-                    spaces,
-                    price,
                 )
                 message = f"{message}\n{template}"
-            footer = retrieve_sum_for_month(user_id, self.month, self.year)
-            footer = format_price(footer)
-            spaces = " " * (10 - len(footer))
+            line = "—" * (spacer + 2)
+            message = f"{message}\n<code>{line}</code>"
+            spaces = " " * (spacer - len(footer))
             footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
-            message = f"{message}\n\n{footer}"
+            message = f"{message}\n{footer}"
         return message
 
     def previous_page(self, update: Update, context: CallbackContext):
