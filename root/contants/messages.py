@@ -183,7 +183,7 @@ HOW_TO_PAGE_ONE = (
     "Per far sì che io possa riconoscere un tuo <i>acquisto</i> è necessario che tu "
     "invii nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n\n"
     "Indicando anche una cifra numerica, registrerò l'<i>acquisto</i> con l'importo indicato. "
-    "Nel caso in cui ce ne sia più di uno, ricorda che prenderò in considerazione solo il primo.\n"
+    "Nel caso in cui ce ne sia più di una, ricorda che prenderò in considerazione solo la prima.\n"
     "Puoi inserire l'importo in molteplici formati:\n\n"
     "   •  <code>22</code>\n"
     "   •  <code>22,50 €</code>\n"
@@ -213,6 +213,6 @@ HOW_TO_PAGE_THREE = (
     "   • selezionare <b>Modifica</b>;\n"
     "   • dopo aver apportato le modifiche, confermare.\n\n"
     "Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva, "
-    "sempre con la stessa procedura; ti basterà aggiungere l'hashtag <code>#ultimiacquisti</code> "
-    "in fase di modifica del messaggio."
+    "sempre con la stessa procedura: ti basterà taggare il post con <code>#ultimiacquisti</code> "
+    "in fase di modifica del messaggio e provvederò ad aggiungere un acquisto a quella data."
 )
