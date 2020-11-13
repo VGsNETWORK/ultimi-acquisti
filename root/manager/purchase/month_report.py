@@ -313,6 +313,13 @@ class MonthReport:
                 creation_date = creation_date.strftime(
                     f"%d {get_month_string(creation_date.month)}, %H:%M"
                 )
+                if purchase.description:
+                    creation_date = purchase.description
+                    creation_date = (
+                        f"{creation_date[:20]}..."
+                        if len(creation_date) > 20
+                        else creation_date
+                    )
                 spaces = " " * (spacer - len(price))
                 template = PURCHASE_REPORT_TEMPLATE % (
                     spaces,

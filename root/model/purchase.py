@@ -2,7 +2,7 @@
 
 """ Class of a Purchase mongoengine model """
 
-from mongoengine import IntField, FloatField
+from mongoengine import IntField, FloatField, StringField
 from root.model.base_model import BaseModel
 
 
@@ -17,3 +17,4 @@ class Purchase(BaseModel):
     price = FloatField()
     message_id = IntField(unique=True)
     chat_id = IntField()
+    description = StringField()

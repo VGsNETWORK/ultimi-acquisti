@@ -75,6 +75,7 @@ def create_purchase(
     message_id: int,
     chat_id: int,
     creation_date: datetime = None,
+    description: str = "",
 ) -> None:
     """Store a new purchase from a user in the database or modify an existing one
 
@@ -84,12 +85,15 @@ def create_purchase(
         message_id (int): The Telegram message_if of the purchase
         chat_id (int): The chat where the purchase was posted
         creation_date (datetime, optional): When the post was created. Defaults to None.
+        description (str, optional): The description of the purchase. Defaults to ''.
     """
     try:
         Purchase.objects().get(message_id=message_id)
         logger.info(f"try to modifying purchase {message_id}")
         Purchase.objects(message_id=message_id).update(
-            set__price=price, set__creation_date=creation_date
+            set__price=price,
+            set__creation_date=creation_date,
+            set__description=description,
         )
         return
     except DoesNotExist:
@@ -101,10 +105,15 @@ def create_purchase(
             message_id=message_id,
             chat_id=chat_id,
             creation_date=creation_date,
+            description=description,
         ).save()
     else:
         Purchase(
-            user_id=user_id, price=price, message_id=message_id, chat_id=chat_id
+            user_id=user_id,
+            price=price,
+            message_id=message_id,
+            chat_id=chat_id,
+            description=description,
         ).save()
 
 

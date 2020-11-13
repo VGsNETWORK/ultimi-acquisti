@@ -4,11 +4,10 @@
 
 import re
 from datetime import datetime
-
-import root.util.logger as logger
 from pyrogram import Client
 from pyrogram.client import User
 from pyrogram.types import Message
+import root.util.logger as logger
 from root.contants.messages import (
     ONLY_GROUP,
     PURCHASE_ADDED,
@@ -29,6 +28,7 @@ def add_purchase(
     message_id: float,
     chat_id: float,
     creation_date: datetime = None,
+    caption: str = "",
 ) -> None:
     """add a new purchase
 
@@ -38,10 +38,11 @@ def add_purchase(
         message_id (float): The message_id of the post
         chat_id (float): The chat where the post was made
         creation_date (datetime, optional): The creation_date of the post. Defaults to None.
+        caption (str, optional): The description of the purchase. Defaults to ''.
     """
     if not user_exists(user.id):
         create_user(user)
-    create_purchase(user.id, price, message_id, chat_id, creation_date)
+    create_purchase(user.id, price, message_id, chat_id, creation_date, caption)
 
 
 def handle_purchase(client: Client, message: Message) -> None:
@@ -104,13 +105,22 @@ def handle_purchase(client: Client, message: Message) -> None:
         caption = " ".join(caption)
 
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
+        if len(price) != 0:
+            caption = caption.split(" ")
+            caption.remove(price[0])
+            caption = " ".join(caption)
         price = price[0] if len(price) != 0 else 0.00
-        if price:
-            price = convert_to_float(price)
-            result = {"name": caption, "price": price, "error": None}
-            logger.info(f"The user purchase {price} worth of products")
+        price = convert_to_float(price)
+        caption = re.findall(r"%.*%", caption)
+        if caption:
+            caption = caption[0]
+            caption = caption[1:-1]
+            caption = caption[:100]
         else:
-            result = {"name": caption, "price": 0.00, "error": None}
+            caption = ""
+        result = {"name": caption, "price": price, "error": None}
+        logger.info(f"The user purchase {price} worth of products")
+        logger.info(result)
     except ValueError as value_error:
         logger.error(value_error)
         sender.send_message(token, log_channel, value_error)
@@ -147,7 +157,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             custom_date_error = True
     if not result["error"]:
-        add_purchase(user, price, message_id, chat_id, date)
+        add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
         else:
