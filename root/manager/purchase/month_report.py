@@ -29,6 +29,7 @@ from root.util.util import (
     format_price,
     get_month_string,
     is_group_allowed,
+    is_number,
 )
 
 
@@ -60,6 +61,10 @@ class MonthReport:
         self.current_month = current_date.month
         self.year = current_date.year
         self.current_year = current_date.year
+        if expand:
+            year = update.callback_query.data.split("_")[-1]
+            self.year = int(year) if is_number(year) else self.year
+            self.month = 1
         message: Message = update.message if update.message else update.edited_message
         if not message:
             message = update.effective_message
@@ -274,6 +279,16 @@ class MonthReport:
                     ),
                 ]
             )
+
+        keyboard.append(
+            [
+                create_button(
+                    f"Passa al report annuale del {self.year}",
+                    f"expand_year_report_{self.year}",
+                    f"expand_year_report_{self.year}",
+                )
+            ]
+        )
         return keyboard
 
     def retrieve_purchase(self, user: User) -> [Purchase]:

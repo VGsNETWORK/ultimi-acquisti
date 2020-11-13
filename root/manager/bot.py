@@ -167,12 +167,12 @@ class BotManager:
         )
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.month_report.expand_report, pattern="expand_report"
+                callback=self.month_report.expand_report, pattern="expand_report.*"
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=self.year_report.expand_report, pattern="expand_year_report"
+                callback=self.year_report.expand_report, pattern="expand_year_report.*"
             )
         )

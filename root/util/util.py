@@ -67,6 +67,22 @@ def has_number(content: str) -> bool:
     return any(char.isdigit() for char in content)
 
 
+def is_number(content: str) -> bool:
+    """Check if a string is a number
+
+    Args:
+        content (str): The string to check
+
+    Returns:
+        bool: True if is a number, False otherwise
+    """
+    try:
+        int(content)
+        return True
+    except ValueError:
+        return False
+
+
 def is_develop() -> bool:
     """Chek if the profile is set to develop
 
