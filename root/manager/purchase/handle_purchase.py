@@ -113,10 +113,6 @@ def handle_purchase(client: Client, message: Message) -> None:
             title = ""
 
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
-        if len(price) != 0:
-            caption = caption.split(" ")
-            caption.remove(price[0])
-            caption = " ".join(caption)
         price = price[0] if len(price) != 0 else "0.00"
         price = convert_to_float(price)
         caption = title
