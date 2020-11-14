@@ -100,7 +100,7 @@ NO_MONTH_PURCHASE = (
 )
 
 NO_YEAR_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, durante il <b>%s</b> '
+    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> '
     "non hai registrato alcun acquisto."
 )
 

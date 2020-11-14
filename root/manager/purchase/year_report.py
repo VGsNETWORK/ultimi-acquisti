@@ -208,21 +208,27 @@ class YearReport:
             spacer.append(len(footer))
             spacer.sort()
             spacer = spacer[-1]
-            for i in range(0, mrange):
-                price = format_price(purchases[i])
-                month = get_month_string(i + 1, False)
-                spaces = " " * (spacer - len(price))
-                template = YEAR_PURCHASE_TEMPLATE % (
-                    spaces,
-                    price,
-                    month,
-                )
-                message = f"{message}\n{template}"
-            spaces = " " * (spacer - len(footer))
-            footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
-            line = "—" * (spacer + 2)
-            message = f"{message}\n<code>{line}</code>"
-            message = f"{message}\n{footer}"
+            price_check = [purchases[i] for i in range(0, mrange) if purchases[i] > 0]
+            if len(price_check) == 0:
+                message = NO_YEAR_PURCHASE % (user_id, first_name, self.year)
+            else:
+                for i in range(0, mrange):
+                    price = purchases[i]
+                    if price > 0:
+                        price = format_price(price)
+                        month = get_month_string(i + 1, False)
+                        spaces = " " * (spacer - len(price))
+                        template = YEAR_PURCHASE_TEMPLATE % (
+                            spaces,
+                            price,
+                            month,
+                        )
+                        message = f"{message}\n{template}"
+                spaces = " " * (spacer - len(footer))
+                footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
+                line = "—" * (spacer + 2)
+                message = f"{message}\n<code>{line}</code>"
+                message = f"{message}\n{footer}"
         return message
 
     def previous_year(self, update: Update, context: CallbackContext):

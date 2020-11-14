@@ -110,7 +110,6 @@ def create_button(
     Returns:
         InlineKeyboardButton: The Telegram Inline Button to use
     """
-    logger.info(f"creating button {query}")
     return InlineKeyboardButton(message, callback_data=callback, url=url)
 
 
