@@ -103,21 +103,23 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             mdate = "NO_DATE_TO_PARSE"
         caption = " ".join(caption)
+        title = re.findall(r"%.*%", caption)
+        if title:
+            title = title[0]
+            caption = caption.replace(title, "")
+            title = title[1:-1]
+            title = title[:100]
+        else:
+            title = ""
 
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         if len(price) != 0:
             caption = caption.split(" ")
             caption.remove(price[0])
             caption = " ".join(caption)
-        price = price[0] if len(price) != 0 else 0.00
+        price = price[0] if len(price) != 0 else "0.00"
         price = convert_to_float(price)
-        caption = re.findall(r"%.*%", caption)
-        if caption:
-            caption = caption[0]
-            caption = caption[1:-1]
-            caption = caption[:100]
-        else:
-            caption = ""
+        caption = title
         result = {"name": caption, "price": price, "error": None}
         logger.info(f"The user purchase {price} worth of products")
         logger.info(result)
