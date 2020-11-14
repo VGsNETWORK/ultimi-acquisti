@@ -92,7 +92,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         # [\.,]   -> marches . or ,
         # \d{1,2} -> matches one or two numbers
         # ?       -> makes the capturing group optional
-
+        caption = caption.replace("\n", " ")
         caption = caption.split(" ")
         caption.remove("#ultimiacquisti")
         mdate = next(
