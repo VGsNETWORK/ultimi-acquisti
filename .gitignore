@@ -5,5 +5,5 @@ build/
 message.json
 .env.json
 .deploy.json
-*.session
+*.session*
 *.zip*
