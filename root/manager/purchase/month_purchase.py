@@ -9,6 +9,7 @@ from root.contants.messages import (
     MONTH_PURCHASES,
     MONTH_PREVIOUS_PURCHASES_HIGER,
     MONTH_PREVIOUS_PURCHASES_LOWER,
+    MONTH_PREVIOUS_PURCHASES_NONE,
     NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
@@ -72,6 +73,8 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
             if price > pprice
             else MONTH_PREVIOUS_PURCHASES_HIGER % (mstring, format_price(pprice), diff)
         )
+        if pprice == 0:
+            append = MONTH_PREVIOUS_PURCHASES_NONE % mstring
         price = format_price(price)
         message = MONTH_PURCHASES % (
             user_id,

@@ -9,6 +9,7 @@ from root.contants.messages import (
     YEAR_PURCHASES,
     YEAR_PREVIOUS_PURCHASES_HIGER,
     YEAR_PREVIOUS_PURCHASES_LOWER,
+    YEAR_PREVIOUS_PURCHASE_NONE,
     NO_QUOTE_BOT,
 )
 from root.helper.redis_message import add_message
@@ -72,6 +73,8 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             if price > pprice
             else YEAR_PREVIOUS_PURCHASES_HIGER % (year, format_price(pprice), diff)
         )
+        if pprice == 0:
+            append = YEAR_PREVIOUS_PURCHASE_NONE % year
         price = format_price(price)
         message = YEAR_PURCHASES % (
             user_id,

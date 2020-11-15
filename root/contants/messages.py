@@ -37,6 +37,8 @@ MONTH_PURCHASES = (
     "<b>%s</b> hai speso un totale di <code>%s €</code>.\n\n"
 )
 
+MONTH_PREVIOUS_PURCHASES_NONE = "📈 A <i>%s</i> non hai registrato alcun acquisto."
+
 MONTH_PREVIOUS_PURCHASES_HIGER = (
     "📉 A <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in più rispetto a questo mese."
@@ -53,6 +55,8 @@ YEAR_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> '
     "hai speso un totale di <code>%s €</code>.\n\n"
 )
+
+YEAR_PREVIOUS_PURCHASE_NONE = "📈 Nel <i>%s</i> non hai registrato alcun acquisto."
 
 YEAR_PREVIOUS_PURCHASES_HIGER = (
     "📉 Nel <i>%s</i> hai speso <code>%s €</code>, "
