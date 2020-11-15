@@ -63,8 +63,9 @@ class MonthReport:
         self.current_year = current_date.year
         if expand:
             year = update.callback_query.data.split("_")[-1]
-            self.year = int(year) if is_number(year) else self.year
-            self.month = 1
+            if is_number(year):
+                self.year = int(year)
+                self.month = 1
         message: Message = update.message if update.message else update.edited_message
         if not message:
             message = update.effective_message
