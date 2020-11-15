@@ -133,11 +133,11 @@ LAST_PURCHASE_USER = (
 
 MONTH_PURCHASE_REPORT = (
     '<a href="tg://user?id=%s">%s</a>,'
-    " nel mese di <b>%s</b> hai avuto le seguenti spese:\n"
+    " nel mese di <b>%s</b> hai avuto le seguenti spese:\n\n"
 )
 
 YEAR_PURCHASE_REPORT = (
-    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai avuto le seguenti spese:\n'
+    '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai avuto le seguenti spese:\n\n'
 )
 
 YEAR_PURCHASE_TEMPLATE = "<code>%s</code><code>%s €</code>             %s"
@@ -191,7 +191,7 @@ SESSION_ENDED = (
 
 HOW_TO_DEEP_LINK = (
     '<a href="tg://user?id=%s">%s</a>, puoi visualizzare la guida all\'utilizzo del bot '
-    f'<a href="t.me/%s?start=how_to">QUI</a>.'
+    '<a href="t.me/%s?start=how_to">QUI</a>.'
 )
 
 
