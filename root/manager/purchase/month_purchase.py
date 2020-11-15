@@ -7,9 +7,11 @@ from telegram.ext import CallbackContext
 from root.contants.messages import (
     MONTH_USER_PURCHASES,
     MONTH_PURCHASES,
-    MONTH_PREVIOUS_PURCHASES_HIGER,
+    MONTH_PREVIOUS_PURCHASES_HIGHER,
     MONTH_PREVIOUS_PURCHASES_LOWER,
     MONTH_PREVIOUS_PURCHASES_NONE,
+    MONTH_PURCHASES_NONE,
+    MONTH_USER_PURCHASES_NONE,
     NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
@@ -71,22 +73,33 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         append = (
             MONTH_PREVIOUS_PURCHASES_LOWER % (mstring, format_price(pprice), diff)
             if price > pprice
-            else MONTH_PREVIOUS_PURCHASES_HIGER % (mstring, format_price(pprice), diff)
+            else MONTH_PREVIOUS_PURCHASES_HIGHER % (mstring, format_price(pprice), diff)
         )
         if pprice == 0:
             append = MONTH_PREVIOUS_PURCHASES_NONE % mstring
-        price = format_price(price)
-        message = MONTH_PURCHASES % (
-            user_id,
-            first_name,
-            get_current_month(False, True),
-            price,
-        )
+        if price == 0:
+            message = MONTH_PURCHASES_NONE % (
+                user_id,
+                first_name,
+                get_current_month(False, True),
+            )
+            append = f"➖{append[1:]}"
+        else:
+            price = format_price(price)
+            message = MONTH_PURCHASES % (
+                user_id,
+                first_name,
+                get_current_month(False, True),
+                price,
+            )
         message += append
     else:
-        price = format_price(price)
         date = f"{get_current_month( False, True)} {get_current_year()}"
-        message = MONTH_USER_PURCHASES % (first_name, date, price)
+        if price == 0:
+            message = MONTH_USER_PURCHASES_NONE % (first_name, date)
+        else:
+            price = format_price(price)
+            message = MONTH_USER_PURCHASES % (first_name, date, price)
     telegram_message: Message = (
         update.message if update.message else update.edited_message
     )

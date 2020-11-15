@@ -7,9 +7,11 @@ from telegram.ext import CallbackContext
 from root.contants.messages import (
     YEAR_USER_PURCHASES,
     YEAR_PURCHASES,
-    YEAR_PREVIOUS_PURCHASES_HIGER,
+    YEAR_PREVIOUS_PURCHASES_HIGHER,
     YEAR_PREVIOUS_PURCHASES_LOWER,
     YEAR_PREVIOUS_PURCHASE_NONE,
+    YEAR_PURCHASES_NONE,
+    YEAR_USER_PURCHASES_NONE,
     NO_QUOTE_BOT,
 )
 from root.helper.redis_message import add_message
@@ -71,25 +73,36 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         append = (
             YEAR_PREVIOUS_PURCHASES_LOWER % (year, format_price(pprice), diff)
             if price > pprice
-            else YEAR_PREVIOUS_PURCHASES_HIGER % (year, format_price(pprice), diff)
+            else YEAR_PREVIOUS_PURCHASES_HIGHER % (year, format_price(pprice), diff)
         )
         if pprice == 0:
             append = YEAR_PREVIOUS_PURCHASE_NONE % year
-        price = format_price(price)
-        message = YEAR_PURCHASES % (
-            user_id,
-            first_name,
-            get_current_year(),
-            price,
-        )
+        if price == 0:
+            message = YEAR_PURCHASES_NONE % (
+                user_id,
+                first_name,
+                get_current_year(),
+            )
+            append = f"➖{append[1:]}"
+        else:
+            price = format_price(price)
+            message = YEAR_PURCHASES % (
+                user_id,
+                first_name,
+                get_current_year(),
+                price,
+            )
         message += append
     else:
-        price = format_price(price)
-        message = YEAR_USER_PURCHASES % (
-            first_name,
-            get_current_year(),
-            price,
-        )
+        if price == 0:
+            message = YEAR_USER_PURCHASES_NONE % (first_name, get_current_year())
+        else:
+            price = format_price(price)
+            message = YEAR_USER_PURCHASES % (
+                first_name,
+                get_current_year(),
+                price,
+            )
     add_message(message_id, user_id)
     sender.send_and_delete(
         context,
