@@ -62,10 +62,13 @@ class MonthReport:
         self.year = current_date.year
         self.current_year = current_date.year
         if expand:
-            year = update.callback_query.data.split("_")[-1]
+            query: str = update.callback_query.data
+            year = query.split("_")[-1]
             if is_number(year):
                 self.year = int(year)
                 self.month = 1
+                if "current" in query:
+                    self.month = self.current_month
         message: Message = update.message if update.message else update.edited_message
         if not message:
             message = update.effective_message
@@ -281,6 +284,64 @@ class MonthReport:
                 ]
             )
 
+        if self.year + 5 <= self.current_year:
+            if self.month > self.current_month:
+                keyboard.append(
+                    [
+                        create_button(
+                            "– 5  anni",
+                            str("month_previous_year_5"),
+                            "month_previous_year_5",
+                        ),
+                        create_button(
+                            "🔚",
+                            str("empty_button"),
+                            "empty_button",
+                        ),
+                    ]
+                )
+            else:
+                keyboard.append(
+                    [
+                        create_button(
+                            "– 5  anni",
+                            str("month_previous_year_5"),
+                            "month_previous_year_5",
+                        ),
+                        create_button(
+                            "+ 5  anni",
+                            str("month_next_year_5"),
+                            "month_next_year_5",
+                        ),
+                    ]
+                )
+        else:
+            keyboard.append(
+                [
+                    create_button(
+                        "– 5  anni",
+                        str("month_previous_year_5"),
+                        "month_previous_year_5",
+                    ),
+                    create_button(
+                        "🔚",
+                        str("empty_button"),
+                        "empty_button",
+                    ),
+                ]
+            )
+
+        if self.month != self.current_month or self.current_year != self.year:
+            keyboard.append(
+                [
+                    create_button(
+                        f"Vai al mese corrente {get_month_string(self.current_month)} {self.current_year}",
+                        f"expand_report_current_{self.current_year}",
+                        f"expand_report_current_{self.current_year}",
+                    )
+                ]
+            )
+
         keyboard.append(
             [
                 create_button(
@@ -290,6 +351,7 @@ class MonthReport:
                 )
             ]
         )
+
         return keyboard
 
     def retrieve_purchase(self, user: User) -> [Purchase]:
@@ -415,6 +477,7 @@ class MonthReport:
         restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
+
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
         context.bot.edit_message_text(
@@ -451,7 +514,12 @@ class MonthReport:
             return
         restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
-        self.year -= 1
+        query: str = update.callback_query.data
+        year = query.split("_")[-1]
+        if is_number(year):
+            self.year = self.year - int(year)
+        else:
+            self.year -= 1
         message = self.retrieve_purchase(user)
         keyboard = self.build_keyboard()
         context.bot.edit_message_text(
@@ -574,7 +642,12 @@ class MonthReport:
             return
         restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
-        self.year += 1
+        query: str = update.callback_query.data
+        year = query.split("_")[-1]
+        if is_number(year):
+            self.year = self.year + int(year)
+        else:
+            self.year += 1
         if self.year == self.current_year:
             if self.month > self.current_month:
                 self.month = self.current_month
