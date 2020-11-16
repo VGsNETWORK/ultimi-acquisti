@@ -335,7 +335,7 @@ class MonthReport:
             keyboard.append(
                 [
                     create_button(
-                        f"Vai al mese corrente {get_month_string(self.current_month)} {self.current_year}",
+                        f"Vai al mese corrente  ({get_month_string(self.current_month, False, True)} {self.current_year})",
                         f"expand_report_current_{self.current_year}",
                         f"expand_report_current_{self.current_year}",
                     )
