@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from dateutil import tz
-from telegram import InlineKeyboardMarkup, Message, Update, User, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
 from root.helper.redis_message import add_message, is_owner
@@ -23,12 +23,12 @@ from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    create_button,
     format_price,
     get_month_string,
     is_group_allowed,
     is_number,
 )
+from root.helper.keyboard.year_report import build_keyboard
 
 
 class YearReport:
@@ -77,7 +77,7 @@ class YearReport:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        keyboard = self.build_keyboard()
+        keyboard = build_keyboard(self.year, self.current_year)
         message = self.retrieve_purchase(user)
         if expand:
             try:
@@ -122,64 +122,6 @@ class YearReport:
             context (CallbackContext): The context of the telegram bot
         """
         self.year_report(update, context, True)
-
-    def build_keyboard(self) -> [[InlineKeyboardButton]]:
-        """Create the keyboard for the report
-
-        Returns:
-            [[InlineKeyboardButton]]: Array of Arrays of Keyboard Buttons
-        """
-        keyboard = []
-        if self.year == self.current_year:
-            keyboard = [
-                [
-                    create_button(
-                        f"{self.year - 1}   ◄",
-                        str("year_previous_year"),
-                        "year_previous_year",
-                    ),
-                    create_button(
-                        f"{self.year}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        "🔚",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                ]
-            ]
-        else:
-            keyboard = [
-                [
-                    create_button(
-                        f"{self.year - 1}   ◄",
-                        str("year_previous_year"),
-                        "year_previous_year",
-                    ),
-                    create_button(
-                        f"{self.year}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"►   {self.year + 1}",
-                        str("year_next_year"),
-                        "year_next_year",
-                    ),
-                ]
-            ]
-        keyboard.append(
-            [
-                create_button(
-                    f"Passa al report mensile di Gennaio {self.year}",
-                    f"expand_report_{self.year}",
-                    f"expand_report_{self.year}",
-                )
-            ]
-        )
-        return keyboard
 
     def retrieve_purchase(self, user: User) -> [Purchase]:
         """Retrieve of the purchases for the user
@@ -258,7 +200,7 @@ class YearReport:
         context.bot.answer_callback_query(update.callback_query.id)
         self.year -= 1
         message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
+        keyboard = build_keyboard(self.year, self.current_year)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -297,7 +239,7 @@ class YearReport:
         if self.year >= self.current_year:
             self.year = self.current_year
         message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
+        keyboard = build_keyboard(self.year, self.current_year)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
