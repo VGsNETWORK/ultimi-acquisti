@@ -38,7 +38,7 @@ MONTH_PURCHASES = (
 )
 
 MONTH_PURCHASES_NONE = (
-    '<a href="tg://user?id=%s">%s</a>, a ' "<b>%s</b> non hai ancora speso niente.\n\n"
+    '<a href="tg://user?id=%s">%s</a>, a <b>%s</b> non hai ancora speso niente.\n\n'
 )
 
 MONTH_PREVIOUS_PURCHASES_NONE = "📈 A <i>%s</i> non hai registrato alcun acquisto."
@@ -89,7 +89,7 @@ PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
 
 CANCEL_PURCHASE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>,'
+    '<a href="tg://user?id=%s">%s</a>, '
     + "per cancellare un tuo acquisto devi <b>quotarlo</b>!"
 )
 
