@@ -4,7 +4,7 @@
 
 from datetime import datetime
 from dateutil import tz
-from telegram import InlineKeyboardMarkup, Message, Update, InlineKeyboardButton, User
+from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.redis_message import add_message, is_owner
 from root.model.purchase import Purchase
@@ -25,12 +25,13 @@ from root.helper.user_helper import create_user, user_exists
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    create_button,
     format_price,
     get_month_string,
     is_group_allowed,
     is_number,
 )
+from root.helper.keyboard.month_report import build_keyboard
+from root.helper.report import check_owner
 
 
 class MonthReport:
@@ -84,7 +85,9 @@ class MonthReport:
                 create_user(user)
             if not is_group_allowed(chat_id):
                 return
-        keyboard = self.build_keyboard()
+        keyboard = build_keyboard(
+            self.month, self.current_month, self.year, self.current_year
+        )
         message = self.retrieve_purchase(user)
         if expand:
             try:
@@ -126,234 +129,7 @@ class MonthReport:
         """
         self.month_report(update, context, True)
 
-    def build_keyboard(self) -> [[InlineKeyboardButton]]:
-        """Create the keyboard for the report
-
-        Returns:
-            [[InlineKeyboardButton]]: Array of Arrays of Keyboard Buttons
-        """
-        keyboard = []
-        if (
-            self.year == self.current_year
-            and self.month > 1
-            and self.month < self.current_month
-        ):
-            keyboard = [
-                [
-                    create_button(
-                        f"{get_month_string(self.month - 1, False, False )}   ◄",
-                        str("month_previous_page"),
-                        "month_previous_page",
-                    ),
-                    create_button(
-                        f"{get_month_string(self.month, False, False).upper()}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"►   {get_month_string(self.month + 1, False, False )}",
-                        str("month_next_page"),
-                        "month_next_page",
-                    ),
-                ]
-            ]
-        elif not self.year == self.current_year and self.month > 1 and self.month < 12:
-            keyboard = [
-                [
-                    create_button(
-                        f"{get_month_string(self.month - 1, False, False )}   ◄",
-                        str("month_previous_page"),
-                        "month_previous_page",
-                    ),
-                    create_button(
-                        f"{get_month_string(self.month, False, False).upper()}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"►   {get_month_string(self.month + 1, False, False )}",
-                        str("month_next_page"),
-                        "month_next_page",
-                    ),
-                ]
-            ]
-        elif self.month == 1:
-            message = f"{get_month_string(12, True, False )} {self.year - 1}   ◄"
-            keyboard = [
-                [
-                    create_button(
-                        f"{message}",
-                        str("month_previous_start_year"),
-                        "month_previous_start_year",
-                    ),
-                    create_button(
-                        f"{get_month_string(self.month, False, False).upper()}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"►   {get_month_string(self.month + 1, False, False )}",
-                        str("month_next_page"),
-                        "month_next_page",
-                    ),
-                ]
-            ]
-        elif not self.year == self.current_year and self.month == 12:
-            message = f"►   {get_month_string(1, True, False )} {self.year + 1}"
-            keyboard = [
-                [
-                    create_button(
-                        f"{get_month_string(self.month - 1, False, False )}   ◄",
-                        str("month_previous_page"),
-                        "month_previous_page",
-                    ),
-                    create_button(
-                        f"{get_month_string(self.month, False, False).upper()}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"{message}",
-                        str("month_next_start_year"),
-                        "month_next_start_year",
-                    ),
-                ]
-            ]
-        elif self.year == self.current_year and self.month == self.current_month:
-            keyboard = [
-                [
-                    create_button(
-                        f"{get_month_string(self.month - 1, False, False )}   ◄",
-                        str("month_previous_page"),
-                        "month_previous_page",
-                    ),
-                    create_button(
-                        f"{get_month_string(self.month, False, False).upper()}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        "🔚",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                ]
-            ]
-        if self.year == self.current_year:
-            keyboard.append(
-                [
-                    create_button(
-                        f"{get_month_string(self.month, True, False )} {self.year - 1}   ◄",
-                        str("month_previous_year"),
-                        "month_previous_year",
-                    ),
-                    create_button(
-                        f"{self.year}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        "🔚",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                ]
-            )
-        else:
-            if self.year + 1 == self.current_year and self.month > self.current_month:
-                month = self.current_month
-            else:
-                month = self.month
-            keyboard.append(
-                [
-                    create_button(
-                        f"{get_month_string(self.month, True, False )} {self.year - 1}   ◄",
-                        str("month_previous_year"),
-                        "month_previous_year",
-                    ),
-                    create_button(
-                        f"{self.year}",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                    create_button(
-                        f"►   {get_month_string(month, True, False )} {self.year + 1}",
-                        str("month_next_year"),
-                        "month_next_year",
-                    ),
-                ]
-            )
-
-        if self.year + 5 <= self.current_year:
-            if self.month > self.current_month:
-                keyboard.append(
-                    [
-                        create_button(
-                            "– 5  anni",
-                            str("month_previous_year_5"),
-                            "month_previous_year_5",
-                        ),
-                        create_button(
-                            "🔚",
-                            str("empty_button"),
-                            "empty_button",
-                        ),
-                    ]
-                )
-            else:
-                keyboard.append(
-                    [
-                        create_button(
-                            "– 5  anni",
-                            str("month_previous_year_5"),
-                            "month_previous_year_5",
-                        ),
-                        create_button(
-                            "+ 5  anni",
-                            str("month_next_year_5"),
-                            "month_next_year_5",
-                        ),
-                    ]
-                )
-        else:
-            keyboard.append(
-                [
-                    create_button(
-                        "– 5  anni",
-                        str("month_previous_year_5"),
-                        "month_previous_year_5",
-                    ),
-                    create_button(
-                        "🔚",
-                        str("empty_button"),
-                        "empty_button",
-                    ),
-                ]
-            )
-
-        if self.month != self.current_month or self.current_year != self.year:
-            keyboard.append(
-                [
-                    create_button(
-                        f"Vai al mese corrente  ({get_month_string(self.current_month, False, True)} {self.current_year})",
-                        f"expand_report_current_{self.current_year}",
-                        f"expand_report_current_{self.current_year}",
-                    )
-                ]
-            )
-
-        keyboard.append(
-            [
-                create_button(
-                    f"Passa al report annuale del {self.year}",
-                    f"expand_year_report_{self.year}",
-                    f"expand_year_report_{self.year}",
-                )
-            ]
-        )
-
-        return keyboard
-
+    # =========================================================================
     def retrieve_purchase(self, user: User) -> [Purchase]:
         """Retrieve of the purchases for the user
 
@@ -363,12 +139,12 @@ class MonthReport:
         Returns:
             [Purchase]: The list of purchases
         """
-        if not user_exists(user.id):
-            create_user(user)
         if self.month > 12:
-            self.month = 12
-        if self.month < 1:
             self.month = 1
+            self.year += 1
+        if self.month < 1:
+            self.year -= 1
+            self.month = 12
         user_id = user.id
         first_name = user.first_name
         purchases = retrieve_month_purchases_for_user(user_id, self.month, self.year)
@@ -414,6 +190,7 @@ class MonthReport:
             message = f"{message}\n{footer}"
         return message
 
+    # =========================================================================
     def previous_page(self, update: Update, context: CallbackContext):
         """Go to the previous page
 
@@ -421,35 +198,10 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
+        if not check_owner(update, context):
             return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
         self.month -= 1
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
+        self.retrieve_and_send(update, context)
 
     def next_page(self, update: Update, context: CallbackContext):
         """Go to the next page
@@ -458,36 +210,10 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
+        if not check_owner(update, context):
             return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
         self.month += 1
-
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
+        self.retrieve_and_send(update, context)
 
     def previous_year(self, update: Update, context: CallbackContext):
         """Go to the previous year
@@ -496,126 +222,12 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
+        if not check_owner(update, context):
             return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
         query: str = update.callback_query.data
         year = query.split("_")[-1]
-        if is_number(year):
-            self.year = self.year - int(year)
-        else:
-            self.year -= 1
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
-
-    def next_start_year(self, update: Update, context: CallbackContext):
-        """Go to the next year but at the start
-
-        Args:
-            update (Update): Telegram update
-            context (CallbackContext): The context of the telegram bot
-        """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
-            return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
-        self.year += 1
-        self.month = 1
-        if self.year == self.current_year:
-            if self.month > self.current_month:
-                self.month = self.current_month
-        if self.year > self.current_year:
-            self.year = self.current_year
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
-
-    def previous_start_year(self, update: Update, context: CallbackContext):
-        """Go to the previous year but at the end
-
-        Args:
-            update (Update): Telegram update
-            context (CallbackContext): The context of the telegram bot
-        """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
-            return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
-        self.year -= 1
-        self.month = 12
-        if self.year == self.current_year:
-            if self.month > self.current_month:
-                self.month = self.current_month
-        if self.year > self.current_year:
-            self.year = self.current_year
-        message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
+        self.year = self.year - int(year)
+        self.retrieve_and_send(update, context)
 
     def next_year(self, update: Update, context: CallbackContext):
         """Go to the next year
@@ -624,37 +236,32 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        user = update.effective_user
-        message_id = update.effective_message.message_id
-        chat_id = update.effective_chat.id
-        user_id = user.id
-        try:
-            if not is_owner(message_id, user_id):
-                context.bot.answer_callback_query(
-                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
-                )
-                return
-        except ValueError:
-            context.bot.answer_callback_query(
-                update.callback_query.id, text=SESSION_ENDED, show_alert=True
-            )
-            self.sender.delete_message(context, chat_id, message_id)
+        if not check_owner(update, context):
             return
-        restart_process(message_id)
-        context.bot.answer_callback_query(update.callback_query.id)
         query: str = update.callback_query.data
         year = query.split("_")[-1]
-        if is_number(year):
-            self.year = self.year + int(year)
-        else:
-            self.year += 1
+        self.year = self.year + int(year)
         if self.year == self.current_year:
             if self.month > self.current_month:
                 self.month = self.current_month
-        if self.year > self.current_year:
-            self.year = self.current_year
+        self.retrieve_and_send(update, context)
+
+    def retrieve_and_send(self, update: Update, context: CallbackContext):
+        """[summary]
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
+        user = update.effective_user
+        if not user_exists(user.id):
+            create_user(user)
+        message_id = update.effective_message.message_id
+        chat_id = update.effective_chat.id
         message = self.retrieve_purchase(user)
-        keyboard = self.build_keyboard()
+        keyboard = build_keyboard(
+            self.month, self.current_month, self.year, self.current_year
+        )
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

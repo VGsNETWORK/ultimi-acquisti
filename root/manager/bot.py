@@ -151,18 +151,6 @@ class BotManager:
             )
         )
         self.disp.add_handler(
-            CallbackQueryHandler(
-                callback=self.month_report.next_start_year,
-                pattern="month_next_start_year",
-            )
-        )
-        self.disp.add_handler(
-            CallbackQueryHandler(
-                callback=self.month_report.previous_start_year,
-                pattern="month_previous_start_year",
-            )
-        )
-        self.disp.add_handler(
             CallbackQueryHandler(callback=self.empty_button, pattern="empty_button")
         )
         self.disp.add_handler(

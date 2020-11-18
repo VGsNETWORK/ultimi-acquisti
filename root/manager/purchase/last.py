@@ -36,15 +36,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
     if user.is_bot:
         sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
         return
-    if not chat_type == "private":
-        if not user_exists(user_id):
-            create_user(user)
-        if not is_group_allowed(chat_id):
-            return
-        purchase: Purchase = get_last_purchase(user_id)
-    else:
-        sender.send_and_delete(context, chat_id, ONLY_GROUP)
-        return
+    purchase: Purchase = get_last_purchase(user_id)
     if message.reply_to_message:
         rmessage: Message = message.reply_to_message
         ruser = rmessage.from_user

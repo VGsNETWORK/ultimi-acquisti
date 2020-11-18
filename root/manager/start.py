@@ -31,7 +31,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
-    sender.delete_if_private(context, message)
+    # sender.delete_if_private(context, message)
     params = re.sub("\\/\\w+\\s", "", message.text)
     if params:
         handle_params(update, context, params)
