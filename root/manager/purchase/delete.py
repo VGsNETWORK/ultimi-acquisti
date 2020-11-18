@@ -15,6 +15,7 @@ from root.contants.messages import (
     PURCHASE_DELETED,
     ONLY_GROUP,
     PURCHASE_NOT_FOUND,
+    NOT_YOUR_PURCHASE,
 )
 from root.util.telegram import TelegramSender
 
@@ -57,9 +58,14 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         return
     try:
         message_id = reply.message_id
-        purchase_helper.delete_purchase(user_id, message_id)
-        context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-        sender.send_and_delete(context, chat_id, PURCHASE_DELETED, timeout=10)
+        purchase = purchase_helper.find_by_message_id(message_id)
+        if purchase.user_id == user_id:
+            purchase_helper.delete_purchase(user_id, message_id)
+            context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+            message = PURCHASE_DELETED
+        else:
+            message = NOT_YOUR_PURCHASE % (user_id, first_name)
+        sender.send_and_delete(context, chat_id, message, timeout=10)
     except DoesNotExist:
         message_id = message.message_id
         message = PURCHASE_NOT_FOUND % (user_id, first_name)

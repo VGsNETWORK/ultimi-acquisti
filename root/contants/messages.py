@@ -93,7 +93,7 @@ CANCEL_PURCHASE_ERROR = (
 )
 
 PURCHASE_NOT_FOUND = (
-    '<a href="tg://user?id=%s">%s</a>, non riesco a'
+    '<a href="tg://user?id=%s">%s</a>, non riesco a '
     "trovare l'acquisto che hai fatto..."
 )
 
@@ -106,13 +106,18 @@ GROUP_NOT_ALLOWED = (
 )
 
 NO_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>,'
-    " non hai ancora registrato alcun acquisto su questo bot."
+    '<a href="tg://user?id=%s">%s</a>, '
+    "non hai ancora registrato alcun acquisto su questo bot."
+)
+
+NOT_YOUR_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>, '
+    "non puoi cancellare l'acquisto di un altro utente!"
 )
 
 NO_MONTH_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, nel mese di <b>%s</b>'
-    " non hai registrato alcun acquisto."
+    '<a href="tg://user?id=%s">%s</a>, nel mese di <b>%s</b> '
+    "non hai registrato alcun acquisto."
 )
 
 NO_YEAR_PURCHASE = (

@@ -117,6 +117,18 @@ def create_purchase(
         ).save()
 
 
+def find_by_message_id(message_id: int) -> Purchase:
+    """Find a purchase using the message_id
+
+    Args:
+        message_id (int): The message_id to find
+
+    Returns:
+        Purchase: The purchase if found
+    """
+    return Purchase.objects.get(message_id=message_id)
+
+
 def retrive_purchases_for_user(user_id: int) -> [Purchase]:
     """retrieve all purchases for a user
 
