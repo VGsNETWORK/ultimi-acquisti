@@ -16,6 +16,8 @@ from root.contants.messages import (
     ONLY_GROUP,
     PURCHASE_NOT_FOUND,
     NOT_YOUR_PURCHASE,
+    NO_QUOTE_BOT,
+    NOT_A_PURCHASE,
 )
 from root.util.telegram import TelegramSender
 
@@ -55,6 +57,13 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     if not reply:
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
         sender.send_and_delete(context, chat_id, message, timeout=10)
+        return
+    if reply.from_user.is_bot:
+        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT, timeout=10)
+        return
+    if not "#ultimiacquisti" in reply.text:
+        message = NOT_A_PURCHASE % (user_id, first_name)
+        sender.send_and_delete(context, chat_id, message, timeout=30)
         return
     try:
         message_id = reply.message_id

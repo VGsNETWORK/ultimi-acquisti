@@ -89,7 +89,15 @@ PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
 
 CANCEL_PURCHASE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>, per annullare un tuo acquisto devi quotarlo!'
+    '<a href="tg://user?id=%s">%s</a>,'
+    + "per cancellare un tuo acquisto devi <b>quotarlo</b>!"
+)
+
+NOT_A_PURCHASE = (
+    '<a href="tg://user?id=%s">%s</a>, '
+    "il messaggio che hai quotato non è un acquisto valido!\n\n"
+    "Per essere riconosciuto, un acquisto deve contenere "
+    'l\'hashtag "<code>#ultimiacquisti</code>".'
 )
 
 PURCHASE_NOT_FOUND = (
