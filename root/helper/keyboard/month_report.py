@@ -112,7 +112,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     if month != current_month or year != current_year:
         # Show the button to view the current month/year report if the user is not there
         btext = (
-            f"Vai al mese corrente  ({get_month_string(current_month, False, True)}"
+            f"Vai al mese corrente  ({get_month_string(current_month, False, False)}"
             f" {current_year})"
         )
         bcall = f"expand_report_current_{current_year}"
@@ -121,7 +121,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     # Button to pass to the year report
     btext = f"Passa al report annuale del {year}"
     bcall = f"expand_year_report_{year}"
-    buttons.append([[btext, bcall]])
+    buttons = [[[btext, bcall]], *buttons]
 
     # Create a telegram compatible keyboard
     for brow in buttons:
