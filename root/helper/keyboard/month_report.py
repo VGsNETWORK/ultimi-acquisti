@@ -116,12 +116,12 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
             f" {current_year})"
         )
         bcall = f"expand_report_current_{current_year}"
-        buttons.append([[btext, bcall]])
+        buttons = [[[btext, bcall]], *buttons]
 
     # Button to pass to the year report
     btext = f"Passa al report annuale del {year}"
     bcall = f"expand_year_report_{year}"
-    buttons = [[[btext, bcall]], *buttons]
+    buttons.append([[btext, bcall]])
 
     # Create a telegram compatible keyboard
     for brow in buttons:
