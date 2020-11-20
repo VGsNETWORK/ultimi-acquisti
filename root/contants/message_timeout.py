@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+"""Various timeouts for the messages"""
+
+SERVICE_TIMEOUT = 10
+LONG_SERVICE_TIMEOUT = 30
+MONTH_REPORT_TIMEOUT = 300
+YEAR_REPORT_TIMEOUT = 180
+HELP_TIMEOUT = 60

@@ -29,6 +29,7 @@ from root.util.util import (
     is_number,
 )
 from root.helper.keyboard.year_report import build_keyboard
+from root.contants.message_timeout import YEAR_REPORT_TIMEOUT
 
 
 class YearReport:
@@ -83,7 +84,7 @@ class YearReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
-                    restart_process(message_id, 300)
+                    restart_process(message_id, YEAR_REPORT_TIMEOUT)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
@@ -112,7 +113,7 @@ class YearReport:
             chat_id,
             message,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            timeout=180,
+            timeout=YEAR_REPORT_TIMEOUT,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:

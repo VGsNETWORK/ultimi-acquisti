@@ -27,6 +27,7 @@ from root.util.util import (
     create_button,
 )
 from root.util.telegram import TelegramSender
+from root.contants.message_timeout import SERVICE_TIMEOUT
 
 sender = TelegramSender()
 
@@ -109,5 +110,5 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         chat_id,
         message,
         reply_markup=InlineKeyboardMarkup(keyboard) if expand or self_quote else None,
-        timeout=10,
+        timeout=SERVICE_TIMEOUT,
     )

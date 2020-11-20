@@ -43,10 +43,9 @@ def stop_process(key: str) -> None:
 
 def restart_process(key: str, timeout: int = -1) -> None:
     """Restart a background process identified by a key
-    timeout=10,
-        Args:
-            key (str): The identifier of the process
-            int (int, optional): The timeout of the call, Default -1
+    Args:
+        key (str): The identifier of the process
+        int (int, optional): The timeout of the call, Default -1
     """
     key = str(key)
     logger.info(f"restarting process with {key}")

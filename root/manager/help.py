@@ -14,6 +14,7 @@ from root.contants.messages import (
 )
 from root.helper.process_helper import restart_process
 from root.helper.process_helper import stop_process
+from root.contants.message_timeout import HELP_TIMEOUT
 
 sender = TelegramSender()
 PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE]
@@ -81,7 +82,7 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
         chat_id,
         message,
         reply_markup=InlineKeyboardMarkup([[button]]),
-        timeout=60,
+        timeout=HELP_TIMEOUT,
     )
 
 

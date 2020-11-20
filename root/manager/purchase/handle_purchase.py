@@ -18,6 +18,7 @@ from root.helper.purchase_helper import convert_to_float, create_purchase
 from root.helper.user_helper import create_user, user_exists
 from root.util.telegram import TelegramSender
 from root.util.util import has_number, is_group_allowed, retrieve_key
+from root.contants.message_timeout import SERVICE_TIMEOUT
 
 sender = TelegramSender()
 
@@ -165,4 +166,6 @@ def handle_purchase(client: Client, message: Message) -> None:
             )
     else:
         message = result["error"]
-    sender.send_and_deproto(client, chat_id, message, message_id, timeout=10)
+    sender.send_and_deproto(
+        client, chat_id, message, message_id, timeout=SERVICE_TIMEOUT
+    )

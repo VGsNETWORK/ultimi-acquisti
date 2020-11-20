@@ -20,6 +20,7 @@ from root.contants.messages import (
     NOT_A_PURCHASE,
 )
 from root.util.telegram import TelegramSender
+from root.contants.message_timeout import SERVICE_TIMEOUT, LONG_SERVICE_TIMEOUT
 
 sender = TelegramSender()
 
@@ -41,7 +42,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     first_name = user.first_name
     chat_type = message.chat.type
     if message.chat.type == "private":
-        sender.send_and_delete(context, chat_id, ONLY_GROUP, timeout=10)
+        sender.send_and_delete(context, chat_id, ONLY_GROUP, timeout=SERVICE_TIMEOUT)
         return
     if not chat_type == "private":
         if not user_exists(user_id):
@@ -56,14 +57,14 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     message_id = message.message_id
     if not reply:
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=10)
+        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
         return
     if reply.from_user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT, timeout=10)
+        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT, timeout=SERVICE_TIMEOUT)
         return
     if not "#ultimiacquisti" in reply.text:
         message = NOT_A_PURCHASE % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=30)
+        sender.send_and_delete(context, chat_id, message, timeout=LONG_SERVICE_TIMEOUT)
         return
     try:
         message_id = reply.message_id
@@ -74,11 +75,11 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
             message = PURCHASE_DELETED
         else:
             message = NOT_YOUR_PURCHASE % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=10)
+        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
     except DoesNotExist:
         message_id = message.message_id
         message = PURCHASE_NOT_FOUND % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=10)
+        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
 
 
 def remove_purchase(client: Client, message: PyroMessage) -> None:
@@ -92,4 +93,6 @@ def remove_purchase(client: Client, message: PyroMessage) -> None:
     user_id: int = message.from_user.id
     chat_id = message.chat.id
     purchase_helper.delete_purchase(user_id, message_id)
-    sender.send_and_deproto(client, chat_id, PURCHASE_DELETED, message_id, timeout=10)
+    sender.send_and_deproto(
+        client, chat_id, PURCHASE_DELETED, message_id, timeout=SERVICE_TIMEOUT
+    )
