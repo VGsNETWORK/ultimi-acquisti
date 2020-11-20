@@ -146,7 +146,11 @@ class TelegramSender:
             message (Message): The message to delete
         """
         if message.chat.type == "private":
-            self.delete_message(context, message.chat.id, message.message_id)
+            self.delete_message(
+                context,
+                message.chat.id,
+                message.message_id,
+            )
 
     def delete_message(
         self, context: CallbackContext, chat_id: int, message_id: int, timeout: int = 0
@@ -161,9 +165,12 @@ class TelegramSender:
         """
         sleep(timeout)
         try:
+            logger.info(f"deleting {message_id} from redis")
             delete_message(message_id)
-            context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-        except BadRequest:
+            logger.info(f"deleting {message_id} from telegram")
+            self._bot = Bot(environ["TOKEN"])
+            self._bot.delete_message(chat_id=chat_id, message_id=message_id)
+        except BadRequest as bad_request:
             pass
 
     def deproto_message(
@@ -179,8 +186,10 @@ class TelegramSender:
         """
         sleep(timeout)
         try:
+            logger.info(f"deleting {message_id} from redis")
             delete_message(message_id)
-            self._bot_init(environ["TOKEN"])
+            logger.info(f"deleting {message_id} from telegram")
+            self._bot = Bot(environ["TOKEN"])
             self._bot.delete_message(chat_id=chat_id, message_id=message_id)
         except BadRequest:
             pass

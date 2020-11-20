@@ -109,4 +109,5 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         chat_id,
         message,
         reply_markup=InlineKeyboardMarkup(keyboard) if expand or self_quote else None,
+        timeout=10,
     )

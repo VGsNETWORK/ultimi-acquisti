@@ -74,7 +74,8 @@ class MonthReport:
         if not message:
             message = update.effective_message
         else:
-            self.sender.delete_if_private(context, message)
+            if expand:
+                self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
@@ -92,7 +93,7 @@ class MonthReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
-                    restart_process(message_id)
+                    restart_process(message_id, 300)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,

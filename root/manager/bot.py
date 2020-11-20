@@ -42,7 +42,11 @@ class BotManager:
     def connect(self):
         """Run the telegram bot"""
         self.token = retrieve_key("TOKEN")
-        self.updater = Updater(self.token, use_context=True)
+        self.updater = Updater(
+            self.token,
+            use_context=True,
+            request_kwargs={"read_timeout": 6, "connect_timeout": 7},
+        )
         self.disp = self.updater.dispatcher
         self.add_handler()
         logger.info("Il bot si sta avviando...")
