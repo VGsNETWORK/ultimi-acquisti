@@ -68,7 +68,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     buttons[1].append([btext, bcall])
 
     # If the user is in the current year he can't go to the next one
-    if year == current_year:
+    if year == current_year or (month > current_month and year + 1 == current_year):
         btext = end_emoji
         bcall = do_nothing
     else:
