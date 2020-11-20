@@ -17,14 +17,14 @@ DB_GENERIC_ERROR = (
 )
 
 TELEGRAM_ERROR = (
-    "Durante la gestione di un update è successo questo errore:"
+    "Durante la gestione di un update si è verificato questo errore:"
     "\n\n<code>%s</code>\n\nRisolviamo al più presto 😡"
 )
 
 USER_ERROR = (
     "Hey, durante la gestione del tuo messaggio si sono verificati degli errori."
-    " I nostri sviluppatori sono stati informati "
-    "e verranno risolti il prima possibile."
+    " I nostri sviluppatori sono stati informati:"
+    " verranno risolti il prima possibile."
 )
 
 PRICE_MESSAGE_NOT_FORMATTED = (
