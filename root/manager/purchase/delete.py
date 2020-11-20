@@ -2,7 +2,7 @@
 
 """ File containing the function to delete a purchase """
 
-from telegram import Update, Message
+from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from mongoengine.errors import DoesNotExist
 from pyrogram.types import Message as PyroMessage
@@ -21,6 +21,7 @@ from root.contants.messages import (
 )
 from root.util.telegram import TelegramSender
 from root.contants.message_timeout import SERVICE_TIMEOUT, LONG_SERVICE_TIMEOUT
+from root.util.util import create_button, retrieve_key
 
 sender = TelegramSender()
 
@@ -64,7 +65,24 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         return
     if not "#ultimiacquisti" in reply.text:
         message = NOT_A_PURCHASE % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=LONG_SERVICE_TIMEOUT)
+        bot_name = retrieve_key("BOT_NAME")
+        keyboard = [
+            [
+                create_button(
+                    "Scopri di più",
+                    callback="help_redirect",
+                    query="help_redirect",
+                    url=f"t.me/{bot_name}?start=how_to",
+                )
+            ]
+        ]
+        sender.send_and_delete(
+            context,
+            chat_id,
+            message,
+            timeout=LONG_SERVICE_TIMEOUT,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+        )
         return
     try:
         message_id = reply.message_id

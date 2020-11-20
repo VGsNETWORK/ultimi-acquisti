@@ -96,7 +96,7 @@ CANCEL_PURCHASE_ERROR = (
 NOT_A_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, '
     "il messaggio che hai quotato non è un acquisto valido!\n\n"
-    "Per essere riconosciuto, un acquisto deve contenere "
+    "Per essere riconosciuto, un <i>acquisto</i> deve contenere "
     'l\'hashtag "<code>#ultimiacquisti</code>".'
 )
 
