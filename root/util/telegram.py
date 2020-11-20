@@ -95,6 +95,7 @@ class TelegramSender:
             text=text,
             reply_to_message_id=reply_to_message_id,
             parse_mode=parse_mode,
+            disable_notification=True,
         )
         create_process(
             name_prefix=message.message_id,
@@ -130,6 +131,7 @@ class TelegramSender:
             parse_mode=parse_mode,
             reply_to_message_id=reply_to_message_id,
             reply_markup=reply_markup,
+            disable_notification=True,
         )
         create_process(
             name_prefix=message.message_id,
@@ -170,7 +172,7 @@ class TelegramSender:
             logger.info(f"deleting {message_id} from telegram")
             self._bot = Bot(environ["TOKEN"])
             self._bot.delete_message(chat_id=chat_id, message_id=message_id)
-        except BadRequest as bad_request:
+        except BadRequest:
             pass
 
     def deproto_message(
