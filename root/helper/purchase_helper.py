@@ -182,6 +182,16 @@ def delete_purchase(user_id: int, message_id: int) -> None:
     Purchase.objects.filter(user_id=user_id).get(message_id=message_id).delete()
 
 
+def delete_purchase_forced(message_id: int) -> None:
+    """Delete a purchase
+
+    Args:
+        message_id (int): The purchase to delete
+    """
+    logger.info(f"finding purchase {message_id}")
+    Purchase.objects.get(message_id=message_id).delete()
+
+
 def retrieve_sum_for_user(user_id: int) -> float:
     """Return how much the user has spent up until now
 

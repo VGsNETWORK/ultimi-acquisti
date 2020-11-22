@@ -114,3 +114,20 @@ def remove_purchase(client: Client, message: PyroMessage) -> None:
     sender.send_and_deproto(
         client, chat_id, PURCHASE_DELETED, message_id, timeout=SERVICE_TIMEOUT
     )
+
+
+def deleted_purchase_message(client: Client, messages: [PyroMessage]) -> None:
+    """Remove the purchase from the database when a user deletes the message of a purchase
+
+    Args:
+        client (Client): The mtproto client
+        message (PyroMessage): The mtproto Message
+    """
+    for message in messages:
+        message_id = message.message_id
+        if purchase_helper.find_by_message_id(message_id):
+            chat_id = message.chat.id
+            purchase_helper.delete_purchase_forced(message_id)
+            sender.send_and_deproto(
+                client, chat_id, PURCHASE_DELETED, message_id, timeout=SERVICE_TIMEOUT
+            )
