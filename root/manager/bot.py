@@ -25,7 +25,7 @@ import root.util.logger as logger
 from root.manager.help import help_navigate, help_init
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
-from root.manager.start import handle_start, help_end
+from root.manager.start import handle_start, help_end, append_commands, remove_commands
 
 
 class BotManager:
@@ -166,5 +166,17 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.year_report.expand_report, pattern="expand_year_report.*"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=append_commands, pattern="start_show_commands"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=remove_commands, pattern="start_hide_commands"
             )
         )

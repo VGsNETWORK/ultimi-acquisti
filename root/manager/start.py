@@ -8,7 +8,11 @@ from telegram.ext import CallbackContext
 from root.manager.help import bot_help
 from root.util.telegram import TelegramSender
 from root.util.util import create_button, retrieve_key
-from root.contants.messages import START_COMMAND, NOT_ALLOWED_IN_GROUP
+from root.contants.messages import (
+    START_COMMAND,
+    NOT_ALLOWED_IN_GROUP,
+    START_COMMANDS_LIST,
+)
 from root.helper.process_helper import restart_process
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, MONTH_REPORT_TIMEOUT
 
@@ -33,7 +37,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         sender.send_and_delete(
             context,
             chat_id,
-            build_message(message),
+            build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
         )
     return
@@ -84,7 +88,70 @@ def help_end(update: Update, context: CallbackContext):
     )
 
 
+def append_commands(update: Update, context: CallbackContext):
+    """Append the list of commands to the start message
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
+    callback: CallbackQuery = update.callback_query
+    message: Message = callback.message
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "🔺  Nascondi i comandi  🔺",
+                    "start_hide_commands",
+                    "start_hide_commands",
+                )
+            ],
+            [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+        ]
+    )
+    chat_id: int = message.chat.id
+    message_id: int = message.message_id
+    restart_process(message.message_id, timeout=get_timeout(message))
+    message: str = f"{message.text}\n{START_COMMANDS_LIST}"
+    context.bot.edit_message_text(
+        text=message,
+        chat_id=chat_id,
+        disable_web_page_preview=True,
+        message_id=message_id,
+        reply_markup=keyboard,
+        parse_mode="HTML",
+    )
+
+
+def remove_commands(update: Update, context: CallbackContext):
+    """Remove the list of commands to the start message
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
+    callback: CallbackQuery = update.callback_query
+    message: Message = callback.message
+    restart_process(message.message_id, timeout=get_timeout(message))
+    context.bot.edit_message_text(
+        text=build_message(update.effective_user, message),
+        chat_id=message.chat.id,
+        disable_web_page_preview=True,
+        message_id=message.message_id,
+        reply_markup=build_keyboard(message),
+        parse_mode="HTML",
+    )
+
+
 def get_timeout(message: Message) -> int:
+    """Get timeout based on the chat
+
+    Args:
+        message (Message): The message
+
+    Returns:
+        int: The timeout
+    """
     if message.chat.type != "private":
         return LONG_SERVICE_TIMEOUT
     return MONTH_REPORT_TIMEOUT
@@ -120,13 +187,22 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
     bot_name = retrieve_key("BOT_NAME")
     if message.chat.type == "private":
         return InlineKeyboardMarkup(
-            [[create_button("📜  Guida", "how_to_page_1", "how_to_page_1")]]
+            [
+                [
+                    create_button(
+                        "🔻  Mostra i comandi  🔻",
+                        "start_show_commands",
+                        "start_show_commands",
+                    )
+                ],
+                [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+            ]
         )
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
-                    "↩️  Privata",
+                    "Vai alla chat privata  ➡️",
                     "go_start",
                     "go_start",
                     url=f"t.me/{bot_name}?start=start",

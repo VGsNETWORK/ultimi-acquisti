@@ -36,6 +36,35 @@ START_COMMAND = (
     "Sono un gestore di spesa tramite cui puoi registrare i tuoi acquisti recenti e passati [...]"
 )
 
+START_COMMANDS_LIST = (
+    "<b>LISTA COMANDI</b>\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fhowto%40VGsNETWORK_Bot">/howto</a>'
+    "     Mostra una breve guida all'utilizzo del bot\n"
+    '<a href="https://t.me/share/url?text=%2Fultimoacquisto%40VGsNETWORK_Bot">/ultimoacquisto</a>'
+    "     Ritrova il tuo ultimo acquisto\n\n"
+    '<a href="https://t.me/share/url?text=%2Fspesamensile%40VGsNETWORK_Bot">/spesamensile</a>'
+    "     Mostra la tua spesa totale per questo mese\n"
+    '<a href="https://t.me/share/url?text=%2Freportmensile%40VGsNETWORK_Bot">/reportmensile</a>'
+    "     Mostra un report dettagliato della tua spesa totale per questo mese\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparamese%40VGsNETWORK_Bot">/comparamese</a>'
+    "     Metti a confronto la tua spesa mensile con quella di un altro utente"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparamese%40VGsNETWORK_Bot%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>'
+    "     Specifica un mese e un anno per cui eseguire <code>comparamese</code>\n\n"
+    '<a href="https://t.me/share/url?text=%2Fspesaannuale%40VGsNETWORK_Bot">/spesaannuale</a>'
+    "     Mostra la tua spesa totale per questo anno\n"
+    '<a href="https://t.me/share/url?text=%2Freportannuale%40VGsNETWORK_Bot">/reportannuale</a>'
+    "     Mostra un report dettagliato della tua spesa totale per questo anno\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparaanno%40VGsNETWORK_Bot">/comparaanno</a>'
+    "     Metti a confronto la tua spesa annuale con quella di un altro utente"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparaanno%40VGsNETWORK_Bot%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>'
+    "     Specifica un mese e un anno per cui eseguire <code>comparaanno</code>\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcancellaspesa%40VGsNETWORK_Bot">/cancellaspesa</a>'
+    "     Rimuovi un acquisto dal tuo storico; cancella anche il relativo post"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
+)
+
 
 PRICE_MESSAGE_NOT_FORMATTED = (
     "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine "
