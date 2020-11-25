@@ -22,10 +22,10 @@ from root.manager.purchase.year_purchase import year_purchase
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
 import root.util.logger as logger
-from root.manager.help import help_navigate, help_init, help_end
+from root.manager.help import help_navigate, help_init
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
-from root.manager.start import handle_start
+from root.manager.start import handle_start, help_end
 
 
 class BotManager:

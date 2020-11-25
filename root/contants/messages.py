@@ -27,6 +27,16 @@ USER_ERROR = (
     " verranno risolti il prima possibile."
 )
 
+NOT_ALLOWED_IN_GROUP = (
+    'Ciao <a href="tg://user?id=%s">%s</a>, per piacere continuiamo in chat privata!'
+)
+
+START_COMMAND = (
+    'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
+    "Sono un gestore di spesa tramite cui puoi registrare i tuoi acquisti recenti e passati [...]"
+)
+
+
 PRICE_MESSAGE_NOT_FORMATTED = (
     "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine "
     "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"

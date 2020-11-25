@@ -67,7 +67,7 @@ class YearReport:
         if not message:
             message = update.effective_message
         else:
-            if expand:
+            if not expand:
                 self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type

@@ -30,20 +30,6 @@ def help_init(update: Update, context: CallbackContext):
     bot_help(update, context, 1)
 
 
-def help_end(update: Update, context: CallbackContext):
-    """End the help session with the user
-
-    Args:
-        update (Update): Telegram update
-        context (CallbackContext): The context of the telegram bot
-    """
-    context.bot.answer_callback_query(update.callback_query.id)
-    callback: CallbackQuery = update.callback_query
-    message: Message = callback.message
-    sender.delete_if_private(context, message)
-    stop_process(message.message_id)
-
-
 def help_navigate(update: Update, context: CallbackContext):
     """Navigate in the various pages of the help section
 
