@@ -34,11 +34,11 @@ NOT_ALLOWED_IN_GROUP = (
 START_COMMAND = (
     'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
     "Sono un <b>bot di gestione della spesa personale</b>, e puoi usarmi per registrare"
-    "i tuoi acquisti recenti e passati e tracciarli nel tempo.\n"
+    " i tuoi acquisti recenti e passati e tracciarli nel tempo.\n"
     "La funzioni di aggiunta, modifica e rimozione degli acquisti sono"
-    "utilizzabili solo all'interno dei gruppi di @VGsNETWORK (@VGsGROUPS),"
-    "luogo dove puoi anche comparare la tua spesa di un certo periodo con quella"
-    "degli altri utenti, nonché vederne i rispettivi acquisti.\n\n"
+    " utilizzabili solo all'interno dei gruppi di @VGsNETWORK (@VGsGROUPS),"
+    " luogo dove puoi anche comparare la tua spesa di un certo periodo con quella"
+    " degli altri utenti, nonché vederne i rispettivi acquisti.\n\n"
     "Buon utilizzo!"
 )
 
