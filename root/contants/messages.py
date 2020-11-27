@@ -43,31 +43,31 @@ START_COMMAND = (
 )
 
 START_COMMANDS_LIST = (
-    "\n\n\n<b>LISTA COMANDI</b>\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fhowto@UltimiAcquistiBot">/howto</a>'
-    "     Mostra una breve guida all'utilizzo del bot\n"
-    '<a href="https://t.me/share/url?text=%2Fultimoacquisto@UltimiAcquistiBot">/ultimoacquisto</a>'
-    "     Ritrova il tuo ultimo acquisto\n\n"
-    '<a href="https://t.me/share/url?text=%2Fspesamensile@UltimiAcquistiBot">/spesamensile</a>'
-    "     Mostra la tua spesa totale per questo mese\n"
-    '<a href="https://t.me/share/url?text=%2Freportmensile@UltimiAcquistiBot">/reportmensile</a>'
-    "     Mostra un report dettagliato della tua spesa totale per questo mese\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot">/comparamese</a>'
-    "     Metti a confronto la tua spesa mensile con quella di un altro utente"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>'
-    "     Specifica un mese e un anno per cui eseguire <code>comparamese</code>\n\n"
-    '<a href="https://t.me/share/url?text=%2Fspesaannuale@UltimiAcquistiBot">/spesaannuale</a>'
-    "     Mostra la tua spesa totale per questo anno\n"
-    '<a href="https://t.me/share/url?text=%2Freportannuale@UltimiAcquistiBot">/reportannuale</a>'
-    "     Mostra un report dettagliato della tua spesa totale per questo anno\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot">/comparaanno</a>'
-    "     Metti a confronto la tua spesa annuale con quella di un altro utente"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>'
-    "     Specifica un mese e un anno per cui eseguire <code>comparaanno</code>\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcancellaspesa@UltimiAcquistiBot">/cancellaspesa</a>'
-    "     Rimuovi un acquisto dal tuo storico; cancella anche il relativo post"
+    "\n\n\n<b>LISTA COMANDI</b>\n\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fhowto@UltimiAcquistiBot">/howto</a>\n\n'
+    "Mostra una breve guida all'utilizzo del bot\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fultimoacquisto@UltimiAcquistiBot">/ultimoacquisto</a>\n\n'
+    "Ritrova il tuo ultimo acquisto\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fspesamensile@UltimiAcquistiBot">/spesamensile</a>\n\n'
+    "Mostra la tua spesa totale per questo mese\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Freportmensile@UltimiAcquistiBot">/reportmensile</a>\n\n'
+    "Mostra un report dettagliato della tua spesa totale per questo mese\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot">/comparamese</a>\n\n'
+    "Metti a confronto la tua spesa mensile con quella di un altro utente"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>\n\n'
+    "Specifica un mese e un anno per cui eseguire <code>comparamese</code>\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fspesaannuale@UltimiAcquistiBot">/spesaannuale</a>\n\n'
+    "Mostra la tua spesa totale per questo anno\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Freportannuale@UltimiAcquistiBot">/reportannuale</a>\n\n'
+    "Mostra un report dettagliato della tua spesa totale per questo anno\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot">/comparaanno</a>\n\n'
+    "Metti a confronto la tua spesa annuale con quella di un altro utente"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>\n\n'
+    "Specifica un mese e un anno per cui eseguire <code>comparaanno</code>\n\n\n"
+    '<a href="https://t.me/share/url?text=%2Fcancellaspesa@UltimiAcquistiBot">/cancellaspesa</a>\n\n'
+    "Rimuovi un acquisto dal tuo storico; cancella anche il relativo post"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
 )
 
