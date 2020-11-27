@@ -8,6 +8,7 @@ from root.manager.bot import BotManager
 from root.helper.configuration import ConfigurationHelper
 from root.manager.mtbot import Mtbot
 from root.helper.redis_message import reset_redis
+from time import sleep
 
 
 def main():
@@ -17,10 +18,11 @@ def main():
     configuration = ConfigurationHelper()
     configuration.load_configurations()
     bot = BotManager()
-    bot_thread = threading.Thread(target=bot.connect, name="mtproto")
+    bot_thread = threading.Thread(target=bot.connect, name="bot-api")
     bot_thread.start()
     mtbot = Mtbot()
-    mtbot.run()
+    mtbot.run_userbot()
+    mtbot.run_bot()
 
 
 if __name__ == "__main__":

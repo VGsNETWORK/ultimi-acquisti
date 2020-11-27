@@ -42,9 +42,13 @@ class TelegramSender:
         """
         self._bot_init(token)
         try:
+            self._bot = Bot(environ["TOKEN"])
+            print("TOKEN")
+            print(environ["TOKEN"])
             logger.info("sending message to chat {}".format(chat_id))
             self._bot.send_message(chat_id=chat_id, text=message, **kwargs)
-        except Unauthorized:
+        except Unauthorized as unauthorized_exception:
+            print(unauthorized_exception)
             logger.error("403 Unauthorized, bot token is wrong")
         except BadRequest:
             logger.error("400 Bad Request")
@@ -62,6 +66,7 @@ class TelegramSender:
         """
         self._bot_init(token)
         try:
+            self._bot = Bot(environ["TOKEN"])
             logger.info("sending photo to chat {}".format(chat_id))
             self._bot.send_photo(
                 chat_id=chat_id, photo=photo, caption=caption, **kwargs
@@ -159,7 +164,7 @@ class TelegramSender:
     ):
         """Delete the message after the timeoutupdate,
 
-        Args:
+        Argsprint:
             context (CallbackContext): The context of the telegram bot
             chat_id (int): The chat where to delete the message
             message_id (int): The message to delete

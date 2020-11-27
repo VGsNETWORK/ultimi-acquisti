@@ -37,10 +37,10 @@ class Mtbot:
         logging.getLogger("pyrogram.syncer").setLevel(logging.WARNING)
         self.api_id = retrieve_key("API_ID")
         self.api_hash = retrieve_key("API_HASH")
-        self.app = Client("ultimiacquisti", api_id=self.api_id, api_hash=self.api_hash)
-        self.user = Client("userbot", api_id=self.api_id, api_hash=self.api_hash)
+        self.user = None
+        self.app = None
 
-    def setup(self):
+    def setup_bot(self):
         """Setup the bot handlers"""
         logger.info("Configuring mtproto handlers")
         self.app.add_handler(
@@ -49,13 +49,21 @@ class Mtbot:
         self.app.add_handler(
             MessageHandler(remove_purchase, filters=(filters.edited & purchase_filter))
         )
+
+    def setup_userbot(self):
+        """Setup the userbot handlers"""
         self.user.add_handler(
             DeletedMessagesHandler(deleted_purchase_message, filters=purchase_filter)
         )
 
-    def run(self):
+    def run_bot(self):
         """Run the bot"""
-        logger.info("running mtproto part of the bot")
-        self.setup()
-        self.app.start()
-        self.user.run()
+        self.app = Client("ultimiacquisti", api_id=self.api_id, api_hash=self.api_hash)
+        self.setup_bot()
+        self.app.run()
+
+    def run_userbot(self):
+        """run the userbot"""
+        self.user = Client("userbot", api_id=self.api_id, api_hash=self.api_hash)
+        self.setup_userbot()
+        self.user.start()

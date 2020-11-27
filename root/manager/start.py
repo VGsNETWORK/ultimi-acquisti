@@ -112,7 +112,8 @@ def append_commands(update: Update, context: CallbackContext):
     chat_id: int = message.chat.id
     message_id: int = message.message_id
     restart_process(message.message_id, timeout=get_timeout(message))
-    message: str = f"{message.text}\n{START_COMMANDS_LIST}"
+    message: str = build_message(update.effective_user, message)
+    message: str = f"{message}\n{START_COMMANDS_LIST}"
     context.bot.edit_message_text(
         text=message,
         chat_id=chat_id,
