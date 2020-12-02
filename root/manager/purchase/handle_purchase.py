@@ -16,6 +16,7 @@ from root.contants.messages import (
     PURCHASE_PRICE_HINT,
     PURCHASE_TITLE_HINT,
     PURCHASE_DATE_HINT,
+    PURCHASE_HEADER_HINT,
 )
 from root.helper.purchase_helper import convert_to_float, create_purchase
 from root.helper.user_helper import create_user, user_exists
@@ -168,6 +169,8 @@ def handle_purchase(client: Client, message: Message) -> None:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
+            if append_message:
+                append_message = f"{PURCHASE_HEADER_HINT}{append_message}"
             message += append_message
         else:
             message = PURCHASE_DATE_ERROR % (
