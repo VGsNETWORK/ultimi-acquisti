@@ -95,7 +95,8 @@ class TelegramSender:
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
             timeout (int, optional): [description]. Defaults to 360.
         """
-        message: ProtoMessage = client.send_message(
+        self._bot = Bot(environ["TOKEN"])
+        message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,
             reply_to_message_id=reply_to_message_id,
@@ -104,7 +105,7 @@ class TelegramSender:
         )
         create_process(
             name_prefix=message.message_id,
-            target=self.deproto_message,
+            target=self.delete_message,
             args=(client, chat_id, message.message_id, timeout),
         )
 

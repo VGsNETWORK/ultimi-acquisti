@@ -13,6 +13,9 @@ from root.contants.messages import (
     PURCHASE_ADDED,
     PURCHASE_DATE_ERROR,
     PURCHASE_MODIFIED,
+    PURCHASE_PRICE_HINT,
+    PURCHASE_TITLE_HINT,
+    PURCHASE_DATE_HINT,
 )
 from root.helper.purchase_helper import convert_to_float, create_purchase
 from root.helper.user_helper import create_user, user_exists
@@ -53,6 +56,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    append_message = ""
     if message.from_user.is_bot:
         return
     token = retrieve_key("TOKEN")
@@ -83,7 +87,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         # regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
         # \d      -> matches a number
         # +       -> match one or more of the previous
-        # ()      -> capturing group
+        # ()      -> capturing groappend = ""up
         # ?:      -> do not create a capture group (makes no sense but it does not work without)
         # [\.\',] -> matches . , '
         # \d{3}   -> matches 3 numbers
@@ -112,8 +116,11 @@ def handle_purchase(client: Client, message: Message) -> None:
             title = title[:100]
         else:
             title = ""
+            append_message += PURCHASE_TITLE_HINT
 
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
+        if len(price) == 0:
+            append_message += PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
         price = convert_to_float(price)
         caption = title
@@ -155,10 +162,13 @@ def handle_purchase(client: Client, message: Message) -> None:
                 date = mdate
         else:
             custom_date_error = True
+    else:
+        append_message += PURCHASE_DATE_HINT
     if not result["error"]:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
+            message += append_message
         else:
             message = PURCHASE_DATE_ERROR % (
                 user.id,
@@ -166,6 +176,4 @@ def handle_purchase(client: Client, message: Message) -> None:
             )
     else:
         message = result["error"]
-    sender.send_and_deproto(
-        client, chat_id, message, message_id, timeout=SERVICE_TIMEOUT
-    )
+    sender.send_and_deproto(client, chat_id, message, message_id, timeout=120)

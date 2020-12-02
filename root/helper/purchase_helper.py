@@ -163,7 +163,7 @@ def retrieve_month_purchases_for_user(
         year = year if year else current_date.year
         _, end = monthrange(year, month)
         start_date = datetime(year, month, 1)
-        end_date = datetime(year, month, end)
+        end_date = datetime(year, month, end, 23, 59, 59, 59)
         return Purchase.objects.filter(
             user_id=user_id, creation_date__lte=end_date, creation_date__gte=start_date
         ).order_by("creation_date")
@@ -237,7 +237,7 @@ def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
     year = year if year else current_date.year
     _, end = monthrange(year, month)
     start_date = datetime(year, month, 1)
-    end_date = datetime(year, month, end)
+    end_date = datetime(year, month, end, 23, 59, 59, 59)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
 
@@ -264,7 +264,7 @@ def retrieve_sum_for_year(user_id: int, year: int) -> float:
         float: How much the user has spent in a specific year
     """
     start_date = datetime(year, 1, 1)
-    end_date = datetime(year, 12, 31)
+    end_date = datetime(year, 12, 31, 23, 59, 59, 59)
     return retrieve_sum_between_date(user_id, start_date, end_date)
 
 

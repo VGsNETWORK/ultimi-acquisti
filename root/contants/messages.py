@@ -46,27 +46,33 @@ START_COMMANDS_LIST = (
     "\n\n\n<b>LISTA COMANDI</b>\n\n\n\n"
     '<a href="https://t.me/share/url?text=%2Fhowto@UltimiAcquistiBot">/howto</a>\n\n'
     "Mostra una breve guida all'utilizzo del bot\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fultimoacquisto@UltimiAcquistiBot">/ultimoacquisto</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Fultimoacquisto@UltimiAcquistiBot">'
+    "/ultimoacquisto</a>\n\n"
     "Ritrova il tuo ultimo acquisto\n\n\n"
     '<a href="https://t.me/share/url?text=%2Fspesamensile@UltimiAcquistiBot">/spesamensile</a>\n\n'
     "Mostra la tua spesa totale per questo mese\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Freportmensile@UltimiAcquistiBot">/reportmensile</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Freportmensile@UltimiAcquistiBot">'
+    "/reportmensile</a>\n\n"
     "Mostra un report dettagliato della tua spesa totale per questo mese\n\n\n"
     '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot">/comparamese</a>\n\n'
     "Metti a confronto la tua spesa mensile con quella di un altro utente"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot%20%3CMM%2FYYYY%3E">'
+    "/comparamese &lt;MM/YYYY&gt;</a>\n\n"
     "Specifica un mese e un anno per cui eseguire <code>comparamese</code>\n\n\n"
     '<a href="https://t.me/share/url?text=%2Fspesaannuale@UltimiAcquistiBot">/spesaannuale</a>\n\n'
     "Mostra la tua spesa totale per questo anno\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Freportannuale@UltimiAcquistiBot">/reportannuale</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Freportannuale@UltimiAcquistiBot">'
+    "/reportannuale</a>\n\n"
     "Mostra un report dettagliato della tua spesa totale per questo anno\n\n\n"
     '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot">/comparaanno</a>\n\n'
     "Metti a confronto la tua spesa annuale con quella di un altro utente"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot%20%3CYYYY%3E">'
+    "/comparaanno &lt;YYYY&gt;</a>\n\n"
     "Specifica un mese e un anno per cui eseguire <code>comparaanno</code>\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcancellaspesa@UltimiAcquistiBot">/cancellaspesa</a>\n\n'
+    '<a href="https://t.me/share/url?text=%2Fcancellaspesa@UltimiAcquistiBot">'
+    "/cancellaspesa</a>\n\n"
     "Rimuovi un acquisto dal tuo storico; cancella anche il relativo post"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
 )
@@ -127,6 +133,22 @@ YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s �
 
 YEAR_USER_PURCHASES_NONE = "<i>%s</i> nel <b>%s</b> non ha registrato alcun acquisto."
 
+PURCHASE_HEADER_HINT = "\n\n\nLo sapevi che...?"
+
+PURCHASE_PRICE_HINT = (
+    "\n\n💲  Puoi aggiungere un prezzo al tuo acquisto specificandolo nel messaggio."
+)
+
+PURCHASE_TITLE_HINT = (
+    "\n\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
+    " del testo tra <code>%...%</code>."
+)
+
+PURCHASE_DATE_HINT = (
+    "\n\n📅  Puoi collocare retroattivamente il tuo acquisto"
+    " specificando una data antecedente nel formato <code>DD/MM/YYYY</code>."
+)
+
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
@@ -134,20 +156,20 @@ PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
 
 CANCEL_PURCHASE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>, '
-    + "per cancellare un tuo acquisto devi <b>quotarlo</b>!"
+    '<a href="tg://user?id=%s">%s</a>,'
+    " per cancellare un tuo acquisto devi <b>quotarlo</b>!"
 )
 
 NOT_A_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, '
-    "il messaggio che hai quotato non è un acquisto valido!\n\n"
-    "Per essere riconosciuto, un <i>acquisto</i> deve contenere "
-    'l\'hashtag "<code>#ultimiacquisti</code>".'
+    '<a href="tg://user?id=%s">%s</a>,'
+    " il messaggio che hai quotato non è un acquisto valido!\n\n"
+    "Per essere riconosciuto, un <i>acquisto</i> deve contenere"
+    ' l\'hashtag "<code>#ultimiacquisti</code>".'
 )
 
 PURCHASE_NOT_FOUND = (
-    '<a href="tg://user?id=%s">%s</a>, non riesco a '
-    "trovare l'acquisto che hai fatto..."
+    '<a href="tg://user?id=%s">%s</a>, non riesco a'
+    " trovare l'acquisto che hai fatto..."
 )
 
 PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!</i>"
