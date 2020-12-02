@@ -57,7 +57,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
-    append_message = ""
+    append_message = ["", "", ""]
     if message.from_user.is_bot:
         return
     token = retrieve_key("TOKEN")
@@ -117,11 +117,11 @@ def handle_purchase(client: Client, message: Message) -> None:
             title = title[:100]
         else:
             title = ""
-            append_message += PURCHASE_TITLE_HINT
+            append_message[2] = PURCHASE_TITLE_HINT
 
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         if len(price) == 0:
-            append_message += PURCHASE_PRICE_HINT
+            append_message[0] = PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
         price = convert_to_float(price)
         caption = title
@@ -164,11 +164,12 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             custom_date_error = True
     else:
-        append_message += PURCHASE_DATE_HINT
+        append_message[1] = PURCHASE_DATE_HINT
     if not result["error"]:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
+            append_message = "".join(append_message)
             if append_message:
                 append_message = f"{PURCHASE_HEADER_HINT}{append_message}"
             message += append_message

@@ -133,19 +133,19 @@ YEAR_USER_PURCHASES = "<i>%s</i> nel <b>%s</b> ha speso un totale di <code>%s �
 
 YEAR_USER_PURCHASES_NONE = "<i>%s</i> nel <b>%s</b> non ha registrato alcun acquisto."
 
-PURCHASE_HEADER_HINT = "\n\n\nLo sapevi che...?"
+PURCHASE_HEADER_HINT = "\n\n\n<b>Lo sapevi che...?</b>"
 
 PURCHASE_PRICE_HINT = (
-    "\n\n💲  Puoi aggiungere un prezzo al tuo acquisto specificandolo nel messaggio."
+    "\n💲  Puoi aggiungere un prezzo al tuo acquisto specificandolo nel messaggio."
 )
 
 PURCHASE_TITLE_HINT = (
-    "\n\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
+    "\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
     " del testo tra <code>%...%</code>."
 )
 
 PURCHASE_DATE_HINT = (
-    "\n\n📅  Puoi collocare retroattivamente il tuo acquisto"
+    "\n📅  Puoi collocare retroattivamente il tuo acquisto"
     " specificando una data antecedente nel formato <code>DD/MM/YYYY</code>."
 )
 
