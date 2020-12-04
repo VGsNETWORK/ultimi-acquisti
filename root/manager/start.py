@@ -50,8 +50,12 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    bot_name: str = retrieve_key("BOT_NAME")
+    bot_name = f"/start@{bot_name}"
     message: Message = update.message if update.message else update.edited_message
-    params = message.text.replace("/start", "")
+    if not bot_name in message.text and message.chat.type != "private":
+        return
+    params = re.sub(f"{bot_name}|/start", "", message.text)
     params = re.sub(r"\/\w+\s", "", params)
     if params:
         handle_params(update, context, params)
