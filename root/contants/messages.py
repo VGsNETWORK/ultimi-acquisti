@@ -2,6 +2,10 @@
 
 """ This class contains all the messages used in the bot """
 
+from os import environ
+
+BOT_NAME = environ["BOT_NAME"]
+
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
 DB_CONNECTION_ERROR = (
@@ -33,48 +37,45 @@ NOT_ALLOWED_IN_GROUP = (
 
 START_COMMAND = (
     'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
-    "Sono un <b>bot di gestione della spesa personale</b>, e puoi usarmi per registrare"
-    " i tuoi acquisti recenti e passati e tracciarli nel tempo.\n"
-    "La funzioni di aggiunta, modifica e rimozione degli acquisti sono"
-    " utilizzabili solo all'interno dei gruppi di @VGsNETWORK (@VGsGROUPS),"
-    " luogo dove puoi anche comparare la tua spesa di un certo periodo con quella"
-    " degli altri utenti, nonché vederne i rispettivi acquisti.\n\n"
-    "Buon utilizzo!"
+    "Sono un <b>bot di gestione della spesa personale</b>,"
+    " e puoi usarmi per registrare i tuoi acquisti recenti"
+    " e passati e tracciarli nel tempo.\n"
+    "<b>N.B.:</b> La funzioni di aggiunta, modifica e rimozione"
+    " degli acquisti sono utilizzabili <u>solo all'interno dei"
+    " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
+    "<b>Buon utilizzo!</b>"
 )
 
 START_COMMANDS_LIST = (
-    "\n\n\n<b>LISTA COMANDI</b>\n\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fhowto@UltimiAcquistiBot">/howto</a>\n\n'
+    "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n\n"
+    f'<a href="https://t.me/share/url?text=/howto@{BOT_NAME}">/howto</a>\n\n'
     "Mostra una breve guida all'utilizzo del bot\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fultimoacquisto@UltimiAcquistiBot">'
-    "/ultimoacquisto</a>\n\n"
+    f'<a href="https://t.me/share/url?text=/ultimoacquisto@{BOT_NAME}">/ultimoacquisto</a>\n\n'
     "Ritrova il tuo ultimo acquisto\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fspesamensile@UltimiAcquistiBot">/spesamensile</a>\n\n'
+    f'<a href="https://t.me/share/url?text=/spesamensile@{BOT_NAME}">/spesamensile</a>\n\n'
     "Mostra la tua spesa totale per questo mese\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Freportmensile@UltimiAcquistiBot">'
-    "/reportmensile</a>\n\n"
+    f'<a href="https://t.me/share/url?text=/reportmensile@{BOT_NAME}">/reportmensile</a>\n\n'
     "Mostra un report dettagliato della tua spesa totale per questo mese\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot">/comparamese</a>\n\n'
-    "Metti a confronto la tua spesa mensile con quella di un altro utente"
+    f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}">/comparamese</a>\n'
+    f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}%20%3CMM/YYYY%3E">/'
+    "comparamese &lt;MM/YYYY&gt;</a>\n\n"
+    "Metti a confronto la tua spesa mensile con quella di un altro utente,"
+    " specificando opzionalmente un mese e un anno diversi da quelli correnti"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparamese@UltimiAcquistiBot%20%3CMM%2FYYYY%3E">'
-    "/comparamese &lt;MM/YYYY&gt;</a>\n\n"
-    "Specifica un mese e un anno per cui eseguire <code>comparamese</code>\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fspesaannuale@UltimiAcquistiBot">/spesaannuale</a>\n\n'
+    f'<a href="https://t.me/share/url?text=/spesaannuale@{BOT_NAME}">/spesaannuale</a>\n\n'
     "Mostra la tua spesa totale per questo anno\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Freportannuale@UltimiAcquistiBot">'
-    "/reportannuale</a>\n\n"
+    f'<a href="https://t.me/share/url?text=/reportannuale@{BOT_NAME}">/reportannuale</a>\n\n'
     "Mostra un report dettagliato della tua spesa totale per questo anno\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot">/comparaanno</a>\n\n'
-    "Metti a confronto la tua spesa annuale con quella di un altro utente"
+    f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}">/comparaanno</a>\n'
+    f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}%20%3CYYYY%3E">/'
+    "comparaanno &lt;YYYY&gt;</a>\n\n"
+    "Metti a confronto la tua spesa annuale con quella di un altro utente,"
+    " specificando opzionalmente un anno diverso da quello corrente"
     " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcomparaanno@UltimiAcquistiBot%20%3CYYYY%3E">'
-    "/comparaanno &lt;YYYY&gt;</a>\n\n"
-    "Specifica un mese e un anno per cui eseguire <code>comparaanno</code>\n\n\n"
-    '<a href="https://t.me/share/url?text=%2Fcancellaspesa@UltimiAcquistiBot">'
-    "/cancellaspesa</a>\n\n"
-    "Rimuovi un acquisto dal tuo storico; cancella anche il relativo post"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
+    f'<a href="https://t.me/share/url?text=/cancellaspesa@{BOT_NAME}">/cancellaspesa</a>\n\n'
+    "Rimuovi un acquisto dal tuo storico; cancella anche il"
+    " relativo post (funziona solo nei <b>gruppi</b> e"
+    " richiede di <b>quotare un tuo acquisto</b>)"
 )
 
 

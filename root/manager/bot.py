@@ -45,7 +45,7 @@ class BotManager:
         self.updater = Updater(
             self.token,
             use_context=True,
-            request_kwargs={"read_timeout": 6, "connect_timeout": 7},
+            request_kwargs={},
         )
         self.disp = self.updater.dispatcher
         self.add_handler()
