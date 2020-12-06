@@ -161,7 +161,10 @@ class YearReport:
                     if price > 0:
                         price = format_price(price)
                         month = get_month_string(i + 1, False)
-                        if self.current_month == i + 1:
+                        if (
+                            self.current_month == i + 1
+                            and self.year == self.current_year
+                        ):
                             month = f"► {month}"
                         spaces = " " * (spacer - len(price))
                         template = YEAR_PURCHASE_TEMPLATE % (

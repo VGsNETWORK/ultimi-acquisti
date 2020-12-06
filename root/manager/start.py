@@ -12,6 +12,8 @@ from root.contants.messages import (
     START_COMMAND,
     NOT_ALLOWED_IN_GROUP,
     START_COMMANDS_LIST,
+    PLEASE_NOTE_APPEND,
+    START_GROUP_GROUP_APPEND,
 )
 from root.helper.process_helper import restart_process
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, MONTH_REPORT_TIMEOUT
@@ -174,10 +176,10 @@ def build_message(user: User, message: Message) -> str:
     user_id: int = user.id
     first_name: str = user.first_name
     if message.chat.type == "private":
-        message = START_COMMAND
+        message = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
     else:
-        message = NOT_ALLOWED_IN_GROUP
-    return message % (user_id, first_name)
+        message = f"{START_COMMAND}" % (user_id, first_name, START_GROUP_GROUP_APPEND)
+    return message
 
 
 def build_keyboard(message: Message) -> InlineKeyboardMarkup:
@@ -207,7 +209,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
         [
             [
                 create_button(
-                    "Vai alla chat privata  ➡️",
+                    "Maggiori informazioni  ➡️",
                     "go_start",
                     "go_start",
                     url=f"t.me/{bot_name}?start=start",

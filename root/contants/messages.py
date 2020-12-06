@@ -39,43 +39,52 @@ START_COMMAND = (
     'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
     "Sono un <b>bot di gestione della spesa personale</b>,"
     " e puoi usarmi per registrare i tuoi acquisti recenti"
-    " e passati e tracciarli nel tempo.\n"
-    "<b>N.B.:</b> La funzioni di aggiunta, modifica e rimozione"
+    " e passati e tracciarli nel tempo."
+    "%s<b>Buon utilizzo!</b>"
+)
+
+START_GROUP_GROUP_APPEND = (
+    "\n\n🏁  Per iniziare, <b>invia</b> o <b>modifica</b> un messaggio di qualunque"
+    ' tipo aggiungendo l\'hashtag "<code>#ultimiacquisti</code>"...\n\n'
+    "ℹ️  Per maggiori informazioni sul mio utilizzo, <b>vai alla chat privata</b>!\n\n\n"
+)
+
+PLEASE_NOTE_APPEND = (
+    "\n<b>N.B.:</b> Le funzioni di <b>aggiunta</b>, <b>modifica</b> e <b>rimozione</b>"
     " degli acquisti sono utilizzabili <u>solo all'interno dei"
     " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
-    "<b>Buon utilizzo!</b>"
 )
 
 START_COMMANDS_LIST = (
     "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n\n"
     f'<a href="https://t.me/share/url?text=/howto@{BOT_NAME}">/howto</a>\n\n'
-    "Mostra una breve guida all'utilizzo del bot\n\n\n"
+    "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/ultimoacquisto@{BOT_NAME}">/ultimoacquisto</a>\n\n'
-    "Ritrova il tuo ultimo acquisto\n\n\n"
+    "<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/spesamensile@{BOT_NAME}">/spesamensile</a>\n\n'
-    "Mostra la tua spesa totale per questo mese\n\n\n"
+    "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/reportmensile@{BOT_NAME}">/reportmensile</a>\n\n'
-    "Mostra un report dettagliato della tua spesa totale per questo mese\n\n\n"
+    "<i>Mostra un report dettagliato della tua spesa totale per questo mese</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}">/comparamese</a>\n'
     f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}%20%3CMM/YYYY%3E">/'
     "comparamese &lt;MM/YYYY&gt;</a>\n\n"
-    "Metti a confronto la tua spesa mensile con quella di un altro utente,"
+    "<i>Metti a confronto la tua spesa mensile con quella di un altro utente,"
     " specificando opzionalmente un mese e un anno diversi da quelli correnti"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/spesaannuale@{BOT_NAME}">/spesaannuale</a>\n\n'
-    "Mostra la tua spesa totale per questo anno\n\n\n"
+    "<i>Mostra la tua spesa totale per questo anno</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/reportannuale@{BOT_NAME}">/reportannuale</a>\n\n'
-    "Mostra un report dettagliato della tua spesa totale per questo anno\n\n\n"
+    "<i>Mostra un report dettagliato della tua spesa totale per questo anno</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}">/comparaanno</a>\n'
     f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}%20%3CYYYY%3E">/'
     "comparaanno &lt;YYYY&gt;</a>\n\n"
-    "Metti a confronto la tua spesa annuale con quella di un altro utente,"
+    "<i>Metti a confronto la tua spesa annuale con quella di un altro utente,"
     " specificando opzionalmente un anno diverso da quello corrente"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)\n\n\n"
+    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/cancellaspesa@{BOT_NAME}">/cancellaspesa</a>\n\n'
-    "Rimuovi un acquisto dal tuo storico; cancella anche il"
+    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il"
     " relativo post (funziona solo nei <b>gruppi</b> e"
-    " richiede di <b>quotare un tuo acquisto</b>)"
+    " richiede di <b>quotare un tuo acquisto</b>)</i>"
 )
 
 
@@ -142,12 +151,12 @@ PURCHASE_PRICE_HINT = (
 
 PURCHASE_TITLE_HINT = (
     "\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
-    " del testo tra <code>%...%</code>."
+    " del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b>report mensile</b>."
 )
 
 PURCHASE_DATE_HINT = (
     "\n📅  Puoi collocare retroattivamente il tuo acquisto"
-    " specificando una data antecedente nel formato <code>DD/MM/YYYY</code>."
+    " specificando una data antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
 )
 
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
