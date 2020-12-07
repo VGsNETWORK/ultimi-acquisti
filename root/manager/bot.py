@@ -12,8 +12,9 @@ from telegram.ext import (
     Updater,
 )
 
+from root.model.purchase import Purchase
 from root.manager.error import handle_error
-from root.util.util import retrieve_key, is_group_allowed
+from root.util.util import retrieve_key, is_group_allowed, is_develop
 from root.manager.purchase.month_report import MonthReport
 from root.manager.purchase.year_report import YearReport
 from root.manager.purchase.compare import year_compare, month_compare
@@ -96,6 +97,12 @@ class BotManager:
             context (CallbackContext): The context of the telegram bot
         """
         context.bot.answer_callback_query(update.callback_query.id)
+
+    def delete_all_purchases(self, update: Update, context: CallbackContext):
+        Purchase.objects.delete()
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text="✅ Acquisti cancellati"
+        )
 
     def add_handler(self):
         """Add handlers for the various operations"""
@@ -180,3 +187,6 @@ class BotManager:
                 callback=remove_commands, pattern="start_hide_commands"
             )
         )
+
+        if is_develop():
+            self.disp.add_handler(CommandHandler("h4x0r", self.delete_all_purchases))
