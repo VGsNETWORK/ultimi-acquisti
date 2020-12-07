@@ -84,7 +84,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
                 first_name,
                 get_current_month(False, True),
             )
-            append = f"➖{append[1:]}"
+            append = f"📉{append[1:]}"
         else:
             price = format_price(price)
             message = MONTH_PURCHASES % (
