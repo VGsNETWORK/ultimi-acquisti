@@ -112,6 +112,14 @@ def append_commands(update: Update, context: CallbackContext):
                 )
             ],
             [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+            [
+                create_button(
+                    "🆘  Supporto",
+                    "support",
+                    "support",
+                    url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                )
+            ],
         ]
     )
     chat_id: int = message.chat.id
@@ -190,7 +198,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
                 [
                     create_button(
-                        "🆘 Supporto",
+                        "🆘  Supporto",
                         "support",
                         "support",
                         url="t.me/VGsNETWORK_Bot?start=leave_feedback",
