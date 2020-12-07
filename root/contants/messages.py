@@ -109,6 +109,8 @@ MONTH_PREVIOUS_PURCHASES_HIGHER = (
     "<code>%s</code> in più rispetto a questo mese."
 )
 
+MONTH_PREVIOUS_PURCHASES_SAME = "➖ Anche a <i>%s</i> hai speso <code>%s €</code>."
+
 MONTH_PREVIOUS_PURCHASES_LOWER = (
     "📈 A <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in meno rispetto a questo mese."
@@ -133,6 +135,8 @@ YEAR_PREVIOUS_PURCHASES_HIGHER = (
     "📉 Nel <i>%s</i> hai speso <code>%s €</code>, "
     "<code>%s</code> in più rispetto a quest'anno."
 )
+
+YEAR_PREVIOUS_PURCHASES_SAME = "➖ Anche nel <i>%s</i> hai speso <code>%s €</code>."
 
 YEAR_PREVIOUS_PURCHASES_LOWER = (
     "📈 Nel <i>%s</i> hai speso <code>%s €</code>, "
