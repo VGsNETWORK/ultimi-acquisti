@@ -51,7 +51,7 @@ START_GROUP_GROUP_APPEND = (
 
 PLEASE_NOTE_APPEND = (
     "\n<b>N.B.:</b> Le funzioni di <b>aggiunta</b>, <b>modifica</b> e <b>rimozione</b>"
-    " degli acquisti sono utilizzabili <u>solo all'interno dei"
+    " degli acquisti sono fruibili <u>solo all'interno dei"
     " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
 )
 
