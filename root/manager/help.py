@@ -13,7 +13,6 @@ from root.contants.messages import (
     HOW_TO_DEEP_LINK,
 )
 from root.helper.process_helper import restart_process
-from root.helper.process_helper import stop_process
 from root.contants.message_timeout import HELP_TIMEOUT
 
 sender = TelegramSender()
