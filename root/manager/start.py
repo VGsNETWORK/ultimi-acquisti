@@ -188,6 +188,14 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                     )
                 ],
                 [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+                [
+                    create_button(
+                        "🆘 Supporto",
+                        "support",
+                        "support",
+                        url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                    )
+                ],
             ]
         )
     return InlineKeyboardMarkup(
