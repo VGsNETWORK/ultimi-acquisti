@@ -32,7 +32,7 @@ from root.util.util import (
 )
 from root.helper.keyboard.month_report import build_keyboard
 from root.helper.report import check_owner
-from root.contants.message_timeout import MONTH_REPORT_TIMEOUT
+from root.contants.message_timeout import FIVE_MINUTES
 
 
 class MonthReport:
@@ -94,7 +94,7 @@ class MonthReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
-                    restart_process(message_id, MONTH_REPORT_TIMEOUT)
+                    restart_process(message_id, FIVE_MINUTES)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
@@ -123,7 +123,7 @@ class MonthReport:
             chat_id,
             message,
             InlineKeyboardMarkup(keyboard),
-            timeout=MONTH_REPORT_TIMEOUT,
+            timeout=FIVE_MINUTES,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:

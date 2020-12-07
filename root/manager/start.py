@@ -10,13 +10,12 @@ from root.util.telegram import TelegramSender
 from root.util.util import create_button, retrieve_key
 from root.contants.messages import (
     START_COMMAND,
-    NOT_ALLOWED_IN_GROUP,
     START_COMMANDS_LIST,
     PLEASE_NOTE_APPEND,
     START_GROUP_GROUP_APPEND,
 )
 from root.helper.process_helper import restart_process
-from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, MONTH_REPORT_TIMEOUT
+from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 
 sender = TelegramSender()
 
@@ -69,7 +68,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         chat_id,
         build_message(update.effective_user, message),
         reply_markup=build_keyboard(message),
-        timeout=get_timeout(message),
+        timeout=TWO_MINUTES,
     )
 
 
@@ -83,7 +82,7 @@ def help_end(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
-    restart_process(message.message_id, timeout=get_timeout(message))
+    restart_process(message.message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -117,7 +116,7 @@ def append_commands(update: Update, context: CallbackContext):
     )
     chat_id: int = message.chat.id
     message_id: int = message.message_id
-    restart_process(message.message_id, timeout=get_timeout(message))
+    restart_process(message.message_id, timeout=FIVE_MINUTES)
     message: str = build_message(update.effective_user, message)
     message: str = f"{message}\n{START_COMMANDS_LIST}"
     context.bot.edit_message_text(
@@ -139,7 +138,7 @@ def remove_commands(update: Update, context: CallbackContext):
     """
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
-    restart_process(message.message_id, timeout=get_timeout(message))
+    restart_process(message.message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -148,20 +147,6 @@ def remove_commands(update: Update, context: CallbackContext):
         reply_markup=build_keyboard(message),
         parse_mode="HTML",
     )
-
-
-def get_timeout(message: Message) -> int:
-    """Get timeout based on the chat
-
-    Args:
-        message (Message): The message
-
-    Returns:
-        int: The timeout
-    """
-    if message.chat.type != "private":
-        return LONG_SERVICE_TIMEOUT
-    return MONTH_REPORT_TIMEOUT
 
 
 def build_message(user: User, message: Message) -> str:
