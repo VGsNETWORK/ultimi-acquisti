@@ -56,7 +56,7 @@ PLEASE_NOTE_APPEND = (
 )
 
 START_COMMANDS_LIST = (
-    "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n\n"
+    "\n\n<u><b>LISTA COMANDI</b></u>\n\n\n"
     f'<a href="https://t.me/share/url?text=/howto@{BOT_NAME}">/howto</a>\n\n'
     "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
     f'<a href="https://t.me/share/url?text=/ultimoacquisto@{BOT_NAME}">/ultimoacquisto</a>\n\n'
@@ -85,6 +85,32 @@ START_COMMANDS_LIST = (
     "<i>Rimuovi un acquisto dal tuo storico; cancella anche il"
     " relativo post (funziona solo nei <b>gruppi</b> e"
     " richiede di <b>quotare un tuo acquisto</b>)</i>"
+)
+
+START_COMMANDS_LIST = (
+    "\n\n<u><b>LISTA COMANDI</b></u>\n\n"
+    "Tieni presente che alcuni comandi funzionano <b>solo nei gruppi</b> (👥), mentre per altri rispondo sia nei gruppi, sia qui (👤).\n"
+    "Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata, così potrai inviarlo in men che non si dica!\n\n\n"
+    "(👤)   /howto\n\n"
+    "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
+    f'(👤)   /ultimoacquisto      (<a href="https://t.me/share/url?text=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
+    f'(👤)   /spesamensile      (<a href="https://t.me/share/url?text=%2Fspesamensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
+    f'(👤)   /reportmensile      (<a href="https://t.me/share/url?text=%2Freportmensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra un report dettagliato della tua spesa totale per questo mese</i>\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}">/comparamese</a>\n'
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>\n\n'
+    "<i>Metti a confronto la tua spesa mensile con quella di un altro utente, specificando opzionalmente un mese e un anno diversi da quelli correnti (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
+    f'(👤)   /spesaannuale      (<a href="https://t.me/share/url?text=%2Fspesaannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra la tua spesa totale per questo anno</i>\n\n\n"
+    f'(👤)   /reportannuale      (<a href="https://t.me/share/url?text=%2Freportannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra un report dettagliato della tua spesa totale per questo anno</i>\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}">/comparaanno</a>\n'
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>\n\n'
+    "<i>Metti a confronto la tua spesa annuale con quella di un altro utente, specificando opzionalmente un anno diverso da quello corrente (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcancellaspesa%40{BOT_NAME}">/cancellaspesa</a>\n\n'
+    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)</i>"
 )
 
 
