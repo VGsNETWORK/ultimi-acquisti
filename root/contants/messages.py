@@ -159,7 +159,7 @@ PURCHASE_PRICE_HINT = (
 
 PURCHASE_TITLE_HINT = (
     "\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
-    " del testo tra <code>%...%</code>. Potrai visualizzarlo nel /reportmensile."
+    " del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b>/reportmensile</b>."
 )
 
 PURCHASE_DATE_HINT = (
