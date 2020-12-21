@@ -356,3 +356,7 @@ HOW_TO_PAGE_THREE = (
     "sempre con la stessa procedura: ti basterà taggare il post con <code>#ultimiacquisti</code> "
     "in fase di modifica del messaggio e provvederò ad aggiungere un acquisto a quella data."
 )
+
+FEEDBACK_SEND_MESSAGE = "Scrivi il messaggio che vuoi inviare, poi premi Invia:"
+
+FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s</code>):\n\n<i>%s</i>"

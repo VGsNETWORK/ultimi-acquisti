@@ -82,12 +82,35 @@ def help_end(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
+    message_id = message.message_id
     restart_process(message.message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
         disable_web_page_preview=True,
-        message_id=message.message_id,
+        message_id=message_id,
+        reply_markup=build_keyboard(message),
+        parse_mode="HTML",
+    )
+
+
+def conversation_main_menu(
+    update: Update, context: CallbackContext, reduce: bool = False
+):
+    """Show the main menu after a conversation handler
+
+    Args:
+        update (Update): Telegram update
+        context (CallbackContext): The context of the telegram bot
+    """
+    message: Message = update.effective_message
+    message_id = message.message_id - 1 if reduce else message.message_id
+    restart_process(message_id, timeout=TWO_MINUTES)
+    context.bot.edit_message_text(
+        text=build_message(update.effective_user, message),
+        chat_id=message.chat.id,
+        disable_web_page_preview=True,
+        message_id=message_id,
         reply_markup=build_keyboard(message),
         parse_mode="HTML",
     )
@@ -115,9 +138,9 @@ def append_commands(update: Update, context: CallbackContext):
             [
                 create_button(
                     "🆘  Supporto",
-                    "support",
-                    "support",
-                    url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                    "send_feedback",
+                    "send_feedback",
+                    # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
                 )
             ],
         ]
@@ -199,9 +222,9 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 [
                     create_button(
                         "🆘  Supporto",
-                        "support",
-                        "support",
-                        url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                        "send_feedback",
+                        "send_feedback",
+                        # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
                     )
                 ],
             ]

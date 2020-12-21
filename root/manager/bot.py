@@ -27,6 +27,7 @@ from root.manager.help import help_navigate, help_init
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
 from root.manager.start import handle_start, help_end, append_commands, remove_commands
+from root.manager.feedback import FEEDBACK_CONVERSATION
 
 
 class BotManager:
@@ -107,6 +108,7 @@ class BotManager:
     def add_handler(self):
         """Add handlers for the various operations"""
         self.disp.add_error_handler(handle_error)
+        self.disp.add_handler(FEEDBACK_CONVERSATION)
         self.disp.add_handler(CommandHandler("start", handle_start))
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))
