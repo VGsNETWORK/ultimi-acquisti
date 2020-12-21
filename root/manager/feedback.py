@@ -18,6 +18,8 @@ from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
 
+MESSAGE_ID = 0
+
 FEEDBACK_MESSAGE = range(1)
 
 MESSAGE = 0
@@ -30,6 +32,7 @@ def start_feedback(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    global MESSAGE_ID
     context.bot.answer_callback_query(update.callback_query.id)
     message_id = update.effective_message.message_id
     user_id = update.effective_user.id
@@ -41,6 +44,7 @@ def start_feedback(update: Update, context: CallbackContext):
         reply_markup=build_keyboard(),
         parse_mode="HTML",
     )
+    MESSAGE_ID = message_id
     logger.info(message_id)
     return FEEDBACK_MESSAGE
 
@@ -62,7 +66,7 @@ def send_feedback(update: Update, context: CallbackContext):
     message: str = f"{message}\n\n\n#feedback @{bot_name}"
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
     sender.delete_if_private(context, update.effective_message)
-    conversation_main_menu(update, context, True)
+    conversation_main_menu(update, context, MESSAGE_ID)
     return ConversationHandler.END
 
 

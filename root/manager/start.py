@@ -95,7 +95,7 @@ def help_end(update: Update, context: CallbackContext):
 
 
 def conversation_main_menu(
-    update: Update, context: CallbackContext, reduce: bool = False
+    update: Update, context: CallbackContext, message_id: int = None
 ):
     """Show the main menu after a conversation handler
 
@@ -104,7 +104,7 @@ def conversation_main_menu(
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.effective_message
-    message_id = message.message_id - 1 if reduce else message.message_id
+    message_id = message_id if message_id else message.message_id
     restart_process(message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
