@@ -2,6 +2,7 @@
 
 """ Feedback manager for  the bot """
 
+from time import sleep
 from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
@@ -72,8 +73,9 @@ def send_feedback(update: Update, context: CallbackContext):
     message: str = FEEDBACK_FROM_MESSAGE % (f"{username}", user_id, message)
     message: str = f"{message}\n\n\n#feedback @{bot_name}"
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
-    sender.delete_if_private(context, update.effective_message)
     conversation_main_menu(update, context, MESSAGE_ID)
+    sleep(0.5)
+    sender.delete_if_private(context, update.effective_message)
     return ConversationHandler.END
 
 
