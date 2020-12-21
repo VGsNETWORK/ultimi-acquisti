@@ -62,7 +62,14 @@ def send_feedback(update: Update, context: CallbackContext):
     username: str = update.effective_user.username
     user_id: int = update.effective_user.id
     message: str = update.effective_message.text
-    message: str = FEEDBACK_FROM_MESSAGE % (f"@{username}", user_id, message)
+    if not username:
+        username = '<a href="tg://user?id=%s">%s</a>' % (
+            user_id,
+            update.effective_user.first_name,
+        )
+    else:
+        username = f"@{username}"
+    message: str = FEEDBACK_FROM_MESSAGE % (f"{username}", user_id, message)
     message: str = f"{message}\n\n\n#feedback @{bot_name}"
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
     sender.delete_if_private(context, update.effective_message)
