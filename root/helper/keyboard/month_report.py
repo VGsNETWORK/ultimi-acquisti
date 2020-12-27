@@ -110,13 +110,23 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     buttons[2].append([btext, bcall])
 
     if month != current_month or year != current_year:
-        # Show the button to view the current month/year report if the user is not there
-        btext = (
-            f"Vai al mese corrente  ({get_month_string(current_month, False, False)}"
-            f" {current_year})"
-        )
-        bcall = f"expand_report_current_{current_year}"
-        buttons = [[[btext, bcall]], *buttons]
+        if not month + 1 == current_month:
+            # Show the button to view the current month/year report if the user is not there
+            btext = (
+                f"Vai al mese corrente  ({get_month_string(current_month, False, False)}"
+                f" {current_year})"
+            )
+            bcall = f"expand_report_current_{current_year}"
+            # this puts the button at the beginning of the list
+            buttons = [[[btext, bcall]], *buttons]
+
+    if not month == 1 and not month == 2:
+        btext = "Torna a inizio anno"
+        bcall = "month_first_month"
+        if len(buttons[0]) == 1:
+            buttons[0] = [[btext, bcall], *buttons[0]]
+        else:
+            buttons = [[[btext, bcall]], *buttons]
 
     # Button to pass to the year report
     btext = f"Passa al report annuale del {year}"

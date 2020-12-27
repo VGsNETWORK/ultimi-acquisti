@@ -221,6 +221,18 @@ class MonthReport:
         self.month += 1
         self.retrieve_and_send(update, context)
 
+    def current_month_report(self, update: Update, context: CallbackContext):
+        """Go to the beginning of the year
+
+        Args:
+            update (Update): Telegram update
+            context (CallbackContext): The context of the telegram bot
+        """
+        if not check_owner(update, context):
+            return
+        self.month = 1
+        self.retrieve_and_send(update, context)
+
     def previous_year(self, update: Update, context: CallbackContext):
         """Go to the previous year
 
