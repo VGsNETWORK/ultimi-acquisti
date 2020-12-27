@@ -54,6 +54,67 @@ short_month = {
     13: "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚",
 }
 
+short_text_month = {
+    "gen": 1,
+    "feb": 2,
+    "mar": 3,
+    "apr": 4,
+    "mag": 5,
+    "giu": 6,
+    "lug": 7,
+    "ago": 8,
+    "set": 9,
+    "ott": 10,
+    "nov": 11,
+    "dic": 12,
+    "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚": 13,
+}
+
+long_text_month = {
+    "gennaio": 1,
+    "febbraio": 2,
+    "marzo": 3,
+    "aprile": 4,
+    "maggio": 5,
+    "giugno": 6,
+    "luglio": 7,
+    "agosto": 8,
+    "settembre": 9,
+    "ottobre": 10,
+    "Novembre": 11,
+    "Dicembre": 12,
+    "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚": 13,
+}
+
+
+def get_month_number(month: str) -> int:
+    """return the int of the month from a string
+
+    Args:
+        month (str): The month in string format
+
+    Returns:
+        int: the int
+    """
+    month = month.lower()
+    if month in long_text_month.keys():
+        return long_text_month[month]
+    if month in short_text_month.keys():
+        return short_text_month[month]
+
+
+def is_text_month(month: str) -> bool:
+    """Check if a string is a valid month
+
+    Args:
+        month (str): The string to check
+
+    Returns:
+        bool: If is a valid short or long month string
+    """
+    month = month.lower()
+    return month in long_text_month.keys() or month in short_text_month.keys()
+
 
 def has_number(content: str) -> bool:
     """Check if a string contains a number

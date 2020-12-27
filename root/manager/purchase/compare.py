@@ -2,6 +2,7 @@
 
 """ File containing functions to compare prices with other users """
 
+import re
 from datetime import datetime
 from telegram import Update, Message
 from telegram.ext import CallbackContext
@@ -14,6 +15,8 @@ import root.util.logger as logger
 from root.util.util import (
     format_price,
     get_month_string,
+    is_text_month,
+    get_month_number,
 )
 from root.contants.messages import (
     MONTH_COMPARE_PRICE,
@@ -91,19 +94,29 @@ def compare(
             custom_month = cdate.month
     else:
         custom_date = message.text if message.text else message.caption
-        custom_date = custom_date.split(" ")
-        if len(custom_date) > 1:
-            try:
-                custom_date = custom_date[1]
-                custom_date = custom_date.split("/")
-                custom_month = int(custom_date[0])
-                custom_year = int(custom_date[1])
-            except Exception:
+        rdate = re.findall(r"(\w{3,9}\ \d{4})", custom_date)
+        if rdate:
+            rdate = rdate[0].split(" ")
+            mtext = rdate[0]
+            custom_year = int(rdate[1])
+            if is_text_month(mtext):
+                custom_month = get_month_number(mtext)
+            else:
+                rdate = None
+        if not rdate:
+            custom_date = custom_date.split(" ")
+            if len(custom_date) > 1:
+                try:
+                    custom_date = custom_date[1]
+                    custom_date = custom_date.split("/")
+                    custom_month = int(custom_date[0])
+                    custom_year = int(custom_date[1])
+                except Exception:
+                    custom_year = cdate.year
+                    custom_month = cdate.month
+            else:
                 custom_year = cdate.year
                 custom_month = cdate.month
-        else:
-            custom_year = cdate.year
-            custom_month = cdate.month
     if len(str(custom_year)) == 2:
         custom_year = int(f"20{custom_year}")
     if custom_year > cdate.year:
