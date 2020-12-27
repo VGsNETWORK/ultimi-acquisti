@@ -94,6 +94,7 @@ def compare(
             custom_month = cdate.month
     else:
         custom_date = message.text if message.text else message.caption
+        custom_date = re.sub(r"/\w+\s", "", custom_date)
         rdate = re.findall(r"(\w{3,9}\ \d{4})", custom_date)
         if rdate:
             rdate = rdate[0].split(" ")
@@ -104,10 +105,17 @@ def compare(
             else:
                 rdate = None
         if not rdate:
-            custom_date = custom_date.split(" ")
-            if len(custom_date) > 1:
+            rdate = re.findall("^\w{3,9}$", custom_date)
+            if rdate:
+                mtext = rdate[0]
+                if is_text_month(mtext):
+                    custom_month = get_month_number(mtext)
+                    custom_year = cdate.year
+                else:
+                    rdate = None
+        if not rdate:
+            if custom_date:
                 try:
-                    custom_date = custom_date[1]
                     custom_date = custom_date.split("/")
                     custom_month = int(custom_date[0])
                     custom_year = int(custom_date[1])
