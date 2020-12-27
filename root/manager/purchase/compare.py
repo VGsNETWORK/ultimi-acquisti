@@ -29,6 +29,8 @@ from root.contants.messages import (
     NO_QUOTE_BOT,
     ONLY_GROUP,
     NO_QUOTE_FOUND,
+    COMPARE_WRONG_MONTH,
+    COMPARE_WRONG_YEAR,
 )
 from root.util.telegram import TelegramSender
 
@@ -128,7 +130,11 @@ def compare(
     if len(str(custom_year)) == 2:
         custom_year = int(f"20{custom_year}")
     if custom_year > cdate.year:
-        custom_year = cdate.year
+        sender.send_and_delete(context, chat_id, COMPARE_WRONG_YEAR)
+        return
+    if custom_year == cdate.year and custom_month > cdate.month:
+        sender.send_and_delete(context, chat_id, COMPARE_WRONG_MONTH)
+        return
     if not rmessage:
         return
     ruser = rmessage.from_user

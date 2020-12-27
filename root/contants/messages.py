@@ -300,6 +300,10 @@ COMPARE_TIE = "💸 I vostri portafogli sono ugualmente leggeri..."
 
 COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
+COMPARE_WRONG_YEAR = "❌  L'anno indicato supera quello corrente!"
+
+COMPARE_WRONG_MONTH = "❌  Il mese indicato supera quello corrente!"
+
 NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
 
 NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"
