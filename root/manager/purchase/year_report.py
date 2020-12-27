@@ -205,7 +205,9 @@ class YearReport:
             return
         restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
-        self.year -= 1
+        query: str = update.callback_query.data
+        year = query.split("_")[-1]
+        self.year -= int(year)
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
         context.bot.edit_message_text(
@@ -242,7 +244,9 @@ class YearReport:
             return
         restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
-        self.year += 1
+        query: str = update.callback_query.data
+        year = query.split("_")[-1]
+        self.year += int(year)
         if self.year >= self.current_year:
             self.year = self.current_year
         message = self.retrieve_purchase(user)
