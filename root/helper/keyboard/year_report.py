@@ -48,16 +48,6 @@ def build_keyboard(year: int, current_year: int):
     bcall = "year_previous_year_5"
     buttons[1].append([btext, bcall])
 
-    # If the user is less than 10 years ago do not allow him to proceed
-    if year + 10 > current_year:
-        btext = end_emoji
-        bcall = do_nothing
-    else:
-        # Otherwise allow him to view the next year
-        btext = "+ 10  anni"
-        bcall = "year_next_year_10"
-    buttons[1].append([btext, bcall])
-
     # If the user is less than 5 years ago do not allow him to proceed
     if year + 5 > current_year:
         btext = end_emoji
@@ -66,6 +56,16 @@ def build_keyboard(year: int, current_year: int):
         # Otherwise allow him to view the next year
         btext = "+ 5  anni"
         bcall = "year_next_year_5"
+    buttons[1].append([btext, bcall])
+
+    # If the user is less than 10 years ago do not allow him to proceed
+    if year + 10 > current_year:
+        btext = end_emoji
+        bcall = do_nothing
+    else:
+        # Otherwise allow him to view the next year
+        btext = "+ 10  anni"
+        bcall = "year_next_year_10"
     buttons[1].append([btext, bcall])
 
     # ================ THIRD ROW REGARDING YEAR ================
