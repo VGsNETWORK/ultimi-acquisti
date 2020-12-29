@@ -153,6 +153,7 @@ def compare(
                     sender.send_and_delete(context, chat_id=chat_id, text=error_message)
                     return
         if not rdate:
+            custom_date = re.sub(r"/\w+", "", custom_date)
             if custom_date:
                 try:
                     custom_date = custom_date.split("/")
@@ -170,16 +171,11 @@ def compare(
                     sender.send_and_delete(context, chat_id=chat_id, text=error_message)
                     return
             else:
-                # TODO: add example
-                user_message = message.text if message.text else message.caption
-                user_message = user_message.split(" ")[0].replace("/", "")
-                error_message = COMMAND_FORMAT_ERROR % (
-                    user.id,
-                    user.first_name,
-                    user_message,
-                )
-                sender.send_and_delete(context, chat_id=chat_id, text=error_message)
-                return
+                custom_year = cdate.year
+                custom_month = cdate.month
+        else:
+            custom_year = cdate.year
+            custom_month = cdate.month
     if len(str(custom_year)) == 2:
         custom_year = int(f"20{custom_year}")
     if custom_year > cdate.year:
