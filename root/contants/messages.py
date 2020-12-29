@@ -316,12 +316,12 @@ COMPARE_WRONG_MONTH = (
 
 COMPARE_MONTH_NOT_VALID = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese</code>!'
+    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese &lt;mese&gt;</code>!'
 )
 
 COMPARE_YEAR_NOT_VALID = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    ' "<b>%s</b>" non è un anno valido per la funzione <code>comparaanno</code>!'
+    ' "<b>%s</b>" non è un anno valido per la funzione <code>comparaanno &lt;anno&gt;</code>!'
 )
 
 TOO_MANY_ARGUMENTS = (
