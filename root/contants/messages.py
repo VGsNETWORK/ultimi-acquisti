@@ -314,6 +314,29 @@ COMPARE_WRONG_MONTH = (
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
+COMPARE_MONTH_NOT_VALID = (
+    '❌  <a href="tg://user?id=%s">%s</a>,'
+    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese</code>!'
+)
+
+COMPARE_YEAR_NOT_VALID = (
+    '❌  <a href="tg://user?id=%s">%s</a>,'
+    ' "<b>%s</b>" non è un anno valido per la funzione <code>comparaanno</code>!'
+)
+
+TOO_MANY_ARGUMENTS = (
+    '❌  <a href="tg://user?id=%s">%s</a>, hai inserito troppi argomenti per la funzione <code>%s</code>.\n\n\n'
+    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
+)
+
+COMMAND_FORMAT_ERROR = (
+    '❌  <a href="tg://user?id=%s">%s</a>, gli argomenti forniti'
+    " non rispettano il formato corretto per la funzione <code>%s</code>.\n\n\n"
+    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
+)
+
 NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
 
 NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"

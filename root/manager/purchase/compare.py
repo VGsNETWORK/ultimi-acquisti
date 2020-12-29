@@ -31,6 +31,10 @@ from root.contants.messages import (
     NO_QUOTE_FOUND,
     COMPARE_WRONG_MONTH,
     COMPARE_WRONG_YEAR,
+    COMPARE_MONTH_NOT_VALID,
+    COMPARE_YEAR_NOT_VALID,
+    TOO_MANY_ARGUMENTS,
+    COMMAND_FORMAT_ERROR,
 )
 from root.util.telegram import TelegramSender
 
@@ -84,6 +88,15 @@ def compare(
         sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
         return
     rmessage: Message = message.reply_to_message
+    arg_number = 2 if month else 1
+    user_message = message.text if message.text else message.caption
+    user_message = re.sub(r"/\w+\s", "", user_message)
+    if len(user_message.split(" ")) > arg_number:
+        # TODO: add example
+        user_message = user_message.split(" ")[0].replace("/", "")
+        error_message = TOO_MANY_ARGUMENTS % (user.id, user.first_name, user_message)
+        sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+        return
     if not month:
         custom_year = message.text if message.text else message.caption
         custom_year = custom_year.split(" ")
@@ -91,14 +104,23 @@ def compare(
             try:
                 custom_year = int(custom_year[1])
             except Exception:
-                custom_year = cdate.year
+                # TODO: add example
+                error_message = COMPARE_YEAR_NOT_VALID % (
+                    user.id,
+                    user.first_name,
+                    custom_year[1],
+                )
+                sender.send_and_delete(
+                    context=context, chat_id=chat_id, text=error_message
+                )
+                return
         else:
             custom_year = cdate.year
             custom_month = cdate.month
     else:
         custom_date = message.text if message.text else message.caption
         custom_date = re.sub(r"/\w+\s", "", custom_date)
-        rdate = re.findall(r"(\w{3,9}\ \d{4})", custom_date)
+        rdate = re.findall(r"(\w{1,9}\ \d{4})", custom_date)
         if rdate:
             rdate = rdate[0].split(" ")
             mtext = rdate[0]
@@ -106,16 +128,30 @@ def compare(
             if is_text_month(mtext):
                 custom_month = get_month_number(mtext)
             else:
-                rdate = None
+                # TODO: add example
+                error_message = COMPARE_MONTH_NOT_VALID % (
+                    user.id,
+                    user.first_name,
+                    mtext,
+                )
+                sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+                return
         if not rdate:
-            rdate = re.findall("^\w{3,9}$", custom_date)
+            rdate = re.findall(r"^\w{1,9}$", custom_date)
             if rdate:
                 mtext = rdate[0]
                 if is_text_month(mtext):
                     custom_month = get_month_number(mtext)
                     custom_year = cdate.year
                 else:
-                    rdate = None
+                    # TODO: add example
+                    error_message = COMPARE_MONTH_NOT_VALID % (
+                        user.id,
+                        user.first_name,
+                        mtext,
+                    )
+                    sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+                    return
         if not rdate:
             if custom_date:
                 try:
@@ -123,11 +159,27 @@ def compare(
                     custom_month = int(custom_date[0])
                     custom_year = int(custom_date[1])
                 except Exception:
-                    custom_year = cdate.year
-                    custom_month = cdate.month
+                    # TODO: add example
+                    user_message = message.text if message.text else message.caption
+                    user_message = user_message.split(" ")[0].replace("/", "")
+                    error_message = COMMAND_FORMAT_ERROR % (
+                        user.id,
+                        user.first_name,
+                        user_message,
+                    )
+                    sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+                    return
             else:
-                custom_year = cdate.year
-                custom_month = cdate.month
+                # TODO: add example
+                user_message = message.text if message.text else message.caption
+                user_message = user_message.split(" ")[0].replace("/", "")
+                error_message = COMMAND_FORMAT_ERROR % (
+                    user.id,
+                    user.first_name,
+                    user_message,
+                )
+                sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+                return
     if len(str(custom_year)) == 2:
         custom_year = int(f"20{custom_year}")
     if custom_year > cdate.year:
