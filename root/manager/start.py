@@ -31,6 +31,8 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     params = params.rstrip().lstrip()
     if params == "how_to":
         bot_help(update, context)
+    if params == "command_help":
+        append_commands(update, context)
     if params == "start":
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
@@ -123,8 +125,11 @@ def append_commands(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
-    callback: CallbackQuery = update.callback_query
-    message: Message = callback.message
+    if update.callback_query:
+        callback: CallbackQuery = update.callback_query
+        message: Message = callback.message
+    else:
+        message: Message = update.effective_message
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -150,14 +155,23 @@ def append_commands(update: Update, context: CallbackContext):
     restart_process(message.message_id, timeout=FIVE_MINUTES)
     message: str = build_message(update.effective_user, message)
     message: str = f"{message}\n{START_COMMANDS_LIST}"
-    context.bot.edit_message_text(
-        text=message,
-        chat_id=chat_id,
-        disable_web_page_preview=True,
-        message_id=message_id,
-        reply_markup=keyboard,
-        parse_mode="HTML",
-    )
+    if update.callback_query:
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=keyboard,
+            parse_mode="HTML",
+        )
+    else:
+        context.bot.send_message(
+            text=message,
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            reply_markup=keyboard,
+            parse_mode="HTML",
+        )
 
 
 def remove_commands(update: Update, context: CallbackContext):
