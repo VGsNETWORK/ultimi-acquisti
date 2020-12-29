@@ -302,12 +302,16 @@ COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
 COMPARE_WRONG_YEAR = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    " l'anno indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!"
+    " l'anno indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n\n"
+    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
 COMPARE_WRONG_MONTH = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    " il mese indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!"
+    " il mese indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n\n"
+    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
 NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
@@ -324,8 +328,8 @@ SESSION_ENDED = (
 )
 
 HOW_TO_DEEP_LINK = (
-    '<a href="tg://user?id=%s">%s</a>, puoi visualizzare la guida all\'utilizzo del bot '
-    '<a href="t.me/%s?start=how_to">QUI</a>.'
+    '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot '
+    '<a href="t.me/%s?start=how_to">clicca qui</a>.'
 )
 
 

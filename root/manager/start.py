@@ -31,7 +31,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     params = params.rstrip().lstrip()
     if params == "how_to":
         bot_help(update, context)
-    if params == "command_help":
+    if params == "command_list":
         append_commands(update, context)
     if params == "start":
         message: Message = update.message if update.message else update.edited_message
