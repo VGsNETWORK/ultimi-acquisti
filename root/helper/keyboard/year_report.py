@@ -73,6 +73,12 @@ def build_keyboard(year: int, current_year: int):
     bcall = f"expand_report_{year}"
     buttons.append([[btext, bcall]])
 
+    #  =============== FIRST ROW REGARDING CURRENT YEAR ====================
+    if not current_year == year:
+        btext = f"Vai all'anno corrente  ({current_year})"
+        bcall = f"year_next_year_{current_year-year}"
+        buttons = [[[btext, bcall]], *buttons]
+
     # Create a telegram compatible keyboard
     for brow in buttons:
         row = [create_button(button[0], button[1], button[1]) for button in brow]
