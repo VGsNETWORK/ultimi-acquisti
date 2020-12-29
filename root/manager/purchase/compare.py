@@ -74,6 +74,7 @@ def compare(
     custom_year = cdate.year
     custom_month = cdate.month
     message: Message = update.message if update.message else update.edited_message
+    user = message.from_user
     sender.delete_if_private(context, message)
     chat_id = message.chat.id
     if message.chat.type == "private":
@@ -130,15 +131,28 @@ def compare(
     if len(str(custom_year)) == 2:
         custom_year = int(f"20{custom_year}")
     if custom_year > cdate.year:
-        sender.send_and_delete(context, chat_id, COMPARE_WRONG_YEAR)
+        error_message = message.text.split(" ")[0].replace("/", "")
+        error_message = COMPARE_WRONG_YEAR % (
+            user.id,
+            user.first_name,
+            error_message,
+            custom_year,
+        )
+        sender.send_and_delete(context, chat_id, error_message)
         return
     if custom_year == cdate.year and custom_month > cdate.month:
-        sender.send_and_delete(context, chat_id, COMPARE_WRONG_MONTH)
+        error_message = message.text.split(" ")[0].replace("/", "")
+        error_message = COMPARE_WRONG_MONTH % (
+            user.id,
+            user.first_name,
+            error_message,
+            get_month_string(custom_month, False, True),
+        )
+        sender.send_and_delete(context, chat_id, error_message)
         return
     if not rmessage:
         return
     ruser = rmessage.from_user
-    user = message.from_user
     if not user_exists(user.id):
         create_user(user)
     if not user_exists(ruser.id):

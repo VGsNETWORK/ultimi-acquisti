@@ -74,7 +74,7 @@ def build_keyboard(year: int, current_year: int):
     buttons.append([[btext, bcall]])
 
     #  =============== FIRST ROW REGARDING CURRENT YEAR ====================
-    if not (current_year == year or current_year == year + 1):
+    if not current_year in (year + 1, year):
         btext = f"Vai all'anno corrente  ({current_year})"
         bcall = f"year_next_year_{current_year-year}"
         buttons = [[[btext, bcall]], *buttons]

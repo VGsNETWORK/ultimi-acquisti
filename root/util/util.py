@@ -67,7 +67,7 @@ short_text_month = {
     "ott": 10,
     "nov": 11,
     "dic": 12,
-    "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚": 13,
+    "e̵̓l̴̓u̴̔l̵͋": 13,
 }
 
 long_text_month = {
@@ -81,9 +81,9 @@ long_text_month = {
     "agosto": 8,
     "settembre": 9,
     "ottobre": 10,
-    "Novembre": 11,
-    "Dicembre": 12,
-    "E̵͙̦̓̔͘͜l̴̢͙͓̓̿͝u̴̝̼̫̔̔͘l̵͓͖̘͋̓̚": 13,
+    "novembre": 11,
+    "dicembre": 12,
+    "e̵̓l̴̓u̴̔l̵͋": 13,
 }
 
 
