@@ -332,8 +332,8 @@ TOO_MANY_ARGUMENTS = (
 )
 
 COMMAND_FORMAT_ERROR = (
-    '❌  <a href="tg://user?id=%s">%s</a>, gli argomenti forniti'
-    " non rispettano il formato corretto per la funzione <code>%s</code>.\n\n\n"
+    '❌  <a href="tg://user?id=%s">%s</a>, "<b>%s</b>"'
+    " non rispetta il formato corretto per la funzione <code>%s</code>.\n\n\n"
     "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )

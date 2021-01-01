@@ -141,11 +141,18 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
             # Case where two values has been passed
             user_date = re.findall(r"(^\w{1,9}\s\d{4}$)", args)
             if not user_date:
-                alternative: bool = len(user_input.split(" ")) > 2
+                user_input: list = user_input.split(" ")
+                alternative: bool = len(user_input) > 2
+                user_input: list = user_input[1:]
+                if alternative:
+                    user_input: str = f"{user_input[0][:15]}... {user_input[1][:15]}..."
+                else:
+                    user_input: str = user_input[0][:15]
                 command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
+                    user_input,
                     command,
                 )
                 sender.send_and_delete(context, chat_id, message)
@@ -170,11 +177,18 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 month: int = get_month_number(month)
                 year = int(user_date[1])
             except (ValueError, IndexError):
-                alternative: bool = len(user_input.split(" ")) > 2
+                user_input: list = user_input.split(" ")
+                alternative: bool = len(user_input) > 2
+                user_input: list = user_input[1:]
+                if alternative:
+                    user_input: str = f"{user_input[0][:15]}... {user_input[1][:15]}..."
+                else:
+                    user_input: str = user_input[0][:15]
                 command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
+                    user_input,
                     command,
                 )
                 sender.send_and_delete(context, chat_id, message)
