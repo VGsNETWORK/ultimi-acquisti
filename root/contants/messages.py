@@ -316,7 +316,8 @@ COMPARE_WRONG_MONTH = (
 
 COMPARE_MONTH_NOT_VALID = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese &lt;mese&gt;</code>!'
+    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese &lt;mese&gt;</code>!\n\n'
+    '<i>💡 Prova con "<b>%s</b>" o "<b>%s</b>".</i>'
 )
 
 COMPARE_YEAR_NOT_VALID = (

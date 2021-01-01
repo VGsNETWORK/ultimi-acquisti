@@ -87,6 +87,22 @@ long_text_month = {
 }
 
 
+def month_starts_with(month: str):
+    """ check if the first 3 letters of the word is a valid message or not """
+    month: str = month[:3]
+    month: str = month.lower()
+    if any(m for m in short_text_month if month == m):
+        index: str = next(m for m in short_text_month if month == m)
+        if index:
+            index: int = short_text_month[index]
+            try:
+                return short_month[index].lower(), long_month[index].lower()
+            except IndexError:
+                return short_month[1].lower(), long_month[1].lower()
+        return short_month[1].lower(), long_month[1].lower()
+    return short_month[1].lower(), long_month[1].lower()
+
+
 def get_month_number(month: str) -> int:
     """return the int of the month from a string
 

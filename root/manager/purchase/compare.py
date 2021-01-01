@@ -17,6 +17,7 @@ from root.util.util import (
     get_month_string,
     is_text_month,
     get_month_number,
+    month_starts_with,
 )
 from root.contants.messages import (
     MONTH_COMPARE_PRICE,
@@ -123,11 +124,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
         if month:
             month = month[0]
             if not is_text_month(month):
+                example_month = month_starts_with(month)
                 command: str = create_command_append(command, True)
                 message: str = COMPARE_MONTH_NOT_VALID % (
                     user.id,
                     first_name,
                     month,
+                    example_month[0],
+                    example_month[1],
                 )
                 sender.send_and_delete(context, chat_id, message)
                 return False
@@ -150,11 +154,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 user_date = user_date.split(" ")
                 month = user_date[0]
                 if not is_text_month(month):
+                    example_month = month_starts_with(month)
                     command: str = create_command_append(command, True, True)
                     message: str = COMPARE_MONTH_NOT_VALID % (
                         user.id,
                         first_name,
                         month,
+                        example_month[0],
+                        example_month[1],
                     )
                     sender.send_and_delete(context, chat_id, message)
                     return False
