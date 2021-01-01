@@ -49,7 +49,7 @@ def month_compare(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     logger.info("received command month compare")
-    compare(update, context, retrieve_sum_for_month, True)
+    compare(update, context, True)
 
 
 def year_compare(update: Update, context: CallbackContext) -> None:
@@ -60,195 +60,244 @@ def year_compare(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     logger.info("received command year compare")
-    compare(update, context, retrieve_sum_for_year, False)
+    compare(update, context, False)
 
 
-def compare(
-    update: Update, context: CallbackContext, function: callable, month: bool
-) -> None:
-    """General compare function used to compare month/year
-
-    Args:
-        update (Update): Telegram update
-        context (CallbackContext): The context of the telegram bot
-        function (callable): The function to call wich retrieves the sum
-        month (bool): If you have to compare the month or the year
-    """
-    cdate = datetime.now()
-    custom_year = cdate.year
-    custom_month = cdate.month
+def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     message: Message = update.message if update.message else update.edited_message
     user = message.from_user
-    sender.delete_if_private(context, message)
-    chat_id = message.chat.id
+    chat_id: int = message.chat.id
+    argc: int = 2 if month else 1
+    user_input: str = message.text if message.text else message.caption
+    command = re.findall(r"/\w+", user_input)[0]
+    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
+    args: list(str) = args.split(" ")
+    if len(args) > argc:
+        command += " &lt;mese&gt;" if month else " &lt;anno&gt;"
+        error_message = TOO_MANY_ARGUMENTS % (user.id, user.first_name, command)
+        sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+        return False
+    return True
+
+
+def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
+    message: Message = update.message if update.message else update.edited_message
+    user = message.from_user
+    chat_id: int = message.chat.id
+    rmessage: Message = message.reply_to_message
     if message.chat.type == "private":
         sender.send_and_delete(context, chat_id, ONLY_GROUP)
-        return
+        return False
     if not message.reply_to_message:
         sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
-        return
-    rmessage: Message = message.reply_to_message
-    arg_number = 2 if month else 1
-    user_message = message.text if message.text else message.caption
-    user_message = re.sub(r"/\w+\s", "", user_message)
-    if len(user_message.split(" ")) > arg_number:
-        # TODO: add example
-        user_message = user_message.split(" ")[0].replace("/", "")
-        error_message = TOO_MANY_ARGUMENTS % (user.id, user.first_name, user_message)
-        sender.send_and_delete(context, chat_id=chat_id, text=error_message)
-        return
-    if not month:
-        custom_year = message.text if message.text else message.caption
-        custom_year = custom_year.split(" ")
-        if len(custom_year) > 1:
-            try:
-                custom_year = int(custom_year[1])
-            except Exception:
-                # TODO: add example
-                error_message = COMPARE_YEAR_NOT_VALID % (
-                    user.id,
-                    user.first_name,
-                    custom_year[1],
-                )
-                sender.send_and_delete(
-                    context=context, chat_id=chat_id, text=error_message
-                )
-                return
-        else:
-            custom_year = cdate.year
-            custom_month = cdate.month
-    else:
-        custom_date = message.text if message.text else message.caption
-        custom_date = re.sub(r"/\w+\s", "", custom_date)
-        rdate = re.findall(r"(\w{1,9}\ \d{4})", custom_date)
-        if rdate:
-            rdate = rdate[0].split(" ")
-            mtext = rdate[0]
-            custom_year = int(rdate[1])
-            if is_text_month(mtext):
-                custom_month = get_month_number(mtext)
-            else:
-                # TODO: add example
-                error_message = COMPARE_MONTH_NOT_VALID % (
-                    user.id,
-                    user.first_name,
-                    mtext,
-                )
-                sender.send_and_delete(context, chat_id=chat_id, text=error_message)
-                return
-        if not rdate:
-            rdate = re.findall(r"^\w{1,9}$", custom_date)
-            if rdate:
-                mtext = rdate[0]
-                if is_text_month(mtext):
-                    custom_month = get_month_number(mtext)
-                    custom_year = cdate.year
-                else:
-                    # TODO: add example
-                    error_message = COMPARE_MONTH_NOT_VALID % (
-                        user.id,
-                        user.first_name,
-                        mtext,
-                    )
-                    sender.send_and_delete(context, chat_id=chat_id, text=error_message)
-                    return
-        if not rdate:
-            custom_date = re.sub(r"/\w+", "", custom_date)
-            if custom_date:
-                try:
-                    custom_date = custom_date.split("/")
-                    custom_month = int(custom_date[0])
-                    custom_year = int(custom_date[1])
-                except Exception:
-                    # TODO: add example
-                    user_message = message.text if message.text else message.caption
-                    user_message = user_message.split(" ")[0].replace("/", "")
-                    error_message = COMMAND_FORMAT_ERROR % (
-                        user.id,
-                        user.first_name,
-                        user_message,
-                    )
-                    sender.send_and_delete(context, chat_id=chat_id, text=error_message)
-                    return
-            else:
-                custom_year = cdate.year
-                custom_month = cdate.month
-        else:
-            custom_year = cdate.year
-            custom_month = cdate.month
-    if len(str(custom_year)) == 2:
-        custom_year = int(f"20{custom_year}")
-    if custom_year > cdate.year:
-        error_message = message.text.split(" ")[0].replace("/", "")
-        error_message = COMPARE_WRONG_YEAR % (
-            user.id,
-            user.first_name,
-            error_message,
-            custom_year,
-        )
-        sender.send_and_delete(context, chat_id, error_message)
-        return
-    if custom_year == cdate.year and custom_month > cdate.month:
-        error_message = message.text.split(" ")[0].replace("/", "")
-        error_message = COMPARE_WRONG_MONTH % (
-            user.id,
-            user.first_name,
-            error_message,
-            get_month_string(custom_month, False, True),
-        )
-        sender.send_and_delete(context, chat_id, error_message)
-        return
-    if not rmessage:
-        return
-    ruser = rmessage.from_user
+        return False
+    reply_user = rmessage.from_user
     if not user_exists(user.id):
         create_user(user)
-    if not user_exists(ruser.id):
-        create_user(ruser)
-    ruser_id = ruser.id
-    user_id = user.id
-    if ruser_id == user_id:
+    if not user_exists(reply_user.id):
+        create_user(reply_user)
+    if reply_user.id == user.id:
         sender.send_and_delete(context, chat_id, NO_QUOTE_YOURSELF)
-        return
-    if ruser.is_bot:
+        return False
+    if reply_user.is_bot:
         sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
-        return
-    rfirst_name = ruser.first_name
+        return False
+    return True
+
+
+def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
+    current_date = datetime.now()
+    message: Message = update.message if update.message else update.edited_message
+    reply_user = message.reply_to_message.from_user
+    user = message.from_user
     first_name = user.first_name
-    if not month:
-        upurchase = function(user_id, custom_year)
-        rpurchase = function(ruser_id, custom_year)
-        message = YEAR_COMPARE_PRICE % (
-            custom_year,
-            user_id,
-            first_name,
-            format_price(upurchase),
-            rfirst_name,
-            format_price(rpurchase),
-        )
-    else:
-        upurchase = function(user_id, custom_month, custom_year)
-        rpurchase = function(ruser_id, custom_month, custom_year)
-        date = f"{get_month_string(custom_month, False, True)} {custom_year}"
-        message = MONTH_COMPARE_PRICE % (
-            date,
-            user_id,
-            first_name,
-            format_price(upurchase),
-            rfirst_name,
-            format_price(rpurchase),
-        )
-    if upurchase > rpurchase:
-        diff = upurchase - rpurchase
-        diff = format_price(diff)
-        message = f"{message}{COMPARE_YOU_WON % diff}"
-    elif upurchase < rpurchase:
-        diff = rpurchase - upurchase
-        diff = format_price(diff)
-        message = f"{message}{COMPARE_HE_WON % diff}"
-    else:
-        if int(rpurchase) != 0:
-            message = f"{message}{COMPARE_TIE}"
+    chat_id: int = message.chat.id
+    user_input = message.text if message.text else message.caption
+
+    command = re.findall(r"/\w+", user_input)[0]
+    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
+    # Case when no arguments has been passed by the user
+    if args:
+        # Case where only one value has been passed (month string)
+        month: str = re.findall(r"^\w{1,9}$", args)
+        if month:
+            month = month[0]
+            if not is_text_month(month):
+                command: str = create_command_append(command, True)
+                message: str = COMPARE_MONTH_NOT_VALID % (
+                    user.id,
+                    first_name,
+                    month,
+                )
+                sender.send_and_delete(context, chat_id, message)
+                return False
+            month: int = get_month_number(month)
+            year = current_date.year
         else:
-            message = f"{message}{COMPARE_NO_PURCHASE}"
+            # Case where two values has been passed
+            user_date = re.findall(r"(^\w{1,9}\s\d{4}$)", args)
+            if not user_date:
+                command: str = create_command_append(command, True)
+                message: str = COMMAND_FORMAT_ERROR % (
+                    user.id,
+                    first_name,
+                    command,
+                )
+                sender.send_and_delete(context, chat_id, message)
+                return False
+            try:
+                user_date = user_date[0]
+                user_date = user_date.split(" ")
+                month = user_date[0]
+                if not is_text_month(month):
+                    command: str = create_command_append(command, True)
+                    message: str = COMPARE_MONTH_NOT_VALID % (
+                        user.id,
+                        first_name,
+                        month,
+                    )
+                    sender.send_and_delete(context, chat_id, message)
+                    return False
+                month: int = get_month_number(month)
+                year = int(user_date[1])
+            except (ValueError, IndexError):
+                command: str = create_command_append(command, True)
+                message: str = COMMAND_FORMAT_ERROR % (
+                    user.id,
+                    first_name,
+                    command,
+                )
+                sender.send_and_delete(context, chat_id, message)
+                return False
+    else:
+        month = current_date.month
+        year = current_date.year
+
+    # check if the year is after the current one
+    if year > current_date.year:
+        command: str = create_command_append(command, True)
+        message: str = COMPARE_WRONG_YEAR % (user.id, first_name, command, year)
+        sender.send_and_delete(context, chat_id, message)
+        return False
+    # check if the month is after the current one in this year
+    if year == current_date.year:
+        if month > current_date.month:
+            command: str = create_command_append(command, True)
+            message: str = COMPARE_WRONG_MONTH % (
+                user.id,
+                first_name,
+                command,
+                year,
+            )
+            sender.send_and_delete(context, chat_id, message)
+            return False
+    user_purchase: float = retrieve_sum_for_month(user.id, month, year)
+    reply_user_purchase: float = retrieve_sum_for_month(reply_user.id, month, year)
+    message_date: str = f"{get_month_string(month, False, True)} {year}"
+    message: str = MONTH_COMPARE_PRICE % (
+        message_date,
+        user.id,
+        first_name,
+        format_price(user_purchase),
+        reply_user.first_name,
+        format_price(reply_user_purchase),
+    )
+    message: str = get_compare_message(message, user_purchase, reply_user_purchase)
     sender.send_and_delete(context, chat_id, message)
+    return True
+
+
+def validate_year_and_send(update: Update, context: CallbackContext):
+    current_date = datetime.now()
+    message: Message = update.message if update.message else update.edited_message
+    reply_user = message.reply_to_message.from_user
+    user = message.from_user
+    first_name = user.first_name
+    chat_id: int = message.chat.id
+    user_input = message.text if message.text else message.caption
+
+    command = re.findall(r"/\w+", user_input)[0]
+    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
+
+    if args:
+        year = re.findall(r"^\d{4}$", args)
+        if year:
+            try:
+                year = year[0]
+                year = int(year)
+            except (ValueError, IndexError):
+                command: str = create_command_append(command, False)
+                message: str = COMPARE_YEAR_NOT_VALID % (
+                    user.id,
+                    first_name,
+                    year,
+                    command,
+                )
+                sender.send_and_delete(context, chat_id, message)
+                return False
+        else:
+            command: str = create_command_append(command, False)
+            message: str = COMPARE_YEAR_NOT_VALID % (
+                user.id,
+                first_name,
+                args,
+                command,
+            )
+            sender.send_and_delete(context, chat_id, message)
+            return False
+    else:
+        year = current_date.year
+
+    # check if the year is after the current one
+    if year > current_date.year:
+        command: str = create_command_append(command, False)
+        message: str = COMPARE_WRONG_YEAR % (user.id, first_name, command, year)
+        sender.send_and_delete(context, chat_id, message)
+        return False
+
+    user_purchase: float = retrieve_sum_for_year(user.id, year)
+    reply_user_purchase: float = retrieve_sum_for_year(reply_user.id, year)
+    message: str = YEAR_COMPARE_PRICE % (
+        year,
+        user.id,
+        first_name,
+        format_price(user_purchase),
+        reply_user.first_name,
+        format_price(reply_user_purchase),
+    )
+    message: str = get_compare_message(message, user_purchase, reply_user_purchase)
+    sender.send_and_delete(context, chat_id, message)
+    return True
+
+
+def get_compare_message(
+    message: str, user_purchase: float, reply_user_purchase: float
+) -> str:
+    if user_purchase > reply_user_purchase:
+        diff = user_purchase - reply_user_purchase
+        diff = format_price(diff)
+        return f"{message}{COMPARE_YOU_WON % diff}"
+    if user_purchase < reply_user_purchase:
+        diff = reply_user_purchase - user_purchase
+        diff = format_price(diff)
+        return f"{message}{COMPARE_HE_WON % diff}"
+    if int(reply_user_purchase) != 0:
+        return f"{message}{COMPARE_TIE}"
+    return f"{message}{COMPARE_NO_PURCHASE}"
+
+
+def create_command_append(command: str, month: bool):
+    command += " &lt;mese&gt;" if month else " &lt;anno&gt;"
+    return command
+
+
+def compare(update: Update, context: CallbackContext, month: bool):
+    if not check_quote_and_users(update, context):
+        return
+    if not check_args(update, context, month):
+        return
+
+    if month:
+        validate_month_and_send(update, context)
+    else:
+        validate_year_and_send(update, context)

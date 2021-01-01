@@ -321,7 +321,7 @@ COMPARE_MONTH_NOT_VALID = (
 
 COMPARE_YEAR_NOT_VALID = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    ' "<b>%s</b>" non è un anno valido per la funzione <code>comparaanno &lt;anno&gt;</code>!'
+    ' "<b>%s</b>" non è un anno valido per la funzione <code>%s</code>!'
 )
 
 TOO_MANY_ARGUMENTS = (

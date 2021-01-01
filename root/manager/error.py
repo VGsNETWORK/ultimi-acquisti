@@ -22,17 +22,18 @@ def handle_error(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
-    chat_id = retrieve_key("ERROR_CHANNEL")
-    if update.effective_message:
-        sender.send_and_delete(
-            context,
-            chat_id,
-            USER_ERROR,
-            reply_to_message_id=update.effective_message.message_id,
-            timeout=LONG_SERVICE_TIMEOUT,
-        )
-        update.effective_message.reply_text(USER_ERROR)
-    trace = "".join(traceback.format_tb(sys.exc_info()[2]))
-    logger.error(trace)
-    text = TELEGRAM_ERROR % context.error
-    context.bot.send_message(chat_id, text, parse_mode="HTML")
+    if update:
+        chat_id = retrieve_key("ERROR_CHANNEL")
+        if update.effective_message:
+            sender.send_and_delete(
+                context,
+                chat_id,
+                USER_ERROR,
+                reply_to_message_id=update.effective_message.message_id,
+                timeout=LONG_SERVICE_TIMEOUT,
+            )
+            update.effective_message.reply_text(USER_ERROR)
+        trace = "".join(traceback.format_tb(sys.exc_info()[2]))
+        logger.error(trace)
+        text = TELEGRAM_ERROR % context.error
+        context.bot.send_message(chat_id, text, parse_mode="HTML")
