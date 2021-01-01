@@ -137,7 +137,7 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
             # Case where two values has been passed
             user_date = re.findall(r"(^\w{1,9}\s\d{4}$)", args)
             if not user_date:
-                command: str = create_command_append(command, True)
+                command: str = create_command_append(command, True, True)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
@@ -150,7 +150,7 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 user_date = user_date.split(" ")
                 month = user_date[0]
                 if not is_text_month(month):
-                    command: str = create_command_append(command, True)
+                    command: str = create_command_append(command, True, True)
                     message: str = COMPARE_MONTH_NOT_VALID % (
                         user.id,
                         first_name,
@@ -161,7 +161,7 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 month: int = get_month_number(month)
                 year = int(user_date[1])
             except (ValueError, IndexError):
-                command: str = create_command_append(command, True)
+                command: str = create_command_append(command, True, True)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
@@ -175,19 +175,20 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
 
     # check if the year is after the current one
     if year > current_date.year:
-        command: str = create_command_append(command, True)
+        command: str = create_command_append(command, True, True)
         message: str = COMPARE_WRONG_YEAR % (user.id, first_name, command, year)
         sender.send_and_delete(context, chat_id, message)
         return False
     # check if the month is after the current one in this year
     if year == current_date.year:
         if month > current_date.month:
-            command: str = create_command_append(command, True)
+            alternative: bool = len(user_input.split(" ")) > 2
+            command: str = create_command_append(command, True, alternative)
             message: str = COMPARE_WRONG_MONTH % (
                 user.id,
                 first_name,
                 command,
-                year,
+                get_month_string(month, False, True),
             )
             sender.send_and_delete(context, chat_id, message)
             return False
@@ -286,8 +287,12 @@ def get_compare_message(
     return f"{message}{COMPARE_NO_PURCHASE}"
 
 
-def create_command_append(command: str, month: bool):
-    command += " &lt;mese&gt;" if month else " &lt;anno&gt;"
+def create_command_append(command: str, month: bool, month_alternative: bool = False):
+    if month_alternative:
+        month_command: str = " &lt;mese&gt; &lt;anno&gt;"
+    else:
+        month_command: str = " &lt;mese&gt;"
+    command += month_command if month else " &lt;anno&gt;"
     return command
 
 
