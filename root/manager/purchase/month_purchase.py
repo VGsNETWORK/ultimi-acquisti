@@ -69,9 +69,9 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         pprice = retrieve_sum_for_month(user_id, month - 1, year)
         diff = pprice - price if pprice > price else price - pprice
         diff = format_price(diff)
-        mstring = (
-            date
-        ) = f"{get_month_string(month -1, False, True)} {get_current_year()}"
+        current_year: int = get_current_year()
+        current_year: int = current_year - 1 if month == 1 else current_year
+        mstring = date = f"{get_month_string(month - 1, False, True)} {current_year}"
         append = (
             MONTH_PREVIOUS_PURCHASES_LOWER % (mstring, format_price(pprice), diff)
             if price > pprice

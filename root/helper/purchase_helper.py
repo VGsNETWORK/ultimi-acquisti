@@ -158,6 +158,8 @@ def retrieve_month_purchases_for_user(
         [Purchase]: List of purchases
     """
     try:
+        month = 12 if month < 1 else month
+        month = 1 if month > 13 else month
         current_date = datetime.now()
         month = month if month else current_date.month
         year = year if year else current_date.year
@@ -233,6 +235,8 @@ def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
     Returns:
         float: [description]
     """
+    month = 12 if month < 1 else month
+    month = 1 if month > 13 else month
     current_date = datetime.now()
     year = year if year else current_date.year
     _, end = monthrange(year, month)

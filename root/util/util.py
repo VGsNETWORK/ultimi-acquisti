@@ -260,6 +260,8 @@ def get_month_string(month: int, short: bool = True, lower: bool = False) -> str
     Returns:
         str: The string representation of the month
     """
+    month = 12 if month < 1 else month
+    month = 1 if month > 13 else month
     month = short_month[month] if short else long_month[month]
     return month.lower() if lower else month
 
