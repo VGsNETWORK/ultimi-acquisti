@@ -16,6 +16,7 @@ from root.contants.messages import (
 )
 from root.helper.process_helper import restart_process
 from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
+from root.helper.redis_message import add_message
 
 sender = TelegramSender()
 
@@ -37,6 +38,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
+        add_message(update.effective_message.message_id, update.effective_user.id)
         sender.send_and_delete(
             context,
             chat_id,
@@ -65,6 +67,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         return
     sender.delete_if_private(update, message)
     chat_id = message.chat.id
+    add_message(update.effective_message.message_id, update.effective_user.id)
     sender.send_and_delete(
         context,
         chat_id,
@@ -139,6 +142,7 @@ def append_commands(update: Update, context: CallbackContext):
                     "start_hide_commands",
                 )
             ],
+            [create_button("🏁  Inizia", "expand_report", "expand_report")],
             [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
             [
                 create_button(
@@ -232,6 +236,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
+                [create_button("🏁  Inizia", "expand_report", "expand_report")],
                 [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
                 [
                     create_button(
@@ -252,6 +257,6 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                     "go_start",
                     url=f"t.me/{bot_name}?start=start",
                 )
-            ]
+            ],
         ]
     )
