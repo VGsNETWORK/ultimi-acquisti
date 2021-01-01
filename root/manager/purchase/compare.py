@@ -74,7 +74,7 @@ def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
     args: list(str) = args.split(" ")
     if len(args) > argc:
-        command += " &lt;mese&gt;" if month else " &lt;anno&gt;"
+        command = create_command_append(command, month, True)
         error_message = TOO_MANY_ARGUMENTS % (user.id, user.first_name, command)
         sender.send_and_delete(context, chat_id=chat_id, text=error_message)
         return False
@@ -141,7 +141,8 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
             # Case where two values has been passed
             user_date = re.findall(r"(^\w{1,9}\s\d{4}$)", args)
             if not user_date:
-                command: str = create_command_append(command, True, True)
+                alternative: bool = len(user_input.split(" ")) > 2
+                command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
@@ -154,8 +155,9 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 user_date = user_date.split(" ")
                 month = user_date[0]
                 if not is_text_month(month):
+                    alternative: bool = len(user_input.split(" ")) > 2
                     example_month = month_starts_with(month)
-                    command: str = create_command_append(command, True, True)
+                    command: str = create_command_append(command, True, alternative)
                     message: str = COMPARE_MONTH_NOT_VALID % (
                         user.id,
                         first_name,
@@ -168,7 +170,8 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 month: int = get_month_number(month)
                 year = int(user_date[1])
             except (ValueError, IndexError):
-                command: str = create_command_append(command, True, True)
+                alternative: bool = len(user_input.split(" ")) > 2
+                command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
                     first_name,
