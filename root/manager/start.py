@@ -3,6 +3,7 @@
 """ File to handle the start command """
 
 import re
+from datetime import datetime
 from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
 from telegram.ext import CallbackContext
 from root.manager.help import bot_help
@@ -19,6 +20,7 @@ from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 from root.helper.redis_message import add_message
 
 sender = TelegramSender()
+current_year = datetime.now().year
 
 
 def handle_params(update: Update, context: CallbackContext, params: str) -> None:
@@ -142,8 +144,15 @@ def append_commands(update: Update, context: CallbackContext):
                     "start_hide_commands",
                 )
             ],
-            [create_button("🏁  Inizia", "expand_report", "expand_report")],
             [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+            [
+                create_button("💳  Report mensile", "expand_report", "expand_report"),
+                create_button(
+                    "💳  Report annuale",
+                    f"expand_year_report_{current_year}",
+                    f"expand_year_report_{current_year}",
+                ),
+            ],
             [
                 create_button(
                     "🆘  Supporto",
@@ -236,8 +245,17 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
-                [create_button("🏁  Inizia", "expand_report", "expand_report")],
                 [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+                [
+                    create_button(
+                        "💳  Report mensile", "expand_report", "expand_report"
+                    ),
+                    create_button(
+                        "💳  Report annuale",
+                        f"expand_year_report_{current_year}",
+                        f"expand_year_report_{current_year}",
+                    ),
+                ],
                 [
                     create_button(
                         "🆘  Supporto",
