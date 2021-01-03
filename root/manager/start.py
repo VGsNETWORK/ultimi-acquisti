@@ -147,10 +147,10 @@ def append_commands(update: Update, context: CallbackContext):
             [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
             [
                 create_button(
-                    "💳  Apri Report mensile", "expand_report", "expand_report"
+                    "💳  Apri il report mensile", "expand_report", "expand_report"
                 ),
                 create_button(
-                    "💳  Apri Report annuale",
+                    "💳  Apri il report annuale",
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
                 ),
@@ -250,10 +250,10 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
                 [
                     create_button(
-                        "💳  Apri Report mensile", "expand_report", "expand_report"
+                        "💳  Apri il report mensile", "expand_report", "expand_report"
                     ),
                     create_button(
-                        "💳  Apri Report annuale",
+                        "💳  Apri il report annuale",
                         f"expand_year_report_{current_year}",
                         f"expand_year_report_{current_year}",
                     ),
