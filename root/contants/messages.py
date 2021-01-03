@@ -113,6 +113,38 @@ START_COMMANDS_LIST = (
     "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)</i>"
 )
 
+START_COMMANDS_LIST = (
+    "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n"
+    "Questo è un riepilogo di tutti i comandi supportati dal bot. Tieni presente che alcuni di questi"
+    " funzionano <b>solo nei gruppi</b> (👥), mentre altri funzionano anche qui, <b>in chat privata</b> (👤).\n"
+    "💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
+    " <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata,"
+    " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!\n\n\n"
+    "(👤)   /howto\n\n"
+    "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
+    '(👤)   /ultimoacquisto      (<a href="https://t.me/share/url?text=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    f"<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
+    f'(👤)   /spesamensile      (<a href="https://t.me/share/url?text=%2Fspesamensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
+    f'(👤)   /reportmensile      (<a href="https://t.me/share/url?text=%2Freportmensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra un report dettagliato della tua spesa totale per questo mese</i>\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}">/comparamese</a>\n'
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}%20%3Cmese%3E">/comparamese &lt;mese&gt;</a>\n'
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}%20%3Cmese%3E%20%3Canno%3E">/comparamese &lt;mese&gt; &lt;anno&gt;</a>\n\n'
+    "<i>Metti a confronto la tua spesa mensile per il mese corrente con quella di un altro utente.\n"
+    "Specifica opzionalmente un <b>mese</b> o un <b>mese + anno</b> diversi per effettuare l'operazione su periodi precedenti</i> (richiede di <b>quotare un utente</b>)\n\n\n"
+    f'(👤)   /spesaannuale      (<a href="https://t.me/share/url?text=%2Fspesaannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra la tua spesa totale per questo anno</i>\n\n\n"
+    f'(👤)   /reportannuale      (<a href="https://t.me/share/url?text=%2Freportannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    "<i>Mostra un report dettagliato della tua spesa totale per questo anno</i>\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}">/comparaanno</a>\n'
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}%20%3Canno%3E">/comparaanno &lt;anno&gt;</a>\n\n'
+    f"<i>Metti a confronto la tua spesa annuale per l'anno corrente con quella di un altro utente.\n"
+    "Specifica opzionalmente un <b>anno</b> diverso per effettuare l'operazione su anni precedenti</i> (richiede di <b>quotare un utente</b>)\n\n\n"
+    f'(👥)   <a href="https://t.me/share/url?text=%2Fcancellaspesa%40{BOT_NAME}">/cancellaspesa</a>\n\n'
+    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post</i> (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
+)
+
 
 PRICE_MESSAGE_NOT_FORMATTED = (
     "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine "
@@ -316,7 +348,7 @@ COMPARE_WRONG_MONTH = (
 
 COMPARE_MONTH_NOT_VALID = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    ' "<b>%s</b>" non è un mese valido per la funzione <code>comparamese &lt;mese&gt;</code>!\n\n'
+    ' "<b>%s</b>" non è un mese valido per la funzione <code>%s</code>!\n\n'
     '<i>💡 Prova con "<b>%s</b>" o "<b>%s</b>".</i>'
 )
 

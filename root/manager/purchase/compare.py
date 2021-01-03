@@ -3,6 +3,7 @@
 """ File containing functions to compare prices with other users """
 
 import re
+from html import escape
 from datetime import datetime
 from telegram import Update, Message
 from telegram.ext import CallbackContext
@@ -70,8 +71,8 @@ def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     chat_id: int = message.chat.id
     argc: int = 2 if month else 1
     user_input: str = message.text if message.text else message.caption
-    command = re.findall(r"/\w+", user_input)[0]
-    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
+    command = re.findall(r"/\S+", user_input)[0]
+    args: str = re.sub(r"/\S+\s|/\S+", "", user_input)
     args: list(str) = args.split(" ")
     if len(args) > argc:
         command = create_command_append(command, month, True)
@@ -115,21 +116,25 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
     chat_id: int = message.chat.id
     user_input = message.text if message.text else message.caption
 
-    command = re.findall(r"/\w+", user_input)[0]
-    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
+    command = re.findall(r"/\S+", user_input)[0]
+    if "@" in command:
+        command = re.findall(r"^.*?(?=@)", command)[0]
+    args: str = re.sub(r"/\S+\s|/\S+", "", user_input)
     # Case when no arguments has been passed by the user
     if args:
         # Case where only one value has been passed (month string)
-        month: str = re.findall(r"^\w{1,9}$", args)
+        month: str = re.findall(r"^\S{1,9}$", args)
         if month:
             month = month[0]
             if not is_text_month(month):
                 example_month = month_starts_with(month)
+                month = escape(month)
                 command: str = create_command_append(command, True)
                 message: str = COMPARE_MONTH_NOT_VALID % (
                     user.id,
                     first_name,
                     month,
+                    command,
                     example_month[0],
                     example_month[1],
                 )
@@ -139,15 +144,17 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
             year = current_date.year
         else:
             # Case where two values has been passed
-            user_date = re.findall(r"(^\w{1,9}\s\d{4}$)", args)
+            user_date = re.findall(r"(^\S{1,9}\s\S{4}$)", args)
             if not user_date:
                 user_input: list = user_input.split(" ")
                 alternative: bool = len(user_input) > 2
                 user_input: list = user_input[1:]
                 if alternative:
-                    user_input: str = f"{user_input[0][:15]}... {user_input[1][:15]}..."
+                    user_input: str = f"{user_input[0]} {user_input[1]}"
                 else:
-                    user_input: str = user_input[0][:15]
+                    user_input: str = f"{user_input[0][:15]}..."
+
+                user_input = escape(user_input)
                 command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
@@ -165,10 +172,12 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                     alternative: bool = len(user_input.split(" ")) > 2
                     example_month = month_starts_with(month)
                     command: str = create_command_append(command, True, alternative)
+                    month = escape(month)
                     message: str = COMPARE_MONTH_NOT_VALID % (
                         user.id,
                         first_name,
                         month,
+                        command,
                         example_month[0],
                         example_month[1],
                     )
@@ -181,9 +190,10 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 alternative: bool = len(user_input) > 2
                 user_input: list = user_input[1:]
                 if alternative:
-                    user_input: str = f"{user_input[0][:15]}... {user_input[1][:15]}..."
+                    user_input: str = f"{user_input[0]} {user_input[1]}"
                 else:
-                    user_input: str = user_input[0][:15]
+                    user_input: str = f"{user_input[0][:15]}..."
+                user_input = escape(user_input)
                 command: str = create_command_append(command, True, alternative)
                 message: str = COMMAND_FORMAT_ERROR % (
                     user.id,
@@ -241,16 +251,16 @@ def validate_year_and_send(update: Update, context: CallbackContext):
     chat_id: int = message.chat.id
     user_input = message.text if message.text else message.caption
 
-    command = re.findall(r"/\w+", user_input)[0]
-    args: str = re.sub(r"/\w+\s|/\w+", "", user_input)
-
+    command = re.findall(r"/\S+", user_input)[0]
+    args: str = re.sub(r"/\S+\s|/\S+", "", user_input)
     if args:
-        year = re.findall(r"^\d{4}$", args)
+        year = re.findall(r"^\S{4}$", args)
         if year:
             try:
                 year = year[0]
                 year = int(year)
             except (ValueError, IndexError):
+                year = escape(year)
                 command: str = create_command_append(command, False)
                 message: str = COMPARE_YEAR_NOT_VALID % (
                     user.id,
@@ -262,6 +272,7 @@ def validate_year_and_send(update: Update, context: CallbackContext):
                 return False
         else:
             command: str = create_command_append(command, False)
+            args = escape(args)
             message: str = COMPARE_YEAR_NOT_VALID % (
                 user.id,
                 first_name,
