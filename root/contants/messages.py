@@ -142,7 +142,7 @@ START_COMMANDS_LIST = (
     f"<i>Metti a confronto la tua spesa annuale per l'anno corrente con quella di un altro utente.\n"
     "Specifica opzionalmente un <b>anno</b> diverso per effettuare l'operazione su anni precedenti</i> (richiede di <b>quotare un utente</b>)\n\n\n"
     f'(👥)   <a href="https://t.me/share/url?text=%2Fcancellaspesa%40{BOT_NAME}">/cancellaspesa</a>\n\n'
-    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post</i> (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)"
+    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post</i> (richiede di <b>quotare un tuo acquisto</b>)"
 )
 
 

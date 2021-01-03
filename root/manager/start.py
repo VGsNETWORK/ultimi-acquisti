@@ -144,11 +144,13 @@ def append_commands(update: Update, context: CallbackContext):
                     "start_hide_commands",
                 )
             ],
-            [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+            [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
             [
-                create_button("💳  Report mensile", "expand_report", "expand_report"),
                 create_button(
-                    "💳  Report annuale",
+                    "💳  Apri Report mensile", "expand_report", "expand_report"
+                ),
+                create_button(
+                    "💳  Apri Report annuale",
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
                 ),
@@ -245,13 +247,13 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
-                [create_button("📜  Guida", "how_to_page_1", "how_to_page_1")],
+                [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
                 [
                     create_button(
-                        "💳  Report mensile", "expand_report", "expand_report"
+                        "💳  Apri Report mensile", "expand_report", "expand_report"
                     ),
                     create_button(
-                        "💳  Report annuale",
+                        "💳  Apri Report annuale",
                         f"expand_year_report_{current_year}",
                         f"expand_year_report_{current_year}",
                     ),
