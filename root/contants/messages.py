@@ -55,37 +55,6 @@ PLEASE_NOTE_APPEND = (
     " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
 )
 
-START_COMMANDS_LIST = (
-    "\n\n<u><b>LISTA COMANDI</b></u>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/howto@{BOT_NAME}">/howto</a>\n\n'
-    "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/ultimoacquisto@{BOT_NAME}">/ultimoacquisto</a>\n\n'
-    "<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/spesamensile@{BOT_NAME}">/spesamensile</a>\n\n'
-    "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/reportmensile@{BOT_NAME}">/reportmensile</a>\n\n'
-    "<i>Mostra un report dettagliato della tua spesa totale per questo mese</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}">/comparamese</a>\n'
-    f'<a href="https://t.me/share/url?text=/comparamese@{BOT_NAME}%20%3CMM/YYYY%3E">/'
-    "comparamese &lt;MM/YYYY&gt;</a>\n\n"
-    "<i>Metti a confronto la tua spesa mensile con quella di un altro utente,"
-    " specificando opzionalmente un mese e un anno diversi da quelli correnti"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/spesaannuale@{BOT_NAME}">/spesaannuale</a>\n\n'
-    "<i>Mostra la tua spesa totale per questo anno</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/reportannuale@{BOT_NAME}">/reportannuale</a>\n\n'
-    "<i>Mostra un report dettagliato della tua spesa totale per questo anno</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}">/comparaanno</a>\n'
-    f'<a href="https://t.me/share/url?text=/comparaanno@{BOT_NAME}%20%3CYYYY%3E">/'
-    "comparaanno &lt;YYYY&gt;</a>\n\n"
-    "<i>Metti a confronto la tua spesa annuale con quella di un altro utente,"
-    " specificando opzionalmente un anno diverso da quello corrente"
-    " (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
-    f'<a href="https://t.me/share/url?text=/cancellaspesa@{BOT_NAME}">/cancellaspesa</a>\n\n'
-    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il"
-    " relativo post (funziona solo nei <b>gruppi</b> e"
-    " richiede di <b>quotare un tuo acquisto</b>)</i>"
-)
 
 START_COMMANDS_LIST = (
     "\n\n<u><b>LISTA COMANDI</b></u>\n\n"
@@ -122,7 +91,7 @@ START_COMMANDS_LIST = (
     " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!\n\n\n"
     "<code>(👤)  </code>/howto\n\n"
     "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
-    '<code>(👤)  </code>/ultimoacquisto      (<a href="https://t.me/share/url?text=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
+    f'<code>(👤)  </code>/ultimoacquisto      (<a href="https://t.me/share/url?text=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
     f"<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
     f'<code>(👤)  </code>/spesamensile      (<a href="https://t.me/share/url?text=%2Fspesamensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
     "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
