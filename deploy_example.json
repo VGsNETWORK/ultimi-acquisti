@@ -1,8 +1,10 @@
 {
-    "package": "package-name",
-    "host": "hostname",
-    "username": "username",
-    "destination": "destination",
-    "service": "service-name",
-    "ssh": "ssh_key_path"
+    "profile": {
+        "package": "package-name",
+        "host": "hostname",
+        "username": "username",
+        "destination": "destination",
+        "service": "service-name",
+        "ssh": "ssh_key_path"
+    }
 }
