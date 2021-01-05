@@ -57,7 +57,7 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
     first_name: str = user.first_name
     message = HOW_TO_DEEP_LINK % (user_id, first_name, bot_name)
     button = create_button(
-        message="GUIDA",
+        message="ℹ  Guida",
         callback="help_redirect",
         query="help_redirect",
         url=f"t.me/{bot_name}?start=how_to",
