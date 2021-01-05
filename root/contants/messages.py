@@ -247,13 +247,13 @@ NO_YEAR_PURCHASE = (
 
 LAST_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, hai effettuato il tuo ultimo acquisto '
-    "in data <b>%s alle %s</b>. "
-    'Puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>!'
+    "in data <b>%s alle %s</b>.\n\n"
+    'Puoi vederlo <a href="https://t.me/c/%s/%s">cliccando qui</a>!'
 )
 
 LAST_PURCHASE_USER = (
-    "<i>%s</i> ha effettuato il suo ultimo acquisto in data <b>%s alle %s</b>. "
-    'Puoi trovarlo <a href="https://t.me/c/%s/%s">qui</a>!'
+    "<i>%s</i> ha effettuato il suo ultimo acquisto in data <b>%s alle %s</b>.\n\n"
+    'Puoi vederlo <a href="https://t.me/c/%s/%s">cliccando qui</a>!'
 )
 
 MONTH_PURCHASE_REPORT = (
