@@ -1,0 +1,369 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/a3c87ab5/
+0	.vscode/launch.json	/^        {$/;"	o	array:configurations
+API_HASH	.env.json	/^  "API_HASH": "3b2f0aa466b2bcd40014b76fedde3cf3",$/;"	s
+API_HASH	.vscode/launch.json	/^                "API_HASH": "3b2f0aa466b2bcd40014b76fedde3cf3",$/;"	s	object:configurations.0.env
+API_ID	.env.json	/^  "API_ID": "87341",$/;"	s
+API_ID	.vscode/launch.json	/^                "API_ID": "87341",$/;"	s	object:configurations.0.env
+BOT_NAME	.env.json	/^  "BOT_NAME": "VGsTEST_Bot"$/;"	s
+BOT_NAME	env-example.json	/^  "BOT_NAME": "TESTBOT"$/;"	s
+BOT_NAME	root/contants/messages.py	/^BOT_NAME = environ["BOT_NAME"]$/;"	v
+BaseModel	root/model/base_model.py	/^class BaseModel(Document):$/;"	c
+BotManager	root/manager/bot.py	/^class BotManager:$/;"	c
+CANCEL_PURCHASE_ERROR	root/contants/messages.py	/^CANCEL_PURCHASE_ERROR = ($/;"	v
+COMMAND_FORMAT_ERROR	root/contants/messages.py	/^COMMAND_FORMAT_ERROR = ($/;"	v
+COMPARE_HE_WON	root/contants/messages.py	/^COMPARE_HE_WON = "😞 Hai <b>perso<\/b> di  <code>%s €<\/code>..."$/;"	v
+COMPARE_MONTH_NOT_VALID	root/contants/messages.py	/^COMPARE_MONTH_NOT_VALID = ($/;"	v
+COMPARE_NO_PURCHASE	root/contants/messages.py	/^COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"$/;"	v
+COMPARE_TIE	root/contants/messages.py	/^COMPARE_TIE = "💸 I vostri portafogli sono ugualmente leggeri..."$/;"	v
+COMPARE_WRONG_MONTH	root/contants/messages.py	/^COMPARE_WRONG_MONTH = ($/;"	v
+COMPARE_WRONG_YEAR	root/contants/messages.py	/^COMPARE_WRONG_YEAR = ($/;"	v
+COMPARE_YEAR_NOT_VALID	root/contants/messages.py	/^COMPARE_YEAR_NOT_VALID = ($/;"	v
+COMPARE_YOU_WON	root/contants/messages.py	/^COMPARE_YOU_WON = "🥳 Hai <b>vinto<\/b> di  <code>%s €<\/code>!"$/;"	v
+CONFIG	root/util/logger.py	/^CONFIG = configparser.ConfigParser()$/;"	v
+CONNECTION	.env.json	/^  "CONNECTION": "mongodb:\/\/{}:{}@{}\/{}",$/;"	s
+CONNECTION	.vscode/launch.json	/^                "CONNECTION": "mongodb:\/\/{}:{}@{}\/{}",$/;"	s	object:configurations.0.env
+CONNECTION	env-example.json	/^  "CONNECTION": "mongodb:\/\/{}:{}@{}\/{}",$/;"	s
+CONSIDERAZIONI	README.md	/^# CONSIDERAZIONI$/;"	c
+CProcess	root/model/cprocess.py	/^class CProcess(Process):$/;"	c
+Configuration	root/model/configuration.py	/^class Configuration(BaseModel):$/;"	c
+ConfigurationHelper	root/helper/configuration.py	/^class ConfigurationHelper:$/;"	c
+DBHOST	.env.json	/^  "DBHOST": "127.0.0.1",$/;"	s
+DBHOST	.vscode/launch.json	/^                "DBHOST": "127.0.0.1",$/;"	s	object:configurations.0.env
+DBHOST	env-example.json	/^  "DBHOST": "127.0.0.1",$/;"	s
+DBNAME	.env.json	/^  "DBNAME": "purchase",$/;"	s
+DBNAME	.vscode/launch.json	/^                "DBNAME": "purchase",$/;"	s	object:configurations.0.env
+DBNAME	env-example.json	/^  "DBNAME": "unixporn",$/;"	s
+DBPASSWORD	.env.json	/^  "DBPASSWORD": "purchase",$/;"	s
+DBPASSWORD	.vscode/launch.json	/^                "DBPASSWORD": "purchase",$/;"	s	object:configurations.0.env
+DBPASSWORD	env-example.json	/^  "DBPASSWORD": "unixporn",$/;"	s
+DBUSERNAME	.env.json	/^  "DBUSERNAME": "purchase",$/;"	s
+DBUSERNAME	.vscode/launch.json	/^                "DBUSERNAME": "purchase",$/;"	s	object:configurations.0.env
+DBUSERNAME	env-example.json	/^  "DBUSERNAME": "unixporn",$/;"	s
+DB_CONNECTION_ERROR	root/contants/messages.py	/^DB_CONNECTION_ERROR = ($/;"	v
+DB_CONNECTION_SUCCESS	root/contants/messages.py	/^DB_CONNECTION_SUCCESS = "Connesso al database..."$/;"	v
+DB_GENERIC_ERROR	root/contants/messages.py	/^DB_GENERIC_ERROR = ($/;"	v
+ERROR_CHANNEL	.env.json	/^  "ERROR_CHANNEL": "-1001323973152",$/;"	s
+ERROR_CHANNEL	.vscode/launch.json	/^                "ERROR_CHANNEL": "-1001323973152",$/;"	s	object:configurations.0.env
+ERROR_CHANNEL	env-example.json	/^  "ERROR_CHANNEL": "ERROR_CHANNEL",$/;"	s
+FEEDBACK_CHANNEL	.env.json	/^  "FEEDBACK_CHANNEL": "-1001479349492",$/;"	s
+FEEDBACK_CONVERSATION	root/manager/feedback.py	/^FEEDBACK_CONVERSATION = ConversationHandler($/;"	v
+FEEDBACK_FROM_MESSAGE	root/contants/messages.py	/^FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s<\/code>):\\n\\n<i>%s<\/i>"$/;"	v
+FEEDBACK_MESSAGE	root/manager/feedback.py	/^FEEDBACK_MESSAGE = range(1)$/;"	v
+FEEDBACK_SEND_MESSAGE	root/contants/messages.py	/^FEEDBACK_SEND_MESSAGE = "Scrivi il messaggio che vuoi inviare, poi premi Invia:"$/;"	v
+FILE	root/util/logger.py	/^FILE = "server.log"$/;"	v
+FIVE_MINUTES	root/contants/message_timeout.py	/^FIVE_MINUTES = 300$/;"	v
+FORMAT	root/util/logger.py	/^FORMAT = "%(asctime)-15s %(levelname)s:%(funcName)-8s %(message)s"$/;"	v
+GROUP_ID	.env.json	/^  "GROUP_ID": "['-1001222941733']",$/;"	s
+GROUP_ID	.vscode/launch.json	/^                "GROUP_ID": "['-1001382571795']"$/;"	s	object:configurations.0.env
+GROUP_ID	env-example.json	/^  "GROUP_ID": "['GROUPS_ID']",$/;"	s
+GROUP_NOT_ALLOWED	root/contants/messages.py	/^GROUP_NOT_ALLOWED = ($/;"	v
+HELP_TIMEOUT	root/contants/message_timeout.py	/^HELP_TIMEOUT = 60$/;"	v
+HOW_TO_DEEP_LINK	root/contants/messages.py	/^HOW_TO_DEEP_LINK = ($/;"	v
+HOW_TO_PAGE_ONE	root/contants/messages.py	/^HOW_TO_PAGE_ONE = ($/;"	v
+HOW_TO_PAGE_THREE	root/contants/messages.py	/^HOW_TO_PAGE_THREE = ($/;"	v
+HOW_TO_PAGE_TWO	root/contants/messages.py	/^HOW_TO_PAGE_TWO = ($/;"	v
+LAST_PURCHASE	root/contants/messages.py	/^LAST_PURCHASE = ($/;"	v
+LAST_PURCHASE_USER	root/contants/messages.py	/^LAST_PURCHASE_USER = ($/;"	v
+LEVEL	root/util/logger.py	/^LEVEL = logging.INFO$/;"	v
+LONG_SERVICE_TIMEOUT	root/contants/message_timeout.py	/^LONG_SERVICE_TIMEOUT = 30$/;"	v
+MESSAGE	root/manager/feedback.py	/^MESSAGE = 0$/;"	v
+MESSAGE_ID	root/manager/feedback.py	/^MESSAGE_ID = 0$/;"	v
+MESSAGE_PREFIX	root/helper/redis_message.py	/^MESSAGE_PREFIX = "ultimi_acquisti"$/;"	v
+MONTH_COMPARE_PRICE	root/contants/messages.py	/^MONTH_COMPARE_PRICE = ($/;"	v
+MONTH_PREVIOUS_PURCHASES_HIGHER	root/contants/messages.py	/^MONTH_PREVIOUS_PURCHASES_HIGHER = ($/;"	v
+MONTH_PREVIOUS_PURCHASES_LOWER	root/contants/messages.py	/^MONTH_PREVIOUS_PURCHASES_LOWER = ($/;"	v
+MONTH_PREVIOUS_PURCHASES_NONE	root/contants/messages.py	/^MONTH_PREVIOUS_PURCHASES_NONE = "📈 A <i>%s<\/i> non hai registrato alcun acquisto."$/;"	v
+MONTH_PREVIOUS_PURCHASES_SAME	root/contants/messages.py	/^MONTH_PREVIOUS_PURCHASES_SAME = ($/;"	v
+MONTH_PURCHASES	root/contants/messages.py	/^MONTH_PURCHASES = ($/;"	v
+MONTH_PURCHASES_NONE	root/contants/messages.py	/^MONTH_PURCHASES_NONE = ($/;"	v
+MONTH_PURCHASE_REPORT	root/contants/messages.py	/^MONTH_PURCHASE_REPORT = ($/;"	v
+MONTH_USER_PURCHASES	root/contants/messages.py	/^MONTH_USER_PURCHASES = "<i>%s<\/i> a <b>%s<\/b> ha speso un totale di <code>%s €<\/code>."$/;"	v
+MONTH_USER_PURCHASES_NONE	root/contants/messages.py	/^MONTH_USER_PURCHASES_NONE = "<i>%s<\/i> a <b>%s<\/b> non ha registrato alcun acquisto."$/;"	v
+MonthReport	root/manager/purchase/month_report.py	/^class MonthReport:$/;"	c
+Mtbot	root/manager/mtbot.py	/^class Mtbot:$/;"	c
+NOT_ALLOWED_IN_GROUP	root/contants/messages.py	/^NOT_ALLOWED_IN_GROUP = ($/;"	v
+NOT_A_PURCHASE	root/contants/messages.py	/^NOT_A_PURCHASE = ($/;"	v
+NOT_MESSAGE_OWNER	root/contants/messages.py	/^NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"$/;"	v
+NOT_YOUR_PURCHASE	root/contants/messages.py	/^NOT_YOUR_PURCHASE = ($/;"	v
+NO_MONTH_PURCHASE	root/contants/messages.py	/^NO_MONTH_PURCHASE = ($/;"	v
+NO_PURCHASE	root/contants/messages.py	/^NO_PURCHASE = ($/;"	v
+NO_QUOTE_BOT	root/contants/messages.py	/^NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"$/;"	v
+NO_QUOTE_FOUND	root/contants/messages.py	/^NO_QUOTE_FOUND = "Per lanciare questo comando prova a quotare un utente..."$/;"	v
+NO_QUOTE_YOURSELF	root/contants/messages.py	/^NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"$/;"	v
+NO_YEAR_PURCHASE	root/contants/messages.py	/^NO_YEAR_PURCHASE = ($/;"	v
+ONLY_GROUP	root/contants/messages.py	/^ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."$/;"	v
+PAGES	root/manager/help.py	/^PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE]$/;"	v
+PLEASE_NOTE_APPEND	root/contants/messages.py	/^PLEASE_NOTE_APPEND = ($/;"	v
+PRICE_MESSAGE_NOT_FORMATTED	root/contants/messages.py	/^PRICE_MESSAGE_NOT_FORMATTED = ($/;"	v
+PROCESS_NAME	root/helper/process_helper.py	/^PROCESS_NAME = "ultimi_acquisti_process_%s"$/;"	v
+PROFILE	.env.json	/^  "PROFILE": "develop",$/;"	s
+PROFILE	env-example.json	/^  "PROFILE": "develop",$/;"	s
+PURCHASE_ADDED	root/contants/messages.py	/^PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!<\/i>"$/;"	v
+PURCHASE_DATE_ERROR	root/contants/messages.py	/^PURCHASE_DATE_ERROR = ($/;"	v
+PURCHASE_DATE_HINT	root/contants/messages.py	/^PURCHASE_DATE_HINT = ($/;"	v
+PURCHASE_DELETED	root/contants/messages.py	/^PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!<\/i>"$/;"	v
+PURCHASE_HEADER_HINT	root/contants/messages.py	/^PURCHASE_HEADER_HINT = "\\n\\n\\n<b>Lo sapevi che...?<\/b>"$/;"	v
+PURCHASE_MODIFIED	root/contants/messages.py	/^PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!<\/i>"$/;"	v
+PURCHASE_NOT_FOUND	root/contants/messages.py	/^PURCHASE_NOT_FOUND = ($/;"	v
+PURCHASE_PRICE_HINT	root/contants/messages.py	/^PURCHASE_PRICE_HINT = ($/;"	v
+PURCHASE_REPORT_TEMPLATE	root/contants/messages.py	/^PURCHASE_REPORT_TEMPLATE = ($/;"	v
+PURCHASE_TITLE_HINT	root/contants/messages.py	/^PURCHASE_TITLE_HINT = ($/;"	v
+Process	root/helper/process_helper.py	/^from root.model.cprocess import CProcess as Process$/;"	x
+ProtoMessage	root/util/telegram.py	/^from pyrogram.types import Message as ProtoMessage$/;"	x
+Purchase	root/model/purchase.py	/^class Purchase(BaseModel):$/;"	c
+PyroMessage	root/manager/purchase/delete.py	/^from pyrogram.types import Message as PyroMessage$/;"	x
+REPORT_PURCHASE_TOTAL	root/contants/messages.py	/^REPORT_PURCHASE_TOTAL = "<code>%s<\/code><code>%s €<\/code>             <b>TOTALE<\/b>"$/;"	v
+SERVICE_TIMEOUT	root/contants/message_timeout.py	/^SERVICE_TIMEOUT = 10$/;"	v
+SESSION_ENDED	root/contants/messages.py	/^SESSION_ENDED = ($/;"	v
+START_COMMAND	root/contants/messages.py	/^START_COMMAND = ($/;"	v
+START_COMMANDS_LIST	root/contants/messages.py	/^START_COMMANDS_LIST = ($/;"	v
+START_GROUP_GROUP_APPEND	root/contants/messages.py	/^START_GROUP_GROUP_APPEND = ($/;"	v
+TELEGRAM_BOT_ADMIN	.env.json	/^  "TELEGRAM_BOT_ADMIN": "84872221",$/;"	s
+TELEGRAM_BOT_ADMIN	.vscode/launch.json	/^                "TELEGRAM_BOT_ADMIN": "84872221",$/;"	s	object:configurations.0.env
+TELEGRAM_BOT_ADMIN	env-example.json	/^  "TELEGRAM_BOT_ADMIN": "USER_ID",$/;"	s
+TELEGRAM_ERROR	root/contants/messages.py	/^TELEGRAM_ERROR = ($/;"	v
+TODO	README.md	/^# TODO$/;"	c
+TOKEN	.env.json	/^  "TOKEN": "1121055937:AAFoZeDr-Xi3iZzDWpmPKnC1ZRpxK02sL1w",$/;"	s
+TOKEN	.vscode/launch.json	/^                "TOKEN": "1283781680:AAHYDakvsDqjoWhhNizpeRXLE8sWwz_61aI",$/;"	s	object:configurations.0.env
+TOKEN	env-example.json	/^  "TOKEN": "BOT_TOKEN",$/;"	s
+TOO_MANY_ARGUMENTS	root/contants/messages.py	/^TOO_MANY_ARGUMENTS = ($/;"	v
+TWO_MINUTES	root/contants/message_timeout.py	/^TWO_MINUTES = 120$/;"	v
+TelegramSender	root/util/telegram.py	/^class TelegramSender:$/;"	c
+TelegramUser	root/helper/user_helper.py	/^from telegram import User as TelegramUser$/;"	x
+ULTIMI ACQUISTI	README.md	/^# ULTIMI ACQUISTI$/;"	c
+USER_ERROR	root/contants/messages.py	/^USER_ERROR = ($/;"	v
+User	root/model/user.py	/^class User(BaseModel):$/;"	c
+WORK_IN_PROGRESS_MESSAGE	root/contants/messages.py	/^WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"$/;"	v
+YEAR_COMPARE_PRICE	root/contants/messages.py	/^YEAR_COMPARE_PRICE = ($/;"	v
+YEAR_PREVIOUS_PURCHASES_HIGHER	root/contants/messages.py	/^YEAR_PREVIOUS_PURCHASES_HIGHER = ($/;"	v
+YEAR_PREVIOUS_PURCHASES_LOWER	root/contants/messages.py	/^YEAR_PREVIOUS_PURCHASES_LOWER = ($/;"	v
+YEAR_PREVIOUS_PURCHASES_SAME	root/contants/messages.py	/^YEAR_PREVIOUS_PURCHASES_SAME = ($/;"	v
+YEAR_PREVIOUS_PURCHASE_NONE	root/contants/messages.py	/^YEAR_PREVIOUS_PURCHASE_NONE = "📈 Nel <i>%s<\/i> non hai registrato alcun acquisto."$/;"	v
+YEAR_PURCHASES	root/contants/messages.py	/^YEAR_PURCHASES = ($/;"	v
+YEAR_PURCHASES_NONE	root/contants/messages.py	/^YEAR_PURCHASES_NONE = ($/;"	v
+YEAR_PURCHASE_REPORT	root/contants/messages.py	/^YEAR_PURCHASE_REPORT = ($/;"	v
+YEAR_PURCHASE_TEMPLATE	root/contants/messages.py	/^YEAR_PURCHASE_TEMPLATE = "<code>%s<\/code><code>%s €<\/code>             %s"$/;"	v
+YEAR_REPORT_TIMEOUT	root/contants/message_timeout.py	/^YEAR_REPORT_TIMEOUT = 180$/;"	v
+YEAR_USER_PURCHASES	root/contants/messages.py	/^YEAR_USER_PURCHASES = "<i>%s<\/i> nel <b>%s<\/b> ha speso un totale di <code>%s €<\/code>."$/;"	v
+YEAR_USER_PURCHASES_NONE	root/contants/messages.py	/^YEAR_USER_PURCHASES_NONE = "<i>%s<\/i> nel <b>%s<\/b> non ha registrato alcun acquisto."$/;"	v
+YearReport	root/manager/purchase/year_report.py	/^class YearReport:$/;"	c
+__init__	root/helper/configuration.py	/^    def __init__(self):$/;"	m	class:ConfigurationHelper
+__init__	root/manager/bot.py	/^    def __init__(self):$/;"	m	class:BotManager
+__init__	root/manager/mtbot.py	/^    def __init__(self):$/;"	m	class:Mtbot
+__init__	root/manager/purchase/month_report.py	/^    def __init__(self):$/;"	m	class:MonthReport
+__init__	root/manager/purchase/year_report.py	/^    def __init__(self):$/;"	m	class:YearReport
+__init__	root/model/cprocess.py	/^    def __init__($/;"	m	class:CProcess
+__init__	root/util/telegram.py	/^    def __init__(self):$/;"	m	class:TelegramSender
+_bot_init	root/util/telegram.py	/^    def _bot_init(self, token: str):$/;"	m	class:TelegramSender
+add_handler	root/manager/bot.py	/^    def add_handler(self):$/;"	m	class:BotManager
+add_message	root/helper/redis_message.py	/^def add_message(message_id: int, user_id: int) -> None:$/;"	f
+add_purchase	root/manager/purchase/handle_purchase.py	/^def add_purchase($/;"	f
+append_commands	root/manager/start.py	/^def append_commands(update: Update, context: CallbackContext):$/;"	f
+before	root/helper/purchase_helper.py	/^def before(to_check: str, to_check_with: str, to_check_from: str) -> bool:$/;"	f
+bot_help	root/manager/help.py	/^def bot_help($/;"	f
+build_keyboard	root/helper/keyboard/month_report.py	/^def build_keyboard(month: int, current_month: int, year: int, current_year: int):$/;"	f
+build_keyboard	root/helper/keyboard/year_report.py	/^def build_keyboard(year: int, current_year: int):$/;"	f
+build_keyboard	root/manager/feedback.py	/^def build_keyboard():$/;"	f
+build_keyboard	root/manager/help.py	/^def build_keyboard(page: int):$/;"	f
+build_keyboard	root/manager/start.py	/^def build_keyboard(message: Message) -> InlineKeyboardMarkup:$/;"	f
+build_message	root/manager/start.py	/^def build_message(user: User, message: Message) -> str:$/;"	f
+cancel_feedback	root/manager/feedback.py	/^def cancel_feedback(update: Update, context: CallbackContext):$/;"	f
+chat_id	root/model/purchase.py	/^    chat_id = IntField()$/;"	v	class:Purchase
+check_args	root/manager/purchase/compare.py	/^def check_args(update: Update, context: CallbackContext, month: bool) -> bool:$/;"	f
+check_owner	root/helper/report.py	/^def check_owner(update: Update, context: CallbackContext) -> bool:$/;"	f
+check_quote_and_users	root/manager/purchase/compare.py	/^def check_quote_and_users(update: Update, context: CallbackContext) -> bool:$/;"	f
+code	root/model/configuration.py	/^    code = StringField(required=True, unique=True)$/;"	v	class:Configuration
+compare	root/manager/purchase/compare.py	/^def compare(update: Update, context: CallbackContext, month: bool):$/;"	f
+configurations	.vscode/launch.json	/^    "configurations": [$/;"	a
+connect	root/manager/bot.py	/^    def connect(self):$/;"	m	class:BotManager
+conversation_main_menu	root/manager/start.py	/^def conversation_main_menu($/;"	f
+convert_to_float	root/helper/purchase_helper.py	/^def convert_to_float(price: str) -> float:$/;"	f
+create_button	root/util/util.py	/^def create_button($/;"	f
+create_command_append	root/manager/purchase/compare.py	/^def create_command_append(command: str, month: bool, month_alternative: bool = False):$/;"	f
+create_process	root/helper/process_helper.py	/^def create_process(name_prefix: str, target: callable, args: tuple) -> None:$/;"	f
+create_purchase	root/helper/purchase_helper.py	/^def create_purchase($/;"	f
+create_user	root/helper/user_helper.py	/^def create_user(user: TelegramUser) -> None:$/;"	f
+creation_date	root/model/base_model.py	/^    creation_date = DateTimeField(default=datetime.now)$/;"	v	class:BaseModel
+current_month_report	root/manager/purchase/month_report.py	/^    def current_month_report(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+current_year	root/manager/start.py	/^current_year = datetime.now().year$/;"	v
+db_connect	root/util/util.py	/^def db_connect():$/;"	f
+de_html	root/util/util.py	/^def de_html(data: object) -> str:$/;"	f
+debug	root/util/logger.py	/^def debug(message: str):$/;"	f
+delete_all_purchases	root/manager/bot.py	/^    def delete_all_purchases(self, update: Update, context: CallbackContext):$/;"	m	class:BotManager
+delete_if_private	root/util/telegram.py	/^    def delete_if_private(self, context: CallbackContext, message: Message):$/;"	m	class:TelegramSender
+delete_message	root/helper/redis_message.py	/^def delete_message(message_id: int) -> None:$/;"	f
+delete_message	root/util/telegram.py	/^    def delete_message($/;"	m	class:TelegramSender
+delete_purchase	root/helper/purchase_helper.py	/^def delete_purchase(user_id: int, message_id: int) -> None:$/;"	f
+delete_purchase	root/manager/purchase/delete.py	/^def delete_purchase(update: Update, context: CallbackContext) -> None:$/;"	f
+delete_purchase_forced	root/helper/purchase_helper.py	/^def delete_purchase_forced(message_id: int) -> None:$/;"	f
+deleted_purchase_message	root/manager/purchase/delete.py	/^def deleted_purchase_message(client: Client, messages: [PyroMessage]) -> None:$/;"	f
+deproto_message	root/util/telegram.py	/^    def deproto_message($/;"	m	class:TelegramSender
+description	root/model/purchase.py	/^    description = StringField()$/;"	v	class:Purchase
+destination	.deploy.json	/^        "destination": "\/opt\/quality\/ultimi-acquisti\/ultimi-acquisti-quality",$/;"	s	object:quality
+destination	.deploy.json	/^        "destination": "\/opt\/ultimi-acquisti\/ultimi-acquisti",$/;"	s	object:production
+destination	deploy_example.json	/^        "destination": "destination",$/;"	s	object:profile
+empty_button	root/manager/bot.py	/^    def empty_button(self, update: Update, context: CallbackContext):$/;"	m	class:BotManager
+env	.vscode/launch.json	/^            "env": {$/;"	o	object:configurations.0
+error	root/util/logger.py	/^def error(message: str):$/;"	f
+expand_report	root/manager/purchase/month_report.py	/^    def expand_report(self, update: Update, context: CallbackContext) -> None:$/;"	m	class:MonthReport
+expand_report	root/manager/purchase/year_report.py	/^    def expand_report(self, update: Update, context: CallbackContext) -> None:$/;"	m	class:YearReport
+find_by_message_id	root/helper/purchase_helper.py	/^def find_by_message_id(message_id: int) -> Purchase:$/;"	f
+find_process	root/helper/process_helper.py	/^def find_process(name_prefix: str) -> Process:$/;"	f
+first_name	root/model/user.py	/^    first_name = StringField()$/;"	v	class:User
+format_price	root/util/util.py	/^def format_price(price: float) -> str:$/;"	f
+generate_id	root/util/util.py	/^def generate_id() -> str:$/;"	f
+get_compare_message	root/manager/purchase/compare.py	/^def get_compare_message($/;"	f
+get_current_month	root/util/util.py	/^def get_current_month(short: bool = True, lower: bool = False, number=False) -> object:$/;"	f
+get_current_year	root/util/util.py	/^def get_current_year() -> int:$/;"	f
+get_last_purchase	root/helper/purchase_helper.py	/^def get_last_purchase(user_id: int) -> Purchase:$/;"	f
+get_month_number	root/util/util.py	/^def get_month_number(month: str) -> int:$/;"	f
+get_month_string	root/util/util.py	/^def get_month_string(month: int, short: bool = True, lower: bool = False) -> str:$/;"	f
+handle_error	root/manager/error.py	/^def handle_error(update: Update, context: CallbackContext):$/;"	f
+handle_params	root/manager/start.py	/^def handle_params(update: Update, context: CallbackContext, params: str) -> None:$/;"	f
+handle_purchase	root/manager/purchase/handle_purchase.py	/^def handle_purchase(client: Client, message: Message) -> None:$/;"	f
+handle_start	root/manager/start.py	/^def handle_start(update: Update, context: CallbackContext) -> None:$/;"	f
+has_number	root/util/util.py	/^def has_number(content: str) -> bool:$/;"	f
+help_end	root/manager/start.py	/^def help_end(update: Update, context: CallbackContext):$/;"	f
+help_init	root/manager/help.py	/^def help_init(update: Update, context: CallbackContext):$/;"	f
+help_navigate	root/manager/help.py	/^def help_navigate(update: Update, context: CallbackContext):$/;"	f
+host	.deploy.json	/^        "host": "185.242.182.127",$/;"	s	object:production
+host	.deploy.json	/^        "host": "185.242.182.127",$/;"	s	object:quality
+host	deploy_example.json	/^        "host": "hostname",$/;"	s	object:profile
+info	root/util/logger.py	/^def info(message: str):$/;"	f
+is_admin	root/helper/user_helper.py	/^def is_admin(user_id: int) -> bool:$/;"	f
+is_admin	root/model/user.py	/^    is_admin = BooleanField(default=False)$/;"	v	class:User
+is_develop	root/util/util.py	/^def is_develop() -> bool:$/;"	f
+is_group_allowed	root/util/util.py	/^def is_group_allowed(chat_id: int) -> bool:$/;"	f
+is_number	root/util/util.py	/^def is_number(content: str) -> bool:$/;"	f
+is_owner	root/helper/redis_message.py	/^def is_owner(message_id: int, user_id: int) -> bool:$/;"	f
+is_text_month	root/util/util.py	/^def is_text_month(month: str) -> bool:$/;"	f
+last_name	root/model/user.py	/^    last_name = StringField()$/;"	v	class:User
+last_purchase	root/manager/purchase/last.py	/^def last_purchase(update: Update, context: CallbackContext) -> None:$/;"	f
+load_configurations	root/helper/configuration.py	/^    def load_configurations(self) -> None:$/;"	m	class:ConfigurationHelper
+logger	root/helper/configuration.py	/^import root.util.logger as logger$/;"	I
+logger	root/helper/process_helper.py	/^import root.util.logger as logger$/;"	I
+logger	root/helper/purchase_helper.py	/^import root.util.logger as logger$/;"	I
+logger	root/helper/redis_message.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/bot.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/error.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/feedback.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/mtbot.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/purchase/compare.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/purchase/handle_purchase.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/purchase/last.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/purchase/month_report.py	/^import root.util.logger as logger$/;"	I
+logger	root/manager/purchase/year_report.py	/^import root.util.logger as logger$/;"	I
+logger	root/util/telegram.py	/^import root.util.logger as logger$/;"	I
+logger	root/util/util.py	/^import root.util.logger as logger$/;"	I
+long_month	root/util/util.py	/^long_month = {$/;"	v
+long_text_month	root/util/util.py	/^long_text_month = {$/;"	v
+main	__main__.py	/^def main():$/;"	f
+message_exist	root/helper/redis_message.py	/^def message_exist(message_id: int) -> str:$/;"	f
+message_id	root/model/purchase.py	/^    message_id = IntField(unique=True)$/;"	v	class:Purchase
+meta	root/model/base_model.py	/^    meta = {"allow_inheritance": True, "abstract": True}$/;"	v	class:BaseModel
+month_compare	root/manager/purchase/compare.py	/^def month_compare(update: Update, context: CallbackContext) -> None:$/;"	f
+month_purchase	root/manager/purchase/month_purchase.py	/^def month_purchase(update: Update, context: CallbackContext) -> None:$/;"	f
+month_report	root/manager/purchase/month_report.py	/^    def month_report($/;"	m	class:MonthReport
+month_starts_with	root/util/util.py	/^def month_starts_with(month: str):$/;"	f
+name	.vscode/launch.json	/^            "name": "Python",$/;"	s	object:configurations.0
+next_page	root/manager/purchase/month_report.py	/^    def next_page(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+next_year	root/manager/purchase/month_report.py	/^    def next_year(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+next_year	root/manager/purchase/year_report.py	/^    def next_year(self, update: Update, context: CallbackContext):$/;"	m	class:YearReport
+objects	root/model/base_model.py	/^    objects = QuerySetManager()$/;"	v	class:BaseModel
+objects	root/model/configuration.py	/^    objects = QuerySetManager()$/;"	v	class:Configuration
+package	.deploy.json	/^        "package": "ultimi-acquisti",$/;"	s	object:production
+package	.deploy.json	/^        "package": "ultimi-acquisti-quality",$/;"	s	object:quality
+package	deploy_example.json	/^        "package": "package-name",$/;"	s	object:profile
+previous_page	root/manager/purchase/month_report.py	/^    def previous_page(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+previous_year	root/manager/purchase/month_report.py	/^    def previous_year(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+previous_year	root/manager/purchase/year_report.py	/^    def previous_year(self, update: Update, context: CallbackContext):$/;"	m	class:YearReport
+price	root/model/purchase.py	/^    price = FloatField()$/;"	v	class:Purchase
+production	.deploy.json	/^    "production": {$/;"	o
+profile	deploy_example.json	/^    "profile": {$/;"	o
+program	.vscode/launch.json	/^            "program": "__main__.py"$/;"	s	object:configurations.0
+purchase_exists	root/helper/purchase_helper.py	/^def purchase_exists(message_id: int) -> None:$/;"	f
+purchase_filter	root/manager/mtbot.py	/^purchase_filter = filters.create(purchase_in_database)$/;"	v
+purchase_helper	root/manager/purchase/delete.py	/^import root.helper.purchase_helper as purchase_helper$/;"	I
+purchase_in_database	root/manager/mtbot.py	/^def purchase_in_database(_, __, message: Message) -> bool:$/;"	f
+python.linting.enabled	.vscode/settings.json	/^    "python.linting.enabled": true$/;"	b
+python.pythonPath	.vscode/settings.json	/^    "python.pythonPath": "\/usr\/bin\/python3",$/;"	s
+quality	.deploy.json	/^    "quality": {$/;"	o
+red	root/helper/redis_message.py	/^red = redis.Redis(db=1)$/;"	v
+remove_commands	root/manager/start.py	/^def remove_commands(update: Update, context: CallbackContext):$/;"	f
+remove_purchase	root/manager/purchase/delete.py	/^def remove_purchase(client: Client, message: PyroMessage) -> None:$/;"	f
+request	.vscode/launch.json	/^            "request": "launch",$/;"	s	object:configurations.0
+reset_redis	root/helper/redis_message.py	/^def reset_redis():$/;"	f
+restart	root/manager/bot.py	/^    def restart(self, update: Update, context: CallbackContext):$/;"	m	class:BotManager
+restart_process	root/helper/process_helper.py	/^def restart_process(key: str, timeout: int = -1) -> None:$/;"	f
+retrieve_admins	root/helper/user_helper.py	/^def retrieve_admins() -> [User]:$/;"	f
+retrieve_and_send	root/manager/purchase/month_report.py	/^    def retrieve_and_send(self, update: Update, context: CallbackContext):$/;"	m	class:MonthReport
+retrieve_key	root/util/util.py	/^def retrieve_key(key: str, decode=False):$/;"	f
+retrieve_month_purchases_for_user	root/helper/purchase_helper.py	/^def retrieve_month_purchases_for_user($/;"	f
+retrieve_purchase	root/manager/purchase/month_report.py	/^    def retrieve_purchase(self, user: User) -> [Purchase]:$/;"	m	class:MonthReport
+retrieve_purchase	root/manager/purchase/year_report.py	/^    def retrieve_purchase(self, user: User) -> [Purchase]:$/;"	m	class:YearReport
+retrieve_sum_between_date	root/helper/purchase_helper.py	/^def retrieve_sum_between_date($/;"	f
+retrieve_sum_for_current_month	root/helper/purchase_helper.py	/^def retrieve_sum_for_current_month(user_id: int) -> float:$/;"	f
+retrieve_sum_for_current_year	root/helper/purchase_helper.py	/^def retrieve_sum_for_current_year(user_id: int) -> float:$/;"	f
+retrieve_sum_for_month	root/helper/purchase_helper.py	/^def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:$/;"	f
+retrieve_sum_for_user	root/helper/purchase_helper.py	/^def retrieve_sum_for_user(user_id: int) -> float:$/;"	f
+retrieve_sum_for_year	root/helper/purchase_helper.py	/^def retrieve_sum_for_year(user_id: int, year: int) -> float:$/;"	f
+retrieve_user	root/helper/user_helper.py	/^def retrieve_user(user_id: int) -> User:$/;"	f
+retrive_purchases_for_user	root/helper/purchase_helper.py	/^def retrive_purchases_for_user(user_id: int) -> [Purchase]:$/;"	f
+run_bot	root/manager/mtbot.py	/^    def run_bot(self):$/;"	m	class:Mtbot
+run_userbot	root/manager/mtbot.py	/^    def run_userbot(self):$/;"	m	class:Mtbot
+send_and_delete	root/util/telegram.py	/^    def send_and_delete($/;"	m	class:TelegramSender
+send_and_deproto	root/util/telegram.py	/^    def send_and_deproto($/;"	m	class:TelegramSender
+send_feedback	root/manager/feedback.py	/^def send_feedback(update: Update, context: CallbackContext):$/;"	f
+send_git_link	root/manager/bot.py	/^    def send_git_link(self, update: Update, context: CallbackContext):$/;"	m	class:BotManager
+send_message	root/util/telegram.py	/^    def send_message(self, token: str, chat_id: int, message: str, **kwargs):$/;"	m	class:TelegramSender
+send_photo	root/util/telegram.py	/^    def send_photo($/;"	m	class:TelegramSender
+send_redirect	root/manager/help.py	/^def send_redirect(update: Update, context: CallbackContext) -> None:$/;"	f
+sender	root/helper/report.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/error.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/feedback.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/help.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/compare.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/delete.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/handle_purchase.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/last.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/month_purchase.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/purchase/year_purchase.py	/^sender = TelegramSender()$/;"	v
+sender	root/manager/start.py	/^sender = TelegramSender()$/;"	v
+sender	root/util/util.py	/^sender = TelegramSender()$/;"	v
+service	.deploy.json	/^        "service": "last-purchase",$/;"	s	object:production
+service	.deploy.json	/^        "service": "last-purchase-quality",$/;"	s	object:quality
+service	deploy_example.json	/^        "service": "service-name",$/;"	s	object:profile
+setup_bot	root/manager/mtbot.py	/^    def setup_bot(self):$/;"	m	class:Mtbot
+setup_userbot	root/manager/mtbot.py	/^    def setup_userbot(self):$/;"	m	class:Mtbot
+short_month	root/util/util.py	/^short_month = {$/;"	v
+short_text_month	root/util/util.py	/^short_text_month = {$/;"	v
+shutdown	root/model/cprocess.py	/^    def shutdown(self):$/;"	m	class:CProcess
+ssh	.deploy.json	/^        "ssh": "\/home\/edoardo\/.ssh\/vps_rsa"$/;"	s	object:production
+ssh	.deploy.json	/^        "ssh": "\/home\/edoardo\/.ssh\/vps_rsa"$/;"	s	object:quality
+ssh	deploy_example.json	/^        "ssh": "ssh_key_path"$/;"	s	object:profile
+start_feedback	root/manager/feedback.py	/^def start_feedback(update: Update, context: CallbackContext):$/;"	f
+stop_process	root/helper/process_helper.py	/^def stop_process(key: str) -> None:$/;"	f
+type	.vscode/launch.json	/^            "type": "python",$/;"	s	object:configurations.0
+update_configuration	root/helper/configuration.py	/^    def update_configuration(self, code: str, value: str) -> None:$/;"	m	class:ConfigurationHelper
+user_exists	root/helper/user_helper.py	/^def user_exists(user_id: int) -> bool:$/;"	f
+user_id	root/model/purchase.py	/^    user_id = IntField()$/;"	v	class:Purchase
+user_id	root/model/user.py	/^    user_id = IntField(required=True, unique=True)$/;"	v	class:User
+username	.deploy.json	/^        "username": "vgs",$/;"	s	object:production
+username	.deploy.json	/^        "username": "vgs",$/;"	s	object:quality
+username	deploy_example.json	/^        "username": "username",$/;"	s	object:profile
+username	root/model/user.py	/^    username = StringField()$/;"	v	class:User
+validate_month_and_send	root/manager/purchase/compare.py	/^def validate_month_and_send(update: Update, context: CallbackContext) -> bool:$/;"	f
+validate_year_and_send	root/manager/purchase/compare.py	/^def validate_year_and_send(update: Update, context: CallbackContext):$/;"	f
+value	root/model/configuration.py	/^    value = StringField(required=True)$/;"	v	class:Configuration
+version	.vscode/launch.json	/^    "version": "0.2.0",$/;"	s
+warn	root/util/logger.py	/^def warn(message: str):$/;"	f
+year_compare	root/manager/purchase/compare.py	/^def year_compare(update: Update, context: CallbackContext) -> None:$/;"	f
+year_purchase	root/manager/purchase/year_purchase.py	/^def year_purchase(update: Update, context: CallbackContext) -> None:$/;"	f
+year_report	root/manager/purchase/year_report.py	/^    def year_report($/;"	m	class:YearReport
