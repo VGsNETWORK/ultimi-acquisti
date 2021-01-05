@@ -87,7 +87,6 @@ def help_end(update: Update, context: CallbackContext):
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
     message_id = message.message_id
-    restart_process(message.message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
