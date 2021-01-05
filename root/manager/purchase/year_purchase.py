@@ -29,6 +29,7 @@ from root.util.util import (
 )
 from root.util.telegram import TelegramSender
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT
+from root.manager.start import back_to_the_start
 
 sender = TelegramSender()
 
@@ -115,6 +116,18 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
                 price,
             )
     add_message(message_id, user_id)
+    if update.effective_message.chat.type == "private":
+        sender.send_and_edit(
+            update,
+            context,
+            chat_id,
+            message,
+            back_to_the_start,
+            InlineKeyboardMarkup(keyboard),
+            timeout=LONG_SERVICE_TIMEOUT,
+        )
+        return
+
     sender.send_and_delete(
         context,
         chat_id,

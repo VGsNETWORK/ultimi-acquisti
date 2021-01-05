@@ -3,6 +3,7 @@
 """ File to handle the start command """
 
 import re
+from time import sleep
 from datetime import datetime
 from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
 from telegram.ext import CallbackContext
@@ -15,7 +16,6 @@ from root.contants.messages import (
     PLEASE_NOTE_APPEND,
     START_GROUP_GROUP_APPEND,
 )
-from root.helper.process_helper import restart_process
 from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 from root.helper.redis_message import add_message
 
@@ -41,10 +41,9 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
         add_message(update.effective_message.message_id, update.effective_user.id)
-        sender.send_and_delete(
-            context,
-            chat_id,
-            build_message(update.effective_user, message),
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
         )
     return
@@ -70,12 +69,10 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     sender.delete_if_private(update, message)
     chat_id = message.chat.id
     add_message(update.effective_message.message_id, update.effective_user.id)
-    sender.send_and_delete(
-        context,
-        chat_id,
-        build_message(update.effective_user, message),
+    context.bot.send_message(
+        chat_id=chat_id,
+        text=build_message(update.effective_user, message),
         reply_markup=build_keyboard(message),
-        timeout=TWO_MINUTES,
     )
 
 
@@ -112,7 +109,6 @@ def conversation_main_menu(
     """
     message: Message = update.effective_message
     message_id = message_id if message_id else message.message_id
-    restart_process(message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -167,7 +163,6 @@ def append_commands(update: Update, context: CallbackContext):
     )
     chat_id: int = message.chat.id
     message_id: int = message.message_id
-    restart_process(message.message_id, timeout=FIVE_MINUTES)
     message: str = build_message(update.effective_user, message)
     message: str = f"{message}\n{START_COMMANDS_LIST}"
     if update.callback_query:
@@ -198,7 +193,6 @@ def remove_commands(update: Update, context: CallbackContext):
     """
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
-    restart_process(message.message_id, timeout=TWO_MINUTES)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -280,3 +274,14 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
             ],
         ]
     )
+
+
+def back_to_the_start(
+    update: Update,
+    context: CallbackContext,
+    chat_id: int,
+    message_id: int,
+    timeout: int = 0,
+):
+    sleep(timeout)
+    conversation_main_menu(update, context, message_id)

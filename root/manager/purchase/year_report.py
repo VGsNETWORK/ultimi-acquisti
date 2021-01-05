@@ -30,6 +30,7 @@ from root.util.util import (
 )
 from root.helper.keyboard.year_report import build_keyboard
 from root.contants.message_timeout import YEAR_REPORT_TIMEOUT
+from root.manager.start import back_to_the_start
 
 
 class YearReport:
@@ -108,6 +109,18 @@ class YearReport:
                 self.sender.delete_message(context, chat_id, message_id)
                 return
         add_message(message_id, user_id)
+        if update.effective_message.chat.type == "private":
+            self.sender.send_and_edit(
+                update,
+                context,
+                chat_id,
+                message,
+                back_to_the_start,
+                InlineKeyboardMarkup(keyboard),
+                timeout=YEAR_REPORT_TIMEOUT,
+            )
+            return
+
         self.sender.send_and_delete(
             context,
             chat_id,

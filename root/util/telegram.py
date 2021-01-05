@@ -4,7 +4,7 @@
 
 from time import sleep
 from os import environ
-from telegram import Bot, Message
+from telegram import Bot, Message, Update
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from pyrogram import Client
@@ -107,6 +107,32 @@ class TelegramSender:
             name_prefix=message.message_id,
             target=self.delete_message,
             args=(client, chat_id, message.message_id, timeout),
+        )
+
+    def send_and_edit(
+        self,
+        update: Update,
+        context: CallbackContext,
+        chat_id: int,
+        text: str,
+        callback,
+        reply_markup=None,
+        reply_to_message_id: int = None,
+        timeout=360,
+    ):
+        message: Message = context.bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+            reply_to_message_id=reply_to_message_id,
+            reply_markup=reply_markup,
+            disable_notification=True,
+        )
+        create_process(
+            name_prefix=message.message_id,
+            target=callback,
+            args=(update, context, chat_id, message.message_id, timeout),
         )
 
     def send_and_delete(

@@ -33,6 +33,7 @@ from root.util.util import (
 from root.helper.keyboard.month_report import build_keyboard
 from root.helper.report import check_owner
 from root.contants.message_timeout import FIVE_MINUTES
+from root.manager.start import back_to_the_start
 
 
 class MonthReport:
@@ -118,6 +119,18 @@ class MonthReport:
                 self.sender.delete_message(context, chat_id, message_id)
                 return
         add_message(message_id, user_id)
+        if update.effective_message.chat.type == "private":
+            self.sender.send_and_edit(
+                update,
+                context,
+                chat_id,
+                message,
+                back_to_the_start,
+                InlineKeyboardMarkup(keyboard),
+                timeout=FIVE_MINUTES,
+            )
+            return
+
         self.sender.send_and_delete(
             context,
             chat_id,

@@ -18,7 +18,7 @@ from root.contants.messages import (
     LAST_PURCHASE_USER,
 )
 from root.util.telegram import TelegramSender
-
+from root.manager.start import back_to_the_start
 
 sender = TelegramSender()
 
@@ -73,7 +73,27 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 context, chat_id, message, reply_to_message_id=purchase.message_id
             )
         except BadRequest:
+            if update.effective_message.chat.type == "private":
+                sender.send_and_edit(
+                    update,
+                    context,
+                    chat_id,
+                    message,
+                    back_to_the_start,
+                )
+                return
+
             sender.send_and_delete(context, chat_id, message)
     else:
         message = NO_PURCHASE % (user_id, first_name)
+        if update.effective_message.chat.type == "private":
+            sender.send_and_edit(
+                update,
+                context,
+                chat_id,
+                message,
+                back_to_the_start,
+            )
+            return
+
         sender.send_and_delete(context, chat_id, message)
