@@ -45,6 +45,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
+            parse_mode="HTML",
         )
     return
 
@@ -73,6 +74,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         chat_id=chat_id,
         text=build_message(update.effective_user, message),
         reply_markup=build_keyboard(message),
+        parse_mode="HTML",
     )
 
 
