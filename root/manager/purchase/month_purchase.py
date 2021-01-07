@@ -20,7 +20,6 @@ from root.helper.purchase_helper import (
     retrieve_sum_for_current_month,
     retrieve_sum_for_month,
 )
-from root.helper.redis_message import add_message
 from root.util.util import (
     get_current_month,
     get_current_year,
@@ -30,7 +29,7 @@ from root.util.util import (
     get_month_string,
 )
 from root.util.telegram import TelegramSender
-from root.contants.message_timeout import LONG_SERVICE_TIMEOUT
+from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, SERVICE_TIMEOUT
 from root.manager.start import back_to_the_start
 
 sender = TelegramSender()
@@ -61,7 +60,14 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     price = retrieve_sum_for_current_month(user_id)
     self_quote = update.effective_user.id == user_id
     if user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_BOT,
+            timeout=SERVICE_TIMEOUT,
+        )
         return
     if expand or self_quote:
         month = get_current_month(number=True)
@@ -119,7 +125,6 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
     ]
-    add_message(message_id, user_id)
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,
@@ -133,6 +138,8 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         return
 
     sender.send_and_delete(
+        update.effective_message.message_id,
+        update.effective_user.id,
         context,
         chat_id,
         message,

@@ -26,6 +26,8 @@ def handle_error(update: Update, context: CallbackContext):
         chat_id = retrieve_key("ERROR_CHANNEL")
         if update.effective_message:
             sender.send_and_delete(
+                update.effective_message.message_id,
+                update.effective_message.from_user.id,
                 context,
                 chat_id,
                 USER_ERROR,

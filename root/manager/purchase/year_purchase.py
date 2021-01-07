@@ -15,7 +15,6 @@ from root.contants.messages import (
     YEAR_PREVIOUS_PURCHASES_SAME,
     NO_QUOTE_BOT,
 )
-from root.helper.redis_message import add_message
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
     retrieve_sum_for_current_year,
@@ -65,7 +64,13 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         ]
     ]
     if user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_BOT,
+        )
         return
     self_quote = update.effective_user.id == user_id
     if expand or self_quote:
@@ -115,7 +120,6 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
                 get_current_year(),
                 price,
             )
-    add_message(message_id, user_id)
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,
@@ -129,6 +133,8 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         return
 
     sender.send_and_delete(
+        update.effective_message.message_id,
+        update.effective_user.id,
         context,
         chat_id,
         message,

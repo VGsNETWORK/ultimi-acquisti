@@ -43,7 +43,14 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     first_name = user.first_name
     chat_type = message.chat.type
     if message.chat.type == "private":
-        sender.send_and_delete(context, chat_id, ONLY_GROUP, timeout=SERVICE_TIMEOUT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            ONLY_GROUP,
+            timeout=SERVICE_TIMEOUT,
+        )
         return
     if not chat_type == "private":
         if not user_exists(user_id):
@@ -58,10 +65,24 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     message_id = message.message_id
     if not reply:
         message = CANCEL_PURCHASE_ERROR % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=SERVICE_TIMEOUT,
+        )
         return
     if reply.from_user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT, timeout=SERVICE_TIMEOUT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_BOT,
+            timeout=SERVICE_TIMEOUT,
+        )
         return
     if not "#ultimiacquisti" in reply.text:
         message = NOT_A_PURCHASE % (user_id, first_name)
@@ -77,6 +98,8 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
             ]
         ]
         sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
             context,
             chat_id,
             message,
@@ -93,11 +116,25 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
             message = PURCHASE_DELETED
         else:
             message = NOT_YOUR_PURCHASE % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=SERVICE_TIMEOUT,
+        )
     except DoesNotExist:
         message_id = message.message_id
         message = PURCHASE_NOT_FOUND % (user_id, first_name)
-        sender.send_and_delete(context, chat_id, message, timeout=SERVICE_TIMEOUT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=SERVICE_TIMEOUT,
+        )
 
 
 def remove_purchase(client: Client, message: PyroMessage) -> None:

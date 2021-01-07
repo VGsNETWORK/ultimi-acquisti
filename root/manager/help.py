@@ -13,7 +13,7 @@ from root.contants.messages import (
     HOW_TO_DEEP_LINK,
 )
 from root.helper.process_helper import restart_process
-from root.contants.message_timeout import HELP_TIMEOUT
+from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
 
 sender = TelegramSender()
 PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE]
@@ -63,11 +63,13 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
         url=f"t.me/{bot_name}?start=how_to",
     )
     sender.send_and_delete(
+        update.effective_message.message_id,
+        update.effective_user.id,
         context,
         chat_id,
         message,
         reply_markup=InlineKeyboardMarkup([[button]]),
-        timeout=HELP_TIMEOUT,
+        timeout=ONE_MINUTE,
     )
 
 
@@ -95,7 +97,7 @@ def bot_help(
         return
     message, keyboard = build_keyboard(page)
     if edit:
-        restart_process(message_id)
+        restart_process(message_id, FIVE_MINUTES)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -106,7 +108,13 @@ def bot_help(
         )
     else:
         sender.send_and_delete(
-            context, chat_id, message, InlineKeyboardMarkup(keyboard)
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            InlineKeyboardMarkup(keyboard),
+            timeout=FIVE_MINUTES,
         )
 
 

@@ -17,6 +17,11 @@ from root.contants.messages import (
     NO_QUOTE_BOT,
     LAST_PURCHASE_USER,
 )
+from root.contants.message_timeout import (
+    SERVICE_TIMEOUT,
+    LONG_SERVICE_TIMEOUT,
+    TWO_MINUTES,
+)
 from root.util.telegram import TelegramSender
 from root.manager.start import back_to_the_start
 
@@ -34,14 +39,28 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
     user_id = user.id
     first_name = user.first_name
     if user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_BOT,
+            SERVICE_TIMEOUT,
+        )
         return
     purchase: Purchase = get_last_purchase(user_id)
     if message.reply_to_message:
         rmessage: Message = message.reply_to_message
         ruser = rmessage.from_user
         if ruser.is_bot:
-            sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+            sender.send_and_delete(
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                NO_QUOTE_BOT,
+                SERVICE_TIMEOUT,
+            )
             return
         user_id = ruser.id
         first_name = ruser.first_name
@@ -70,7 +89,13 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             )
         try:
             sender.send_and_delete(
-                context, chat_id, message, reply_to_message_id=purchase.message_id
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                message,
+                reply_to_message_id=purchase.message_id,
+                timeout=TWO_MINUTES,
             )
         except BadRequest:
             if update.effective_message.chat.type == "private":
@@ -80,10 +105,18 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                     chat_id,
                     message,
                     back_to_the_start,
+                    timeout=TWO_MINUTES,
                 )
                 return
 
-            sender.send_and_delete(context, chat_id, message)
+            sender.send_and_delete(
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                message,
+                timeout=TWO_MINUTES,
+            )
     else:
         message = NO_PURCHASE % (user_id, first_name)
         if update.effective_message.chat.type == "private":
@@ -93,7 +126,15 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 chat_id,
                 message,
                 back_to_the_start,
+                timeout=LONG_SERVICE_TIMEOUT,
             )
             return
 
-        sender.send_and_delete(context, chat_id, message)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=LONG_SERVICE_TIMEOUT,
+        )

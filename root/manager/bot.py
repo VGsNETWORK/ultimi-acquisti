@@ -70,7 +70,12 @@ class BotManager:
             return
         if is_admin(user_id):
             self.sender.send_and_delete(
-                context, chat_id, "Riavvio il bot...", timeout=10
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                "Riavvio il bot...",
+                timeout=10,
             )
             os.popen("sudo systemctl restart last-purchase")
 
@@ -87,7 +92,11 @@ class BotManager:
             return
         chat_id = update.effective_message.chat.id
         self.sender.send_and_delete(
-            context, chat_id=chat_id, text="https://gitlab.com/nautilor/ultimi-acquisti"
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id=chat_id,
+            text="https://gitlab.com/nautilor/ultimi-acquisti",
         )
 
     def empty_button(self, update: Update, context: CallbackContext):

@@ -38,6 +38,12 @@ from root.contants.messages import (
     TOO_MANY_ARGUMENTS,
     COMMAND_FORMAT_ERROR,
 )
+from root.contants.message_timeout import (
+    SERVICE_TIMEOUT,
+    ONE_MINUTE,
+    TWO_MINUTES,
+    LONG_SERVICE_TIMEOUT,
+)
 from root.util.telegram import TelegramSender
 
 sender = TelegramSender()
@@ -77,7 +83,14 @@ def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     if len(args) > argc:
         command = create_command_append(command, month, True)
         error_message = TOO_MANY_ARGUMENTS % (user.id, user.first_name, command)
-        sender.send_and_delete(context, chat_id=chat_id, text=error_message)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id=chat_id,
+            text=error_message,
+            timeout=LONG_SERVICE_TIMEOUT,
+        )
         return False
     return True
 
@@ -88,10 +101,24 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
     chat_id: int = message.chat.id
     rmessage: Message = message.reply_to_message
     if message.chat.type == "private":
-        sender.send_and_delete(context, chat_id, ONLY_GROUP)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            ONLY_GROUP,
+            timeout=SERVICE_TIMEOUT,
+        )
         return False
     if not message.reply_to_message:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_FOUND)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_FOUND,
+            timeout=SERVICE_TIMEOUT,
+        )
         return False
     reply_user = rmessage.from_user
     if not user_exists(user.id):
@@ -99,10 +126,24 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
     if not user_exists(reply_user.id):
         create_user(reply_user)
     if reply_user.id == user.id:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_YOURSELF)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_YOURSELF,
+            timeout=SERVICE_TIMEOUT,
+        )
         return False
     if reply_user.is_bot:
-        sender.send_and_delete(context, chat_id, NO_QUOTE_BOT)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            NO_QUOTE_BOT,
+            timeout=SERVICE_TIMEOUT,
+        )
         return False
     return True
 
@@ -138,7 +179,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                     example_month[0],
                     example_month[1],
                 )
-                sender.send_and_delete(context, chat_id, message)
+                sender.send_and_delete(
+                    update.effective_message.message_id,
+                    update.effective_user.id,
+                    context,
+                    chat_id,
+                    message,
+                    timeout=TWO_MINUTES,
+                )
                 return False
             month: int = get_month_number(month)
             year = current_date.year
@@ -162,7 +210,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                     user_input,
                     command,
                 )
-                sender.send_and_delete(context, chat_id, message)
+                sender.send_and_delete(
+                    update.effective_message.message_id,
+                    update.effective_user.id,
+                    context,
+                    chat_id,
+                    message,
+                    timeout=ONE_MINUTE,
+                )
                 return False
             try:
                 user_date = user_date[0]
@@ -181,7 +236,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                         example_month[0],
                         example_month[1],
                     )
-                    sender.send_and_delete(context, chat_id, message)
+                    sender.send_and_delete(
+                        update.effective_message.message_id,
+                        update.effective_user.id,
+                        context,
+                        chat_id,
+                        message,
+                        timeout=ONE_MINUTE,
+                    )
                     return False
                 month: int = get_month_number(month)
                 year = int(user_date[1])
@@ -201,7 +263,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                     user_input,
                     command,
                 )
-                sender.send_and_delete(context, chat_id, message)
+                sender.send_and_delete(
+                    update.effective_message.message_id,
+                    update.effective_user.id,
+                    context,
+                    chat_id,
+                    message,
+                    timeout=ONE_MINUTE,
+                )
                 return False
     else:
         month = current_date.month
@@ -211,7 +280,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
     if year > current_date.year:
         command: str = create_command_append(command, True, True)
         message: str = COMPARE_WRONG_YEAR % (user.id, first_name, command, year)
-        sender.send_and_delete(context, chat_id, message)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=ONE_MINUTE,
+        )
         return False
     # check if the month is after the current one in this year
     if year == current_date.year:
@@ -224,7 +300,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
                 command,
                 get_month_string(month, False, True),
             )
-            sender.send_and_delete(context, chat_id, message)
+            sender.send_and_delete(
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                message,
+                timeout=ONE_MINUTE,
+            )
             return False
     user_purchase: float = retrieve_sum_for_month(user.id, month, year)
     reply_user_purchase: float = retrieve_sum_for_month(reply_user.id, month, year)
@@ -238,7 +321,14 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
         format_price(reply_user_purchase),
     )
     message: str = get_compare_message(message, user_purchase, reply_user_purchase)
-    sender.send_and_delete(context, chat_id, message)
+    sender.send_and_delete(
+        update.effective_message.message_id,
+        update.effective_user.id,
+        context,
+        chat_id,
+        message,
+        timeout=TWO_MINUTES,
+    )
     return True
 
 
@@ -268,7 +358,14 @@ def validate_year_and_send(update: Update, context: CallbackContext):
                     year,
                     command,
                 )
-                sender.send_and_delete(context, chat_id, message)
+                sender.send_and_delete(
+                    update.effective_message.message_id,
+                    update.effective_user.id,
+                    context,
+                    chat_id,
+                    message,
+                    timeout=ONE_MINUTE,
+                )
                 return False
         else:
             command: str = create_command_append(command, False)
@@ -279,7 +376,14 @@ def validate_year_and_send(update: Update, context: CallbackContext):
                 args,
                 command,
             )
-            sender.send_and_delete(context, chat_id, message)
+            sender.send_and_delete(
+                update.effective_message.message_id,
+                update.effective_user.id,
+                context,
+                chat_id,
+                message,
+                timeout=ONE_MINUTE,
+            )
             return False
     else:
         year = current_date.year
@@ -288,7 +392,14 @@ def validate_year_and_send(update: Update, context: CallbackContext):
     if year > current_date.year:
         command: str = create_command_append(command, False)
         message: str = COMPARE_WRONG_YEAR % (user.id, first_name, command, year)
-        sender.send_and_delete(context, chat_id, message)
+        sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
+            context,
+            chat_id,
+            message,
+            timeout=ONE_MINUTE,
+        )
         return False
 
     user_purchase: float = retrieve_sum_for_year(user.id, year)
@@ -302,7 +413,14 @@ def validate_year_and_send(update: Update, context: CallbackContext):
         format_price(reply_user_purchase),
     )
     message: str = get_compare_message(message, user_purchase, reply_user_purchase)
-    sender.send_and_delete(context, chat_id, message)
+    sender.send_and_delete(
+        update.effective_message.message_id,
+        update.effective_user.id,
+        context,
+        chat_id,
+        message,
+        timeout=TWO_MINUTES,
+    )
     return True
 
 

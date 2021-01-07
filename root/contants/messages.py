@@ -226,7 +226,7 @@ GROUP_NOT_ALLOWED = (
 )
 
 NO_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, '
+    '⚠  <a href="tg://user?id=%s">%s</a>, '
     "non hai ancora registrato alcun acquisto su questo bot."
 )
 

@@ -18,6 +18,7 @@ from root.contants.messages import (
 )
 from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 from root.helper.redis_message import add_message
+from root.contants.message_timeout import THREE_MINUTES
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -40,6 +41,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         message: Message = update.message if update.message else update.edited_message
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
+        # TODO: Do I really need this ?
         add_message(update.effective_message.message_id, update.effective_user.id)
         context.bot.send_message(
             chat_id=chat_id,
@@ -70,12 +72,24 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     sender.delete_if_private(update, message)
     chat_id = message.chat.id
     add_message(update.effective_message.message_id, update.effective_user.id)
-    context.bot.send_message(
-        chat_id=chat_id,
-        text=build_message(update.effective_user, message),
-        reply_markup=build_keyboard(message),
-        parse_mode="HTML",
-    )
+    if message.chat.type == "private":
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=build_message(update.effective_user, message),
+            reply_markup=build_keyboard(message),
+            parse_mode="HTML",
+        )
+    else:
+        sender.send_and_delete(
+            message.message_id,
+            message.from_user.id,
+            context,
+            chat_id,
+            build_message(update.effective_user, message),
+            reply_markup=build_keyboard(message),
+            parse_mode="HTML",
+            timeout=THREE_MINUTES,
+        )
 
 
 def help_end(update: Update, context: CallbackContext):

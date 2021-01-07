@@ -12,6 +12,7 @@ from pyrogram.types import Message as ProtoMessage
 import root.util.logger as logger
 from root.helper.redis_message import delete_message
 from root.helper.process_helper import create_process
+from root.helper.redis_message import add_message
 
 
 class TelegramSender:
@@ -137,6 +138,8 @@ class TelegramSender:
 
     def send_and_delete(
         self,
+        original_message: int,
+        user_id: int,
         context: CallbackContext,
         chat_id: int,
         text: str,
@@ -165,6 +168,7 @@ class TelegramSender:
             reply_markup=reply_markup,
             disable_notification=True,
         )
+        add_message(original_message, user_id)
         create_process(
             name_prefix=message.message_id,
             target=self.delete_message,

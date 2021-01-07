@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
-from root.helper.redis_message import add_message, is_owner
+from root.helper.redis_message import is_owner
 from root.model.purchase import Purchase
 from root.contants.messages import (
     MONTH_PURCHASE_REPORT,
@@ -118,7 +118,6 @@ class MonthReport:
                 )
                 self.sender.delete_message(context, chat_id, message_id)
                 return
-        add_message(message_id, user_id)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
                 update,
@@ -132,6 +131,8 @@ class MonthReport:
             return
 
         self.sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
             context,
             chat_id,
             message,

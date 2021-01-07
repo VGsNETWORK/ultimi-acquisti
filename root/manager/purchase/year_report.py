@@ -8,7 +8,7 @@ from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
-from root.helper.redis_message import add_message, is_owner
+from root.helper.redis_message import is_owner
 from root.contants.messages import (
     YEAR_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
@@ -29,7 +29,7 @@ from root.util.util import (
     is_number,
 )
 from root.helper.keyboard.year_report import build_keyboard
-from root.contants.message_timeout import YEAR_REPORT_TIMEOUT
+from root.contants.message_timeout import THREE_MINUTES
 from root.manager.start import back_to_the_start
 
 
@@ -85,7 +85,7 @@ class YearReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
-                    restart_process(message_id, YEAR_REPORT_TIMEOUT)
+                    restart_process(message_id, THREE_MINUTES)
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
@@ -108,7 +108,6 @@ class YearReport:
                 )
                 self.sender.delete_message(context, chat_id, message_id)
                 return
-        add_message(message_id, user_id)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
                 update,
@@ -117,16 +116,18 @@ class YearReport:
                 message,
                 back_to_the_start,
                 InlineKeyboardMarkup(keyboard),
-                timeout=YEAR_REPORT_TIMEOUT,
+                timeout=THREE_MINUTES,
             )
             return
 
         self.sender.send_and_delete(
+            update.effective_message.message_id,
+            update.effective_user.id,
             context,
             chat_id,
             message,
             reply_markup=InlineKeyboardMarkup(keyboard),
-            timeout=YEAR_REPORT_TIMEOUT,
+            timeout=THREE_MINUTES,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
