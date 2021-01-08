@@ -31,10 +31,6 @@ USER_ERROR = (
     " verranno risolti il prima possibile."
 )
 
-NOT_ALLOWED_IN_GROUP = (
-    'Ciao <a href="tg://user?id=%s">%s</a>, per piacere continuiamo in chat privata!'
-)
-
 START_COMMAND = (
     'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
     "Sono un <b>bot di gestione della spesa personale</b>,"
@@ -55,32 +51,6 @@ PLEASE_NOTE_APPEND = (
     " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
 )
 
-
-START_COMMANDS_LIST = (
-    "\n\n<u><b>LISTA COMANDI</b></u>\n\n"
-    "Tieni presente che alcuni comandi funzionano <b>solo nei gruppi</b> (👥), mentre per altri rispondo sia nei gruppi, sia qui (👤).\n"
-    "Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata, così potrai inviarlo in men che non si dica!\n\n\n"
-    "(👤)   /howto\n\n"
-    "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
-    f'(👤)   /ultimoacquisto      (<a href="https://t.me/share/url?text=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
-    "<i>Ritrova il tuo ultimo acquisto</i>\n\n\n"
-    f'(👤)   /spesamensile      (<a href="https://t.me/share/url?text=%2Fspesamensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
-    "<i>Mostra la tua spesa totale per questo mese</i>\n\n\n"
-    f'(👤)   /reportmensile      (<a href="https://t.me/share/url?text=%2Freportmensile%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
-    "<i>Mostra un report dettagliato della tua spesa totale per questo mese</i>\n\n\n"
-    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}">/comparamese</a>\n'
-    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparamese%40{BOT_NAME}%20%3CMM%2FYYYY%3E">/comparamese &lt;MM/YYYY&gt;</a>\n\n'
-    "<i>Metti a confronto la tua spesa mensile con quella di un altro utente, specificando opzionalmente un mese e un anno diversi da quelli correnti (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
-    f'(👤)   /spesaannuale      (<a href="https://t.me/share/url?text=%2Fspesaannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
-    "<i>Mostra la tua spesa totale per questo anno</i>\n\n\n"
-    f'(👤)   /reportannuale      (<a href="https://t.me/share/url?text=%2Freportannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
-    "<i>Mostra un report dettagliato della tua spesa totale per questo anno</i>\n\n\n"
-    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}">/comparaanno</a>\n'
-    f'(👥)   <a href="https://t.me/share/url?text=%2Fcomparaanno%40{BOT_NAME}%20%3CYYYY%3E">/comparaanno &lt;YYYY&gt;</a>\n\n'
-    "<i>Metti a confronto la tua spesa annuale con quella di un altro utente, specificando opzionalmente un anno diverso da quello corrente (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un utente</b>)</i>\n\n\n"
-    f'(👥)   <a href="https://t.me/share/url?text=%2Fcancellaspesa%40{BOT_NAME}">/cancellaspesa</a>\n\n'
-    "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post (funziona solo nei <b>gruppi</b> e richiede di <b>quotare un tuo acquisto</b>)</i>"
-)
 
 START_COMMANDS_LIST = (
     "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n"
@@ -114,11 +84,6 @@ START_COMMANDS_LIST = (
     "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post</i> (richiede di <b>quotare un tuo acquisto</b>)"
 )
 
-
-PRICE_MESSAGE_NOT_FORMATTED = (
-    "Il messaggio non è formattato correttamente, assicurati di mandare un'immagine "
-    "con la didascalia\n\n<code>#ultimiacquisti PREZZO</code>"
-)
 
 MONTH_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, a '
@@ -198,29 +163,29 @@ PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 
-ONLY_GROUP = "Questa funzionalità è disponibile solo all'interno di un gruppo."
+ONLY_GROUP = "❌  Questa funzionalità è disponibile solo all'interno di un gruppo."
 
 CANCEL_PURCHASE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>,'
+    '❌  <a href="tg://user?id=%s">%s</a>,'
     " per cancellare un tuo acquisto devi <b>quotarlo</b>!"
 )
 
 NOT_A_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>,'
+    '❌  <a href="tg://user?id=%s">%s</a>,'
     " il messaggio che hai quotato non è un acquisto valido!\n\n"
     "Per essere riconosciuto, un <i>acquisto</i> deve contenere"
     ' l\'hashtag "<code>#ultimiacquisti</code>".'
 )
 
 PURCHASE_NOT_FOUND = (
-    '<a href="tg://user?id=%s">%s</a>, non riesco a'
+    '❌  <a href="tg://user?id=%s">%s</a>, non riesco a'
     " trovare l'acquisto che hai fatto..."
 )
 
 PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!</i>"
 
 GROUP_NOT_ALLOWED = (
-    "Questo gruppo non è abilitato all'utilizzo di questo bot.\n"
+    "❌  Questo gruppo non è abilitato all'utilizzo di questo bot.\n"
     "Puoi creare il tuo bot personale con il codice al seguente link:\n\n"
     "https://gitlab.com/nautilor/ultimi-acquisti"
 )
@@ -231,7 +196,7 @@ NO_PURCHASE = (
 )
 
 NOT_YOUR_PURCHASE = (
-    '<a href="tg://user?id=%s">%s</a>, '
+    '❌  <a href="tg://user?id=%s">%s</a>, '
     "non puoi cancellare l'acquisto di un altro utente!"
 )
 
@@ -274,30 +239,30 @@ PURCHASE_REPORT_TEMPLATE = (
 REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"
 
 PURCHASE_DATE_ERROR = (
-    '<a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n'
-    "❗️ Purtroppo la data che mi hai fornito presenta una delle seguenti anomalie:\n"
-    "  - non rispetta il formato <code>DD/MM/YYYY</code>\n"
-    "  - è una data futura\n"
+    '✅  <a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n\n'
+    "❗️ Tuttavia, la data che hai indicato presenta una delle seguenti anomalie:\n\n"
+    "   –  non rispetta il formato <code>DD/MM/YYYY</code>;\n"
+    "   –  è una data futura,\n\n"
     "per questo motivo ho collocato l'acquisto alla data di oggi."
 )
 
 MONTH_COMPARE_PRICE = (
-    "Nel mese di <b>%s</b>...\n"
+    "Nel mese di <b>%s</b>...\n\n"
     '- <a href="tg://user?id=%s">%s</a>, hai speso  <code>%s €</code>\n'
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
 YEAR_COMPARE_PRICE = (
-    "Nel <b>%s</b>...\n"
+    "Nel <b>%s</b>...\n\n"
     '- <a href="tg://user?id=%s">%s</a>, hai speso  <code>%s €</code>\n'
     "- <i>%s</i> ha speso  <code>%s €</code>\n\n"
 )
 
-COMPARE_YOU_WON = "🥳 Hai <b>vinto</b> di  <code>%s €</code>!"
+COMPARE_YOU_WON = "🥳  Hai <b>VINTO</b> di  <code>%s €</code>!"
 
-COMPARE_HE_WON = "😞 Hai <b>perso</b> di  <code>%s €</code>..."
+COMPARE_HE_WON = "😞  Hai <b>perso</b> di  <code>%s €</code>..."
 
-COMPARE_TIE = "💸 I vostri portafogli sono ugualmente leggeri..."
+COMPARE_TIE = "💸  I vostri portafogli sono ugualmente leggeri..."
 
 COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
@@ -339,16 +304,18 @@ COMMAND_FORMAT_ERROR = (
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
-NO_QUOTE_YOURSELF = "Non puoi lanciare questo comando quotando un tuo messaggio!"
+NO_QUOTE_YOURSELF = (
+    "❌  Non puoi lanciare questo comando <b>quotando un tuo messaggio</b>!"
+)
 
-NO_QUOTE_BOT = "Non puoi lanciare questo comando quotando un bot!"
+NO_QUOTE_BOT = "❌  Non puoi lanciare questo comando <b>quotando un bot</b>!"
 
-NO_QUOTE_FOUND = "Per lanciare questo comando prova a quotare un utente..."
+NO_QUOTE_FOUND = "❌  Per lanciare questo comando prova a <b>quotare un utente</b>..."
 
-NOT_MESSAGE_OWNER = "Non puoi navigare tra i report di un altro utente!"
+NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
 
 SESSION_ENDED = (
-    "Il bot è stato riavviato per motivi tecnici, la sessione "
+    "❗️  Il bot è stato riavviato per motivi tecnici, la sessione "
     "di questo messaggio è scaduta."
 )
 
@@ -396,6 +363,6 @@ HOW_TO_PAGE_THREE = (
     "in fase di modifica del messaggio e provvederò ad aggiungere un acquisto a quella data."
 )
 
-FEEDBACK_SEND_MESSAGE = "Scrivi il messaggio che vuoi inviare, poi premi Invia:"
+FEEDBACK_SEND_MESSAGE = "Digita il testo che vuoi inviare, assicurandoti di inserire il tutto in un unico messaggio, poi premi Invia:"
 
 FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s</code>):\n\n<i>%s</i>"

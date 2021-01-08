@@ -1,0 +1,18 @@
+# MESSAGES
+```
+NO_PURCHASE_KEYBOARD = "Aggiunti un'acquisto ora"
+t.me/share/url=#ultimiacquisti
+```
+- COMPARE_TIE should be less strict (print it for example if the difference is 5$)
+- Split Error/Warning/Info/Etc... into different files
+- Check variables names
+- Check emoji
+- PURCHASE_DATE_ERROR should take the first_name, not the username
+
+## USERLINK MISSING
+
+- NO_QUOTE_YOURSELF
+- NO_QUOTE_BOT
+- NO_QUOTE_FOUND
+
+
