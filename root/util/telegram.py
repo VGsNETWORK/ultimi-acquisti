@@ -168,7 +168,6 @@ class TelegramSender:
             reply_markup=reply_markup,
             disable_notification=True,
         )
-        add_message(original_message, user_id)
         create_process(
             name_prefix=message.message_id,
             target=self.delete_message,

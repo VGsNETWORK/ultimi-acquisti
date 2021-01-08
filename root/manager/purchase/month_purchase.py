@@ -31,6 +31,7 @@ from root.util.util import (
 from root.util.telegram import TelegramSender
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, SERVICE_TIMEOUT
 from root.manager.start import back_to_the_start
+from root.helper.redis_message import add_message
 
 sender = TelegramSender()
 
@@ -125,6 +126,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
     ]
+    add_message(message_id, user_id)
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,
