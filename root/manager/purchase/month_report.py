@@ -2,6 +2,7 @@
 
 """ File with class to show the month report """
 
+from random import randint
 from datetime import datetime
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
@@ -15,6 +16,7 @@ from root.contants.messages import (
     PURCHASE_REPORT_TEMPLATE,
     NOT_MESSAGE_OWNER,
     SESSION_ENDED,
+    MONTH_REPORT_FUNNY_APPEND,
 )
 from root.helper.purchase_helper import (
     retrieve_month_purchases_for_user,
@@ -29,6 +31,7 @@ from root.util.util import (
     get_month_string,
     is_group_allowed,
     is_number,
+    random_item,
 )
 from root.helper.keyboard.month_report import build_keyboard
 from root.helper.report import check_owner
@@ -210,6 +213,19 @@ class MonthReport:
             spaces = " " * (spacer - len(footer))
             footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
             message = f"{message}\n{footer}"
+            purchase = [purchase for purchase in purchases if not purchase.description]
+            if purchase:
+                index = randint(0, len(purchase) - 1)
+                purchase = purchase[index]
+                creation_date = purchase.creation_date
+                creation_date = creation_date.strftime(
+                    f"X%d {get_month_string(creation_date.month, False, True)}"
+                ).replace("X0", "")
+
+                append = MONTH_REPORT_FUNNY_APPEND
+                append = append.format(creation_date, random_item(), random_item())
+                message = f"{message}\n\n\n{append}"
+
         return message
 
     # =========================================================================

@@ -366,3 +366,38 @@ HOW_TO_PAGE_THREE = (
 FEEDBACK_SEND_MESSAGE = "Digita il testo che vuoi inviare, assicurandoti di inserire il tutto in un unico messaggio, poi premi Invia:"
 
 FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s</code>):\n\n<i>%s</i>"
+
+MONTH_REPORT_FUNNY_APPEND = (
+    "💡 <i>Ricordi cosa hai acquistato il <b>{}</b>? Era{} o era{}?\n"
+    "Facciamo un po' di chiarezza aggiungendo dei titoli ai tuoi acquisti,"
+    " così avrai il pieno controllo del tuo storico in un batter d'occhio!\n"
+    "Per farlo, clicca sulla data di un acquisto e"
+    ' modificalo aggiungendo del testo tra "<code>%...%</code>".</i>'
+)
+
+RANDOM_ITEM_LIST = [
+    "no delle banane",
+    " un ratto",
+    "no dei maccheroni",
+    " la nonna",
+    " un casco",
+    " del giallo",
+    "no delle corde di violino",
+    " uno spoiler 👀",
+    " del legname",
+    " un martello",
+    "no delle gonne",
+    " un panino",
+    " una baguette",
+    "no dei croissant",
+    " un uovo",
+    " un uovo sodo",
+    " dell'uva",
+    " una scimmia",
+    " una cipolla",
+    " un 4",
+    " una mucca",
+    " un programmatore JavaScript",
+    "no delle sneakers",
+    "un Alt+Canc",
+]

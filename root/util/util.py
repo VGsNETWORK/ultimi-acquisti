@@ -2,6 +2,7 @@
 
 """ Various functions used across the project """
 
+from random import randint
 from re import sub
 from base64 import b64decode
 from uuid import uuid4
@@ -19,6 +20,7 @@ from root.contants.messages import (
     DB_CONNECTION_SUCCESS,
     DB_GENERIC_ERROR,
     GROUP_NOT_ALLOWED,
+    RANDOM_ITEM_LIST,
 )
 
 sender = TelegramSender()
@@ -85,6 +87,11 @@ long_text_month = {
     "dicembre": 12,
     "e̵̓l̴̓u̴̔l̵͋": 13,
 }
+
+
+def random_item():
+    index = randint(0, len(RANDOM_ITEM_LIST) - 1)
+    return RANDOM_ITEM_LIST[index]
 
 
 def month_starts_with(month: str):

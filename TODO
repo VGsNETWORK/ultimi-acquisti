@@ -3,6 +3,7 @@
 NO_PURCHASE_KEYBOARD = "Aggiunti un'acquisto ora"
 t.me/share/url=#ultimiacquisti
 ```
+
 - COMPARE_TIE should be less strict (print it for example if the difference is 5$)
 - Split Error/Warning/Info/Etc... into different files
 - Check variables names
