@@ -115,6 +115,8 @@ def handle_purchase(client: Client, message: Message) -> None:
             caption = caption.replace(title, "")
             title = title[1:-1]
             title = title[:100]
+            if not title:
+                title = "&lt;vuoto&gt;"
         else:
             title = ""
             append_message[2] = PURCHASE_TITLE_HINT

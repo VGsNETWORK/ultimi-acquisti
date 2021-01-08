@@ -213,7 +213,11 @@ class MonthReport:
             spaces = " " * (spacer - len(footer))
             footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
             message = f"{message}\n{footer}"
-            purchase = [purchase for purchase in purchases if not purchase.description]
+            purchase = [
+                purchase
+                for purchase in purchases
+                if not purchase.description or purchase.description == "<vuoto>"
+            ]
             if purchase:
                 index = randint(0, len(purchase) - 1)
                 purchase = purchase[index]
