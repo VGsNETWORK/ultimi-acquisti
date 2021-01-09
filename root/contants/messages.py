@@ -154,6 +154,11 @@ PURCHASE_TITLE_HINT = (
     " del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b>/reportmensile</b>."
 )
 
+PURCHASE_EMPTY_TITLE_HINT = (
+    "\n⚠🔠  <b>Volevi inserire un titolo, ma non sei sicuro su come procedere?</b>"
+    " Ti basta racchiudere del testo tra <code>%Il mio titolo%</code>."
+)
+
 PURCHASE_DATE_HINT = (
     "\n📅  Puoi collocare retroattivamente il tuo acquisto"
     " specificando una data antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
@@ -399,5 +404,6 @@ RANDOM_ITEM_LIST = [
     " una mucca",
     " un programmatore JavaScript",
     "no delle sneakers",
-    "un Alt+Canc",
+    " un Alt+Canc",
+    " l'ultimo modello di smartphone",
 ]

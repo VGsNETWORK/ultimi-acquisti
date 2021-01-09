@@ -17,6 +17,7 @@ from root.contants.messages import (
     PURCHASE_TITLE_HINT,
     PURCHASE_DATE_HINT,
     PURCHASE_HEADER_HINT,
+    PURCHASE_EMPTY_TITLE_HINT,
 )
 from root.helper.purchase_helper import convert_to_float, create_purchase
 from root.helper.user_helper import create_user, user_exists
@@ -117,6 +118,7 @@ def handle_purchase(client: Client, message: Message) -> None:
             title = title[:100]
             if not title:
                 title = "&lt;vuoto&gt;"
+                append_message[2] = PURCHASE_EMPTY_TITLE_HINT
         else:
             title = ""
             append_message[2] = PURCHASE_TITLE_HINT
