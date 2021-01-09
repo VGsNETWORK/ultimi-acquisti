@@ -145,23 +145,21 @@ YEAR_USER_PURCHASES_NONE = "<i>%s</i> nel <b>%s</b> non ha registrato alcun acqu
 
 PURCHASE_HEADER_HINT = "\n\n\n<b>Lo sapevi che...?</b>"
 
-PURCHASE_PRICE_HINT = (
-    "\n💲  Puoi aggiungere un prezzo al tuo acquisto specificandolo nel messaggio."
-)
+PURCHASE_PRICE_HINT = "\n💲  Puoi aggiungere un <b>prezzo</b> al tuo acquisto specificandolo nel messaggio."
 
 PURCHASE_TITLE_HINT = (
-    "\n🔠  Puoi aggiungere un titolo al tuo acquisto includendo"
+    "\n🔠  Puoi aggiungere un <b>titolo</b> al tuo acquisto includendo"
     " del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b>/reportmensile</b>."
 )
 
 PURCHASE_EMPTY_TITLE_HINT = (
     "\n⚠🔠  <b>Volevi inserire un titolo, ma non sei sicuro su come procedere?</b>"
-    " Ti basta racchiudere del testo tra <code>%Il mio titolo%</code>."
+    " Ti basta racchiudere del testo tra <code>%...%</code>, ad esempio: <code>%Il mio titolo%</code>."
 )
 
 PURCHASE_DATE_HINT = (
     "\n📅  Puoi collocare retroattivamente il tuo acquisto"
-    " specificando una data antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
+    " specificando una <b>data</b> antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
 )
 
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
