@@ -39,12 +39,13 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
     user_id = user.id
     first_name = user.first_name
     if user.is_bot:
+        message: str = NO_QUOTE_BOT % (user_id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
-            NO_QUOTE_BOT,
+            message,
             SERVICE_TIMEOUT,
         )
         return
@@ -53,12 +54,13 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
         rmessage: Message = message.reply_to_message
         ruser = rmessage.from_user
         if ruser.is_bot:
+            message: str = NO_QUOTE_BOT % (user_id, user.first_name)
             sender.send_and_delete(
                 update.effective_message.message_id,
                 update.effective_user.id,
                 context,
                 chat_id,
-                NO_QUOTE_BOT,
+                message,
                 SERVICE_TIMEOUT,
             )
             return

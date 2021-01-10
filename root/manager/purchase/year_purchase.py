@@ -65,12 +65,13 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         ]
     ]
     if user.is_bot:
+        message: str = NO_QUOTE_BOT % (user_id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
-            NO_QUOTE_BOT,
+            message,
         )
         return
     self_quote = update.effective_user.id == user_id

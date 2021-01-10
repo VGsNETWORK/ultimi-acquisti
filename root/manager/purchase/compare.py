@@ -111,6 +111,7 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
         )
         return False
     if not message.reply_to_message:
+        message: str = NO_QUOTE_YOURSELF % (user.id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
@@ -126,22 +127,24 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
     if not user_exists(reply_user.id):
         create_user(reply_user)
     if reply_user.id == user.id:
+        message: str = NO_QUOTE_YOURSELF % (user.id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
-            NO_QUOTE_YOURSELF,
+            message,
             timeout=SERVICE_TIMEOUT,
         )
         return False
     if reply_user.is_bot:
+        message: str = NO_QUOTE_BOT % (user.id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
-            NO_QUOTE_BOT,
+            message,
             timeout=SERVICE_TIMEOUT,
         )
         return False

@@ -308,18 +308,25 @@ COMMAND_FORMAT_ERROR = (
 )
 
 NO_QUOTE_YOURSELF = (
-    "❌  Non puoi lanciare questo comando <b>quotando un tuo messaggio</b>!"
+    '❌  <a href="tg://user?id=%s">%s</a>,'
+    " non puoi lanciare questo comando <b>quotando un tuo messaggio</b>!"
 )
 
-NO_QUOTE_BOT = "❌  Non puoi lanciare questo comando <b>quotando un bot</b>!"
+NO_QUOTE_BOT = (
+    '❌  <a href="tg://user?id=%s">%s</a>,'
+    " non puoi lanciare questo comando <b>quotando un bot</b>!"
+)
 
-NO_QUOTE_FOUND = "❌  Per lanciare questo comando prova a <b>quotare un utente</b>..."
+NO_QUOTE_FOUND = (
+    '❌   <a href="tg://user?id=%s">%s</a>'
+    " per lanciare questo comando prova a <b>quotare un utente</b>...")
 
 NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
 
 SESSION_ENDED = (
-    "❗️  Il bot è stato riavviato per motivi tecnici, la sessione "
-    "di questo messaggio è scaduta."
+    "❗️ Il bot è stato aggiornato o riavviato per motivi tecnici, pertanto la sessione"
+    ' di questo messaggio è scaduta.\n\nPer continuare, digita "/" nella chat e seleziona'
+    ' un comando dalla lista.'
 )
 
 HOW_TO_DEEP_LINK = (
