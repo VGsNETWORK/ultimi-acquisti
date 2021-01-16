@@ -18,7 +18,7 @@ from root.util.util import (
     get_month_string,
     is_text_month,
     get_month_number,
-    month_starts_with,
+    month_starts_with
 )
 from root.contants.messages import (
     MONTH_COMPARE_PRICE,
@@ -57,6 +57,7 @@ def month_compare(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     logger.info("received command month compare")
+    sender.delete_if_private(update, update.effective_message)
     compare(update, context, True)
 
 
@@ -68,6 +69,7 @@ def year_compare(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     logger.info("received command year compare")
+    sender.delete_if_private(update, update.effective_message)
     compare(update, context, False)
 
 

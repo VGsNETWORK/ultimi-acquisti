@@ -91,7 +91,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         keyboard = [
             [
                 create_button(
-                    "Scopri di più",
+                    "ℹ️  Scopri di più...",
                     callback="help_redirect",
                     query="help_redirect",
                     url=f"t.me/{bot_name}?start=how_to",

@@ -318,7 +318,7 @@ NO_QUOTE_BOT = (
 )
 
 NO_QUOTE_FOUND = (
-    '❌   <a href="tg://user?id=%s">%s</a>'
+    '❌  <a href="tg://user?id=%s">%s</a>,'
     " per lanciare questo comando prova a <b>quotare un utente</b>...")
 
 NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
@@ -330,8 +330,8 @@ SESSION_ENDED = (
 )
 
 HOW_TO_DEEP_LINK = (
-    '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot '
-    '<a href="t.me/%s?start=how_to">clicca qui</a>.'
+    '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot...'
+    ' <a href="t.me/%s?start=how_to">clicca qui</a>!'
 )
 
 
