@@ -41,7 +41,7 @@ def stop_process(key: str) -> None:
     process.shutdown()
 
 
-def restart_process(key: str, timeout: int = -1) -> None:
+def restart_process(key: str, timeout: int = -1) -> bool:
     """Restart a background process identified by a key
     Args:
         key (str): The identifier of the process
@@ -52,7 +52,7 @@ def restart_process(key: str, timeout: int = -1) -> None:
     process: Process = find_process(key)
     if not process:
         logger.warn(f"Unable to find the process with name {PROCESS_NAME % key}")
-        return
+        return False
     target = process.target
     args = process.args
     args = args if timeout < 0 else (args[0], args[1], timeout)
@@ -61,7 +61,7 @@ def restart_process(key: str, timeout: int = -1) -> None:
     # process.kill()
     # process.close()
     create_process(key, target, args)
-
+    return True
 
 def create_process(name_prefix: str, target: callable, args: tuple) -> None:
     """Create a new background process and start it

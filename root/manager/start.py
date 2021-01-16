@@ -19,6 +19,8 @@ from root.contants.messages import (
 from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
+from root.helper.redis_message import message_exist
+import root.util.logger as logger
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -122,8 +124,11 @@ def conversation_main_menu(
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    logger.info("Received main_menu")
     message: Message = update.effective_message
+    logger.info("retrieving the message_id")
     message_id = message_id if message_id else message.message_id
+    logger.info(f"Message is is {message_id}, editing message")
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -298,5 +303,7 @@ def back_to_the_start(
     message_id: int,
     timeout: int = 0,
 ):
+    logger.info("Waiting for the process to end...")
     sleep(timeout)
+    logger.info("Running the main_menu")
     conversation_main_menu(update, context, message_id)

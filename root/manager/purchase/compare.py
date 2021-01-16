@@ -111,13 +111,13 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
         )
         return False
     if not message.reply_to_message:
-        message: str = NO_QUOTE_YOURSELF % (user.id, user.first_name)
+        message: str = NO_QUOTE_FOUND % (user.id, user.first_name)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
-            NO_QUOTE_FOUND,
+            message,
             timeout=SERVICE_TIMEOUT,
         )
         return False

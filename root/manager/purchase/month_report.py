@@ -38,7 +38,8 @@ from root.helper.report import check_owner
 from root.contants.message_timeout import FIVE_MINUTES
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
-
+from root.helper.process_helper import create_process
+from root.manager.start import back_to_the_start
 
 class MonthReport:
     """ Class used to display the month report of a user """
@@ -99,7 +100,14 @@ class MonthReport:
         if expand:
             try:
                 if is_owner(message_id, user_id):
-                    restart_process(message_id, FIVE_MINUTES)
+                    logger.info("checking if the process is running to restart it")
+                    if not restart_process(message_id, FIVE_MINUTES):
+                        logger.info("Unable to restart process, recreating it")
+                        create_process(
+                            name_prefix=message_id,
+                            target=back_to_the_start,
+                            args=(update, context, chat_id, message_id, FIVE_MINUTES),
+                        )
                     context.bot.answer_callback_query(update.callback_query.id)
                     context.bot.edit_message_text(
                         text=message,
