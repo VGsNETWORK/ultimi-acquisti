@@ -85,6 +85,8 @@ def bot_help(
         edit (bool, optiona): If the message needs to be created or not. Defaults to False.
     """
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     if edit:
         message = update.callback_query.message
     message_id = message.message_id

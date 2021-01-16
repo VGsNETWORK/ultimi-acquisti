@@ -33,7 +33,6 @@ from root.contants.message_timeout import THREE_MINUTES
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
 
-
 class YearReport:
     """ Class used to display the year report of a user """
 
@@ -66,6 +65,8 @@ class YearReport:
             year = update.callback_query.data.split("_")[-1]
             self.year = int(year) if is_number(year) else self.year
         message: Message = update.message if update.message else update.edited_message
+        if not self.sender.check_command(message):
+            return
         if not message:
             message = update.effective_message
         else:

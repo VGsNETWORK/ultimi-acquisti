@@ -78,6 +78,8 @@ class MonthReport:
                 if "current" in query:
                     self.month = self.current_month
         message: Message = update.message if update.message else update.edited_message
+        if not self.sender.check_command(message):
+            return
         if not message:
             message = update.effective_message
         else:

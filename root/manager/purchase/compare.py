@@ -75,6 +75,8 @@ def year_compare(update: Update, context: CallbackContext) -> None:
 
 def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     user = message.from_user
     chat_id: int = message.chat.id
     argc: int = 2 if month else 1
@@ -99,6 +101,8 @@ def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
 
 def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     user = message.from_user
     chat_id: int = message.chat.id
     rmessage: Message = message.reply_to_message
@@ -156,6 +160,8 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
 def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
     current_date = datetime.now()
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     reply_user = message.reply_to_message.from_user
     user = message.from_user
     first_name = user.first_name
@@ -340,6 +346,8 @@ def validate_month_and_send(update: Update, context: CallbackContext) -> bool:
 def validate_year_and_send(update: Update, context: CallbackContext):
     current_date = datetime.now()
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     reply_user = message.reply_to_message.from_user
     user = message.from_user
     first_name = user.first_name

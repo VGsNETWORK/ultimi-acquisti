@@ -42,6 +42,8 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     expand = not message.reply_to_message
     message = message.reply_to_message if message.reply_to_message else message
     sender.delete_if_private(context, message)

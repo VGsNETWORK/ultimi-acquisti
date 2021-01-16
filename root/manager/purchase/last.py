@@ -32,6 +32,8 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
     """ Retrieve the last purchase of the user who typed the command """
     logger.info("received command last purchase")
     message: Message = update.message if update.message else update.edited_message
+    if not sender.check_command(message):
+        return
     sender.delete_if_private(context, message)
     chat_id = message.chat.id
     chat_type = message.chat.type

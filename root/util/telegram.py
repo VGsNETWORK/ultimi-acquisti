@@ -2,6 +2,7 @@
 
 """ This File contains a class with various telegram tools """
 
+import re
 from time import sleep
 from os import environ
 from telegram import Bot, Message, Update
@@ -13,7 +14,7 @@ import root.util.logger as logger
 from root.helper.redis_message import delete_message
 from root.helper.process_helper import create_process
 from root.helper.redis_message import add_message
-
+from root.contants.messages import BOT_NAME
 
 class TelegramSender:
     """ This class contains a class with various telegram tools """
@@ -32,6 +33,17 @@ class TelegramSender:
             return
         self._bot = Bot(token)
         self._token = token
+
+    def check_command(self, message: str):
+        if message.chat.type != "private":
+            command: str = message.text
+            command: str = re.sub(r"/\w+", "", command)
+            if f"@{BOT_NAME}" in command:
+                return True
+            return False
+        else:
+            return True
+
 
     def send_message(self, token: str, chat_id: int, message: str, **kwargs):
         """send a message to a designed chat
