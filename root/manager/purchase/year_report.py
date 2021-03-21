@@ -33,6 +33,7 @@ from root.contants.message_timeout import THREE_MINUTES
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
 
+
 class YearReport:
     """ Class used to display the year report of a user """
 
@@ -64,14 +65,13 @@ class YearReport:
         if expand:
             year = update.callback_query.data.split("_")[-1]
             self.year = int(year) if is_number(year) else self.year
-        message: Message = update.message if update.message else update.edited_message
+        message: Message = update.effective_message
+        if not message:
+            message = update.callback_query.message
         if not self.sender.check_command(message):
             return
-        if not message:
-            message = update.effective_message
-        else:
-            if not expand:
-                self.sender.delete_if_private(context, message)
+        if not expand:
+            self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user
@@ -142,7 +142,7 @@ class YearReport:
         """
         self.year_report(update, context, True)
 
-    def retrieve_purchase(self, user: User) -> [Purchase]:
+    def retrieve_purchase(self, user: User):
         """Retrieve of the purchases for the user
 
         Args:

@@ -7,10 +7,12 @@ from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
     CallbackContext,
+    CommandHandler,
     MessageHandler,
     Filters,
 )
 from telegram import Update, InlineKeyboardMarkup
+from telegram.message import Message
 from root.manager.start import conversation_main_menu
 from root.util.util import retrieve_key, create_button
 from root.contants.messages import FEEDBACK_FROM_MESSAGE, FEEDBACK_SEND_MESSAGE
@@ -34,18 +36,31 @@ def start_feedback(update: Update, context: CallbackContext):
         context (CallbackContext): The context of the telegram bot
     """
     global MESSAGE_ID
-    context.bot.answer_callback_query(update.callback_query.id)
+    if update.callback_query:
+        context.bot.answer_callback_query(update.callback_query.id)
     message_id = update.effective_message.message_id
     user_id = update.effective_user.id
-    context.bot.edit_message_text(
-        text=FEEDBACK_SEND_MESSAGE,
-        chat_id=user_id,
-        disable_web_page_preview=True,
-        message_id=message_id,
-        reply_markup=build_keyboard(),
-        parse_mode="HTML",
-    )
-    MESSAGE_ID = message_id
+    if update.callback_query:
+        logger.info("EDITING MESSAGE?????")
+        context.bot.edit_message_text(
+            text=FEEDBACK_SEND_MESSAGE,
+            chat_id=user_id,
+            disable_web_page_preview=True,
+            message_id=message_id,
+            reply_markup=build_keyboard(),
+            parse_mode="HTML",
+        )
+        MESSAGE_ID = message_id
+    else:
+        message: Message = context.bot.send_message(
+            text=FEEDBACK_SEND_MESSAGE,
+            chat_id=user_id,
+            disable_web_page_preview=True,
+            reply_markup=build_keyboard(),
+            parse_mode="HTML",
+        )
+        MESSAGE_ID = message.message_id
+
     logger.info(message_id)
     return FEEDBACK_MESSAGE
 
@@ -100,7 +115,8 @@ def build_keyboard():
 
 FEEDBACK_CONVERSATION = ConversationHandler(
     entry_points=[
-        CallbackQueryHandler(callback=start_feedback, pattern="send_feedback")
+        CommandHandler("start", start_feedback, Filters.regex("^.*leave_feedback*.$")),
+        CallbackQueryHandler(callback=start_feedback, pattern="send_feedback"),
     ],
     states={FEEDBACK_MESSAGE: [MessageHandler(Filters.text, send_feedback)]},
     fallbacks=[

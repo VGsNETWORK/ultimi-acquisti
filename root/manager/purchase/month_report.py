@@ -41,6 +41,7 @@ from root.helper.redis_message import add_message
 from root.helper.process_helper import create_process
 from root.manager.start import back_to_the_start
 
+
 class MonthReport:
     """ Class used to display the month report of a user """
 
@@ -77,14 +78,13 @@ class MonthReport:
                 self.month = 1
                 if "current" in query:
                     self.month = self.current_month
-        message: Message = update.message if update.message else update.edited_message
+        message: Message = update.effective_message
+        if not message:
+            message = update.callback_query.message
         if not self.sender.check_command(message):
             return
-        if not message:
-            message = update.effective_message
-        else:
-            if not expand:
-                self.sender.delete_if_private(context, message)
+        if not expand:
+            self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
         chat_type = message.chat.type
         user = update.effective_user

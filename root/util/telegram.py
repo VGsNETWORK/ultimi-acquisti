@@ -16,6 +16,7 @@ from root.helper.process_helper import create_process
 from root.helper.redis_message import add_message
 from root.contants.messages import BOT_NAME
 
+
 class TelegramSender:
     """ This class contains a class with various telegram tools """
 
@@ -34,7 +35,7 @@ class TelegramSender:
         self._bot = Bot(token)
         self._token = token
 
-    def check_command(self, message: str):
+    def check_command(self, message: Message):
         if message.chat.type != "private":
             command: str = message.text
             command: str = re.sub(r"/\w+", "", command)
@@ -43,7 +44,6 @@ class TelegramSender:
             return False
         else:
             return True
-
 
     def send_message(self, token: str, chat_id: int, message: str, **kwargs):
         """send a message to a designed chat

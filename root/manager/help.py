@@ -84,11 +84,11 @@ def bot_help(
         page (int, optional): The page to view. Defaults to 1.
         edit (bool, optiona): If the message needs to be created or not. Defaults to False.
     """
-    message: Message = update.message if update.message else update.edited_message
-    if not sender.check_command(message):
-        return
+    message: Message = update.effective_message
     if edit:
         message = update.callback_query.message
+    if not sender.check_command(message):
+        return
     message_id = message.message_id
     chat_id = message.chat.id
     chat_type = message.chat.type
