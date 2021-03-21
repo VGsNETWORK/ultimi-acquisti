@@ -163,10 +163,12 @@ def build_keyboard(page: int):
             ]
         ]
 
+    close_help = "Ho capito"
+    last_page = page != len(PAGES) - 1
     keyboard.append(
         [
             create_button(
-                "Ho capito",
+                close_help if last_page else close_help.upper(),
                 str("how_to_end"),
                 "how_to_end",
             ),
