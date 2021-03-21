@@ -58,7 +58,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     # ================ SECOND ROW REGARDING YEAR (1) ================
 
     # The user can always go back in time regarding years
-    btext = f"{get_month_string(month, True, False )} {year - 1}   ◄"
+    btext = f"{year - 1}   ◄"
     bcall = "month_previous_year_1"
     buttons.append([[btext, bcall]])
 
@@ -73,7 +73,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
         bcall = do_nothing
     else:
         # Otherwise allow him to view the next year
-        btext = f"►   {get_month_string(month, True, False )} {year + 1}"
+        btext = f"►   {year + 1}"
         bcall = "month_next_year_1"
     buttons[1].append([btext, bcall])
 
