@@ -3,6 +3,7 @@
 """ File that contains the class to start the bot with the bot api """
 
 import os
+from root.manager.purchase.handle_purchase import toggle_purchase_tips
 from telegram import Message, Update
 from telegram.ext import (
     CallbackContext,
@@ -10,7 +11,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     Dispatcher,
     Updater,
-    Filters
+    Filters,
 )
 
 from root.model.purchase import Purchase
@@ -205,6 +206,12 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=remove_commands, pattern="start_hide_commands"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=toggle_purchase_tips, pattern="purchase.toggle_tips"
             )
         )
 

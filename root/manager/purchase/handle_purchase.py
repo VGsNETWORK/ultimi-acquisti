@@ -4,11 +4,19 @@
 
 import re
 from datetime import datetime
+
+from pyrogram.types.bots_and_keyboards import reply_keyboard_markup
+from root.helper.redis_message import add_message, is_owner
 from pyrogram import Client
 from pyrogram.client import User
 from pyrogram.types import Message
+from telegram.callbackquery import CallbackQuery
+from telegram.ext.callbackcontext import CallbackContext
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+from telegram.update import Update
 import root.util.logger as logger
 from root.contants.messages import (
+    NOT_MESSAGE_OWNER,
     ONLY_GROUP,
     PURCHASE_ADDED,
     PURCHASE_DATE_ERROR,
@@ -18,12 +26,14 @@ from root.contants.messages import (
     PURCHASE_DATE_HINT,
     PURCHASE_HEADER_HINT,
     PURCHASE_EMPTY_TITLE_HINT,
+    SESSION_ENDED,
 )
 from root.helper.purchase_helper import convert_to_float, create_purchase
-from root.helper.user_helper import create_user, user_exists
+from root.helper.user_helper import create_user, user_exists, retrieve_user
 from root.util.telegram import TelegramSender
-from root.util.util import has_number, is_group_allowed, retrieve_key
+from root.util.util import create_button, has_number, is_group_allowed, retrieve_key
 from root.contants.message_timeout import SERVICE_TIMEOUT
+from root.model.user import User as UserModel
 
 sender = TelegramSender()
 
@@ -81,7 +91,9 @@ def handle_purchase(client: Client, message: Message) -> None:
         return
     message_id = message.message_id
     user = message.from_user
-    if not user_exists(user.id):
+    user_id: int = user.id
+    add_message(message_id, user_id)
+    if not user_exists(user_id):
         create_user(user)
     caption = message.caption if message.caption else message.text
     logger.info("Parsing purchase")
@@ -169,14 +181,16 @@ def handle_purchase(client: Client, message: Message) -> None:
             custom_date_error = True
     else:
         append_message[1] = PURCHASE_DATE_HINT
+    modelUser: UserModel = retrieve_user(user_id)
     if not result["error"]:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
             append_message = "".join(append_message)
-            if append_message:
-                append_message = f"{PURCHASE_HEADER_HINT}{append_message}"
-            message += append_message
+            if modelUser.show_purchase_tips:
+                if append_message:
+                    append_message = f"{PURCHASE_HEADER_HINT}{append_message}"
+                message += append_message
         else:
             message = PURCHASE_DATE_ERROR % (
                 user.id,
@@ -184,4 +198,51 @@ def handle_purchase(client: Client, message: Message) -> None:
             )
     else:
         message = result["error"]
-    sender.send_and_deproto(client, chat_id, message, message_id, timeout=120)
+    keyboard = build_purchase_keyboard(modelUser)
+    sender.send_and_deproto(client, chat_id, message, keyboard, message_id, timeout=120)
+
+
+def build_purchase_keyboard(user: UserModel):
+    show_tips = user.show_purchase_tips
+    message: str = "🙈  Nascondi suggerimenti" if show_tips else "🙉  Mostra suggerimenti"
+    return InlineKeyboardMarkup(
+        [[create_button(message, "purchase.toggle_tips", "purchase.toggle_tips")]]
+    )
+
+
+def toggle_purchase_tips(update: Update, context: CallbackContext):
+    callback_query: CallbackQuery = update.callback_query
+    message: Message = callback_query.message
+    chat_id: int = message.chat.id
+    logger.info(chat_id)
+    message_id = message.message_id
+    user: User = update.effective_user
+    user_id: int = user.id
+    try:
+        if is_owner(message_id, user_id):
+            context.bot.answer_callback_query(callback_query.id)
+            modelUser: UserModel = retrieve_user(user_id)
+            modelUser.show_purchase_tips = not modelUser.show_purchase_tips
+            modelUser.save()
+            keyboard = build_purchase_keyboard(modelUser)
+            context.bot.edit_message_text(
+                message_id=message_id,
+                chat_id=chat_id,
+                text="✅  <i>Impostazioni aggiornate con successo!</i>",
+                reply_markup=keyboard,
+                parse_mode="HTML",
+            )
+        else:
+            context.bot.answer_callback_query(
+                callback_query.id,
+                text="❌  Non puoi modificare le impostazioni di un altro utente!",
+                show_alert=True,
+            )
+    except ValueError as e:
+        logger.error(e)
+        context.bot.answer_callback_query(
+            callback_query.id,
+            text=SESSION_ENDED,
+            show_alert=True,
+        )
+        sender.delete_message(context, chat_id, message_id)

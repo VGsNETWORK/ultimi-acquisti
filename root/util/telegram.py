@@ -94,6 +94,7 @@ class TelegramSender:
         client: Client,
         chat_id: int,
         text: str,
+        reply_markup=None,
         reply_to_message_id: int = None,
         parse_mode: str = "HTML",
         timeout: int = 360,
@@ -113,6 +114,7 @@ class TelegramSender:
             chat_id=chat_id,
             text=text,
             reply_to_message_id=reply_to_message_id,
+            reply_markup=reply_markup,
             parse_mode=parse_mode,
             disable_notification=True,
         )

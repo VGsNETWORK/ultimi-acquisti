@@ -129,7 +129,7 @@ def find_by_message_id(message_id: int) -> Purchase:
     return Purchase.objects.get(message_id=message_id)
 
 
-def retrive_purchases_for_user(user_id: int) -> [Purchase]:
+def retrive_purchases_for_user(user_id: int):
     """retrieve all purchases for a user
 
     Args:
@@ -146,7 +146,7 @@ def retrive_purchases_for_user(user_id: int) -> [Purchase]:
 
 def retrieve_month_purchases_for_user(
     user_id: int, month: int = None, year: int = None
-) -> [Purchase]:
+):
     """Retrieve all purchases in a month
 
     Args:
