@@ -38,14 +38,18 @@ def delete_message(message_id: int) -> None:
     red.delete(message_key)
 
 
-def add_message(message_id: int, user_id: int) -> None:
+def add_message(message_id: int, user_id: int, add: bool = True) -> None:
     """Store a message in redis
 
     Args:
         message_id (int): The message_id of the message
         user_id (int): The user who typed the command
+        add (bool): if True, add + 1 to the message_id
     """
-    message_key = f"{MESSAGE_PREFIX}_{message_id + 1}"
+    if add:
+        message_id += 1
+    logger.info(f"Creating redis message for {message_id} - {user_id}")
+    message_key = f"{MESSAGE_PREFIX}_{message_id}"
     red.set(message_key, user_id)
 
 

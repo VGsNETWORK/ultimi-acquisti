@@ -97,6 +97,8 @@ class TelegramSender:
         reply_markup=None,
         reply_to_message_id: int = None,
         parse_mode: str = "HTML",
+        create_redis: bool = False,
+        user_id: int = 0,
         timeout: int = 360,
     ):
         """Send a message and create a thread to delete it after the timeout
@@ -118,6 +120,8 @@ class TelegramSender:
             parse_mode=parse_mode,
             disable_notification=True,
         )
+        if create_redis:
+            add_message(message.message_id, user_id, False)
         create_process(
             name_prefix=message.message_id,
             target=self.delete_message,

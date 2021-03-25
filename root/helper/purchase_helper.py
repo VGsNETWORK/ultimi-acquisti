@@ -117,6 +117,21 @@ def create_purchase(
         ).save()
 
 
+def find_by_message_id_and_chat_id(message_id: int, chat_id: int) -> Purchase:
+    """Find a purchase using the message_id
+
+    Args:
+        message_id (int): The message_id to find
+
+    Returns:
+        Purchase: The purchase if found
+    """
+    try:
+        return Purchase.objects.get(message_id=message_id, chat_id=chat_id)
+    except DoesNotExist:
+        return None
+
+
 def find_by_message_id(message_id: int) -> Purchase:
     """Find a purchase using the message_id
 
