@@ -319,14 +319,15 @@ NO_QUOTE_BOT = (
 
 NO_QUOTE_FOUND = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    " per lanciare questo comando prova a <b>quotare un utente</b>...")
+    " per lanciare questo comando prova a <b>quotare un utente</b>..."
+)
 
 NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
 
 SESSION_ENDED = (
     "❗️ Il bot è stato aggiornato o riavviato per motivi tecnici, pertanto la sessione"
     ' di questo messaggio è scaduta.\n\nPer continuare, digita "/" nella chat e seleziona'
-    ' un comando dalla lista.'
+    " un comando dalla lista."
 )
 
 HOW_TO_DEEP_LINK = (
@@ -396,7 +397,7 @@ RANDOM_ITEM_LIST = [
     " uno spoiler 👀",
     " del legname",
     " un martello",
-    "no delle gonne",
+    " una gonna",
     " un panino",
     " una baguette",
     "no dei croissant",
@@ -412,3 +413,7 @@ RANDOM_ITEM_LIST = [
     " un Alt+Canc",
     " l'ultimo modello di smartphone",
 ]
+
+MESSAGE_DELETION_TIMEOUT = (
+    "\n\n\n🕒  <i>Il messaggio si autodistruggerà tra %s secondi.</i>"
+)

@@ -17,6 +17,7 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 import root.util.logger as logger
 from root.contants.messages import (
+    MESSAGE_DELETION_TIMEOUT,
     NOT_MESSAGE_OWNER,
     ONLY_GROUP,
     PURCHASE_ADDED,
@@ -37,7 +38,7 @@ from root.helper.purchase_helper import (
 from root.helper.user_helper import create_user, user_exists, retrieve_user
 from root.util.telegram import TelegramSender
 from root.util.util import create_button, has_number, is_group_allowed, retrieve_key
-from root.contants.message_timeout import SERVICE_TIMEOUT
+from root.contants.message_timeout import SERVICE_TIMEOUT, TWO_MINUTES
 from root.model.user import User as UserModel
 
 sender = TelegramSender()
@@ -211,7 +212,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         message_id,
         create_redis=True,
         user_id=user_id,
-        timeout=120,
+        timeout=TWO_MINUTES,
     )
 
 
@@ -275,6 +276,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     message = purchase_service_message
                 modelUser.save()
                 keyboard = build_purchase_keyboard(modelUser)
+                message += MESSAGE_DELETION_TIMEOUT % TWO_MINUTES
                 context.bot.edit_message_text(
                     message_id=message_id,
                     chat_id=chat_id,

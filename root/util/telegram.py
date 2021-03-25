@@ -14,7 +14,7 @@ import root.util.logger as logger
 from root.helper.redis_message import delete_message
 from root.helper.process_helper import create_process
 from root.helper.redis_message import add_message
-from root.contants.messages import BOT_NAME
+from root.contants.messages import BOT_NAME, MESSAGE_DELETION_TIMEOUT
 
 
 class TelegramSender:
@@ -112,6 +112,7 @@ class TelegramSender:
             timeout (int, optional): [description]. Defaults to 360.
         """
         self._bot = Bot(environ["TOKEN"])
+        text += MESSAGE_DELETION_TIMEOUT % timeout
         message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,
@@ -177,6 +178,7 @@ class TelegramSender:
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
             timeout (int, optional): The timeout after the message will be deleted. Defaults to 360.
         """
+        text += MESSAGE_DELETION_TIMEOUT % timeout
         message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=text,
