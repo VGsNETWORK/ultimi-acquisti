@@ -429,6 +429,10 @@ CANNOT_MODIFY_OTHERS_SETTINGS = "❌  Non puoi modificare le impostazioni di un 
 
 MESSAGE_DELETION_FUNNY_APPEND = [" Fuggite, sciocchi!", " That'll escalate quickly.", " Much hurry."]
 
+MESSAGE_EDIT_TIMEOUT = (
+    "\n\n\n🕒  <i>Verrai reindirizzato/a alla homepage tra %s.</i>"
+)
+
 MESSAGE_DELETION_TIMEOUT = (
-    "\n\n\n🕒  <i>Questo messaggio si cancellerà tra %s.<b>%s</b></i>"
+    "\n\n\n🕒  <i>Questo messaggio si autodistruggerà tra %s.<b>%s</b></i>"
 )

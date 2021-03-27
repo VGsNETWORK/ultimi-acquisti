@@ -17,7 +17,7 @@ from root.helper.redis_message import add_message
 from root.contants.messages import (
     BOT_NAME,
     MESSAGE_DELETION_TIMEOUT,
-    MESSAGE_DELETION_FUNNY_APPEND,
+    MESSAGE_DELETION_FUNNY_APPEND, MESSAGE_EDIT_TIMEOUT,
 )
 
 
@@ -159,6 +159,7 @@ class TelegramSender:
         reply_to_message_id: int = None,
         timeout=360,
     ):
+        # text += MESSAGE_EDIT_TIMEOUT % ttm(timeout)
         message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=text,
