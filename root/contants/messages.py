@@ -185,7 +185,18 @@ PURCHASE_NOT_FOUND = (
     " trovare l'acquisto che hai fatto..."
 )
 
-PURCHASE_DELETED = "✅  <i>Acquisto cancellato con successo!</i>"
+PURCHASES_DELETED = (
+    '✅  <i><a href="tg://user?id=%s">%s</a>,'
+    " hai cancellato %s acquisti con successo!</i>"
+)
+PURCHASES_DELETED_APPEND = (
+    '<i>\n        - <b>%s</b> del <b>%s</b></i>'
+)
+
+PURCHASE_DELETED = (
+    '✅  <i><a href="tg://user?id=%s">%s</a>,'
+    " <b>%s</b> del <b>%s</b> cancellato con successo!</i>"
+)
 
 GROUP_NOT_ALLOWED = (
     "❌  Questo gruppo non è abilitato all'utilizzo di questo bot.\n"
@@ -414,7 +425,9 @@ RANDOM_ITEM_LIST = [
     " l'ultimo modello di smartphone",
 ]
 
-MESSAGE_DELETION_FUNNY_APPEND = [" Fuggite, sciocchi!"]
+CANNOT_MODIFY_OTHERS_SETTINGS = "❌  Non puoi modificare le impostazioni di un altro utente!"
+
+MESSAGE_DELETION_FUNNY_APPEND = [" Fuggite, sciocchi!", " That'll escalate quickly.", " Much hurry."]
 
 MESSAGE_DELETION_TIMEOUT = (
     "\n\n\n🕒  <i>Questo messaggio si cancellerà tra %s.<b>%s</b></i>"

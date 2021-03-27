@@ -2,7 +2,7 @@
 
 """ File to handle a new or and edited purchase """
 
-from random import random
+import random
 import re
 from datetime import datetime
 from root.model.purchase import Purchase
@@ -18,7 +18,7 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 import root.util.logger as logger
 from root.contants.messages import (
-    MESSAGE_DELETION_FUNNY_APPEND,
+    CANNOT_MODIFY_OTHERS_SETTINGS, MESSAGE_DELETION_FUNNY_APPEND,
     MESSAGE_DELETION_TIMEOUT,
     NOT_MESSAGE_OWNER,
     ONLY_GROUP,
@@ -286,7 +286,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 keyboard = build_purchase_keyboard(modelUser)
                 if random.choice(range(100)) > 70:
                     message += MESSAGE_DELETION_TIMEOUT % (
-                        TWO_MINUTES,
+                        ttm(TWO_MINUTES),
                         random.choice(MESSAGE_DELETION_FUNNY_APPEND),
                     )
                 else:
@@ -301,7 +301,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
         else:
             context.bot.answer_callback_query(
                 callback_query.id,
-                text="❌  Non puoi modificare le impostazioni di un altro utente!",
+                text=CANNOT_MODIFY_OTHERS_SETTINGS,
                 show_alert=True,
             )
     except ValueError as e:

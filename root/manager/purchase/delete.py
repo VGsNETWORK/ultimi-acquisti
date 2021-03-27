@@ -2,17 +2,22 @@
 
 """ File containing the function to delete a purchase """
 
+import random
+from datetime import datetime
+from telegram.user import User
+from root.model.purchase import Purchase
 from typing import List
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from mongoengine.errors import DoesNotExist
 from pyrogram.types import Message as PyroMessage
 from pyrogram import Client
-from root.util.util import is_group_allowed
+from root.util.util import get_month_number, get_month_string, is_group_allowed
 from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
 from root.contants.messages import (
     CANCEL_PURCHASE_ERROR,
+    PURCHASES_DELETED, PURCHASES_DELETED_APPEND,
     PURCHASE_DELETED,
     ONLY_GROUP,
     PURCHASE_NOT_FOUND,
@@ -165,11 +170,36 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         client (Client): The mtproto client
         message (PyroMessage): The mtproto Message
     """
+    user_id = 0
+    purchases = []
+    titles = []
     for message in messages:
         message_id = message.message_id
         if purchase_helper.purchase_exists(message_id, message.chat.id):
             chat_id = message.chat.id
-            purchase_helper.delete_purchase_forced(message_id, message.chat.id)
-            sender.send_and_deproto(
-                client, chat_id, PURCHASE_DELETED, timeout=SERVICE_TIMEOUT
+            purchase: Purchase = purchase_helper.find_by_message_id_and_chat_id(
+                message_id, message.chat.id
             )
+            user_id = purchase.user_id
+            purchases.append(purchase.creation_date)
+            titles.append(purchase.description)
+            purchase_helper.delete_purchase_forced(message_id, message.chat.id)
+    user: List[User] = client.get_users([user_id])
+    user: User = user[0]
+    message = PURCHASES_DELETED if len(messages) > 1 else PURCHASE_DELETED
+    name = user.first_name if user.first_name else user.username
+    if len(messages) > 1:
+        message = message % (user_id, name, len(messages))
+        append = []
+        for purchase in zip(purchases,titles):
+            title = f"{purchase[1]}" if purchase[1] else "acquisto"
+            date: datetime = purchase[0]
+            date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+            append.append(PURCHASES_DELETED_APPEND % (title, date))
+        message += "".join(append)
+    else:
+        title = f"{titles[0]}" if titles[0] else "acquisto"
+        date: datetime = purchases[0]
+        date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+        message = message % (user_id, name, title, date)
+    sender.send_and_deproto(client, chat_id, message, timeout=SERVICE_TIMEOUT)
