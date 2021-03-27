@@ -414,6 +414,4 @@ RANDOM_ITEM_LIST = [
     " l'ultimo modello di smartphone",
 ]
 
-MESSAGE_DELETION_TIMEOUT = (
-    "\n\n\n🕒  <i>Il messaggio si autodistruggerà tra %s secondi.</i>"
-)
+MESSAGE_DELETION_TIMEOUT = "\n\n\n🕒  <i>Il messaggio si autodistruggerà tra %s secondi.</i> <b>FUGGITE SCIOCCHI!</b>"
