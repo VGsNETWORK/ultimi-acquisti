@@ -202,4 +202,4 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         date: datetime = purchases[0]
         date = "%s %s" % (date.day, get_month_string(date.month, False, True))
         message = message % (user_id, name, title, date)
-    sender.send_and_deproto(client, chat_id, message, timeout=SERVICE_TIMEOUT)
+    sender.send_and_deproto(client, chat_id, message, timeout=SERVICE_TIMEOUT * len(messages))
