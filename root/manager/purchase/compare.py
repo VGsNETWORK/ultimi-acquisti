@@ -18,7 +18,7 @@ from root.util.util import (
     get_month_string,
     is_text_month,
     get_month_number,
-    month_starts_with
+    month_starts_with,
 )
 from root.contants.messages import (
     MONTH_COMPARE_PRICE,

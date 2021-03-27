@@ -89,6 +89,15 @@ long_text_month = {
 }
 
 
+def ttm(timeout: int):
+    if timeout > 60:
+        timeout = timeout // 60
+        minute = "i" if timeout > 1 else "o"
+        return "%s %s" % (timeout, "minut%s" % minute)
+    else:
+        return "%s %s" % (timeout, "secondi")
+
+
 def random_item():
     index = randint(0, len(RANDOM_ITEM_LIST) - 1)
     return RANDOM_ITEM_LIST[index]

@@ -63,6 +63,7 @@ def restart_process(key: str, timeout: int = -1) -> bool:
     create_process(key, target, args)
     return True
 
+
 def create_process(name_prefix: str, target: callable, args: tuple) -> None:
     """Create a new background process and start it
 

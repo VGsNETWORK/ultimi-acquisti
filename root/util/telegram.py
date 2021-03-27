@@ -3,18 +3,31 @@
 """ This File contains a class with various telegram tools """
 
 import re
+import random
 from time import sleep
 from os import environ
 from telegram import Bot, Message, Update
 from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from pyrogram import Client
-from pyrogram.types import Message as ProtoMessage
 import root.util.logger as logger
 from root.helper.redis_message import delete_message
 from root.helper.process_helper import create_process
 from root.helper.redis_message import add_message
-from root.contants.messages import BOT_NAME, MESSAGE_DELETION_TIMEOUT
+from root.contants.messages import (
+    BOT_NAME,
+    MESSAGE_DELETION_TIMEOUT,
+    MESSAGE_DELETION_FUNNY_APPEND,
+)
+
+
+def ttm(timeout: int):
+    if timeout > 60:
+        timeout = timeout // 60
+        minute = "i" if timeout > 1 else "o"
+        return "%s %s" % (timeout, "minut%s" % minute)
+    else:
+        return "%s %s" % (timeout, "secondi")
 
 
 class TelegramSender:
@@ -112,7 +125,13 @@ class TelegramSender:
             timeout (int, optional): [description]. Defaults to 360.
         """
         self._bot = Bot(environ["TOKEN"])
-        text += MESSAGE_DELETION_TIMEOUT % timeout
+        if random.choice(range(100)) > 70:
+            text += MESSAGE_DELETION_TIMEOUT % (
+                ttm(timeout),
+                random.choice(MESSAGE_DELETION_FUNNY_APPEND),
+            )
+        else:
+            text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
         message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,
@@ -178,7 +197,13 @@ class TelegramSender:
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
             timeout (int, optional): The timeout after the message will be deleted. Defaults to 360.
         """
-        text += MESSAGE_DELETION_TIMEOUT % timeout
+        if random.choice(range(100)) > 70:
+            text += MESSAGE_DELETION_TIMEOUT % (
+                ttm(timeout),
+                random.choice(MESSAGE_DELETION_FUNNY_APPEND),
+            )
+        else:
+            text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
         message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=text,

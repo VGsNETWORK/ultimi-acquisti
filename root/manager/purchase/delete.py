@@ -2,6 +2,7 @@
 
 """ File containing the function to delete a purchase """
 
+from typing import List
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from mongoengine.errors import DoesNotExist
@@ -22,6 +23,7 @@ from root.contants.messages import (
 from root.util.telegram import TelegramSender
 from root.contants.message_timeout import SERVICE_TIMEOUT, LONG_SERVICE_TIMEOUT
 from root.util.util import create_button, retrieve_key
+import root.util.logger as logger
 
 sender = TelegramSender()
 
@@ -156,7 +158,7 @@ def remove_purchase(client: Client, message: PyroMessage) -> None:
     )
 
 
-def deleted_purchase_message(client: Client, messages: [PyroMessage]) -> None:
+def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> None:
     """Remove the purchase from the database when a user deletes the message of a purchase
 
     Args:
@@ -165,9 +167,9 @@ def deleted_purchase_message(client: Client, messages: [PyroMessage]) -> None:
     """
     for message in messages:
         message_id = message.message_id
-        if purchase_helper.find_by_message_id(message_id):
+        if purchase_helper.purchase_exists(message_id, message.chat.id):
             chat_id = message.chat.id
-            purchase_helper.delete_purchase_forced(message_id)
+            purchase_helper.delete_purchase_forced(message_id, message.chat.id)
             sender.send_and_deproto(
-                client, chat_id, PURCHASE_DELETED, message_id, timeout=SERVICE_TIMEOUT
+                client, chat_id, PURCHASE_DELETED, timeout=SERVICE_TIMEOUT
             )

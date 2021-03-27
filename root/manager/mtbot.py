@@ -24,7 +24,7 @@ def purchase_in_database(_, __, message: Message) -> bool:
     Returns:
         bool: If the message was a purchase
     """
-    return bool(purchase_exists(message.message_id))
+    return bool(purchase_exists(message.message_id, message.chat.id))
 
 
 purchase_filter = filters.create(purchase_in_database)

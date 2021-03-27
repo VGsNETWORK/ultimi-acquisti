@@ -199,14 +199,14 @@ def delete_purchase(user_id: int, message_id: int) -> None:
     Purchase.objects.filter(user_id=user_id).get(message_id=message_id).delete()
 
 
-def delete_purchase_forced(message_id: int) -> None:
+def delete_purchase_forced(message_id: int, chat_id: int) -> None:
     """Delete a purchase
 
     Args:
         message_id (int): The purchase to delete
     """
     logger.info(f"finding purchase {message_id}")
-    Purchase.objects.get(message_id=message_id).delete()
+    Purchase.objects.get(message_id=message_id, chat_id=chat_id).delete()
 
 
 def retrieve_sum_for_user(user_id: int) -> float:
@@ -304,7 +304,7 @@ def get_last_purchase(user_id: int) -> Purchase:
         return None
 
 
-def purchase_exists(message_id: int) -> None:
+def purchase_exists(message_id: int, chat_id: int) -> None:
     """Check if the message_id is a purchase
 
     Args:
@@ -314,7 +314,7 @@ def purchase_exists(message_id: int) -> None:
         bool: If The purchase exists
     """
     try:
-        return bool(Purchase.objects.get(message_id=message_id))
+        return bool(Purchase.objects.get(message_id=message_id, chat_id=chat_id))
     except DoesNotExist:
         return False
 
