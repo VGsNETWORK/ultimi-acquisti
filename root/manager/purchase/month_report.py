@@ -4,6 +4,7 @@
 
 from random import randint
 from datetime import datetime
+from typing import List
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
@@ -27,7 +28,7 @@ from root.helper.user_helper import create_user, user_exists
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    format_price,
+    append_timeout_message, format_price,
     get_month_string,
     is_group_allowed,
     is_number,
@@ -111,6 +112,8 @@ class MonthReport:
                             args=(update, context, chat_id, message_id, FIVE_MINUTES),
                         )
                     context.bot.answer_callback_query(update.callback_query.id)
+                    is_private = not update.effective_chat.type == "private"
+                    message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
                     context.bot.edit_message_text(
                         text=message,
                         chat_id=chat_id,
@@ -133,6 +136,8 @@ class MonthReport:
                 self.sender.delete_message(context, chat_id, message_id)
                 return
         add_message(message_id, user_id)
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
                 update,
@@ -165,7 +170,7 @@ class MonthReport:
         self.month_report(update, context, True)
 
     # =========================================================================
-    def retrieve_purchase(self, user: User) -> [Purchase]:
+    def retrieve_purchase(self, user: User) -> List[Purchase]:
         """Retrieve of the purchases for the user
 
         Args:
@@ -326,6 +331,8 @@ class MonthReport:
         keyboard = build_keyboard(
             self.month, self.current_month, self.year, self.current_year
         )
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

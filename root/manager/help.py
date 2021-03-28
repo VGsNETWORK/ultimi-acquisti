@@ -5,7 +5,7 @@
 from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
-from root.util.util import create_button, retrieve_key
+from root.util.util import append_timeout_message, create_button, retrieve_key
 from root.contants.messages import (
     HOW_TO_PAGE_ONE,
     HOW_TO_PAGE_TWO,
@@ -100,6 +100,8 @@ def bot_help(
     message, keyboard = build_keyboard(page)
     if edit:
         restart_process(message_id, FIVE_MINUTES)
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -109,6 +111,8 @@ def bot_help(
             parse_mode="HTML",
         )
     else:
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,

@@ -23,7 +23,7 @@ from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    format_price,
+    append_timeout_message, format_price,
     get_month_string,
     is_group_allowed,
     is_number,
@@ -89,6 +89,8 @@ class YearReport:
                 if is_owner(message_id, user_id):
                     restart_process(message_id, THREE_MINUTES)
                     context.bot.answer_callback_query(update.callback_query.id)
+                    is_private = not update.effective_chat.type == "private"
+                    message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
                     context.bot.edit_message_text(
                         text=message,
                         chat_id=chat_id,
@@ -227,6 +229,8 @@ class YearReport:
         self.year -= int(year)
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -268,6 +272,8 @@ class YearReport:
             self.year = self.current_year
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

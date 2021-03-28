@@ -5,8 +5,10 @@
 from random import randint
 from re import sub
 from base64 import b64decode
+from time import time
 from uuid import uuid4
 import ast
+import random
 from os import environ
 from datetime import datetime
 from mongoengine import connect
@@ -19,7 +21,7 @@ from root.contants.messages import (
     DB_CONNECTION_ERROR,
     DB_CONNECTION_SUCCESS,
     DB_GENERIC_ERROR,
-    GROUP_NOT_ALLOWED,
+    GROUP_NOT_ALLOWED, MESSAGE_DELETION_FUNNY_APPEND, MESSAGE_DELETION_TIMEOUT, MESSAGE_EDIT_TIMEOUT,
     RANDOM_ITEM_LIST,
 )
 
@@ -87,6 +89,18 @@ long_text_month = {
     "dicembre": 12,
     "e̵̓l̴̓u̴̔l̵͋": 13,
 }
+
+
+def append_timeout_message(message: str, delete: bool, timeout: bool, show_joke: bool):
+    if delete:
+        joke = ""
+        if show_joke:
+            if random.choice(range(100)) > 70:
+                joke = random.choice(MESSAGE_DELETION_FUNNY_APPEND)
+        message += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), joke)
+    else:
+        message += MESSAGE_EDIT_TIMEOUT % (ttm(timeout))
+    return message
 
 
 def ttm(timeout: int):
