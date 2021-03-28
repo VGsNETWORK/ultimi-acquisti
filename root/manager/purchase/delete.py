@@ -17,7 +17,8 @@ from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
 from root.contants.messages import (
     CANCEL_PURCHASE_ERROR,
-    PURCHASES_DELETED, PURCHASES_DELETED_APPEND,
+    PURCHASES_DELETED,
+    PURCHASES_DELETED_APPEND,
     PURCHASE_DELETED,
     ONLY_GROUP,
     PURCHASE_NOT_FOUND,
@@ -191,7 +192,7 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     if len(messages) > 1:
         message = message % (user_id, name, len(messages))
         append = []
-        for purchase in zip(purchases,titles):
+        for purchase in zip(purchases, titles):
             title = f"{purchase[1]}" if purchase[1] else "acquisto"
             title = title if title != "<vuoto>" else "acquisto"
             date: datetime = purchase[0]
@@ -204,4 +205,6 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         date: datetime = purchases[0]
         date = "%s %s" % (date.day, get_month_string(date.month, False, True))
         message = message % (user_id, name, title, date)
-    sender.send_and_deproto(client, chat_id, message, timeout=SERVICE_TIMEOUT * len(messages))
+    sender.send_and_deproto(
+        client, chat_id, message, timeout=SERVICE_TIMEOUT * len(messages)
+    )

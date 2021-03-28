@@ -17,7 +17,8 @@ from root.helper.redis_message import add_message
 from root.contants.messages import (
     BOT_NAME,
     MESSAGE_DELETION_TIMEOUT,
-    MESSAGE_DELETION_FUNNY_APPEND, MESSAGE_EDIT_TIMEOUT,
+    MESSAGE_DELETION_FUNNY_APPEND,
+    MESSAGE_EDIT_TIMEOUT,
 )
 
 

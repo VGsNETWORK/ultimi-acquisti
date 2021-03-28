@@ -42,7 +42,7 @@ START_COMMAND = (
 START_GROUP_GROUP_APPEND = (
     "\n\n🏁  Per iniziare, <b>invia</b> o <b>modifica</b> un messaggio di qualunque"
     ' tipo aggiungendo l\'hashtag "<code>#ultimiacquisti</code>"...\n\n'
-    "ℹ️  Per maggiori informazioni sul mio utilizzo, <b>vai alla chat privata</b>!\n\n\n"
+    "ℹ️  Per maggiori informazioni sul mio utilizzo, <b>vai alla chat privata</b>!\n\n"
 )
 
 PLEASE_NOTE_APPEND = (
@@ -189,9 +189,7 @@ PURCHASES_DELETED = (
     '✅  <i><a href="tg://user?id=%s">%s</a>,'
     " hai cancellato %s acquisti con successo!</i>"
 )
-PURCHASES_DELETED_APPEND = (
-    '<i>\n        - <b>%s</b> del <b>%s</b></i>'
-)
+PURCHASES_DELETED_APPEND = "<i>\n        - <b>%s</b> del <b>%s</b></i>"
 
 PURCHASE_DELETED = (
     '✅  <i><a href="tg://user?id=%s">%s</a>,'
@@ -425,13 +423,17 @@ RANDOM_ITEM_LIST = [
     " l'ultimo modello di smartphone",
 ]
 
-CANNOT_MODIFY_OTHERS_SETTINGS = "❌  Non puoi modificare le impostazioni di un altro utente!"
-
-MESSAGE_DELETION_FUNNY_APPEND = [" Fuggite, sciocchi!", " That'll escalate quickly.", " Much hurry."]
-
-MESSAGE_EDIT_TIMEOUT = (
-    "\n\n\n🕒  <i>Verrai reindirizzato/a alla homepage tra %s.</i>"
+CANNOT_MODIFY_OTHERS_SETTINGS = (
+    "❌  Non puoi modificare le impostazioni di un altro utente!"
 )
+
+MESSAGE_DELETION_FUNNY_APPEND = [
+    " Fuggite, sciocchi!",
+    " That'll escalate quickly.",
+    " Much hurry.",
+]
+
+MESSAGE_EDIT_TIMEOUT = "\n\n\n🕒  <i>Verrai reindirizzato/a alla homepage tra %s.</i>"
 
 MESSAGE_DELETION_TIMEOUT = (
     "\n\n\n🕒  <i>Questo messaggio si autodistruggerà tra %s.<b>%s</b></i>"

@@ -18,7 +18,8 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 import root.util.logger as logger
 from root.contants.messages import (
-    CANNOT_MODIFY_OTHERS_SETTINGS, MESSAGE_DELETION_FUNNY_APPEND,
+    CANNOT_MODIFY_OTHERS_SETTINGS,
+    MESSAGE_DELETION_FUNNY_APPEND,
     MESSAGE_DELETION_TIMEOUT,
     NOT_MESSAGE_OWNER,
     ONLY_GROUP,

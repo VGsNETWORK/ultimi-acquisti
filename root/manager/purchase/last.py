@@ -2,6 +2,7 @@
 
 """ File to retrieve the last purchase of the user """
 
+from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
@@ -130,6 +131,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 chat_id,
                 message,
                 back_to_the_start,
+                reply_markup=NO_PURCHASE_KEYBOARD,
                 timeout=LONG_SERVICE_TIMEOUT,
             )
             return
@@ -140,5 +142,6 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             context,
             chat_id,
             message,
+            reply_markup=NO_PURCHASE_KEYBOARD,
             timeout=LONG_SERVICE_TIMEOUT,
         )
