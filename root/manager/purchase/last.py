@@ -20,7 +20,7 @@ from root.contants.messages import (
 )
 from root.contants.message_timeout import (
     SERVICE_TIMEOUT,
-    LONG_SERVICE_TIMEOUT,
+    ONE_MINUTE,
     TWO_MINUTES,
 )
 from root.util.telegram import TelegramSender
@@ -132,7 +132,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 message,
                 back_to_the_start,
                 reply_markup=NO_PURCHASE_KEYBOARD,
-                timeout=LONG_SERVICE_TIMEOUT,
+                timeout=ONE_MINUTE,
             )
             return
 
@@ -143,5 +143,5 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             chat_id,
             message,
             reply_markup=NO_PURCHASE_KEYBOARD,
-            timeout=LONG_SERVICE_TIMEOUT,
+            timeout=ONE_MINUTE,
         )

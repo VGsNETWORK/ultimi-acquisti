@@ -4,13 +4,14 @@
 """ File with class to show the year report """
 
 from datetime import datetime
+from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
 from root.helper.redis_message import is_owner
 from root.contants.messages import (
-    YEAR_PURCHASE_REPORT,
+    NO_PURCHASE, YEAR_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
     NO_YEAR_PURCHASE,
     YEAR_PURCHASE_TEMPLATE,
@@ -19,11 +20,12 @@ from root.contants.messages import (
 )
 from root.model.purchase import Purchase
 from root.helper.process_helper import restart_process
-from root.helper.purchase_helper import retrieve_sum_for_month, retrieve_sum_for_year
+from root.helper.purchase_helper import get_last_purchase, retrieve_sum_for_month, retrieve_sum_for_year
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    append_timeout_message, format_price,
+    append_timeout_message,
+    format_price,
     get_month_string,
     is_group_allowed,
     is_number,
@@ -68,8 +70,9 @@ class YearReport:
         message: Message = update.effective_message
         if not message:
             message = update.callback_query.message
-        if not self.sender.check_command(message):
-            return
+        if not update.callback_query:
+            if not self.sender.check_command(message):
+                return
         if not expand:
             self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
@@ -83,20 +86,27 @@ class YearReport:
             if not is_group_allowed(chat_id):
                 return
         keyboard = build_keyboard(self.year, self.current_year)
+        keyboard = InlineKeyboardMarkup(keyboard)
         message = self.retrieve_purchase(user)
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
+            keyboard = NO_PURCHASE_KEYBOARD
         if expand:
             try:
                 if is_owner(message_id, user_id):
                     restart_process(message_id, THREE_MINUTES)
                     context.bot.answer_callback_query(update.callback_query.id)
                     is_private = not update.effective_chat.type == "private"
-                    message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
+                    message = append_timeout_message(
+                        message, is_private, THREE_MINUTES, is_private
+                    )
                     context.bot.edit_message_text(
                         text=message,
                         chat_id=chat_id,
                         disable_web_page_preview=True,
                         message_id=message_id,
-                        reply_markup=InlineKeyboardMarkup(keyboard),
+                        reply_markup=keyboard,
                         parse_mode="HTML",
                     )
                 else:
@@ -120,7 +130,7 @@ class YearReport:
                 chat_id,
                 message,
                 back_to_the_start,
-                InlineKeyboardMarkup(keyboard),
+                keyboard,
                 timeout=THREE_MINUTES,
             )
             return
@@ -131,7 +141,7 @@ class YearReport:
             context,
             chat_id,
             message,
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=keyboard,
             timeout=THREE_MINUTES,
         )
 
@@ -229,14 +239,19 @@ class YearReport:
         self.year -= int(year)
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
+        keyboard = InlineKeyboardMarkup(keyboard)
         is_private = not update.effective_chat.type == "private"
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
+            keyboard = NO_PURCHASE_KEYBOARD
         message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
             disable_web_page_preview=True,
             message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=keyboard,
             parse_mode="HTML",
         )
 
@@ -272,6 +287,11 @@ class YearReport:
             self.year = self.current_year
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
+        keyboard = InlineKeyboardMarkup(keyboard)
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
+            keyboard = NO_PURCHASE_KEYBOARD
         is_private = not update.effective_chat.type == "private"
         message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
         context.bot.edit_message_text(
@@ -279,6 +299,6 @@ class YearReport:
             chat_id=chat_id,
             disable_web_page_preview=True,
             message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=keyboard,
             parse_mode="HTML",
         )

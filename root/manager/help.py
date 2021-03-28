@@ -112,7 +112,7 @@ def bot_help(
         )
     else:
         is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+        # message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,

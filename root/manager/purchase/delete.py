@@ -4,6 +4,7 @@
 
 import random
 from datetime import datetime
+from pyrogram.types.user_and_chats.chat_member import ChatMember
 from telegram.user import User
 from root.model.purchase import Purchase
 from typing import List
@@ -122,9 +123,16 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         message_id = reply.message_id
         purchase = purchase_helper.find_by_message_id(message_id)
         if purchase.user_id == user_id:
+            purchase: Purchase = purchase_helper.find_by_message_id_and_chat_id(
+                message_id, message.chat.id)
+            title = f"{purchase.description}" if purchase.description else "acquisto"
+            title = title if title != "<vuoto>" else "acquisto"
+            date: datetime = purchase.creation_date
+            date = "%s %s" % (date.day, get_month_string(date.month, False, True))
             purchase_helper.delete_purchase(user_id, message_id)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
-            message = PURCHASE_DELETED
+            name = user.first_name if user.first_name else user.username
+            message = PURCHASE_DELETED % (user_id, name, title, date)
         else:
             message = NOT_YOUR_PURCHASE % (user_id, first_name)
         sender.send_and_delete(
@@ -185,8 +193,8 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             purchases.append(purchase.creation_date)
             titles.append(purchase.description)
             purchase_helper.delete_purchase_forced(message_id, message.chat.id)
-    user: List[User] = client.get_users([user_id])
-    user: User = user[0]
+    user: ChatMember = client.get_chat_member(chat_id, user_id)
+    user: User = user.user
     message = PURCHASES_DELETED if len(messages) > 1 else PURCHASE_DELETED
     name = user.first_name if user.first_name else user.username
     if len(messages) > 1:

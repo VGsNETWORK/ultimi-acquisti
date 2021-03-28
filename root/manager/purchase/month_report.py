@@ -4,6 +4,7 @@
 
 from random import randint
 from datetime import datetime
+from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from typing import List
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
@@ -11,7 +12,7 @@ from telegram.ext import CallbackContext
 from root.helper.redis_message import is_owner
 from root.model.purchase import Purchase
 from root.contants.messages import (
-    MONTH_PURCHASE_REPORT,
+    MONTH_PURCHASE_REPORT, NO_PURCHASE,
     REPORT_PURCHASE_TOTAL,
     NO_MONTH_PURCHASE,
     PURCHASE_REPORT_TEMPLATE,
@@ -20,7 +21,7 @@ from root.contants.messages import (
     MONTH_REPORT_FUNNY_APPEND,
 )
 from root.helper.purchase_helper import (
-    retrieve_month_purchases_for_user,
+    get_last_purchase, retrieve_month_purchases_for_user,
     retrieve_sum_for_month,
 )
 from root.helper.process_helper import restart_process
@@ -28,7 +29,8 @@ from root.helper.user_helper import create_user, user_exists
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
-    append_timeout_message, format_price,
+    append_timeout_message,
+    format_price,
     get_month_string,
     is_group_allowed,
     is_number,
@@ -73,6 +75,7 @@ class MonthReport:
         self.current_year = current_date.year
         if expand:
             query: str = update.callback_query.data
+            logger.info(query)
             year = query.split("_")[-1]
             if is_number(year):
                 self.year = int(year)
@@ -82,8 +85,9 @@ class MonthReport:
         message: Message = update.effective_message
         if not message:
             message = update.callback_query.message
-        if not self.sender.check_command(message):
-            return
+        if not update.callback_query:
+            if not self.sender.check_command(message):
+                return
         if not expand:
             self.sender.delete_if_private(context, message)
         chat_id = message.chat.id
@@ -99,7 +103,12 @@ class MonthReport:
         keyboard = build_keyboard(
             self.month, self.current_month, self.year, self.current_year
         )
+        keyboard = InlineKeyboardMarkup(keyboard)
         message = self.retrieve_purchase(user)
+        purchase = get_last_purchase(user_id)
+        if not purchase:
+            message = NO_PURCHASE % (user_id, user.first_name)
+            keyboard = NO_PURCHASE_KEYBOARD
         if expand:
             try:
                 if is_owner(message_id, user_id):
@@ -113,13 +122,15 @@ class MonthReport:
                         )
                     context.bot.answer_callback_query(update.callback_query.id)
                     is_private = not update.effective_chat.type == "private"
-                    message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+                    message = append_timeout_message(
+                        message, is_private, FIVE_MINUTES, is_private
+                    )
                     context.bot.edit_message_text(
                         text=message,
                         chat_id=chat_id,
                         disable_web_page_preview=True,
                         message_id=message_id,
-                        reply_markup=InlineKeyboardMarkup(keyboard),
+                        reply_markup=keyboard,
                         parse_mode="HTML",
                     )
                 else:
@@ -136,27 +147,27 @@ class MonthReport:
                 self.sender.delete_message(context, chat_id, message_id)
                 return
         add_message(message_id, user_id)
-        is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         if update.effective_message.chat.type == "private":
+            is_private = not update.effective_chat.type == "private"
+            message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
             self.sender.send_and_edit(
                 update,
                 context,
                 chat_id,
                 message,
                 back_to_the_start,
-                InlineKeyboardMarkup(keyboard),
+                keyboard,
                 timeout=FIVE_MINUTES,
             )
             return
-
+        
         self.sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,
             context,
             chat_id,
             message,
-            InlineKeyboardMarkup(keyboard),
+            keyboard,
             timeout=FIVE_MINUTES,
         )
 
@@ -331,13 +342,17 @@ class MonthReport:
         keyboard = build_keyboard(
             self.month, self.current_month, self.year, self.current_year
         )
+        keyboard = InlineKeyboardMarkup(keyboard)
         is_private = not update.effective_chat.type == "private"
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
         message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
             disable_web_page_preview=True,
             message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
+            reply_markup=keyboard,
             parse_mode="HTML",
         )
