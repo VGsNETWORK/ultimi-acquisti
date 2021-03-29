@@ -2,6 +2,7 @@
 
 """ File to show the sum of all the purchases in a month """
 
+from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from root.contants.messages import (
@@ -12,12 +13,12 @@ from root.contants.messages import (
     MONTH_PREVIOUS_PURCHASES_NONE,
     MONTH_PURCHASES_NONE,
     MONTH_USER_PURCHASES_NONE,
-    MONTH_PREVIOUS_PURCHASES_SAME,
+    MONTH_PREVIOUS_PURCHASES_SAME, NO_PURCHASE,
     NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
-    retrieve_sum_for_current_month,
+    get_last_purchase, retrieve_sum_for_current_month,
     retrieve_sum_for_month,
 )
 from root.util.util import (
@@ -129,7 +130,13 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     keyboard = [
         [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
     ]
+    keyboard = InlineKeyboardMarkup(keyboard)
     add_message(message_id, user_id)
+    purchase = get_last_purchase(user.id)
+    if not purchase:
+        expand = True
+        message = NO_PURCHASE % (user.id, user.first_name)
+        keyboard = NO_PURCHASE_KEYBOARD
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,
@@ -137,7 +144,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
             chat_id,
             message,
             back_to_the_start,
-            InlineKeyboardMarkup(keyboard),
+            keyboard,
             timeout=LONG_SERVICE_TIMEOUT,
         )
         return
@@ -148,6 +155,6 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         context,
         chat_id,
         message,
-        reply_markup=InlineKeyboardMarkup(keyboard) if expand or self_quote else None,
+        reply_markup=keyboard if expand or self_quote else None,
         timeout=LONG_SERVICE_TIMEOUT,
     )
