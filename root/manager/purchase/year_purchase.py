@@ -22,7 +22,7 @@ from root.helper.purchase_helper import (
     retrieve_sum_for_year,
 )
 from root.util.util import (
-    get_current_year,
+    append_timeout_message, get_current_year,
     is_group_allowed,
     format_price,
     create_button,
@@ -128,10 +128,12 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
             )
     add_message(message_id, user_id)
     purchase = get_last_purchase(user.id)
+    is_private = not update.effective_chat.type == "private"
     if not purchase:
         expand = True
         message = NO_PURCHASE % (user.id, user.first_name)
         keyboard = NO_PURCHASE_KEYBOARD
+    message = append_timeout_message(message, is_private, LONG_SERVICE_TIMEOUT, is_private)
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,

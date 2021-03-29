@@ -7,7 +7,7 @@ from telegram import Update, Message
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 import root.util.logger as logger
-from root.util.util import is_group_allowed
+from root.util.util import append_timeout_message, is_group_allowed
 from root.model.purchase import Purchase
 from root.helper.purchase_helper import get_last_purchase
 from root.helper.user_helper import user_exists, create_user
@@ -70,6 +70,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
         user_id = ruser.id
         first_name = ruser.first_name
     purchase = get_last_purchase(user_id)
+    is_private = not update.effective_chat.type == "private"
     if purchase:
         purchase_chat_id = str(purchase.chat_id).replace("-100", "")
         date = purchase.creation_date
@@ -93,6 +94,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 purchase.message_id,
             )
         try:
+            message = append_timeout_message(message, is_private, TWO_MINUTES, is_private)
             sender.send_and_delete(
                 update.effective_message.message_id,
                 update.effective_user.id,
@@ -124,6 +126,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             )
     else:
         message = NO_PURCHASE % (user_id, first_name)
+        message = append_timeout_message(message, is_private, ONE_MINUTE, is_private)
         if update.effective_message.chat.type == "private":
             sender.send_and_edit(
                 update,

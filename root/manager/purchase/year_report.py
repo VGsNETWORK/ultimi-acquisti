@@ -123,6 +123,12 @@ class YearReport:
                 self.sender.delete_message(context, chat_id, message_id)
                 return
         add_message(message_id, user_id)
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
+            keyboard = NO_PURCHASE_KEYBOARD
+        is_private = not update.effective_chat.type == "private"
+        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
                 update,
