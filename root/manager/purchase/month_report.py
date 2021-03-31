@@ -7,6 +7,7 @@ from datetime import datetime
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from typing import List
 from dateutil import tz
+import urllib
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.redis_message import is_owner
@@ -224,6 +225,9 @@ class MonthReport:
                 )
                 if purchase.description:
                     creation_date = purchase.description
+                    creation_date = creation_date.replace("<", "&lt;").replace(
+                        ">", "&gt;"
+                    )
                     creation_date = (
                         f"{creation_date[:20]}..."
                         if len(creation_date) > 20

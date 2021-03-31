@@ -149,7 +149,7 @@ PURCHASE_PRICE_HINT = "\n💲  Puoi aggiungere un <b>prezzo</b> al tuo acquisto 
 
 PURCHASE_TITLE_HINT = (
     "\n🔠  Puoi aggiungere un <b>titolo</b> al tuo acquisto includendo"
-    " del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b>/reportmensile</b>."
+    f' del testo tra <code>%...%</code>. Potrai visualizzarlo nel <b><a href="t.me/{BOT_NAME}?start=monthly_report">/reportmensile</a></b>.'
 )
 
 PURCHASE_EMPTY_TITLE_HINT = (

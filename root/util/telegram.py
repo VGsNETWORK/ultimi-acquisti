@@ -140,6 +140,7 @@ class TelegramSender:
             reply_markup=reply_markup,
             parse_mode=parse_mode,
             disable_notification=True,
+            disable_web_page_preview=True,
         )
         if create_redis:
             add_message(message.message_id, user_id, False)

@@ -303,6 +303,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     text=message,
                     reply_markup=keyboard,
                     parse_mode="HTML",
+                    disable_web_page_preview=True,
                 )
         else:
             context.bot.answer_callback_query(
