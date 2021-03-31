@@ -12,7 +12,8 @@ from telegram.ext import CallbackContext
 from root.helper.redis_message import is_owner
 from root.model.purchase import Purchase
 from root.contants.messages import (
-    MONTH_PURCHASE_REPORT, NO_PURCHASE,
+    MONTH_PURCHASE_REPORT,
+    NO_PURCHASE,
     REPORT_PURCHASE_TOTAL,
     NO_MONTH_PURCHASE,
     PURCHASE_REPORT_TEMPLATE,
@@ -21,7 +22,8 @@ from root.contants.messages import (
     MONTH_REPORT_FUNNY_APPEND,
 )
 from root.helper.purchase_helper import (
-    get_last_purchase, retrieve_month_purchases_for_user,
+    get_last_purchase,
+    retrieve_month_purchases_for_user,
     retrieve_sum_for_month,
 )
 from root.helper.process_helper import restart_process
@@ -149,7 +151,9 @@ class MonthReport:
         add_message(message_id, user_id)
         if update.effective_message.chat.type == "private":
             is_private = not update.effective_chat.type == "private"
-            message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+            message = append_timeout_message(
+                message, is_private, FIVE_MINUTES, is_private
+            )
             self.sender.send_and_edit(
                 update,
                 context,
@@ -160,7 +164,7 @@ class MonthReport:
                 timeout=FIVE_MINUTES,
             )
             return
-        
+
         self.sender.send_and_delete(
             update.effective_message.message_id,
             update.effective_user.id,

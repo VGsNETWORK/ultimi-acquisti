@@ -155,7 +155,7 @@ def append_commands(update: Update, context: CallbackContext):
         [
             [
                 create_button(
-                    "🔺  Nascondi i comandi  🔺",
+                    "🔺     Nascondi i comandi     🔺",
                     "start_hide_commands",
                     "start_hide_commands",
                 )
@@ -256,7 +256,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
             [
                 [
                     create_button(
-                        "🔻  Mostra i comandi  🔻",
+                        "🔻     Mostra i comandi     🔻",
                         "start_show_commands",
                         "start_show_commands",
                     )

@@ -13,16 +13,19 @@ from root.contants.messages import (
     MONTH_PREVIOUS_PURCHASES_NONE,
     MONTH_PURCHASES_NONE,
     MONTH_USER_PURCHASES_NONE,
-    MONTH_PREVIOUS_PURCHASES_SAME, NO_PURCHASE,
+    MONTH_PREVIOUS_PURCHASES_SAME,
+    NO_PURCHASE,
     NO_QUOTE_BOT,
 )
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
-    get_last_purchase, retrieve_sum_for_current_month,
+    get_last_purchase,
+    retrieve_sum_for_current_month,
     retrieve_sum_for_month,
 )
 from root.util.util import (
-    append_timeout_message, get_current_month,
+    append_timeout_message,
+    get_current_month,
     get_current_year,
     is_group_allowed,
     format_price,
@@ -138,7 +141,9 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         expand = True
         message = NO_PURCHASE % (user.id, user.first_name)
         keyboard = NO_PURCHASE_KEYBOARD
-    message = append_timeout_message(message, is_private, LONG_SERVICE_TIMEOUT, is_private)
+    message = append_timeout_message(
+        message, is_private, LONG_SERVICE_TIMEOUT, is_private
+    )
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,

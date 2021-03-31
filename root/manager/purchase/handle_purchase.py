@@ -5,10 +5,14 @@
 import random
 import re
 from datetime import datetime
+from root.contants.keyboard import (
+    NEW_PURCHASE_LINK,
+    NO_PURCHASE_KEYBOARD,
+    send_command_to_group_keyboard,
+)
 from root.model.purchase import Purchase
 
-from pyrogram.types.bots_and_keyboards import reply_keyboard_markup
-from root.helper.redis_message import add_message, is_owner
+from root.helper.redis_message import is_owner
 from pyrogram import Client
 from pyrogram.client import User
 from pyrogram.types import Message
@@ -21,8 +25,7 @@ from root.contants.messages import (
     CANNOT_MODIFY_OTHERS_SETTINGS,
     MESSAGE_DELETION_FUNNY_APPEND,
     MESSAGE_DELETION_TIMEOUT,
-    NOT_MESSAGE_OWNER,
-    ONLY_GROUP,
+    ONLY_GROUP_NO_QUOTE,
     PURCHASE_ADDED,
     PURCHASE_DATE_ERROR,
     PURCHASE_MODIFIED,
@@ -47,7 +50,7 @@ from root.util.util import (
     retrieve_key,
     ttm,
 )
-from root.contants.message_timeout import TWO_MINUTES
+from root.contants.message_timeout import ONE_MINUTE, TWO_MINUTES
 from root.model.user import User as UserModel
 
 sender = TelegramSender()
@@ -100,7 +103,9 @@ def handle_purchase(client: Client, message: Message) -> None:
         date = None
     chat_id = message.chat.id
     if message.chat.type == "private":
-        client.send_message(chat_id, text=ONLY_GROUP, parse_mode="HTML")
+        message = ONLY_GROUP_NO_QUOTE % "#ultimiacquisti"
+        keyboard = send_command_to_group_keyboard(NEW_PURCHASE_LINK, custom=True)
+        sender.send_and_deproto(client, chat_id, message, keyboard, timeout=ONE_MINUTE)
         return
     if not is_group_allowed(chat_id):
         return

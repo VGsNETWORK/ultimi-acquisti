@@ -12,7 +12,6 @@ from root.model.purchase import Purchase
 from root.helper.purchase_helper import get_last_purchase
 from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import (
-    ONLY_GROUP,
     LAST_PURCHASE,
     NO_PURCHASE,
     NO_QUOTE_BOT,
@@ -94,7 +93,9 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 purchase.message_id,
             )
         try:
-            message = append_timeout_message(message, is_private, TWO_MINUTES, is_private)
+            message = append_timeout_message(
+                message, is_private, TWO_MINUTES, is_private
+            )
             sender.send_and_delete(
                 update.effective_message.message_id,
                 update.effective_user.id,

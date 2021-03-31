@@ -4,6 +4,7 @@
 
 import random
 from datetime import datetime
+from root.contants.keyboard import send_command_to_group_keyboard
 from pyrogram.types.user_and_chats.chat_member import ChatMember
 from telegram.user import User
 from root.model.purchase import Purchase
@@ -18,6 +19,7 @@ from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
 from root.contants.messages import (
     CANCEL_PURCHASE_ERROR,
+    ONLY_GROUP_QUOTE_SELF_PURCHASE,
     PURCHASES_DELETED,
     PURCHASES_DELETED_APPEND,
     PURCHASE_DELETED,
@@ -28,7 +30,11 @@ from root.contants.messages import (
     NOT_A_PURCHASE,
 )
 from root.util.telegram import TelegramSender
-from root.contants.message_timeout import SERVICE_TIMEOUT, LONG_SERVICE_TIMEOUT
+from root.contants.message_timeout import (
+    ONE_MINUTE,
+    SERVICE_TIMEOUT,
+    LONG_SERVICE_TIMEOUT,
+)
 from root.util.util import create_button, retrieve_key
 import root.util.logger as logger
 
@@ -43,6 +49,10 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
+    command: str = message.text.split(" ")[0]
+    command = command.split("@")[0]
+    keyboard = send_command_to_group_keyboard(command)
+    command = command.replace("/", "")
     if not sender.check_command(message):
         return
     sender.delete_if_private(context, message)
@@ -59,8 +69,9 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
             update.effective_user.id,
             context,
             chat_id,
-            ONLY_GROUP,
-            timeout=SERVICE_TIMEOUT,
+            ONLY_GROUP_QUOTE_SELF_PURCHASE % command,
+            timeout=ONE_MINUTE,
+            reply_markup=keyboard,
         )
         return
     if not chat_type == "private":
@@ -124,7 +135,8 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         purchase = purchase_helper.find_by_message_id(message_id)
         if purchase.user_id == user_id:
             purchase: Purchase = purchase_helper.find_by_message_id_and_chat_id(
-                message_id, message.chat.id)
+                message_id, message.chat.id
+            )
             title = f"{purchase.description}" if purchase.description else "acquisto"
             title = title if title != "<vuoto>" else "acquisto"
             date: datetime = purchase.creation_date

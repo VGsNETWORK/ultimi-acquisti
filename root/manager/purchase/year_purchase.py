@@ -6,7 +6,8 @@ from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from telegram import Update, Message, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 from root.contants.messages import (
-    NO_PURCHASE, YEAR_USER_PURCHASES,
+    NO_PURCHASE,
+    YEAR_USER_PURCHASES,
     YEAR_PURCHASES,
     YEAR_PREVIOUS_PURCHASES_HIGHER,
     YEAR_PREVIOUS_PURCHASES_LOWER,
@@ -18,11 +19,13 @@ from root.contants.messages import (
 )
 from root.helper.user_helper import create_user, user_exists
 from root.helper.purchase_helper import (
-    get_last_purchase, retrieve_sum_for_current_year,
+    get_last_purchase,
+    retrieve_sum_for_current_year,
     retrieve_sum_for_year,
 )
 from root.util.util import (
-    append_timeout_message, get_current_year,
+    append_timeout_message,
+    get_current_year,
     is_group_allowed,
     format_price,
     create_button,
@@ -133,7 +136,9 @@ def year_purchase(update: Update, context: CallbackContext) -> None:
         expand = True
         message = NO_PURCHASE % (user.id, user.first_name)
         keyboard = NO_PURCHASE_KEYBOARD
-    message = append_timeout_message(message, is_private, LONG_SERVICE_TIMEOUT, is_private)
+    message = append_timeout_message(
+        message, is_private, LONG_SERVICE_TIMEOUT, is_private
+    )
     if update.effective_message.chat.type == "private":
         sender.send_and_edit(
             update,

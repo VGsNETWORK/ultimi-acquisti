@@ -166,7 +166,22 @@ PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 
-ONLY_GROUP = "❌  Questa funzionalità è disponibile solo all'interno di un gruppo."
+ONLY_GROUP = (
+    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
+    " <b>quotare prima il messaggio di un utente</b>!"
+)
+
+ONLY_GROUP_NO_QUOTE = (
+    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u>!"
+)
+
+ONLY_GROUP_QUOTE_SELF_PURCHASE = (
+    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
+    " <b>quotare prima un tuo <u>acquisto</u></b>!"
+)
 
 CANCEL_PURCHASE_ERROR = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
@@ -280,15 +295,15 @@ COMPARE_NO_PURCHASE = "Nessuno dei due ha effettuato acquisti finora... 😡"
 
 COMPARE_WRONG_YEAR = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    " l'anno indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n\n"
-    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    " l'anno indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n"
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando,"
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
 COMPARE_WRONG_MONTH = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
-    " il mese indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n\n"
-    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    " il mese indicato per la funzione <code>%s</code> (<b>%s</b>) supera quello corrente!\n\n"
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando,"
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
@@ -304,15 +319,15 @@ COMPARE_YEAR_NOT_VALID = (
 )
 
 TOO_MANY_ARGUMENTS = (
-    '❌  <a href="tg://user?id=%s">%s</a>, hai inserito troppi argomenti per la funzione <code>%s</code>.\n\n\n'
-    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    '❌  <a href="tg://user?id=%s">%s</a>, hai inserito troppi argomenti per la funzione <code>%s</code>.\n\n'
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando,"
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
 COMMAND_FORMAT_ERROR = (
     '❌  <a href="tg://user?id=%s">%s</a>, "<b>%s</b>"'
-    " non rispetta il formato corretto per la funzione <code>%s</code>.\n\n\n"
-    "<i>Per maggiori informazioni sull'utilizzo di questo comando,"
+    " non rispetta il formato corretto per la funzione <code>%s</code>.\n\n"
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando,"
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 

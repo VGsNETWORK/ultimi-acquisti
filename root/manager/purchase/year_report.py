@@ -11,7 +11,8 @@ from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
 from root.helper.redis_message import is_owner
 from root.contants.messages import (
-    NO_PURCHASE, YEAR_PURCHASE_REPORT,
+    NO_PURCHASE,
+    YEAR_PURCHASE_REPORT,
     REPORT_PURCHASE_TOTAL,
     NO_YEAR_PURCHASE,
     YEAR_PURCHASE_TEMPLATE,
@@ -20,7 +21,11 @@ from root.contants.messages import (
 )
 from root.model.purchase import Purchase
 from root.helper.process_helper import restart_process
-from root.helper.purchase_helper import get_last_purchase, retrieve_sum_for_month, retrieve_sum_for_year
+from root.helper.purchase_helper import (
+    get_last_purchase,
+    retrieve_sum_for_month,
+    retrieve_sum_for_year,
+)
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (

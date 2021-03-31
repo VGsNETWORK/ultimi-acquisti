@@ -120,6 +120,41 @@ class BotManager:
         """Add handlers for the various operations"""
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                self.month_report.month_report,
+                Filters.regex("monthly_report"),
+            )
+        )
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                self.year_report.year_report,
+                Filters.regex("yearly_report"),
+            )
+        )
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                last_purchase,
+                Filters.regex("last_purchase"),
+            )
+        )
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                month_purchase,
+                Filters.regex("monthly_expense"),
+            )
+        )
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                year_purchase,
+                Filters.regex("yearly_expense"),
+            )
+        )
         self.disp.add_handler(CommandHandler("start", handle_start))
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))

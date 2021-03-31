@@ -5,6 +5,7 @@
 import re
 from html import escape
 from datetime import datetime
+from root.contants.keyboard import send_command_to_group_keyboard
 from telegram import Update, Message
 from telegram.ext import CallbackContext
 from root.helper.user_helper import create_user, user_exists
@@ -27,9 +28,9 @@ from root.contants.messages import (
     COMPARE_TIE,
     COMPARE_YOU_WON,
     YEAR_COMPARE_PRICE,
+    ONLY_GROUP,
     NO_QUOTE_YOURSELF,
     NO_QUOTE_BOT,
-    ONLY_GROUP,
     NO_QUOTE_FOUND,
     COMPARE_WRONG_MONTH,
     COMPARE_WRONG_YEAR,
@@ -99,8 +100,16 @@ def check_args(update: Update, context: CallbackContext, month: bool) -> bool:
     return True
 
 
-def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
+def check_quote_and_users(
+    update: Update, context: CallbackContext, month: bool
+) -> bool:
     message: Message = update.message if update.message else update.edited_message
+    command: str = message.text.split(" ")[0]
+    command = command.split("@")[0]
+    command_url = command
+    args = "%20%3Cmese%3E%20%3Canno%3E" if month else "%20%3Canno%3E"
+    keyboard = send_command_to_group_keyboard(command_url, args)
+    command: str = command.replace("/", "")
     if not sender.check_command(message):
         return
     user = message.from_user
@@ -112,8 +121,9 @@ def check_quote_and_users(update: Update, context: CallbackContext) -> bool:
             update.effective_user.id,
             context,
             chat_id,
-            ONLY_GROUP,
-            timeout=SERVICE_TIMEOUT,
+            ONLY_GROUP % command,
+            timeout=ONE_MINUTE,
+            reply_markup=keyboard,
         )
         return False
     if not message.reply_to_message:
@@ -463,7 +473,7 @@ def create_command_append(command: str, month: bool, month_alternative: bool = F
 
 
 def compare(update: Update, context: CallbackContext, month: bool):
-    if not check_quote_and_users(update, context):
+    if not check_quote_and_users(update, context, month):
         return
     if not check_args(update, context, month):
         return
