@@ -25,7 +25,7 @@ from root.manager.purchase.year_purchase import year_purchase
 from root.manager.purchase.last import last_purchase
 from root.manager.purchase.delete import delete_purchase
 import root.util.logger as logger
-from root.manager.help import help_navigate, help_init
+from root.manager.help import bot_help, help_navigate, help_init
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
 from root.manager.start import handle_start, help_end, append_commands, remove_commands
@@ -120,6 +120,13 @@ class BotManager:
         """Add handlers for the various operations"""
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                bot_help,
+                Filters.regex("how_to"),
+            )
+        )
         self.disp.add_handler(
             CommandHandler(
                 "start",

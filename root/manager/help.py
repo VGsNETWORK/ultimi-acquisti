@@ -2,17 +2,20 @@
 
 """ Docstring """
 
+from logging import Logger
+from root.manager.start import back_to_the_start
 from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
 from root.util.util import append_timeout_message, create_button, retrieve_key
+import root.util.logger as logger
 from root.contants.messages import (
     HOW_TO_PAGE_ONE,
     HOW_TO_PAGE_TWO,
     HOW_TO_PAGE_THREE,
     HOW_TO_DEEP_LINK,
 )
-from root.helper.process_helper import restart_process
+from root.helper.process_helper import create_process, restart_process, stop_process
 from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
 
 sender = TelegramSender()
@@ -99,9 +102,19 @@ def bot_help(
         return
     message, keyboard = build_keyboard(page)
     if edit:
-        restart_process(message_id, FIVE_MINUTES)
         is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+        if update.effective_chat.type == "private":
+            print("is_private")
+            stop_process(message_id)
+            create_process(
+                name_prefix=message_id,
+                target=back_to_the_start,
+                args=(update, context, chat_id, message_id, FIVE_MINUTES),
+            )
+            context.bot.answer_callback_query(update.callback_query.id)
+            message = append_timeout_message(
+                message, is_private, FIVE_MINUTES, is_private
+            )
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -113,12 +126,12 @@ def bot_help(
     else:
         is_private = not update.effective_chat.type == "private"
         # message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
-        sender.send_and_delete(
-            update.effective_message.message_id,
-            update.effective_user.id,
+        sender.send_and_edit(
+            update,
             context,
             chat_id,
             message,
+            back_to_the_start,
             InlineKeyboardMarkup(keyboard),
             timeout=FIVE_MINUTES,
         )

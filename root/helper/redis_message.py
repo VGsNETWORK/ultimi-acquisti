@@ -2,11 +2,27 @@
 
 """ File to handle messages to delete and who owns them """
 
+from os import environ
 import redis
 import root.util.logger as logger
 
+
+def is_develop() -> bool:
+    """Chek if the profile is set to develop
+
+    Returns:
+        bool: If the profile is set to develop
+    """
+    try:
+        profile = environ["PROFILE"]
+        return profile == "develop"
+    except KeyError:
+        return False
+
+
 MESSAGE_PREFIX = "ultimi_acquisti"
-red = redis.Redis(db=1)
+db_index: int = 15 if is_develop() else 1
+red = redis.Redis(db=db_index)
 
 
 def is_owner(message_id: int, user_id: int) -> bool:

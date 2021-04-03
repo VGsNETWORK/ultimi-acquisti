@@ -4,6 +4,7 @@
 
 import logging
 import configparser
+from os import environ
 
 
 CONFIG = configparser.ConfigParser()
@@ -48,3 +49,7 @@ def debug(message: str):
         message ([str]): The message to log
     """
     logging.debug(message)
+
+
+def exception(exception: Exception):
+    logging.exception(exception)

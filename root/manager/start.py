@@ -2,14 +2,16 @@
 
 """ File to handle the start command """
 
+from os import environ
 import re
+from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
 from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
+from telegram.bot import Bot
 from telegram.ext import CallbackContext
-from root.manager.help import bot_help
 from root.util.telegram import TelegramSender
-from root.util.util import create_button, retrieve_key
+from root.util.util import create_button, format_error, retrieve_key
 from root.contants.messages import (
     START_COMMAND,
     START_COMMANDS_LIST,
@@ -35,8 +37,6 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         params (str): the params passed to the /start command
     """
     params = params.rstrip().lstrip()
-    if params == "how_to":
-        bot_help(update, context)
     if params == "command_list":
         append_commands(update, context)
     if params == "start":
@@ -64,6 +64,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     bot_name: str = retrieve_key("BOT_NAME")
     bot_name = f"/start@{bot_name}"
     message: Message = update.message if update.message else update.edited_message
+    logger.info("private message with message_id: %s" % message.message_id)
     if not bot_name in message.text and message.chat.type != "private":
         return
     params = re.sub(f"{bot_name}|/start", "", message.text)
@@ -73,14 +74,14 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         return
     sender.delete_if_private(update, message)
     chat_id = message.chat.id
-    add_message(update.effective_message.message_id, update.effective_user.id)
     if message.chat.type == "private":
-        context.bot.send_message(
+        message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
             parse_mode="HTML",
         )
+        add_message(message.message_id, update.effective_user.id, False)
     else:
         sender.send_and_delete(
             message.message_id,
@@ -105,6 +106,7 @@ def help_end(update: Update, context: CallbackContext):
     callback: CallbackQuery = update.callback_query
     message: Message = callback.message
     message_id = message.message_id
+    stop_process(message_id)
     context.bot.edit_message_text(
         text=build_message(update.effective_user, message),
         chat_id=message.chat.id,
@@ -128,15 +130,21 @@ def conversation_main_menu(
     message: Message = update.effective_message
     logger.info("retrieving the message_id")
     message_id = message_id if message_id else message.message_id
-    logger.info(f"Message is is {message_id}, editing message")
-    context.bot.edit_message_text(
-        text=build_message(update.effective_user, message),
-        chat_id=message.chat.id,
-        disable_web_page_preview=True,
-        message_id=message_id,
-        reply_markup=build_keyboard(message),
-        parse_mode="HTML",
-    )
+    chat_id = message.chat.id
+    logger.info(f"Message is {message_id}, editing message on chat {chat_id}")
+    try:
+        bot = Bot(environ["TOKEN"])
+        bot.edit_message_text(
+            text=build_message(update.effective_user, message),
+            chat_id=chat_id,
+            disable_web_page_preview=True,
+            reply_markup=build_keyboard(message),
+            message_id=message_id,
+            parse_mode="HTML",
+            timeout=10,
+        )
+    except Exception as e:
+        logger.exception(e)
 
 
 def append_commands(update: Update, context: CallbackContext):

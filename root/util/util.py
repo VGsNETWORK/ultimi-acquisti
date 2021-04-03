@@ -5,7 +5,11 @@
 from random import randint
 from re import sub
 from base64 import b64decode
+import sys
+from types import TracebackType
+from xml.sax.saxutils import escape
 from time import time
+from os.path import split
 from uuid import uuid4
 import ast
 import random
@@ -204,6 +208,26 @@ def is_develop() -> bool:
         return profile == "develop"
     except KeyError:
         return False
+
+
+def escape_value(value: object):
+    """ convert any object to a str and escape it """
+    return escape(str(value))
+
+
+def format_error(error: Exception):
+    """ format an exception showing the type, filename, line number and message """
+    # extreact the information about the exception
+    exc_type, _, exc_tb = sys.exc_info()
+    # extreact the filename where the exception was raised
+    file_name = split(exc_tb.tb_frame.f_code.co_filename)[1]
+    # return a formatted message with the exception info
+    return (
+        f"<b>Exception Type:</b>  <code>{escape_value(exc_type)}</code>\n"
+        f"<b>File Name:</b>  <code>{escape_value(file_name)}</code>\n"
+        f"<b>Line Number:</b>  <code>{escape_value(exc_tb.tb_lineno)}</code>\n"
+        f"<b>Message:</b>  <code>{escape_value(error)}</code>"
+    )
 
 
 def create_button(

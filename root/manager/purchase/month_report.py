@@ -4,6 +4,7 @@
 
 from random import randint
 from datetime import datetime
+from time import time
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from typing import List
 from dateutil import tz
@@ -41,7 +42,7 @@ from root.util.util import (
 )
 from root.helper.keyboard.month_report import build_keyboard
 from root.helper.report import check_owner
-from root.contants.message_timeout import FIVE_MINUTES
+from root.contants.message_timeout import FIVE_MINUTES, ONE_MINUTE
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
 from root.helper.process_helper import create_process
@@ -112,9 +113,10 @@ class MonthReport:
         if not purchase:
             message = NO_PURCHASE % (user_id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
+        is_private = not update.effective_chat.type == "private"
         if expand:
             try:
-                if is_owner(message_id, user_id):
+                if is_private or is_owner(message_id, user_id):
                     logger.info("checking if the process is running to restart it")
                     if not restart_process(message_id, FIVE_MINUTES):
                         logger.info("Unable to restart process, recreating it")
@@ -124,9 +126,9 @@ class MonthReport:
                             args=(update, context, chat_id, message_id, FIVE_MINUTES),
                         )
                     context.bot.answer_callback_query(update.callback_query.id)
-                    is_private = not update.effective_chat.type == "private"
+                    timeout = FIVE_MINUTES if purchase else ONE_MINUTE
                     message = append_timeout_message(
-                        message, is_private, FIVE_MINUTES, is_private
+                        message, is_private, timeout, is_private
                     )
                     context.bot.edit_message_text(
                         text=message,
@@ -355,7 +357,8 @@ class MonthReport:
         purchase = get_last_purchase(user.id)
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
-        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+        timeout = FIVE_MINUTES if purchase else ONE_MINUTE
+        message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,

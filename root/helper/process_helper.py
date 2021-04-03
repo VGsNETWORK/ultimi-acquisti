@@ -32,7 +32,7 @@ def stop_process(key: str) -> None:
         key (str): The identifier of the process
     """
     key = str(key)
-    logger.info(f"restarting process with {key}")
+    logger.info(f"stopping process with {key}")
     process: Process = find_process(key)
     if not process:
         logger.warn(f"Unable to find the process with name {PROCESS_NAME % key}")

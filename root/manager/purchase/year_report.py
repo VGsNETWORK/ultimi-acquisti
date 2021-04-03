@@ -20,7 +20,7 @@ from root.contants.messages import (
     SESSION_ENDED,
 )
 from root.model.purchase import Purchase
-from root.helper.process_helper import restart_process
+from root.helper.process_helper import create_process, restart_process
 from root.helper.purchase_helper import (
     get_last_purchase,
     retrieve_sum_for_month,
@@ -36,7 +36,7 @@ from root.util.util import (
     is_number,
 )
 from root.helper.keyboard.year_report import build_keyboard
-from root.contants.message_timeout import THREE_MINUTES
+from root.contants.message_timeout import ONE_MINUTE, THREE_MINUTES
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
 
@@ -97,14 +97,21 @@ class YearReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
+        is_private = not update.effective_chat.type == "private"
         if expand:
             try:
-                if is_owner(message_id, user_id):
-                    restart_process(message_id, THREE_MINUTES)
+                if is_private or is_owner(message_id, user_id):
+                    if not restart_process(message_id, THREE_MINUTES):
+                        logger.info("Unable to restart process, recreating it")
+                        create_process(
+                            name_prefix=message_id,
+                            target=back_to_the_start,
+                            args=(update, context, chat_id, message_id, THREE_MINUTES),
+                        )
                     context.bot.answer_callback_query(update.callback_query.id)
-                    is_private = not update.effective_chat.type == "private"
+                    timeout = THREE_MINUTES if purchase else ONE_MINUTE
                     message = append_timeout_message(
-                        message, is_private, THREE_MINUTES, is_private
+                        message, is_private, timeout, is_private
                     )
                     context.bot.edit_message_text(
                         text=message,
@@ -121,7 +128,8 @@ class YearReport:
                         show_alert=True,
                     )
                 return
-            except ValueError:
+            except ValueError as e:
+                logger.exception(e)
                 context.bot.answer_callback_query(
                     update.callback_query.id, text=SESSION_ENDED, show_alert=True
                 )
@@ -132,8 +140,8 @@ class YearReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
-        is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
+        timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        message = append_timeout_message(message, is_private, timeout, is_private)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
                 update,
@@ -256,7 +264,8 @@ class YearReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
-        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
+        timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -303,8 +312,9 @@ class YearReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
+        timeout = THREE_MINUTES if purchase else ONE_MINUTE
         is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, THREE_MINUTES, is_private)
+        message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
