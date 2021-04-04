@@ -4,6 +4,7 @@
 """ File with class to show the year report """
 
 from datetime import datetime
+from functools import total_ordering
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
@@ -23,6 +24,7 @@ from root.model.purchase import Purchase
 from root.helper.process_helper import create_process, restart_process
 from root.helper.purchase_helper import (
     get_last_purchase,
+    retrieve_month_purchases_for_user,
     retrieve_sum_for_month,
     retrieve_sum_for_year,
 )
@@ -205,20 +207,27 @@ class YearReport:
                 message = NO_YEAR_PURCHASE % (user_id, first_name, self.year)
             else:
                 for i in range(0, mrange):
+                    total_purchases = retrieve_month_purchases_for_user(
+                        user_id, i + 1, self.year
+                    )
+                    total_purchases = len(total_purchases)
                     price = purchases[i]
                     if price >= 0:
                         price = format_price(price)
                         month = get_month_string(i + 1, False)
+                        month = f"{month}"
                         if (
                             self.current_month == i + 1
                             and self.year == self.current_year
                         ):
-                            month = f"► {month}"
+                            month = f"► <i>{month}</i>"
                         spaces = " " * (spacer - len(price))
                         template = YEAR_PURCHASE_TEMPLATE % (
                             spaces,
                             price,
                             month,
+                            total_purchases,
+                            "o" if total_purchases == 1 else "i",
                         )
                         message = f"{message}\n{template}"
                 spaces = " " * (spacer - len(footer))

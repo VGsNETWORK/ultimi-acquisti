@@ -257,7 +257,9 @@ YEAR_PURCHASE_REPORT = (
     '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> hai avuto le seguenti spese:\n\n'
 )
 
-YEAR_PURCHASE_TEMPLATE = "<code>%s</code><code>%s €</code>             %s"
+YEAR_PURCHASE_TEMPLATE = (
+    "<code>%s</code><code>%s €</code>             %s   (%s acquist%s)"
+)
 
 PURCHASE_REPORT_TEMPLATE = (
     '<code>%s</code><code>%s €</code>             <a href="https://t.me/c/%s/%s">%s</a>'
