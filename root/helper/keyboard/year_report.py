@@ -2,7 +2,8 @@
 
 """ Function to create the keyboard of the year report """
 
-from root.util.util import create_button
+from root.util.util import create_button, get_month_string
+from datetime import datetime
 
 
 def build_keyboard(year: int, current_year: int):
@@ -12,6 +13,7 @@ def build_keyboard(year: int, current_year: int):
         year (int): the year selected
         current_year (int): the current year
     """
+    current_date = datetime.now()
     keyboards = []
     buttons = []
     do_nothing = "empty_button"
@@ -71,6 +73,10 @@ def build_keyboard(year: int, current_year: int):
     # ================ THIRD ROW REGARDING YEAR ================
     btext = f"Passa al report mensile di Gennaio {year}"
     bcall = f"expand_report_{year}"
+    buttons.append([[btext, bcall]])
+
+    btext = f"Passa al report mensile di {get_month_string(current_date.month, False)} {current_year}"
+    bcall = f"expand_report_current_{current_year}"
     buttons.append([[btext, bcall]])
 
     #  =============== FIRST ROW REGARDING CURRENT YEAR ====================
