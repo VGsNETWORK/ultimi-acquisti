@@ -37,6 +37,7 @@ from root.contants.messages import (
     PURCHASE_EMPTY_TITLE_HINT,
     SESSION_ENDED,
 )
+from root.helper.process_helper import create_process, restart_process
 from root.helper.purchase_helper import (
     convert_to_float,
     create_purchase,
@@ -246,6 +247,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
     message: Message = callback_query.message
     chat_id: int = message.chat.id
     message_id = message.message_id
+    restart_process(message_id, TWO_MINUTES)
     reply_message: Message = message.reply_to_message
     caption: str = (
         reply_message.caption if reply_message.caption else reply_message.text

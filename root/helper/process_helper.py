@@ -3,6 +3,7 @@
 """ File to handle background process created by the bot """
 
 from multiprocessing import active_children
+from re import A
 from root.model.cprocess import CProcess as Process
 import root.util.logger as logger
 
@@ -55,7 +56,9 @@ def restart_process(key: str, timeout: int = -1) -> bool:
         return False
     target = process.target
     args = process.args
-    args = args if timeout < 0 else (args[0], args[1], timeout)
+    logger.info(args)
+    # args = args if timeout < 0 else (args[0], args[1], timeout)
+    logger.info(args)
     process.terminate()
     process.shutdown()
     # process.kill()
