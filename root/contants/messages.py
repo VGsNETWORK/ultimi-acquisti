@@ -162,6 +162,8 @@ PURCHASE_DATE_HINT = (
     " specificando una <b>data</b> antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
 )
 
+PURCHASE_HINT_NO_HINT = "\n\n\n😉  Il tuo acquisto è completo. Niente male!"
+
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"

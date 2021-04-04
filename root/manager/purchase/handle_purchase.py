@@ -28,6 +28,7 @@ from root.contants.messages import (
     ONLY_GROUP_NO_QUOTE,
     PURCHASE_ADDED,
     PURCHASE_DATE_ERROR,
+    PURCHASE_HINT_NO_HINT,
     PURCHASE_MODIFIED,
     PURCHASE_PRICE_HINT,
     PURCHASE_TITLE_HINT,
@@ -209,6 +210,8 @@ def handle_purchase(client: Client, message: Message) -> None:
             if modelUser.show_purchase_tips:
                 if append_message:
                     append_message = f"{PURCHASE_HEADER_HINT}{append_message}"
+                else:
+                    append_message = PURCHASE_HINT_NO_HINT
                 message += append_message
         else:
             message = PURCHASE_DATE_ERROR % (
@@ -279,6 +282,8 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 if message:
                     logger.info("Adding setting the header hint")
                     message = f"{PURCHASE_HEADER_HINT}{message}"
+                else:
+                    message = PURCHASE_HINT_NO_HINT
                 context.bot.answer_callback_query(callback_query.id)
                 modelUser: UserModel = retrieve_user(user_id)
                 modelUser.show_purchase_tips = not modelUser.show_purchase_tips
