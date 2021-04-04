@@ -187,7 +187,7 @@ class YearReport:
         user_id = user.id
         first_name = user.first_name
         purchases = [
-            retrieve_sum_for_month(user_id, i, self.year) for i in range(1, 13)
+            retrieve_sum_for_month(user_id, i, self.year, True) for i in range(1, 13)
         ]
         if not purchases:
             message = NO_YEAR_PURCHASE % (user_id, first_name, self.year)
@@ -200,13 +200,13 @@ class YearReport:
             spacer.append(len(footer))
             spacer.sort()
             spacer = spacer[-1]
-            price_check = [purchases[i] for i in range(0, mrange) if purchases[i] > 0]
+            price_check = [purchases[i] for i in range(0, mrange) if purchases[i] >= 0]
             if len(price_check) == 0:
                 message = NO_YEAR_PURCHASE % (user_id, first_name, self.year)
             else:
                 for i in range(0, mrange):
                     price = purchases[i]
-                    if price > 0:
+                    if price >= 0:
                         price = format_price(price)
                         month = get_month_string(i + 1, False)
                         if (

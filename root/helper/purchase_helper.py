@@ -239,7 +239,9 @@ def retrieve_sum_for_current_month(user_id: int) -> float:
     return retrieve_sum_for_month(user_id, month)
 
 
-def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
+def retrieve_sum_for_month(
+    user_id: int, month: int, year: int = None, negative: bool = False
+) -> float:
     """How much the user has spent in a specific month and year
 
     Args:
@@ -257,7 +259,7 @@ def retrieve_sum_for_month(user_id: int, month: int, year: int = None) -> float:
     _, end = monthrange(year, month)
     start_date = datetime(year, month, 1)
     end_date = datetime(year, month, end, 23, 59, 59, 59)
-    return retrieve_sum_between_date(user_id, start_date, end_date)
+    return retrieve_sum_between_date(user_id, start_date, end_date, negative)
 
 
 def retrieve_sum_for_current_year(user_id: int) -> float:
@@ -320,7 +322,7 @@ def purchase_exists(message_id: int, chat_id: int) -> None:
 
 
 def retrieve_sum_between_date(
-    user_id: int, start_date: datetime, end_date: datetime
+    user_id: int, start_date: datetime, end_date: datetime, negative: bool = False
 ) -> float:
     """Retrieve the sum spent between two dates
 
@@ -341,4 +343,5 @@ def retrieve_sum_between_date(
         .filter(creation_date__gte=start_date)
         .aggregate(*pipeline)
     )
-    return 0.0 if len(res) == 0 else res[0]["total"]
+    value = -1.0 if negative else 0.0
+    return value if len(res) == 0 else res[0]["total"]
