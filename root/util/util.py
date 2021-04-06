@@ -98,11 +98,11 @@ long_text_month = {
 }
 
 
-def append_timeout_message(message: str, delete: bool, timeout: bool, show_joke: bool):
+def append_timeout_message(message: str, delete: bool, timeout: int, show_joke: bool):
     if delete:
         joke = ""
         if show_joke:
-            if random.choice(range(100)) > 70:
+            if random.choice(range(100)) > 87:
                 joke = random.choice(MESSAGE_DELETION_FUNNY_APPEND)
         message += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), joke)
     else:
@@ -111,17 +111,16 @@ def append_timeout_message(message: str, delete: bool, timeout: bool, show_joke:
 
 
 def ttm(timeout: int):
+    logger.info(f"parsing timeout {timeout}")
     seconds = timeout
     if timeout > 60:
         timeout = timeout // 60
         minute = "i" if timeout > 1 else "o"
-        while seconds > 60:
+        while seconds >= 60:
             seconds -= 60
         if not seconds > 0:
-            logger.info("no seconds")
             return "%s %s" % (timeout, "minut%s" % minute)
         else:
-            logger.info("we have the seconds")
             second = "i" if seconds > 1 else "o"
             return "%s %s e %s %s" % (
                 timeout,

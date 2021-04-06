@@ -23,11 +23,12 @@ from root.contants.messages import (
 
 
 def ttm(timeout: int):
+    logger.info(f"parsing timeout {timeout}")
     seconds = timeout
     if timeout > 60:
         timeout = timeout // 60
         minute = "i" if timeout > 1 else "o"
-        while seconds > 60:
+        while seconds >= 60:
             seconds -= 60
         if not seconds > 0:
             return "%s %s" % (timeout, "minut%s" % minute)
@@ -138,7 +139,7 @@ class TelegramSender:
             timeout (int, optional): [description]. Defaults to 360.
         """
         self._bot = Bot(environ["TOKEN"])
-        if random.choice(range(100)) > 70:
+        if random.choice(range(100)) > 87:
             text += MESSAGE_DELETION_TIMEOUT % (
                 ttm(timeout),
                 random.choice(MESSAGE_DELETION_FUNNY_APPEND),
@@ -212,7 +213,7 @@ class TelegramSender:
             parse_mode (str, optional): How to parse the message. Defaults to "HTML".
             timeout (int, optional): The timeout after the message will be deleted. Defaults to 360.
         """
-        if random.choice(range(100)) > 70:
+        if random.choice(range(100)) > 87:
             text += MESSAGE_DELETION_TIMEOUT % (
                 ttm(timeout),
                 random.choice(MESSAGE_DELETION_FUNNY_APPEND),

@@ -312,7 +312,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     message = purchase_service_message
                 modelUser.save()
                 keyboard = build_purchase_keyboard(modelUser)
-                if random.choice(range(100)) > 70:
+                if random.choice(range(100)) > 87:
                     message += MESSAGE_DELETION_TIMEOUT % (
                         ttm(ONE_MINUTE + append_timeout),
                         random.choice(MESSAGE_DELETION_FUNNY_APPEND),

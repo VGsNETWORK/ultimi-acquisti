@@ -111,7 +111,10 @@ class MonthReport:
         )
         keyboard = InlineKeyboardMarkup(keyboard)
         message = self.retrieve_purchase(user)
+        purchases = retrieve_month_purchases_for_user(user_id, self.month, self.year)
         purchase = get_last_purchase(user_id)
+        timeout = FIVE_MINUTES if purchase else ONE_MINUTE
+        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         if not purchase:
             message = NO_PURCHASE % (user_id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
@@ -120,15 +123,14 @@ class MonthReport:
             try:
                 if is_private or is_owner(message_id, user_id):
                     logger.info("checking if the process is running to restart it")
-                    if not restart_process(message_id, FIVE_MINUTES):
+                    if not restart_process(message_id, timeout):
                         logger.info("Unable to restart process, recreating it")
                         create_process(
                             name_prefix=message_id,
                             target=back_to_the_start,
-                            args=(update, context, chat_id, message_id, FIVE_MINUTES),
+                            args=(update, context, chat_id, message_id, timeout),
                         )
                     context.bot.answer_callback_query(update.callback_query.id)
-                    timeout = FIVE_MINUTES if purchase else ONE_MINUTE
                     message = append_timeout_message(
                         message, is_private, timeout, is_private
                     )
@@ -156,9 +158,7 @@ class MonthReport:
         add_message(message_id, user_id)
         if update.effective_message.chat.type == "private":
             is_private = not update.effective_chat.type == "private"
-            message = append_timeout_message(
-                message, is_private, FIVE_MINUTES, is_private
-            )
+            message = append_timeout_message(message, is_private, timeout, is_private)
             self.sender.send_and_edit(
                 update,
                 context,
@@ -166,7 +166,7 @@ class MonthReport:
                 message,
                 back_to_the_start,
                 keyboard,
-                timeout=FIVE_MINUTES,
+                timeout=timeout,
             )
             return
 
@@ -177,7 +177,7 @@ class MonthReport:
             chat_id,
             message,
             keyboard,
-            timeout=FIVE_MINUTES,
+            timeout=timeout,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
@@ -378,6 +378,8 @@ class MonthReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
         timeout = FIVE_MINUTES if purchase else ONE_MINUTE
+        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
+        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,
