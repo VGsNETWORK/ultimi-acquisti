@@ -58,6 +58,9 @@ def restart_process(key: str, timeout: int = -1) -> bool:
     args = process.args
     logger.info(args)
     # args = args if timeout < 0 else (args[0], args[1], timeout)
+    args = list(args)
+    args[-1] = timeout
+    args = tuple(args)
     logger.info(args)
     process.terminate()
     process.shutdown()

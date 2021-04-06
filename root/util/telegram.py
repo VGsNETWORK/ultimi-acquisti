@@ -23,10 +23,22 @@ from root.contants.messages import (
 
 
 def ttm(timeout: int):
+    seconds = timeout
     if timeout > 60:
         timeout = timeout // 60
         minute = "i" if timeout > 1 else "o"
-        return "%s %s" % (timeout, "minut%s" % minute)
+        while seconds > 60:
+            seconds -= 60
+        if not seconds > 0:
+            return "%s %s" % (timeout, "minut%s" % minute)
+        else:
+            second = "i" if seconds > 1 else "o"
+            return "%s %s e %s %s" % (
+                timeout,
+                "minut%s" % minute,
+                seconds,
+                "second%s" % second,
+            )
     else:
         return "%s %s" % (timeout, "secondi")
 

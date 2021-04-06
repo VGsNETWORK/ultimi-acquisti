@@ -203,6 +203,12 @@ def handle_purchase(client: Client, message: Message) -> None:
     else:
         append_message[1] = PURCHASE_DATE_HINT
     modelUser: UserModel = retrieve_user(user_id)
+    if modelUser.show_purchase_tips:
+        # extract the elements that are not empty
+        more_time = [m for m in append_message if m]
+        append_timeout = 30 * len(more_time)
+    else:
+        append_timeout = 0
     if not result["error"]:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
@@ -222,6 +228,7 @@ def handle_purchase(client: Client, message: Message) -> None:
     else:
         message = result["error"]
     keyboard = build_purchase_keyboard(modelUser)
+    logger.info(ONE_MINUTE + append_timeout)
     sender.send_and_deproto(
         client,
         chat_id,
@@ -230,7 +237,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         message_id,
         create_redis=True,
         user_id=user_id,
-        timeout=TWO_MINUTES,
+        timeout=ONE_MINUTE + append_timeout,
     )
 
 
@@ -243,11 +250,11 @@ def build_purchase_keyboard(user: UserModel):
 
 
 def toggle_purchase_tips(update: Update, context: CallbackContext):
+    total_tips = 0
     callback_query: CallbackQuery = update.callback_query
     message: Message = callback_query.message
     chat_id: int = message.chat.id
     message_id = message.message_id
-    restart_process(message_id, TWO_MINUTES)
     reply_message: Message = message.reply_to_message
     caption: str = (
         reply_message.caption if reply_message.caption else reply_message.text
@@ -267,9 +274,11 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 if not purchase.description:
                     logger.info("Adding title hint")
                     message = PURCHASE_TITLE_HINT
+                    total_tips += 1
                 if not purchase.price:
                     logger.info("Adding price hint")
                     message += PURCHASE_PRICE_HINT
+                    total_tips += 1
                 caption = caption.replace("\n", " ")
                 caption = caption.split(" ")
                 caption.remove("#ultimiacquisti")
@@ -281,6 +290,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 if not mdate:
                     logger.info("Adding date hint")
                     message += PURCHASE_DATE_HINT
+                    total_tips += 1
                 if message:
                     logger.info("Adding setting the header hint")
                     message = f"{PURCHASE_HEADER_HINT}{message}"
@@ -289,6 +299,11 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 context.bot.answer_callback_query(callback_query.id)
                 modelUser: UserModel = retrieve_user(user_id)
                 modelUser.show_purchase_tips = not modelUser.show_purchase_tips
+                if modelUser.show_purchase_tips:
+                    append_timeout = 30 * total_tips
+                else:
+                    append_timeout = 0
+                restart_process(message_id, ONE_MINUTE + append_timeout)
                 if modelUser.show_purchase_tips:
                     logger.info("Sending message with tips")
                     message = f"{purchase_service_message}{message}"
@@ -299,11 +314,14 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 keyboard = build_purchase_keyboard(modelUser)
                 if random.choice(range(100)) > 70:
                     message += MESSAGE_DELETION_TIMEOUT % (
-                        ttm(TWO_MINUTES),
+                        ttm(ONE_MINUTE + append_timeout),
                         random.choice(MESSAGE_DELETION_FUNNY_APPEND),
                     )
                 else:
-                    message += MESSAGE_DELETION_TIMEOUT % (ttm(TWO_MINUTES), "")
+                    message += MESSAGE_DELETION_TIMEOUT % (
+                        ttm(ONE_MINUTE + append_timeout),
+                        "",
+                    )
                 context.bot.edit_message_text(
                     message_id=message_id,
                     chat_id=chat_id,
