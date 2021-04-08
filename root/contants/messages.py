@@ -267,7 +267,7 @@ PURCHASE_REPORT_TEMPLATE = (
     '<code>%s</code><code>%s €</code>             <a href="https://t.me/c/%s/%s">%s</a>'
 )
 
-NEW_PURCHASE_LINK = "https://t.me/share/url?url=%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%20%25%3Ctitolo%3E%25"
+NEW_PURCHASE_LINK = "https://t.me/share/url?url=%23ultimiacquisti%20%3Cprezzo%3E%20{}%2F{}%2F{}%20%25%3Ctitolo%3E%25"
 PURCHASE_REPORT_ADD_NEW_PURCHASE = '<code>%s</code>%s► <a href="%s">%s</a>'
 
 REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"

@@ -3,6 +3,7 @@
 """ File with class to show the month report """
 
 from random import randint
+from calendar import monthrange
 from datetime import datetime
 from time import time
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
@@ -212,11 +213,22 @@ class MonthReport:
         if not purchases:
             message = NO_MONTH_PURCHASE % (user_id, first_name, date)
             current_date = datetime.now()
+            last_day = monthrange(self.year, self.month)[1]
+            last_day = (
+                "%02d" % current_date.day if current_date.day <= last_day else last_day
+            )
+            link = NEW_PURCHASE_LINK.format(last_day, "%02d" % self.month, self.year)
+            purchase_format_date = (current_date.month, current_date.year)
             current_date = current_date.strftime(
                 f"%d {get_month_string(current_date.month)}, %H:%M"
             )
-            current_date = "Registra un nuovo acquisto..."
-            current_date = ("", "", NEW_PURCHASE_LINK, current_date)
+            current_date = "Registra un nuovo acquisto a questa data"
+            current_date = (
+                "",
+                "",
+                link,
+                current_date,
+            )
             # current_date = (" " * 6, NEW_PURCHASE_LINK, current_date)
             message = (
                 f"{message}\n\n\n{PURCHASE_REPORT_ADD_NEW_PURCHASE % current_date}"
@@ -257,12 +269,23 @@ class MonthReport:
                 )
                 message = f"{message}\n{template}"
             current_date = datetime.now()
+            last_day = monthrange(self.year, self.month)[1]
+            last_day = current_date.day if current_date.day <= last_day else last_day
+            last_day = (
+                "%02d" % current_date.day if current_date.day <= last_day else last_day
+            )
+            link = NEW_PURCHASE_LINK.format(last_day, "%02d" % self.month, self.year)
             current_date = current_date.strftime(
                 f"%d {get_month_string(current_date.month)}, %H:%M"
             )
-            current_date = "Registra un nuovo acquisto..."
+            current_date = "Registra un nuovo acquisto a questa data"
             spaces = " " * (spacer + 2)
-            current_date = (spaces, "             ", NEW_PURCHASE_LINK, current_date)
+            current_date = (
+                spaces,
+                "             ",
+                link,
+                current_date,
+            )
             message = f"{message}\n{PURCHASE_REPORT_ADD_NEW_PURCHASE % current_date}"
             line = "—" * (spacer + 2)
             message = f"{message}\n<code>{line}</code>"
