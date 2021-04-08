@@ -21,9 +21,9 @@ def send_command_to_group_keyboard(command: str, args: str = "", custom: bool = 
 
 
 NEW_PURCHASE_TEMPLATE = (
-    "%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%20%25%3Ctitolo%3E%25"
+    "%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%0A%0A%25%3Ctitolo%3E%25"
 )
-NEW_PURCHASE_LINK = "https://t.me/share/url?url=%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%20%25%3Ctitolo%3E%25"
+NEW_PURCHASE_LINK = "https://t.me/share/url?url=%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%0A%0A%25%3Ctitolo%3E%25"
 
 NO_PURCHASE_KEYBOARD = InlineKeyboardMarkup(
     [
