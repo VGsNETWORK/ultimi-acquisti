@@ -5,7 +5,6 @@
 from random import randint
 from calendar import monthrange
 from datetime import datetime
-from time import time
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from typing import List
 from dateutil import tz
@@ -390,6 +389,14 @@ class MonthReport:
         if not user_exists(user.id):
             create_user(user)
         message_id = update.effective_message.message_id
+
+        purchase = get_last_purchase(user.id)
+        if not purchase:
+            message = NO_PURCHASE % (user.id, user.first_name)
+        timeout = FIVE_MINUTES if purchase else ONE_MINUTE
+        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
+        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
+        restart_process(message_id, timeout)
         chat_id = update.effective_chat.id
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(
@@ -397,12 +404,6 @@ class MonthReport:
         )
         keyboard = InlineKeyboardMarkup(keyboard)
         is_private = not update.effective_chat.type == "private"
-        purchase = get_last_purchase(user.id)
-        if not purchase:
-            message = NO_PURCHASE % (user.id, user.first_name)
-        timeout = FIVE_MINUTES if purchase else ONE_MINUTE
-        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
-        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,

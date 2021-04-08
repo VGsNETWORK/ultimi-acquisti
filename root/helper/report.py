@@ -8,11 +8,14 @@ from root.contants.messages import NOT_MESSAGE_OWNER, SESSION_ENDED
 from root.helper.process_helper import restart_process
 from root.helper.redis_message import is_owner
 from root.util.telegram import TelegramSender
+import root.util.logger as logger
 
 sender = TelegramSender()
 
 
-def check_owner(update: Update, context: CallbackContext) -> bool:
+def check_owner(
+    update: Update, context: CallbackContext, timeout: int = -1, restart: bool = True
+) -> bool:
     """Check and stop not owner of the report
 
     Args:
@@ -38,6 +41,7 @@ def check_owner(update: Update, context: CallbackContext) -> bool:
         )
         sender.delete_message(context, chat_id, message_id)
         return False
-    restart_process(message_id)
+    if restart:
+        restart_process(message_id, timeout)
     context.bot.answer_callback_query(update.callback_query.id)
     return True
