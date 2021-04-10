@@ -127,6 +127,7 @@ class TelegramSender:
         create_redis: bool = False,
         user_id: int = 0,
         timeout: int = 360,
+        show_timeout=True,
     ):
         """Send a message and create a thread to delete it after the timeout
 
@@ -139,13 +140,16 @@ class TelegramSender:
             timeout (int, optional): [description]. Defaults to 360.
         """
         self._bot = Bot(environ["TOKEN"])
-        if random.choice(range(100)) > 87:
-            text += MESSAGE_DELETION_TIMEOUT % (
-                ttm(timeout),
-                random.choice(MESSAGE_DELETION_FUNNY_APPEND),
-            )
+        if show_timeout:
+            if random.choice(range(100)) > 87:
+                text += MESSAGE_DELETION_TIMEOUT % (
+                    ttm(timeout),
+                    random.choice(MESSAGE_DELETION_FUNNY_APPEND),
+                )
+            else:
+                text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
         else:
-            text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
+            text += MESSAGE_DELETION_TIMEOUT % ("", "")
         message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,

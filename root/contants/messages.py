@@ -2,7 +2,11 @@
 
 """ This class contains all the messages used in the bot """
 
+from datetime import datetime
 from os import environ
+
+TODAY = datetime.now()
+TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
 
 BOT_NAME = environ["BOT_NAME"]
 
@@ -273,12 +277,13 @@ PURCHASE_REPORT_ADD_NEW_PURCHASE = '<code>%s</code>%s► <a href="%s">%s</a>'
 REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"
 
 PURCHASE_DATE_ERROR = (
-    '✅  <a href="tg://user?id=%s">%s</a>, il tuo acquisto è stato aggiunto con successo.\n\n\n'
-    "❗️ Tuttavia, la data che hai indicato presenta una delle seguenti anomalie:\n\n"
-    "   –  non rispetta il formato <code>DD/MM/YYYY</code>;\n"
-    "   –  è una data futura,\n\n"
-    "per questo motivo ho collocato l'acquisto alla data di oggi."
+    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai tentando di registrare presenta una data futura.'
+    " Dal momento che non è possibile collocare un acquisto al futuro, questo"
+    f" sarà aggiunto alla data di oggi, <b>{TODAY}</b>.\n\n"
+    "Vuoi continuare o annullare questo inserimento?"
 )
+
+PURCHASE_DISCARDED = "✅  <i>Acquisto annullato con successo.</i>"
 
 MONTH_COMPARE_PRICE = (
     "Nel mese di <b>%s</b>...\n\n"

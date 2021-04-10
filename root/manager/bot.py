@@ -3,7 +3,11 @@
 """ File that contains the class to start the bot with the bot api """
 
 import os
-from root.manager.purchase.handle_purchase import toggle_purchase_tips
+from root.manager.purchase.handle_purchase import (
+    confirm_purchase,
+    discard_purchase,
+    toggle_purchase_tips,
+)
 from telegram import Message, Update
 from telegram.ext import (
     CallbackContext,
@@ -255,6 +259,22 @@ class BotManager:
             CallbackQueryHandler(
                 callback=toggle_purchase_tips, pattern="purchase.toggle_tips"
             )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=toggle_purchase_tips, pattern="purchase.toggle_tips"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=confirm_purchase, pattern="confirm_purchase_*"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=discard_purchase, pattern="remove_purchase_*")
         )
 
         if is_develop():

@@ -5,14 +5,19 @@
 import random
 import re
 from datetime import datetime
+from telegram import message
+
+from telegram.chat import Chat
 from root.contants.keyboard import (
+    ADD_PURCHASE_KEYBOARD,
     NEW_PURCHASE_LINK,
     NO_PURCHASE_KEYBOARD,
+    create_wrong_date_keyboard,
     send_command_to_group_keyboard,
 )
 from root.model.purchase import Purchase
 
-from root.helper.redis_message import is_owner
+from root.helper.redis_message import add_message, is_owner
 from pyrogram import Client
 from pyrogram.client import User
 from pyrogram.types import Message
@@ -28,6 +33,7 @@ from root.contants.messages import (
     ONLY_GROUP_NO_QUOTE,
     PURCHASE_ADDED,
     PURCHASE_DATE_ERROR,
+    PURCHASE_DISCARDED,
     PURCHASE_HINT_NO_HINT,
     PURCHASE_MODIFIED,
     PURCHASE_PRICE_HINT,
@@ -37,10 +43,11 @@ from root.contants.messages import (
     PURCHASE_EMPTY_TITLE_HINT,
     SESSION_ENDED,
 )
-from root.helper.process_helper import create_process, restart_process
+from root.helper.process_helper import create_process, restart_process, stop_process
 from root.helper.purchase_helper import (
     convert_to_float,
     create_purchase,
+    delete_purchase,
     find_by_message_id_and_chat_id,
 )
 from root.helper.user_helper import create_user, user_exists, retrieve_user
@@ -223,12 +230,16 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             message = PURCHASE_DATE_ERROR % (
                 user.id,
-                message.from_user.username,
+                user.first_name,
             )
     else:
         message = result["error"]
-    keyboard = build_purchase_keyboard(modelUser)
+    if custom_date_error:
+        keyboard = create_wrong_date_keyboard(message_id)
+    else:
+        keyboard = build_purchase_keyboard(modelUser)
     logger.info(ONE_MINUTE + append_timeout)
+    add_message(message_id=message_id, user_id=user_id, add=False)
     sender.send_and_deproto(
         client,
         chat_id,
@@ -238,7 +249,10 @@ def handle_purchase(client: Client, message: Message) -> None:
         create_redis=True,
         user_id=user_id,
         timeout=ONE_MINUTE + append_timeout,
+        show_timeout=not custom_date_error,
     )
+    if custom_date_error:
+        stop_process(message_id + 1)
 
 
 def build_purchase_keyboard(user: UserModel):
@@ -344,3 +358,61 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
             show_alert=True,
         )
         sender.delete_message(context, chat_id, message_id)
+
+
+def confirm_purchase(update: Update, context: CallbackContext):
+    callback: CallbackQuery = update.callback_query
+    query: str = callback.data
+    message_to_edit = int(query.split("_")[-1])
+    user: User = update.effective_user
+    user_id: int = user.id
+    chat: Chat = update.effective_chat
+    message: Message = update.effective_message
+    message_id: int = message.message_id
+    chat_id: int = chat.id
+    modelUser: UserModel = retrieve_user(user_id)
+    modelUser.show_purchase_tips = not modelUser.show_purchase_tips
+    modelUser.save()
+    if is_owner(message_to_edit, user_id):
+        context.bot.answer_callback_query(callback.id)
+        logger.info(f"editing message {message_id} on chat {chat_id}")
+        toggle_purchase_tips(update, context)
+    else:
+        context.bot.answer_callback_query(
+            callback.id,
+            text=CANNOT_MODIFY_OTHERS_SETTINGS,
+            show_alert=True,
+        )
+
+
+def discard_purchase(update: Update, context: CallbackContext):
+    callback: CallbackQuery = update.callback_query
+    query: str = callback.data
+    message_to_delete = int(query.split("_")[-1])
+    user: User = update.effective_user
+    user_id: int = user.id
+    message: Message = update.effective_message
+    message_id: int = message.message_id
+    chat: Chat = update.effective_chat
+    chat_id: int = chat.id
+    if is_owner(message_to_delete, user_id):
+        logger.info(f"deleting message {message_id} on chat {chat_id}")
+        context.bot.answer_callback_query(callback.id)
+        delete_purchase(user_id=user_id, message_id=message_to_delete)
+        context.bot.delete_message(chat_id=chat_id, message_id=message_to_delete)
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat_id,
+                text=PURCHASE_DISCARDED,
+                message_id=message_id,
+                reply_markup=ADD_PURCHASE_KEYBOARD,
+                parse_mode="HTML",
+            )
+        except Exception as e:
+            logger.error(e)
+    else:
+        context.bot.answer_callback_query(
+            callback.id,
+            text=CANNOT_MODIFY_OTHERS_SETTINGS,
+            show_alert=True,
+        )
