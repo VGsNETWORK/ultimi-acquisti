@@ -216,15 +216,16 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         message = message % (user_id, name, purchase_messages)
         append = []
         for purchase in zip(purchases, titles):
-            title = f"{purchase[1]}" if purchase[1] else "acquisto"
-            title = title if title != "<vuoto>" else "acquisto"
+            title = f"<b>{purchase[1]}</b>" if purchase[1] else "acquisto senza nome"
+            title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
             date: datetime = purchase[0]
             date = "%s %s" % (date.day, get_month_string(date.month, False, True))
             append.append(PURCHASES_DELETED_APPEND % (title, date))
         message += "".join(append)
     else:
-        title = f"{titles[0]}" if titles[0] else "acquisto"
-        title = title if title != "<vuoto>" else "acquisto"
+        title = f"<b>{titles[0]}</b>" if titles[0] else "acquisto senza nome"
+        logger.info(not "<vuoto>" in title)
+        title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
         date: datetime = purchases[0]
         date = "%s %s" % (date.day, get_month_string(date.month, False, True))
         message = message % (user_id, name, title, date)

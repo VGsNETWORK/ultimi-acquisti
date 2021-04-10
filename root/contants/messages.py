@@ -210,12 +210,14 @@ PURCHASES_DELETED = (
     '✅  <i><a href="tg://user?id=%s">%s</a>,'
     " hai cancellato %s acquisti con successo!</i>"
 )
-PURCHASES_DELETED_APPEND = "<i>\n        - <b>%s</b> del <b>%s</b></i>"
+PURCHASES_DELETED_APPEND = "<i>\n        – %s del %s</i>"
 
+# fmt: off
 PURCHASE_DELETED = (
-    '✅  <i><a href="tg://user?id=%s">%s</a>,'
-    " <b>%s</b> del <b>%s</b> cancellato con successo!</i>"
+    '✅  <i><a href="tg://user?id=%s">%s</a>,' 
+    " %s del %s cancellato con successo!</i>"
 )
+# fmt: on
 
 GROUP_NOT_ALLOWED = (
     "❌  Questo gruppo non è abilitato all'utilizzo di questo bot.\n"
