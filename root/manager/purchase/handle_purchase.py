@@ -36,6 +36,7 @@ from root.contants.messages import (
     PURCHASE_DISCARDED,
     PURCHASE_HINT_NO_HINT,
     PURCHASE_MODIFIED,
+    PURCHASE_MODIFIED_DATE_ERROR,
     PURCHASE_PRICE_HINT,
     PURCHASE_TITLE_HINT,
     PURCHASE_DATE_HINT,
@@ -53,13 +54,14 @@ from root.helper.purchase_helper import (
 from root.helper.user_helper import create_user, user_exists, retrieve_user
 from root.util.telegram import TelegramSender
 from root.util.util import (
+    append_timeout_message,
     create_button,
     has_number,
     is_group_allowed,
     retrieve_key,
     ttm,
 )
-from root.contants.message_timeout import ONE_MINUTE, TWO_MINUTES
+from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, ONE_MINUTE, TWO_MINUTES
 from root.model.user import User as UserModel
 
 sender = TelegramSender()
@@ -95,6 +97,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    edited = message.edit_date
     append_message = ["", "", ""]
     if message.from_user.is_bot:
         return
@@ -228,14 +231,20 @@ def handle_purchase(client: Client, message: Message) -> None:
                     append_message = PURCHASE_HINT_NO_HINT
                 message += append_message
         else:
-            message = PURCHASE_DATE_ERROR % (
-                user.id,
-                user.first_name,
-            )
+            if edited:
+                message = PURCHASE_MODIFIED_DATE_ERROR % (
+                    user.id,
+                    user.first_name,
+                )
+            else:
+                message = PURCHASE_DATE_ERROR % (
+                    user.id,
+                    user.first_name,
+                )
     else:
         message = result["error"]
     if custom_date_error:
-        keyboard = create_wrong_date_keyboard(message_id)
+        keyboard = create_wrong_date_keyboard(message_id, edited)
     else:
         keyboard = build_purchase_keyboard(modelUser)
     logger.info(ONE_MINUTE + append_timeout)
@@ -317,7 +326,12 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     append_timeout = 30 * total_tips
                 else:
                     append_timeout = 0
-                restart_process(message_id, ONE_MINUTE + append_timeout)
+                if not restart_process(message_id, ONE_MINUTE + append_timeout):
+                    create_process(
+                        name_prefix=message_id,
+                        target=sender.delete_message,
+                        args=(None, chat_id, message_id, ONE_MINUTE + append_timeout),
+                    )
                 if modelUser.show_purchase_tips:
                     logger.info("Sending message with tips")
                     message = f"{purchase_service_message}{message}"
@@ -400,10 +414,18 @@ def discard_purchase(update: Update, context: CallbackContext):
         context.bot.answer_callback_query(callback.id)
         delete_purchase(user_id=user_id, message_id=message_to_delete)
         context.bot.delete_message(chat_id=chat_id, message_id=message_to_delete)
+        create_process(
+            name_prefix=message.message_id,
+            target=sender.delete_message,
+            args=(None, chat_id, message.message_id, LONG_SERVICE_TIMEOUT),
+        )
         try:
+            message = append_timeout_message(
+                PURCHASE_DISCARDED, True, LONG_SERVICE_TIMEOUT, True
+            )
             context.bot.edit_message_text(
                 chat_id=chat_id,
-                text=PURCHASE_DISCARDED,
+                text=message,
                 message_id=message_id,
                 reply_markup=ADD_PURCHASE_KEYBOARD,
                 parse_mode="HTML",

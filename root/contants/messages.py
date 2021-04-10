@@ -285,7 +285,14 @@ PURCHASE_DATE_ERROR = (
     "Vuoi continuare o annullare questo inserimento?"
 )
 
-PURCHASE_DISCARDED = "✅  <i>Acquisto annullato con successo.</i>"
+PURCHASE_MODIFIED_DATE_ERROR = (
+    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai modificando presenta una data futura.'
+    " Dal momento che non è possibile collocare un acquisto al futuro, questo"
+    f" sarà spostato alla data di oggi, <b>{TODAY}</b>.\n\n"
+    "Accetti queste condizioni o preferisci eliminare l'acquisto?"
+)
+
+PURCHASE_DISCARDED = "✅  <i>Acquisto eliminato con successo.</i>"
 
 MONTH_COMPARE_PRICE = (
     "Nel mese di <b>%s</b>...\n\n"

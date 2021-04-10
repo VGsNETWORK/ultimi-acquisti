@@ -52,7 +52,8 @@ NO_PURCHASE_KEYBOARD = InlineKeyboardMarkup(
 )
 
 
-def create_wrong_date_keyboard(message_id: int):
+def create_wrong_date_keyboard(message_id: int, modified: bool):
+    discard_text = "❌  Elimina" if modified else "❌  Annulla"
     return InlineKeyboardMarkup(
         [
             [
@@ -62,7 +63,7 @@ def create_wrong_date_keyboard(message_id: int):
                     f"confirm_purchase_{message_id}",
                 ),
                 create_button(
-                    "❌  Annulla",
+                    discard_text,
                     f"remove_purchase_{message_id}",
                     f"remove_purchase_{message_id}",
                 ),
