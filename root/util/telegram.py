@@ -149,7 +149,7 @@ class TelegramSender:
             else:
                 text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
         else:
-            text += MESSAGE_DELETION_TIMEOUT % ("", "")
+            text += ""
         message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,
