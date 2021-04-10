@@ -210,9 +210,9 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             purchase_helper.delete_purchase_forced(message_id, message.chat.id)
     user: ChatMember = client.get_chat_member(chat_id, user_id)
     user: User = user.user
-    message = PURCHASES_DELETED if len(messages) > 1 else PURCHASE_DELETED
+    message = PURCHASES_DELETED if purchase_messages > 1 else PURCHASE_DELETED
     name = user.first_name if user.first_name else user.username
-    if len(messages) > 1:
+    if purchase_messages > 1:
         message = message % (user_id, name, purchase_messages)
         append = []
         for purchase in zip(purchases, titles):
@@ -224,7 +224,6 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         message += "".join(append)
     else:
         title = f"<b>{titles[0]}</b>" if titles[0] else "acquisto senza nome"
-        logger.info(not "<vuoto>" in title)
         title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
         date: datetime = purchases[0]
         date = "%s %s" % (date.day, get_month_string(date.month, False, True))
