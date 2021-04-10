@@ -161,11 +161,12 @@ class TelegramSender:
         )
         if create_redis:
             add_message(message.message_id, user_id, False)
-        create_process(
-            name_prefix=message.message_id,
-            target=self.delete_message,
-            args=(client, chat_id, message.message_id, timeout),
-        )
+        if show_timeout:
+            create_process(
+                name_prefix=message.message_id,
+                target=self.delete_message,
+                args=(client, chat_id, message.message_id, timeout),
+            )
 
     def send_and_edit(
         self,
