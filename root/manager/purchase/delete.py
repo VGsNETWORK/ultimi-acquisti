@@ -219,14 +219,28 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             title = f"<b>{purchase[1]}</b>" if purchase[1] else "acquisto senza nome"
             title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
             date: datetime = purchase[0]
-            date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+            if date.year == datetime.now().year:
+                date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+            else:
+                date = "%s %s %s" % (
+                    date.day,
+                    get_month_string(date.month, False, True),
+                    date.year,
+                )
             append.append(PURCHASES_DELETED_APPEND % (title, date))
         message += "".join(append)
     else:
         title = f"<b>{titles[0]}</b>" if titles[0] else "acquisto senza nome"
         title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
         date: datetime = purchases[0]
-        date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+        if date.year == datetime.now().year:
+            date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+        else:
+            date = "%s %s %s" % (
+                date.day,
+                get_month_string(date.month, False, True),
+                date.year,
+            )
         message = message % (user_id, name, title, date)
     sender.send_and_deproto(
         client, chat_id, message, timeout=SERVICE_TIMEOUT * purchase_messages
