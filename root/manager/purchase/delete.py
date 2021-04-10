@@ -17,6 +17,7 @@ from pyrogram import Client
 from root.util.util import get_month_number, get_month_string, is_group_allowed
 from root.helper.user_helper import create_user, user_exists
 import root.helper.purchase_helper as purchase_helper
+from root.helper.purchase_helper import purchase_exists
 from root.contants.messages import (
     CANCEL_PURCHASE_ERROR,
     ONLY_GROUP_QUOTE_SELF_PURCHASE,
@@ -194,9 +195,11 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     user_id = 0
     purchases = []
     titles = []
+    purchase_messages = 0
     for message in messages:
         message_id = message.message_id
         if purchase_helper.purchase_exists(message_id, message.chat.id):
+            purchase_messages += 1
             chat_id = message.chat.id
             purchase: Purchase = purchase_helper.find_by_message_id_and_chat_id(
                 message_id, message.chat.id
@@ -210,7 +213,7 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     message = PURCHASES_DELETED if len(messages) > 1 else PURCHASE_DELETED
     name = user.first_name if user.first_name else user.username
     if len(messages) > 1:
-        message = message % (user_id, name, len(messages))
+        message = message % (user_id, name, purchase_messages)
         append = []
         for purchase in zip(purchases, titles):
             title = f"{purchase[1]}" if purchase[1] else "acquisto"
@@ -226,5 +229,5 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         date = "%s %s" % (date.day, get_month_string(date.month, False, True))
         message = message % (user_id, name, title, date)
     sender.send_and_deproto(
-        client, chat_id, message, timeout=SERVICE_TIMEOUT * len(messages)
+        client, chat_id, message, timeout=SERVICE_TIMEOUT * purchase_messages
     )
