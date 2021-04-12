@@ -27,6 +27,6 @@ def handle_error(update: Update, context: CallbackContext):
         if update.effective_message:
             if update.effective_chat.id != error_channel:
                 update.effective_message.reply_text(USER_ERROR)
-        logger.error(context.error)
-        text = TELEGRAM_ERROR % format_error(context.error)
+        text = format_error(context.error)
+        logger.error(text)
         context.bot.send_message(error_channel, text, parse_mode="HTML")
