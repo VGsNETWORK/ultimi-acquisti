@@ -394,11 +394,11 @@ class MonthReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
         timeout = FIVE_MINUTES if purchase else ONE_MINUTE
-        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
-        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         restart_process(message_id, timeout)
         chat_id = update.effective_chat.id
         message = self.retrieve_purchase(user)
+        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
+        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         keyboard = build_keyboard(
             self.month, self.current_month, self.year, self.current_year
         )
