@@ -202,6 +202,7 @@ class YearReport:
             mrange = self.current_month if self.year == self.current_year else 12
             spacer = [len(format_price(price)) for price in purchases]
             footer = retrieve_sum_for_year(user_id, self.year)
+            total_spent_yearly = footer
             footer = format_price(footer)
             spacer.append(len(footer))
             spacer.sort()
@@ -224,8 +225,11 @@ class YearReport:
                             self.current_month == i + 1
                             and self.year == self.current_year
                         ):
-                            month = f"► <i>{month}</i>"
-                        spaces = " " * (spacer - len(price))
+                            month = f"► {month}"
+                        if total_spent_yearly >= 10:
+                            spaces = " " * (spacer - len(price))
+                        else:
+                            spaces = " " * (spacer - len(price) - 1)
                         template = YEAR_PURCHASE_TEMPLATE % (
                             spaces,
                             price,
@@ -234,9 +238,15 @@ class YearReport:
                             "o" if total_purchases == 1 else "i",
                         )
                         message = f"{message}\n{template}"
-                spaces = " " * (spacer - len(footer))
+                if total_spent_yearly >= 10:
+                    spaces = " " * (spacer - len(footer))
+                else:
+                    spaces = " " * (spacer - len(footer) - 1)
                 footer = REPORT_PURCHASE_TOTAL % (spaces, footer)
-                line = "—" * (spacer + 2)
+                if total_spent_yearly >= 10:
+                    line = "—" * (spacer + 2)
+                else:
+                    line = "—" * (spacer + 1)
                 message = f"{message}\n<code>{line}</code>"
                 message = f"{message}\n{footer}"
         return message
