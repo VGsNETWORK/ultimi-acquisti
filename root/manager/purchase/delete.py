@@ -230,7 +230,9 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             append.append(PURCHASES_DELETED_APPEND % (title, date))
         message += "".join(append)
     else:
-        title = f"<b>{titles[0]}</b>" if titles[0] else "acquisto senza nome"
+        title = f"{titles[0]}" if titles[0] else ""
+        title = title.replace("<", "&lt;").replace(">", "&gt;")
+        title = f"<b>{title}</b>" if title else "acquisto senza nome"
         title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
         date: datetime = purchases[0]
         if date.year == datetime.now().year:
