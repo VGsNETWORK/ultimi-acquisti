@@ -174,7 +174,7 @@ def retrieve_month_purchases_for_user(
     """
     try:
         month = 12 if month < 1 else month
-        month = 1 if month > 13 else month
+        month = 1 if month > 12 else month
         current_date = datetime.now()
         month = month if month else current_date.month
         year = year if year else current_date.year

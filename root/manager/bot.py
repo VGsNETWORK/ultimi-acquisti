@@ -115,10 +115,11 @@ class BotManager:
         context.bot.answer_callback_query(update.callback_query.id)
 
     def delete_all_purchases(self, update: Update, context: CallbackContext):
-        Purchase.objects.delete()
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text="✅ Acquisti cancellati"
-        )
+        if is_develop():
+            Purchase.objects.delete()
+            context.bot.send_message(
+                chat_id=update.effective_chat.id, text="✅  Acquisti cancellati"
+            )
 
     def add_handler(self):
         """Add handlers for the various operations"""
