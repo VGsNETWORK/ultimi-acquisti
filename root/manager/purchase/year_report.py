@@ -23,6 +23,7 @@ from root.contants.messages import (
 from root.model.purchase import Purchase
 from root.helper.process_helper import create_process, restart_process
 from root.helper.purchase_helper import (
+    count_user_purchases_for_year,
     get_last_purchase,
     retrieve_month_purchases_for_user,
     retrieve_sum_for_month,
@@ -143,6 +144,9 @@ class YearReport:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        number_of_purchases = count_user_purchases_for_year(user_id, self.year)
+        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
+        logger.info(number_of_purchases)
         message = append_timeout_message(message, is_private, timeout, is_private)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
@@ -274,6 +278,9 @@ class YearReport:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        number_of_purchases = count_user_purchases_for_year(user_id, self.year)
+        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
+        logger.info(number_of_purchases)
         message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
             text=message,
@@ -322,6 +329,9 @@ class YearReport:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        number_of_purchases = count_user_purchases_for_year(user_id, self.year)
+        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
+        logger.info(number_of_purchases)
         is_private = not update.effective_chat.type == "private"
         message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(

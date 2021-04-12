@@ -306,6 +306,14 @@ def get_last_purchase(user_id: int) -> Purchase:
         return None
 
 
+def count_user_purchases_for_year(user_id: int, year: int):
+    start_date = datetime(year, 1, 1)
+    end_date = datetime(year, 12, 31, 23, 59, 59, 59)
+    return Purchase.objects.filter(
+        creation_date__lte=end_date, creation_date__gte=start_date, user_id=user_id
+    ).count()
+
+
 def purchase_exists(message_id: int, chat_id: int) -> None:
     """Check if the message_id is a purchase
 
