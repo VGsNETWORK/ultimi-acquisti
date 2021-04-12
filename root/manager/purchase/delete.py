@@ -220,10 +220,20 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
             date: datetime = purchase[0]
             if date.year == datetime.now().year:
-                date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+                day = date.day
+                if day == 1 or day == 8 or day == 11:
+                    day = "dell'<b>%s</b>" % day
+                else:
+                    day = "del <b>%s</b>" % day
+                date = "%s <b>%s</b>" % (day, get_month_string(date.month, False, True))
             else:
-                date = "%s %s %s" % (
-                    date.day,
+                day = date.day
+                if day == 1 or day == 8 or day == 11:
+                    day = "dell'<b>%s</b>" % day
+                else:
+                    day = "del <b>%s</b>" % day
+                date = "%s <b>%s %s</b>" % (
+                    day,
                     get_month_string(date.month, False, True),
                     date.year,
                 )
@@ -236,10 +246,20 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
         title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
         date: datetime = purchases[0]
         if date.year == datetime.now().year:
-            date = "%s %s" % (date.day, get_month_string(date.month, False, True))
+            day = date.day
+            if day == 1 or day == 8 or day == 11:
+                day = "dell'<b>%s</b>" % day
+            else:
+                day = "del <b>%s</b>" % day
+            date = "%s <b>%s</b>" % (day, get_month_string(date.month, False, True))
         else:
-            date = "%s %s %s" % (
-                date.day,
+            day = date.day
+            if day == 1 or day == 8 or day == 11:
+                day = "dell'<b>%s</b>" % day
+            else:
+                day = "del <b>%s</b>" % day
+            date = "%s <b>%s %s</b>" % (
+                day,
                 get_month_string(date.month, False, True),
                 date.year,
             )

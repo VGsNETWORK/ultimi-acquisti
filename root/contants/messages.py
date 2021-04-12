@@ -210,12 +210,12 @@ PURCHASES_DELETED = (
     '✅  <i><a href="tg://user?id=%s">%s</a>,'
     " hai cancellato %s acquisti con successo!</i>"
 )
-PURCHASES_DELETED_APPEND = "<i>\n        – %s del <b>%s</b></i>"
+PURCHASES_DELETED_APPEND = "<i>\n        – %s %s</i>"
 
 # fmt: off
 PURCHASE_DELETED = (
     '✅  <i><a href="tg://user?id=%s">%s</a>,</i>' 
-    " %s <i>del <b>%s</b> cancellato con successo!</i>"
+    " %s <i>%s cancellato con successo!</i>"
 )
 # fmt: on
 
