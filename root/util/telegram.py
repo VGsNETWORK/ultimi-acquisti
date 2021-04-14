@@ -11,8 +11,8 @@ from telegram.ext import CallbackContext
 from telegram.error import Unauthorized, BadRequest
 from pyrogram import Client
 import root.util.logger as logger
-from root.helper.redis_message import delete_message
-from root.helper.process_helper import create_process
+from root.helper.redis_message import delete_message, message_exist
+from root.helper.process_helper import create_process, stop_process
 from root.helper.redis_message import add_message
 from root.contants.messages import (
     BOT_NAME,
@@ -189,6 +189,7 @@ class TelegramSender:
             reply_markup=reply_markup,
             disable_notification=True,
         )
+        logger.info(f"THIS IS THE MESSAGE I SENT: {message.message_id}")
         create_process(
             name_prefix=message.message_id,
             target=callback,
@@ -240,6 +241,29 @@ class TelegramSender:
             args=(context, chat_id, message.message_id, timeout),
         )
 
+    def delete_previous_message(
+        self, user_id: int, message_id: int, chat_id: int, context: CallbackContext
+    ):
+        logger.info(f"THIS IS {message_id}")
+        payload = f"{chat_id}_{user_id}"
+        previous_message_id = message_exist(payload)
+        if previous_message_id:
+            logger.info(f"found {previous_message_id} with payload {payload}")
+            try:
+                delete_message(payload)
+                logger.info("deleted from Redis **")
+                self.delete_message(context, chat_id, int(previous_message_id) - 1)
+                logger.info("deleted from Telegram **")
+                stop_process(int(previous_message_id) - 1)
+                logger.info("deleted from Process **")
+            except Exception as e:
+                logger.error(e)
+                pass
+        else:
+            logger.info(f"not found {previous_message_id} with payload {payload}")
+        add_message(payload, message_id + 1, False)
+        logger.info("added to Redis")
+
     def delete_if_private(self, context: CallbackContext, message: Message):
         """delete a message if it has been sent over a private chat
 
@@ -248,6 +272,9 @@ class TelegramSender:
             context (CallbackContext): The context of the telegram bot
             message (Message): The message to delete
         """
+        self.delete_previous_message(
+            message.from_user.id, message.message_id + 1, message.chat.id, context
+        )
         if message.chat.type == "private":
             self.delete_message(
                 context,

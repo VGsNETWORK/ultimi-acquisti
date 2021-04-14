@@ -45,12 +45,13 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         sender.delete_if_private(update, message)
         # TODO: Do I really need this ?
         add_message(update.effective_message.message_id, update.effective_user.id)
-        context.bot.send_message(
+        msg: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
             parse_mode="HTML",
         )
+        logger.info(f"FUCK OFF {msg.message_id}")
     return
 
 
@@ -75,12 +76,13 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     sender.delete_if_private(update, message)
     chat_id = message.chat.id
     if message.chat.type == "private":
-        message: Message = context.bot.send_message(
+        msg: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
             parse_mode="HTML",
         )
+        logger.info(f"FUCK OFF {msg.message_id}")
         add_message(message.message_id, update.effective_user.id, False)
     else:
         sender.send_and_delete(
@@ -203,13 +205,14 @@ def append_commands(update: Update, context: CallbackContext):
             parse_mode="HTML",
         )
     else:
-        context.bot.send_message(
+        msg: Message = context.bot.send_message(
             text=message,
             chat_id=chat_id,
             disable_web_page_preview=True,
             reply_markup=keyboard,
             parse_mode="HTML",
         )
+        logger.info(f"FUCK OFF {msg.message_id}")
 
 
 def remove_commands(update: Update, context: CallbackContext):

@@ -5,6 +5,7 @@
 from random import randint
 from calendar import monthrange
 from datetime import datetime
+from time import time
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from typing import List
 from dateutil import tz
@@ -394,6 +395,8 @@ class MonthReport:
         if not purchase:
             message = NO_PURCHASE % (user.id, user.first_name)
         timeout = FIVE_MINUTES if purchase else ONE_MINUTE
+        purchases = retrieve_month_purchases_for_user(user.id, self.month, self.year)
+        timeout = FIVE_MINUTES if purchases else ONE_MINUTE
         restart_process(message_id, timeout)
         chat_id = update.effective_chat.id
         message = self.retrieve_purchase(user)

@@ -5,6 +5,7 @@
 
 from datetime import datetime
 from functools import total_ordering
+from time import time
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
@@ -101,18 +102,20 @@ class YearReport:
             message = NO_PURCHASE % (user.id, user.first_name)
             keyboard = NO_PURCHASE_KEYBOARD
         is_private = not update.effective_chat.type == "private"
+        timeout = THREE_MINUTES if purchase else ONE_MINUTE
+        number_of_purchases = count_user_purchases_for_year(user_id, self.year)
+        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
         if expand:
             try:
                 if is_private or is_owner(message_id, user_id):
-                    if not restart_process(message_id, THREE_MINUTES):
+                    if not restart_process(message_id, timeout):
                         logger.info("Unable to restart process, recreating it")
                         create_process(
                             name_prefix=message_id,
                             target=back_to_the_start,
-                            args=(update, context, chat_id, message_id, THREE_MINUTES),
+                            args=(update, context, chat_id, message_id, timeout),
                         )
                     context.bot.answer_callback_query(update.callback_query.id)
-                    timeout = THREE_MINUTES if purchase else ONE_MINUTE
                     message = append_timeout_message(
                         message, is_private, timeout, is_private
                     )
@@ -145,8 +148,7 @@ class YearReport:
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
         number_of_purchases = count_user_purchases_for_year(user_id, self.year)
-        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
-        logger.info(number_of_purchases)
+        timeout = THREE_MINUTES if number_of_purchases > 0 else ONE_MINUTE
         message = append_timeout_message(message, is_private, timeout, is_private)
         if update.effective_message.chat.type == "private":
             self.sender.send_and_edit(
@@ -156,7 +158,7 @@ class YearReport:
                 message,
                 back_to_the_start,
                 keyboard,
-                timeout=THREE_MINUTES,
+                timeout=timeout,
             )
             return
 
@@ -167,7 +169,7 @@ class YearReport:
             chat_id,
             message,
             reply_markup=keyboard,
-            timeout=THREE_MINUTES,
+            timeout=timeout,
         )
 
     def expand_report(self, update: Update, context: CallbackContext) -> None:
@@ -274,7 +276,6 @@ class YearReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
-        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         query: str = update.callback_query.data
         year = query.split("_")[-1]
@@ -289,9 +290,9 @@ class YearReport:
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
         number_of_purchases = count_user_purchases_for_year(user_id, self.year)
-        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
-        logger.info(number_of_purchases)
+        timeout = THREE_MINUTES if number_of_purchases > 0 else ONE_MINUTE
         message = append_timeout_message(message, is_private, timeout, is_private)
+        restart_process(message_id, timeout=timeout)
         context.bot.edit_message_text(
             text=message,
             chat_id=chat_id,
@@ -324,7 +325,6 @@ class YearReport:
             )
             self.sender.delete_message(context, chat_id, message_id)
             return
-        restart_process(message_id)
         context.bot.answer_callback_query(update.callback_query.id)
         query: str = update.callback_query.data
         year = query.split("_")[-1]
@@ -340,8 +340,8 @@ class YearReport:
             keyboard = NO_PURCHASE_KEYBOARD
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
         number_of_purchases = count_user_purchases_for_year(user_id, self.year)
-        timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
-        logger.info(number_of_purchases)
+        timeout = THREE_MINUTES if number_of_purchases > 0 else ONE_MINUTE
+        restart_process(message_id, timeout=timeout)
         is_private = not update.effective_chat.type == "private"
         message = append_timeout_message(message, is_private, timeout, is_private)
         context.bot.edit_message_text(
