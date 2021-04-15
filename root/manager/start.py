@@ -44,14 +44,13 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
         # TODO: Do I really need this ?
-        add_message(update.effective_message.message_id, update.effective_user.id)
         msg: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
             parse_mode="HTML",
         )
-        logger.info(f"FUCK OFF {msg.message_id}")
+        add_message(message.message_id, update.effective_user.id)
     return
 
 
@@ -83,7 +82,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
             parse_mode="HTML",
         )
         logger.info(f"FUCK OFF {msg.message_id}")
-        add_message(message.message_id, update.effective_user.id, False)
+        add_message(message.message_id, update.effective_user.id)
     else:
         sender.send_and_delete(
             message.message_id,

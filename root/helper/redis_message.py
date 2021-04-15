@@ -41,7 +41,7 @@ def is_owner(message_id: int, user_id: int) -> bool:
         return value.decode() == str(user_id)
     else:
         logger.error(f"** REDIS: {message_key} does not belong to anyone")
-        raise ValueError("session ended for the message...")
+        raise ValueError(f"session ended for the message {message_id}...")
 
 
 def delete_message(message_id: int) -> None:
