@@ -243,12 +243,13 @@ def handle_purchase(client: Client, message: Message) -> None:
             if "." in price:
                 price = price.split(".")
                 if int(price[1]) == 0:
-                    price = price[0]
+                    price = str(price[0])
+                    price += ",00%20%E2%82%AC"
                 else:
                     price = str(original_price)
                     price = price.replace(".", ",")
                     if len(price.split(",")[1]) == 1:
-                        price += "0"
+                        price += "0%20%E2%82%AC"
 
         logger.info(date)
         date = date if not isinstance(date, str) else "%3CDD%2FMM%2FYYYY%3E"
