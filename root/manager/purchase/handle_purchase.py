@@ -148,7 +148,15 @@ def handle_purchase(client: Client, message: Message) -> None:
         caption = caption.split(" ")
         caption.remove("#ultimiacquisti")
         mdate = next(
-            (mdate for mdate in caption if ("/" in mdate and has_number(mdate))), None
+            (
+                mdate
+                for mdate in caption
+                if (
+                    re.findall(r"(\d{1,2}/\d{1,2}/\d{2}|\d{4})", mdate)
+                    and has_number(mdate)
+                )
+            ),
+            None,
         )
         if mdate:
             caption.remove(mdate)
@@ -167,8 +175,9 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             title = ""
             append_message[2] = PURCHASE_TITLE_HINT
-
+        logger.info(caption)
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
+        logger.info(price)
         if len(price) == 0:
             append_message[0] = PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
