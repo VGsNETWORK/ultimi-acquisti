@@ -100,6 +100,8 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    if message.forward_from:
+        return
     original_message = message
     edited = message.edit_date
     append_message = ["", "", ""]
