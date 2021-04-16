@@ -5,6 +5,9 @@
 import random
 import re
 from datetime import datetime
+
+from telegram import chat
+from root.manager.start import back_to_the_start
 from telegram import message
 
 from telegram.chat import Chat
@@ -97,6 +100,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    original_message = message
     edited = message.edit_date
     append_message = ["", "", ""]
     if message.from_user.is_bot:
@@ -115,9 +119,21 @@ def handle_purchase(client: Client, message: Message) -> None:
         date = None
     chat_id = message.chat.id
     if message.chat.type == "private":
+        sender.delete_previous_message(
+            message.from_user.id, message.message_id + 1, chat_id, None
+        )
         message = ONLY_GROUP_NO_QUOTE % "#ultimiacquisti"
         keyboard = send_command_to_group_keyboard(NEW_PURCHASE_LINK, custom=True)
-        sender.send_and_deproto(client, chat_id, message, keyboard, timeout=ONE_MINUTE)
+        sender.send_and_proedit(
+            chat_id,
+            original_message,
+            message,
+            back_to_the_start,
+            keyboard,
+            timeout=ONE_MINUTE,
+            append=True,
+            create_redis=True,
+        )
         return
     if not is_group_allowed(chat_id):
         return
@@ -249,17 +265,24 @@ def handle_purchase(client: Client, message: Message) -> None:
         keyboard = build_purchase_keyboard(modelUser)
     logger.info(ONE_MINUTE + append_timeout)
     add_message(message_id=message_id, user_id=user_id, add=False)
-    sender.send_and_deproto(
-        client,
-        chat_id,
-        message,
-        keyboard,
-        message_id,
-        create_redis=True,
-        user_id=user_id,
-        timeout=ONE_MINUTE + append_timeout,
-        show_timeout=not custom_date_error,
-    )
+    if message.chat.type != "private":
+        logger.info("not a private chat")
+        sender.send_and_deproto(
+            client,
+            chat_id,
+            message,
+            keyboard,
+            message_id,
+            create_redis=True,
+            user_id=user_id,
+            timeout=ONE_MINUTE + append_timeout,
+            show_timeout=not custom_date_error,
+        )
+    else:
+        logger.info("command from a private chat")
+        sender.send_and_edit(
+            None, None, chat_id, message, back_to_the_start, timeout=ONE_MINUTE
+        )
     if custom_date_error:
         stop_process(message_id + 1)
 

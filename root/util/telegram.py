@@ -168,6 +168,38 @@ class TelegramSender:
                 args=(client, chat_id, message.message_id, timeout),
             )
 
+    def send_and_proedit(
+        self,
+        chat_id: int,
+        original_message,
+        text: str,
+        callback,
+        reply_markup=None,
+        reply_to_message_id: int = None,
+        timeout=360,
+        append=False,
+        create_redis=False,
+    ):
+        if append:
+            text += MESSAGE_EDIT_TIMEOUT % ttm(timeout)
+        self._bot = Bot(environ["TOKEN"])
+        message: Message = self._bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+            reply_to_message_id=reply_to_message_id,
+            reply_markup=reply_markup,
+        )
+        if create_redis:
+            add_message(message.message_id, original_message.from_user.id, False)
+        logger.info(f"THIS IS THE MESSAGE I SENT: {message.message_id}")
+        create_process(
+            name_prefix=message.message_id,
+            target=callback,
+            args=(None, None, chat_id, message.message_id, timeout, original_message),
+        )
+
     def send_and_edit(
         self,
         update: Update,
@@ -178,9 +210,13 @@ class TelegramSender:
         reply_markup=None,
         reply_to_message_id: int = None,
         timeout=360,
+        append=False,
+        create_redis=False,
     ):
-        # text += MESSAGE_EDIT_TIMEOUT % ttm(timeout)
-        message: Message = context.bot.send_message(
+        if append:
+            text += MESSAGE_EDIT_TIMEOUT % ttm(timeout)
+        self._bot = Bot(environ["TOKEN"])
+        message: Message = self._bot.send_message(
             chat_id=chat_id,
             text=text,
             disable_web_page_preview=True,
@@ -189,6 +225,8 @@ class TelegramSender:
             reply_markup=reply_markup,
             disable_notification=True,
         )
+        if create_redis:
+            add_message(message.message_id, update.effective_user.id, False)
         logger.info(f"THIS IS THE MESSAGE I SENT: {message.message_id}")
         create_process(
             name_prefix=message.message_id,
@@ -283,7 +321,7 @@ class TelegramSender:
             )
 
     def delete_message(
-        self, context: CallbackContext, chat_id: int, message_id: int, timeout: int = 0
+        self, _: CallbackContext, chat_id: int, message_id: int, timeout: int = 0
     ):
         """Delete the message after the timeoutupdate,
 

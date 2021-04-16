@@ -5,6 +5,8 @@
 import re
 from html import escape
 from datetime import datetime
+from time import time
+from root.manager.start import back_to_the_start
 from root.contants.keyboard import send_command_to_group_keyboard
 from telegram import Update, Message
 from telegram.ext import CallbackContext
@@ -116,14 +118,19 @@ def check_quote_and_users(
     chat_id: int = message.chat.id
     rmessage: Message = message.reply_to_message
     if message.chat.type == "private":
-        sender.send_and_delete(
-            update.effective_message.message_id,
-            update.effective_user.id,
+        sender.delete_previous_message(
+            message.from_user.id, message.message_id + 1, chat_id, context
+        )
+        sender.send_and_edit(
+            update,
             context,
             chat_id,
             ONLY_GROUP % command,
+            back_to_the_start,
+            keyboard,
             timeout=ONE_MINUTE,
-            reply_markup=keyboard,
+            append=True,
+            create_redis=True,
         )
         return False
     if not message.reply_to_message:

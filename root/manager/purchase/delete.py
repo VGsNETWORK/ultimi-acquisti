@@ -4,6 +4,7 @@
 
 import random
 from datetime import datetime
+from root.manager.start import back_to_the_start
 from root.contants.keyboard import send_command_to_group_keyboard
 from pyrogram.types.user_and_chats.chat_member import ChatMember
 from telegram.user import User
@@ -65,14 +66,19 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
     first_name = user.first_name
     chat_type = message.chat.type
     if message.chat.type == "private":
-        sender.send_and_delete(
-            update.effective_message.message_id,
-            update.effective_user.id,
+        sender.delete_previous_message(
+            message.from_user.id, message.message_id + 1, chat_id, context
+        )
+        sender.send_and_edit(
+            update,
             context,
             chat_id,
             ONLY_GROUP_QUOTE_SELF_PURCHASE % command,
+            back_to_the_start,
+            keyboard,
             timeout=ONE_MINUTE,
-            reply_markup=keyboard,
+            append=True,
+            create_redis=True,
         )
         return
     if not chat_type == "private":

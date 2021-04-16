@@ -4,6 +4,8 @@
 
 from os import environ
 import re
+
+from pyrogram.methods.messages import Messages
 from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
@@ -119,7 +121,10 @@ def help_end(update: Update, context: CallbackContext):
 
 
 def conversation_main_menu(
-    update: Update, context: CallbackContext, message_id: int = None
+    update: Update,
+    context: CallbackContext,
+    message_id: int = None,
+    original_message: Message = None,
 ):
     """Show the main menu after a conversation handler
 
@@ -128,15 +133,25 @@ def conversation_main_menu(
         context (CallbackContext): The context of the telegram bot
     """
     logger.info("Received main_menu")
-    message: Message = update.effective_message
-    logger.info("retrieving the message_id")
-    message_id = message_id if message_id else message.message_id
-    chat_id = message.chat.id
+    logger.info(f"THIS IS THE MESSAGE_ID: {message_id}")
+    if update:
+        message: Message = update.effective_message
+        logger.info("retrieving the message_id")
+        message_id = message_id if message_id else message.message_id
+        chat_id = message.chat.id
+    else:
+        chat_id: int = original_message.chat.id
+        logger.info("No update, callback from mtproto")
     logger.info(f"Message is {message_id}, editing message on chat {chat_id}")
+    if update:
+        user = update.effective_user
+    else:
+        user = original_message.from_user
+        message = original_message
     try:
         bot = Bot(environ["TOKEN"])
         bot.edit_message_text(
-            text=build_message(update.effective_user, message),
+            text=build_message(user, message),
             chat_id=chat_id,
             disable_web_page_preview=True,
             reply_markup=build_keyboard(message),
@@ -312,8 +327,9 @@ def back_to_the_start(
     chat_id: int,
     message_id: int,
     timeout: int = 0,
+    original_message: Message = None,
 ):
     logger.info("Waiting for the process to end...")
     sleep(timeout)
     logger.info("Running the main_menu")
-    conversation_main_menu(update, context, message_id)
+    conversation_main_menu(update, context, message_id, original_message)
