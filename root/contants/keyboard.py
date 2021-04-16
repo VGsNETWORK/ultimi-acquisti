@@ -5,8 +5,12 @@ from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
 
 
-def send_command_to_group_keyboard(command: str, args: str = "", custom: bool = False):
-    if not custom:
+def send_command_to_group_keyboard(
+    command: str, args: str = "", custom: bool = False, command_only: bool = False
+):
+    if command_only:
+        command = f"t.me/share/url?url={command}"
+    elif not custom:
         command = f"t.me/share/url?url={command}%40{BOT_NAME}{args}"
     text = "☝🏻 Seleziona un gruppo"
     return InlineKeyboardMarkup(
@@ -19,6 +23,8 @@ def send_command_to_group_keyboard(command: str, args: str = "", custom: bool = 
         ]
     )
 
+
+NEW_PURCHASE_FORMAT = "%23ultimiacquisti%20{}%20{}%0A%0A%25{}%25"
 
 NEW_PURCHASE_TEMPLATE = (
     "%23ultimiacquisti%20%3Cprezzo%3E%20%3CDD%2FMM%2FYYYY%3E%0A%0A%25%3Ctitolo%3E%25"

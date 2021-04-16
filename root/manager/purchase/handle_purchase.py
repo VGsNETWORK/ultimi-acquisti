@@ -13,7 +13,9 @@ from telegram import message
 from telegram.chat import Chat
 from root.contants.keyboard import (
     ADD_PURCHASE_KEYBOARD,
+    NEW_PURCHASE_FORMAT,
     NEW_PURCHASE_LINK,
+    NEW_PURCHASE_TEMPLATE,
     NO_PURCHASE_KEYBOARD,
     create_wrong_date_keyboard,
     send_command_to_group_keyboard,
@@ -61,6 +63,7 @@ from root.util.util import (
     create_button,
     has_number,
     is_group_allowed,
+    is_number,
     retrieve_key,
     ttm,
 )
@@ -120,25 +123,6 @@ def handle_purchase(client: Client, message: Message) -> None:
     else:
         date = None
     chat_id = message.chat.id
-    if message.chat.type == "private":
-        sender.delete_previous_message(
-            message.from_user.id, message.message_id + 1, chat_id, None
-        )
-        message = ONLY_GROUP_NO_QUOTE % "#ultimiacquisti"
-        keyboard = send_command_to_group_keyboard(NEW_PURCHASE_LINK, custom=True)
-        sender.send_and_proedit(
-            chat_id,
-            original_message,
-            message,
-            back_to_the_start,
-            keyboard,
-            timeout=ONE_MINUTE,
-            append=True,
-            create_redis=True,
-        )
-        return
-    if not is_group_allowed(chat_id):
-        return
     message_id = message.message_id
     user = message.from_user
     user_id: int = user.id
@@ -237,6 +221,48 @@ def handle_purchase(client: Client, message: Message) -> None:
         append_timeout = 30 * len(more_time)
     else:
         append_timeout = 0
+    ####################################
+    if original_message.chat.type == "private":
+        sender.delete_previous_message(
+            message.from_user.id, message.message_id + 1, chat_id, None
+        )
+        message = ONLY_GROUP_NO_QUOTE % "#ultimiacquisti"
+        price = price if price else "%3Cprezzo%3E"
+        if is_number(price):
+            original_price = price
+            price = str(price)
+            if "." in price:
+                price = price.split(".")
+                if int(price[1]) == 0:
+                    price = price[0]
+                else:
+                    price = str(original_price)
+                    price = price.replace(".", ",")
+                    if len(price.split(",")[1]) == 1:
+                        price += "0"
+
+        logger.info(date)
+        date = date if not isinstance(date, str) else "%3CDD%2FMM%2FYYYY%3E"
+        date = date if date else "%3CDD%2FMM%2FYYYY%3E"
+        caption = caption if caption else "%3Ctitolo%3E"
+        if not isinstance(date, str):
+            date = date.strftime("%d/%m/%Y")
+        command = NEW_PURCHASE_FORMAT.format(price, date, caption)
+        keyboard = send_command_to_group_keyboard(command, command_only=True)
+        sender.send_and_proedit(
+            chat_id,
+            original_message,
+            message,
+            back_to_the_start,
+            keyboard,
+            timeout=ONE_MINUTE,
+            append=True,
+            create_redis=True,
+        )
+        return
+    if not is_group_allowed(chat_id):
+        return
+    ####################################
     if not result["error"]:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
@@ -267,7 +293,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         keyboard = build_purchase_keyboard(modelUser)
     logger.info(ONE_MINUTE + append_timeout)
     add_message(message_id=message_id, user_id=user_id, add=False)
-    if message.chat.type != "private":
+    if original_message.chat.type != "private":
         logger.info("not a private chat")
         sender.send_and_deproto(
             client,
