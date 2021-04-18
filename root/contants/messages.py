@@ -169,7 +169,7 @@ PURCHASE_DATE_HINT = (
     " specificando una <b>data</b> antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
 )
 
-PURCHASE_HINT_NO_HINT = "\n\n<i>Il tuo acquisto è completo. Niente male!</i>  😉"
+PURCHASE_HINT_NO_HINT = "\n<i>Il tuo acquisto è completo. Niente male!  😉"
 
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
@@ -387,9 +387,8 @@ NO_QUOTE_FOUND = (
 NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
 
 SESSION_ENDED = (
-    "❗️ Il bot è stato aggiornato o riavviato per motivi tecnici, pertanto la sessione"
-    ' di questo messaggio è scaduta.\n\nPer continuare, digita "/" nella chat e seleziona'
-    " un comando dalla lista."
+    "❗️ SESSIONE DEL MESSAGGIO SCADUTA\nIl bot è stato aggiornato o riavviato per motivi tecnici."
+    '\n\nPer continuare, digita "/" nella chat e seleziona un comando dalla lista.'
 )
 
 HOW_TO_DEEP_LINK = (
