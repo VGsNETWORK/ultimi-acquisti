@@ -43,6 +43,7 @@ from root.contants.messages import (
     PURCHASE_MODIFIED,
     PURCHASE_MODIFIED_DATE_ERROR,
     PURCHASE_PRICE_HINT,
+    PURCHASE_RECAP_APPEND,
     PURCHASE_TITLE_HINT,
     PURCHASE_DATE_HINT,
     PURCHASE_HEADER_HINT,
@@ -61,6 +62,7 @@ from root.util.telegram import TelegramSender
 from root.util.util import (
     append_timeout_message,
     create_button,
+    format_price,
     has_number,
     is_group_allowed,
     is_number,
@@ -277,6 +279,9 @@ def handle_purchase(client: Client, message: Message) -> None:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
+            message += PURCHASE_RECAP_APPEND(
+                format_price(price, False), title, date if mdate else None
+            )
             append_message = "".join(append_message)
             if modelUser.show_purchase_tips:
                 if append_message:
@@ -335,6 +340,9 @@ def build_purchase_keyboard(user: UserModel):
 
 def toggle_purchase_tips(update: Update, context: CallbackContext):
     total_tips = 0
+    price = 0.00
+    date = None
+    title = None
     callback_query: CallbackQuery = update.callback_query
     message: Message = callback_query.message
     chat_id: int = message.chat.id
@@ -359,10 +367,14 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     logger.info("Adding title hint")
                     message = PURCHASE_TITLE_HINT
                     total_tips += 1
+                else:
+                    title = purchase.description
                 if not purchase.price:
                     logger.info("Adding price hint")
                     message += PURCHASE_PRICE_HINT
                     total_tips += 1
+                else:
+                    price = purchase.price
                 caption = caption.replace("\n", " ")
                 caption = caption.split(" ")
                 caption.remove("#ultimiacquisti")
@@ -375,6 +387,8 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     logger.info("Adding date hint")
                     message += PURCHASE_DATE_HINT
                     total_tips += 1
+                else:
+                    date = datetime.strptime(mdate, "%d/%m/%y")
                 if message:
                     logger.info("Adding setting the header hint")
                     message = f"{PURCHASE_HEADER_HINT}{message}"
@@ -393,12 +407,15 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                         target=sender.delete_message,
                         args=(None, chat_id, message_id, ONE_MINUTE + append_timeout),
                     )
+                recap_message = PURCHASE_RECAP_APPEND(
+                    format_price(price, False), title, date if mdate else None
+                )
                 if modelUser.show_purchase_tips:
                     logger.info("Sending message with tips")
-                    message = f"{purchase_service_message}{message}"
+                    message = f"{purchase_service_message}{recap_message}{message}"
                 else:
                     logger.info("Sending message without tips")
-                    message = purchase_service_message
+                    message = f"{purchase_service_message}{recap_message}"
                 modelUser.save()
                 keyboard = build_purchase_keyboard(modelUser)
                 if random.choice(range(100)) > 87:

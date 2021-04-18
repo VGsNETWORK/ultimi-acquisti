@@ -260,7 +260,7 @@ def create_button(
     return InlineKeyboardButton(message, callback_data=callback, url=url)
 
 
-def format_price(price: float) -> str:
+def format_price(price: float, accept_zero: bool = True) -> str:
     """Convert a float value into a well formatted str price
 
     Args:
@@ -269,7 +269,11 @@ def format_price(price: float) -> str:
     Returns:
         str: The price formatted
     """
+    if not accept_zero:
+        if not price:
+            return
     price = ("%.2f" % price).replace(".", ",")
+    price = str(price)
     price = price.split(",")
     if len(price) > 1:
         price[0] = "{0:,}".format(int(price[0])).replace(",", ".")

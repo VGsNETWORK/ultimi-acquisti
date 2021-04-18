@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from os import environ
+import root.util.logger as logger
 
 TODAY = datetime.now()
 TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
@@ -149,7 +150,9 @@ YEAR_USER_PURCHASES_NONE = "<i>%s</i> nel <b>%s</b> non ha registrato alcun acqu
 
 PURCHASE_HEADER_HINT = "\n\n\n<b>Lo sapevi che...?</b>"
 
-PURCHASE_PRICE_HINT = "\n💲  Puoi aggiungere un <b>prezzo</b> al tuo acquisto specificandolo nel messaggio."
+PURCHASE_PRICE_HINT = (
+    "\n💲 Puoi aggiungere un <b>prezzo</b> al tuo acquisto specificandolo nel messaggio."
+)
 
 PURCHASE_TITLE_HINT = (
     "\n🔠  Puoi aggiungere un <b>titolo</b> al tuo acquisto includendo"
@@ -166,11 +169,25 @@ PURCHASE_DATE_HINT = (
     " specificando una <b>data</b> antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
 )
 
-PURCHASE_HINT_NO_HINT = "\n\n\n😉  Il tuo acquisto è completo. Niente male!"
+PURCHASE_HINT_NO_HINT = "\n\n<i>Il tuo acquisto è completo. Niente male!</i>  😉"
 
 PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
+
+
+def PURCHASE_RECAP_APPEND(price, title, date):
+    message = ""
+    if price or title or date:
+        message = "\n"
+        if price:
+            message += "\n💲 Prezzo:  <code>%s €</code>" % price
+        if date:
+            message += "\n📅  Data:  <code>%s</code>" % date.strftime("%d/%m/%Y")
+        if title:
+            message += "\n🔠  Titolo:  <code>%s</code>" % title
+    return message
+
 
 ONLY_GROUP = (
     "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
