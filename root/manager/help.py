@@ -3,6 +3,7 @@
 """ Docstring """
 
 from logging import Logger
+from root.helper.redis_message import add_message
 from root.manager.start import back_to_the_start
 from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
@@ -29,6 +30,7 @@ def help_init(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    add_message(update.effective_message.message_id, update.effective_user.id)
     bot_help(update, context, 1)
 
 
@@ -104,7 +106,6 @@ def bot_help(
     if edit:
         is_private = not update.effective_chat.type == "private"
         if update.effective_chat.type == "private":
-            print("is_private")
             stop_process(message_id)
             create_process(
                 name_prefix=message_id,
@@ -125,7 +126,7 @@ def bot_help(
         )
     else:
         is_private = not update.effective_chat.type == "private"
-        # message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
+        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
         sender.send_and_edit(
             update,
             context,
