@@ -370,15 +370,9 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 reply_message.message_id, chat_id
             )
             if purchase:
-                if not purchase.description:
-                    logger.info("Adding title hint")
-                    message = PURCHASE_TITLE_HINT
-                    total_tips += 1
-                else:
-                    title = purchase.description
                 if not purchase.price:
                     logger.info("Adding price hint")
-                    message += PURCHASE_PRICE_HINT
+                    message = PURCHASE_PRICE_HINT
                     total_tips += 1
                 else:
                     price = purchase.price
@@ -399,6 +393,12 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                         date = datetime.strptime(mdate, "%d/%m/%y")
                     except ValueError:
                         date = datetime.strptime(mdate, "%d/%m/%Y")
+                if not purchase.description:
+                    logger.info("Adding title hint")
+                    message += PURCHASE_TITLE_HINT
+                    total_tips += 1
+                else:
+                    title = purchase.description
                 if message:
                     logger.info("Adding setting the header hint")
                     message = f"{PURCHASE_HEADER_HINT}{message}"
