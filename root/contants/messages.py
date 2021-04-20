@@ -176,16 +176,21 @@ PURCHASE_ADDED = "✅  <i>Acquisto aggiunto con successo!</i>"
 PURCHASE_MODIFIED = "✅  <i>Acquisto modificato con successo!</i>"
 
 
-def PURCHASE_RECAP_APPEND(price, title, date):
+def PURCHASE_RECAP_APPEND(
+    price, title, date, dprice: bool = False, dtitle: bool = False, ddate: bool = False
+):
     message = ""
     if price or title or date:
         message = "\n"
         if price:
             message += "\n💲 Prezzo:  <code>%s €</code>" % price
+            message += "  (default)" if dprice else ""
         if date:
             message += "\n📅  Data:  <code>%s</code>" % date.strftime("%d/%m/%Y")
+            message += "  (default)" if ddate else ""
         if title:
             message += "\n🔠  Titolo:  <code>%s</code>" % title
+            message += "  (default)" if dtitle else ""
     return message
 
 

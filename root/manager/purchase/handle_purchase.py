@@ -180,6 +180,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         logger.info(caption)
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         logger.info(price)
+        original_price = price
         if len(price) == 0:
             append_message[0] = PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
@@ -253,7 +254,7 @@ def handle_purchase(client: Client, message: Message) -> None:
                     if len(price.split(",")[1]) == 1:
                         price += "0%20%E2%82%AC"
 
-        logger.info(date)
+        logger.info(f"THIS IS THE {date}")
         date = date if not isinstance(date, str) else "%3CDD%2FMM%2FYYYY%3E"
         date = date if date else "%3CDD%2FMM%2FYYYY%3E"
         caption = caption if caption else "%3Ctitolo%3E"
@@ -279,8 +280,14 @@ def handle_purchase(client: Client, message: Message) -> None:
         add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
+            date = datetime.now() if not date else date
             message += PURCHASE_RECAP_APPEND(
-                format_price(price, False), title, date if mdate else None
+                format_price(price),
+                title,
+                date,
+                not len(original_price),
+                False,
+                not mdate,
             )
             append_message = "".join(append_message)
             if modelUser.show_purchase_tips:
@@ -388,7 +395,10 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                     message += PURCHASE_DATE_HINT
                     total_tips += 1
                 else:
-                    date = datetime.strptime(mdate, "%d/%m/%y")
+                    try:
+                        date = datetime.strptime(mdate, "%d/%m/%y")
+                    except ValueError:
+                        date = datetime.strptime(mdate, "%d/%m/%Y")
                 if message:
                     logger.info("Adding setting the header hint")
                     message = f"{PURCHASE_HEADER_HINT}{message}"
@@ -407,8 +417,14 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                         target=sender.delete_message,
                         args=(None, chat_id, message_id, ONE_MINUTE + append_timeout),
                     )
+                date = datetime.now() if not date else date
                 recap_message = PURCHASE_RECAP_APPEND(
-                    format_price(price, False), title, date if mdate else None
+                    format_price(price),
+                    title,
+                    date,
+                    not purchase.price,
+                    False,
+                    not mdate,
                 )
                 if modelUser.show_purchase_tips:
                     logger.info("Sending message with tips")
