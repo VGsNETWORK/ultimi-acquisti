@@ -183,13 +183,13 @@ def PURCHASE_RECAP_APPEND(
     if price or title or date:
         message = "\n"
         if price:
-            message += "\n💲 Prezzo:  <code>%s €</code>" % price
+            message += "\n💲 <b>Prezzo:</b>  <code>%s €</code>" % price
             message += "  (default)" if dprice else ""
         if date:
-            message += "\n📅  Data:  <code>%s</code>" % date.strftime("%d/%m/%Y")
+            message += "\n📅  <b>Data:</b>  <code>%s</code>" % date.strftime("%d/%m/%Y")
             message += "  (default)" if ddate else ""
         if title:
-            message += "\n🔠  Titolo:  <code>%s</code>" % title
+            message += "\n🔠  <b>Titolo:</b>  <code>%s</code>" % title
             message += "  (default)" if dtitle else ""
     return message
 
