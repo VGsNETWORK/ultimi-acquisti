@@ -93,9 +93,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 purchase.message_id,
             )
         try:
-            message = append_timeout_message(
-                message, is_private, TWO_MINUTES, is_private
-            )
+            logger.info("HERE")
             sender.send_and_delete(
                 update.effective_message.message_id,
                 update.effective_user.id,
