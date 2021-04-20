@@ -316,7 +316,6 @@ def handle_purchase(client: Client, message: Message) -> None:
     logger.info(ONE_MINUTE + append_timeout)
     add_message(message_id=message_id, user_id=user_id, add=False)
     if original_message.chat.type != "private":
-        logger.info("not a private chat")
         sender.send_and_deproto(
             client,
             chat_id,

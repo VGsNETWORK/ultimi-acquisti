@@ -127,8 +127,10 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             )
     else:
         message = NO_PURCHASE % (user_id, first_name)
-        message = append_timeout_message(message, is_private, ONE_MINUTE, is_private)
         if update.effective_message.chat.type == "private":
+            message = append_timeout_message(
+                message, is_private, ONE_MINUTE, is_private
+            )
             sender.send_and_edit(
                 update,
                 context,
