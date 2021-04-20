@@ -13,11 +13,12 @@ from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
 from telegram.bot import Bot
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
-from root.util.util import create_button, format_error, retrieve_key
+from root.util.util import create_button, format_error, is_number, retrieve_key
 from root.contants.messages import (
     START_COMMAND,
     START_COMMANDS_LIST,
     PLEASE_NOTE_APPEND,
+    START_COMMANDS_LIST_HEADER,
     START_GROUP_GROUP_APPEND,
 )
 from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
@@ -163,7 +164,7 @@ def conversation_main_menu(
         logger.exception(e)
 
 
-def append_commands(update: Update, context: CallbackContext):
+def append_commands(update: Update, context: CallbackContext, page: int = 0):
     """Append the list of commands to the start message
 
     Args:
@@ -175,6 +176,7 @@ def append_commands(update: Update, context: CallbackContext):
         message: Message = callback.message
     else:
         message: Message = update.effective_message
+    max_pages = len(START_COMMANDS_LIST)
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -182,7 +184,28 @@ def append_commands(update: Update, context: CallbackContext):
                     "🔺     Nascondi i comandi     🔺",
                     "start_hide_commands",
                     "start_hide_commands",
-                )
+                ),
+            ],
+            [
+                create_button(
+                    "◄" if page > 0 else "🔚",
+                    f"command_page_{page - 1}" if page > 0 else "empty_button",
+                    f"command_page_{page - 1}" if page > 0 else "empty_button",
+                ),
+                create_button(
+                    f"{page + 1}/{max_pages}",
+                    "empty_button",
+                    "empty_button",
+                ),
+                create_button(
+                    "►" if page + 1 < max_pages else "🔚",
+                    f"command_page_{page + 1}"
+                    if page + 1 < max_pages
+                    else "empty_button",
+                    f"command_page_{page + 1}"
+                    if page + 1 < max_pages
+                    else "empty_button",
+                ),
             ],
             [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
             [
@@ -208,7 +231,8 @@ def append_commands(update: Update, context: CallbackContext):
     chat_id: int = message.chat.id
     message_id: int = message.message_id
     message: str = build_message(update.effective_user, message)
-    message: str = f"{message}\n{START_COMMANDS_LIST}"
+    command = START_COMMANDS_LIST[page]
+    message: str = f"{message}\n{START_COMMANDS_LIST_HEADER}{command}"
     if update.callback_query:
         context.bot.edit_message_text(
             text=message,
@@ -319,6 +343,17 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
             ],
         ]
     )
+
+
+def navigate_command_list(update: Update, context: CallbackContext):
+    global COMMAND_MESSAGE
+    callback: CallbackQuery = update.callback_query
+    page: str = callback.data
+    page = page.split("_")[-1]
+    if not page.isdigit():
+        return
+    page = int(page)
+    append_commands(update, callback, page)
 
 
 def back_to_the_start(

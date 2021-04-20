@@ -32,7 +32,13 @@ import root.util.logger as logger
 from root.manager.help import bot_help, help_navigate, help_init
 from root.helper.user_helper import is_admin, create_user, user_exists
 from root.util.telegram import TelegramSender
-from root.manager.start import handle_start, help_end, append_commands, remove_commands
+from root.manager.start import (
+    handle_start,
+    help_end,
+    append_commands,
+    navigate_command_list,
+    remove_commands,
+)
 from root.manager.feedback import FEEDBACK_CONVERSATION
 
 
@@ -186,6 +192,11 @@ class BotManager:
 
         self.disp.add_handler(
             CommandHandler("reportannuale", self.year_report.year_report)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=navigate_command_list, pattern="command_page_.*"
+            )
         )
         self.disp.add_handler(
             CallbackQueryHandler(
