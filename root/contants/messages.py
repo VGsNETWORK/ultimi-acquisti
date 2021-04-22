@@ -289,7 +289,7 @@ NO_YEAR_PURCHASE = (
 
 LAST_PURCHASE = (
     '<a href="tg://user?id=%s">%s</a>, hai effettuato il tuo ultimo acquisto '
-    "in data <b>%s alle %s</b>.\n\n"
+    "in data <b>%s alle %s</b>.%s\n\n"
     'Puoi vederlo <a href="https://t.me/c/%s/%s">cliccando qui</a>!'
 )
 

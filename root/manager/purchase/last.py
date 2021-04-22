@@ -7,15 +7,15 @@ from telegram import Update, Message
 from telegram.ext import CallbackContext
 from telegram.error import BadRequest
 import root.util.logger as logger
-from root.util.util import append_timeout_message, is_group_allowed
+from root.util.util import append_timeout_message, format_price
 from root.model.purchase import Purchase
 from root.helper.purchase_helper import get_last_purchase
-from root.helper.user_helper import user_exists, create_user
 from root.contants.messages import (
     LAST_PURCHASE,
     NO_PURCHASE,
     NO_QUOTE_BOT,
     LAST_PURCHASE_USER,
+    PURCHASE_RECAP_APPEND,
 )
 from root.contants.message_timeout import (
     SERVICE_TIMEOUT,
@@ -76,11 +76,17 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
         time = date.strftime("%H:%M")
         date = date.strftime("%d/%m/%Y")
         if not message.reply_to_message or user.id == user_id:
+            recap = PURCHASE_RECAP_APPEND(
+                format_price(purchase.price),
+                purchase.description,
+                None,
+            )
             message = LAST_PURCHASE % (
                 user_id,
                 first_name,
                 date,
                 time,
+                recap,
                 purchase_chat_id,
                 purchase.message_id,
             )
@@ -104,7 +110,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
                 timeout=TWO_MINUTES,
             )
         except BadRequest:
-            if update.effective_message.chat.type == "private":
+            if chat_type == "private":
                 sender.send_and_edit(
                     update,
                     context,
@@ -125,7 +131,7 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             )
     else:
         message = NO_PURCHASE % (user_id, first_name)
-        if update.effective_message.chat.type == "private":
+        if chat_type == "private":
             message = append_timeout_message(
                 message, is_private, ONE_MINUTE, is_private
             )
