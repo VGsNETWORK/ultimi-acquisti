@@ -100,15 +100,15 @@ def bot_help(
         return
     message, keyboard = create_message(page)
     try:
+        stop_process(message_id)
+        create_process(
+            name_prefix=message_id,
+            target=back_to_the_start,
+            args=(update, context, chat_id, message_id, FIVE_MINUTES),
+        )
         if edit:
             is_private = not update.effective_chat.type == "private"
             if update.effective_chat.type == "private":
-                stop_process(message_id)
-                create_process(
-                    name_prefix=message_id,
-                    target=back_to_the_start,
-                    args=(update, context, chat_id, message_id, FIVE_MINUTES),
-                )
                 context.bot.answer_callback_query(update.callback_query.id)
                 message = append_timeout_message(
                     message, is_private, FIVE_MINUTES, is_private

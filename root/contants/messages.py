@@ -448,30 +448,19 @@ HOW_TO_PRICE = (
     "   •  <code>2.250,10€</code>\n"
     "   •  <code>2'250.10</code>\n\n"
     "Se invece ometti l'importo, salverò il tuo <i>acquisto</i> con un importo <i>di default</i>"
-    " di <code>0,00 €</code>; questo è utile per i regali, o se non vuoi rivelare il prezzo di un"
+    " di  <code>0,00 €</code>; questo è utile per i regali, o se non vuoi rivelare il prezzo di un"
     " certo acquisto – tieni presente che in questo secondo caso la scelta si rifletterà"
     " sui totali mensili e annuali.\n\n"
     "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato,"
     " quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
 )
 
-HOW_TO_TITLE = (
-    "<b><u>GUIDA</u>    ➔    🔤  DARE UN NOME ALL'ACQUISTO</b>\n\n\n"
-    "Per facilitare il riconoscimento degli <i>acquisti</i> all'interno del <b>report mensile</b>"
-    " ti è data facoltà di assegnare loro un breve <b><u>titolo</u></b> personalizzato; questo sarà"
-    " mostrato alla destra dell'importo, al posto della stringa di default con data e ora di registrazione dell'acquisto.\n"
-    "Per assegnare un titolo al tuo <i>acquisto</i>, tutto ciò che devi fare è inserire del testo racchiuso da <code>%...%</code>"
-    ' (<i>esempio:</i> "<code>%Il mio acquisto%</code>").\n\n'
-    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato, quindi sentiti pure libero di"
-    " inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
-)
-
 HOW_TO_DATE = (
     "<b><u>GUIDA</u>    ➔    📅  ACQUISTI RETRODATATI</b>\n\n\n"
     'Se assieme al tag "<code>#ultimiacquisti</code>" espliciti una <b><u>data</u></b>'
     " anteriore ad oggi collocherò temporalmente l'<i>acquisto</i> a quel giorno. Tieni presente che:\n\n"
-    "   •  i formati accettati per la data sono <code>DD/MM/YYYY</code>"
-    ' (<i>esempio:</i> "<code>20/04/2021</code>") e <code>DD/MM/YY</code> (<i>esempio:</i> "<code>20/04/21</code>")'
+    "   •  i formati accettati per la data sono  <code>DD/MM/YYYY</code>"
+    '  (<i>esempio:</i>  "<code>20/04/2021</code>") e  <code>DD/MM/YY</code>  (<i>esempio:</i>  "<code>20/04/21</code>")'
     " – altri formati saranno ignorati o potrebbero generare risultati indesiderati;\n"
     "   •  in caso di date multiple inserite correttamente, prenderò in considerazione <u>soltanto la prima</u> trovata a partire dall'alto.\n\n"
     "Se ometti la data, o ne inserisci una futura, il tuo <i>acquisto</i> sarà collocato"
@@ -480,15 +469,26 @@ HOW_TO_DATE = (
     " ignorato, quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
 )
 
+HOW_TO_TITLE = (
+    "<b><u>GUIDA</u>    ➔    🔤  DARE UN NOME ALL'ACQUISTO</b>\n\n\n"
+    "Per facilitare il riconoscimento degli <i>acquisti</i> all'interno del <b>report mensile</b>"
+    " ti è data facoltà di assegnare loro un breve <b><u>titolo</u></b> personalizzato; questo sarà"
+    " mostrato alla destra dell'importo, al posto della stringa di default con data e ora di registrazione dell'acquisto.\n"
+    'Per assegnare un titolo al tuo <i>acquisto</i>, tutto ciò che devi fare è inserire del testo racchiuso tra "<code>%...%</code>"'
+    '  (<i>esempio:</i>  "<code>%Il mio acquisto%</code>").\n\n'
+    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato, quindi sentiti pure libero di"
+    " inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
+)
+
 HOW_TO_MODIFY_A_PURCHASE = (
     "<b><u>GUIDA</u>    ➔    ✍🏻  MODIFICA DI UN ACQUISTO</b>\n\n\n"
     "Tieni presente che puoi <b>cambiare</b>, <b>aggiungere</b> o <b>rimuovere</b>"
     " le info di un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n\n"
-    "   •  cercare il post relativo al tuo acquisto (a tale scopo la <i>funzione di ricerca interna alla chat</i> di Telegram può tornarti utile);\n"
-    "   •  cliccarci sopra (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
+    "   •  cercare il post relativo al tuo acquisto  (a tale scopo la <i>funzione di ricerca interna alla chat</i> di Telegram può tornarti utile);\n"
+    "   •  cliccarci sopra  (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
     "   •  selezionare <b>Modifica</b>;\n"
     "   •  dopo aver apportato le modifiche desiderate al messaggio, confermare.\n\n"
-    "Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva,"
+    "💡 Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva,"
     ' sempre con la stessa procedura: ti basterà taggare il post con "<code>#ultimiacquisti</code>" in fase di modifica del messaggio e,'
     " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
 )
