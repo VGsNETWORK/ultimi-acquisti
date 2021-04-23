@@ -181,13 +181,6 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         [
             [
                 create_button(
-                    "🔺     Nascondi i comandi     🔺",
-                    "start_hide_commands",
-                    "start_hide_commands",
-                ),
-            ],
-            [
-                create_button(
                     "◄" if page > 0 else "🔚",
                     f"command_page_{page - 1}" if page > 0 else "empty_button",
                     f"command_page_{page - 1}" if page > 0 else "empty_button",
@@ -207,7 +200,14 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     else "empty_button",
                 ),
             ],
-            [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
+            [
+                create_button(
+                    "🔺     Nascondi i comandi     🔺",
+                    "start_hide_commands",
+                    "start_hide_commands",
+                ),
+            ],
+            [create_button("ℹ️  Guida", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     "💳  Apri il report mensile", "expand_report", "expand_report"
@@ -310,7 +310,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
-                [create_button("ℹ️  Guida", "how_to_page_1", "how_to_page_1")],
+                [create_button("ℹ️  Guida", "how_to_page_0", "how_to_page_0")],
                 [
                     create_button(
                         "💳  Apri il report mensile", "expand_report", "expand_report"

@@ -178,7 +178,7 @@ class BotManager:
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("howto", help_init))
         self.disp.add_handler(
-            CallbackQueryHandler(callback=help_navigate, pattern="how_to_page")
+            CallbackQueryHandler(callback=help_navigate, pattern="how_to_page_.*")
         )
         self.disp.add_handler(
             CallbackQueryHandler(callback=help_end, pattern="how_to_end")

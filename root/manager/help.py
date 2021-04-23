@@ -2,25 +2,21 @@
 
 """ Docstring """
 
-from logging import Logger
 from root.helper.redis_message import add_message
 from root.manager.start import back_to_the_start
 from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
+from telegram.error import BadRequest
 from root.util.telegram import TelegramSender
 from root.util.util import append_timeout_message, create_button, retrieve_key
-import root.util.logger as logger
 from root.contants.messages import (
-    HOW_TO_PAGE_ONE,
-    HOW_TO_PAGE_TWO,
-    HOW_TO_PAGE_THREE,
+    HOW_TO_PAGES,
     HOW_TO_DEEP_LINK,
 )
-from root.helper.process_helper import create_process, restart_process, stop_process
+from root.helper.process_helper import create_process, stop_process
 from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
 
 sender = TelegramSender()
-PAGES = ["", HOW_TO_PAGE_ONE, HOW_TO_PAGE_TWO, HOW_TO_PAGE_THREE]
 
 
 def help_init(update: Update, context: CallbackContext):
@@ -31,7 +27,7 @@ def help_init(update: Update, context: CallbackContext):
         context (CallbackContext): The context of the telegram bot
     """
     add_message(update.effective_message.message_id, update.effective_user.id)
-    bot_help(update, context, 1)
+    bot_help(update, context, page=0)
 
 
 def help_navigate(update: Update, context: CallbackContext):
@@ -79,7 +75,7 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
 
 
 def bot_help(
-    update: Update, context: CallbackContext, page: int = 1, edit: bool = False
+    update: Update, context: CallbackContext, page: int = 0, edit: bool = False
 ):
     """Generic method to handle the help session
 
@@ -102,95 +98,62 @@ def bot_help(
     if not chat_type == "private":
         send_redirect(update, context)
         return
-    message, keyboard = build_keyboard(page)
-    if edit:
-        is_private = not update.effective_chat.type == "private"
-        if update.effective_chat.type == "private":
-            stop_process(message_id)
-            create_process(
-                name_prefix=message_id,
-                target=back_to_the_start,
-                args=(update, context, chat_id, message_id, FIVE_MINUTES),
+    message, keyboard = create_message(page)
+    try:
+        if edit:
+            is_private = not update.effective_chat.type == "private"
+            if update.effective_chat.type == "private":
+                stop_process(message_id)
+                create_process(
+                    name_prefix=message_id,
+                    target=back_to_the_start,
+                    args=(update, context, chat_id, message_id, FIVE_MINUTES),
+                )
+                context.bot.answer_callback_query(update.callback_query.id)
+                message = append_timeout_message(
+                    message, is_private, FIVE_MINUTES, is_private
+                )
+            context.bot.edit_message_text(
+                text=message,
+                chat_id=chat_id,
+                disable_web_page_preview=True,
+                message_id=message_id,
+                reply_markup=keyboard,
+                parse_mode="HTML",
             )
-            context.bot.answer_callback_query(update.callback_query.id)
+        else:
+            is_private = not update.effective_chat.type == "private"
             message = append_timeout_message(
                 message, is_private, FIVE_MINUTES, is_private
             )
-        context.bot.edit_message_text(
-            text=message,
-            chat_id=chat_id,
-            disable_web_page_preview=True,
-            message_id=message_id,
-            reply_markup=InlineKeyboardMarkup(keyboard),
-            parse_mode="HTML",
-        )
-    else:
-        is_private = not update.effective_chat.type == "private"
-        message = append_timeout_message(message, is_private, FIVE_MINUTES, is_private)
-        sender.send_and_edit(
-            update,
-            context,
-            chat_id,
-            message,
-            back_to_the_start,
-            InlineKeyboardMarkup(keyboard),
-            timeout=FIVE_MINUTES,
-        )
+            sender.send_and_edit(
+                update,
+                context,
+                chat_id,
+                message,
+                back_to_the_start,
+                keyboard,
+                timeout=FIVE_MINUTES,
+            )
+    except BadRequest:
+        return
 
 
-def build_keyboard(page: int):
+def create_message(page: int):
     """Build the keyboard for the help message
 
     Args:
         page (int): The page You want to view
     """
-    message = PAGES[page]
-    if page == 1:
-        keyboard = [
-            [
-                create_button(
-                    "AVANTI   ►",
-                    str(f"how_to_page_{page+1}"),
-                    f"how_to_page_{page+1}",
-                )
-            ]
-        ]
-    elif page == len(PAGES) - 1:
-        keyboard = [
-            [
-                create_button(
-                    "Indietro",
-                    str(f"how_to_page_{page-1}"),
-                    f"how_to_page_{page-1}",
-                )
-            ]
-        ]
-    else:
-        keyboard = [
-            [
-                create_button(
-                    "Indietro",
-                    str(f"how_to_page_{page-1}"),
-                    f"how_to_page_{page-1}",
-                ),
-                create_button(
-                    "AVANTI   ►",
-                    str(f"how_to_page_{page+1}"),
-                    f"how_to_page_{page+1}",
-                ),
-            ]
-        ]
-
-    close_help = "Ho capito"
-    last_page = page != len(PAGES) - 1
-    keyboard.append(
-        [
-            create_button(
-                close_help if last_page else close_help.upper(),
-                str("how_to_end"),
-                "how_to_end",
-            ),
-        ]
-    )
-    message = f"<b>FUNZIONAMENTO  ({page}/{len(PAGES) - 1})</b>\n\n\n{message}"
-    return message, keyboard
+    current_page = HOW_TO_PAGES[page]
+    text = current_page["description"]
+    keyboards = []
+    for index, button in enumerate(HOW_TO_PAGES):
+        callback = f"how_to_page_{index}"
+        button = button["button_text"]
+        if index == page:
+            button = f"►   {button}   ◄"
+        button = create_button(button, callback, callback)
+        keyboards.append([button])
+    keyboards.append([create_button("Ho capito!", "how_to_end", "how_to_end")])
+    return text, InlineKeyboardMarkup(keyboards)

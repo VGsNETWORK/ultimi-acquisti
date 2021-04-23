@@ -316,6 +316,7 @@ PURCHASE_REPORT_TEMPLATE = (
 )
 
 NEW_PURCHASE_LINK = "https://t.me/share/url?url=%23ultimiacquisti%20%3Cprezzo%3E%20{}%2F{}%2F{}%0A%0A%25%3Ctitolo%3E%25"
+
 PURCHASE_REPORT_ADD_NEW_PURCHASE = '<code>%s</code>%s► <a href="%s">%s</a>'
 
 REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"
@@ -421,12 +422,24 @@ HOW_TO_DEEP_LINK = (
     ' <a href="t.me/%s?start=how_to">clicca qui</a>!'
 )
 
+HOW_TO_INTRODUCTION = (
+    "<b><u>GUIDA</u>  ➔  INTRODUZIONE</b>\n\n\n"
+    "Per far sì che io possa riconoscere un tuo acquisto"
+    " è necessario che invii nel gruppo un messaggio di"
+    ' qualsiasi tipo contenente l\'<u>hashtag</u> "<code>#ultimiacquisti</code>".\n'
+    "Se il messaggio non è di tipo testuale, ma consiste in una (o più)"
+    " <i>foto</i> o altro tipo di <i><b>medium</b></i> (<i>immagine non"
+    " compressa</i>, <i>audio</i>, <i>file</i>, etc.), dovrai aggiungere"
+    " il tag in <b>didascalia</b> ai suddetti media per renderli un acquisto legittimo."
+)
 
-HOW_TO_PAGE_ONE = (
-    "Per far sì che io possa riconoscere un tuo <i>acquisto</i> è necessario che tu "
-    "invii nel gruppo un messaggio contenente l'hashtag <code>#ultimiacquisti</code>.\n\n"
-    "Indicando anche una cifra numerica, registrerò l'<i>acquisto</i> con l'importo indicato. "
-    "Nel caso in cui ce ne sia più di una, ricorda che prenderò in considerazione solo la prima.\n"
+HOW_TO_PRICE = (
+    "<b><u>GUIDA</u>  ➔  GESTIONE DEL PREZZO</b>\n\n\n"
+    'Se a seguito del tag "<code>#ultimiacquisti</code>"'
+    " indicherai una cifra numerica assegnerò quell'importo"
+    " come <u>prezzo</u> dell'<i>acquisto</i>. Nel caso in cui il testo"
+    " – o la didascalia, in caso di media – presentasse più di una cifra,"
+    " ricorda che prenderò in considerazione <b>soltanto la prima</b>.\n"
     "Puoi inserire l'importo in molteplici formati:\n\n"
     "   •  <code>22</code>\n"
     "   •  <code>22,50 €</code>\n"
@@ -435,30 +448,84 @@ HOW_TO_PAGE_ONE = (
     "   •  <code>€ 2,250.10</code>\n"
     "   •  <code>2.250,10€</code>\n"
     "   •  <code>2'250.10</code>\n\n"
-    "sono solo alcuni di quelli riconosciuti."
+    "sono solo alcuni di quelli riconosciuti.\n\n\n"
+    "Se invece ometti l'importo, salverò il tuo <i>acquisto</i>"
+    " con un importo <i>di default</i> di <code>0,00 €</code>;"
+    " questo è utile per i regali, o se non vuoi rivelare il"
+    " prezzo di un certo acquisto – tieni presente che in questo"
+    " secondo caso la scelta si rifletterà sui totali mensili e annuali.\n\n"
+    "Tutto il testo in chiaro che aggiungerai al di fuori di prezzo,"
+    " data e titolo verrà ignorato, quindi sentiti pure libero di inserire"
+    " una qualsiasi descrizione riguardante il tuo acquisto."
 )
 
-HOW_TO_PAGE_TWO = (
-    "Se ometti l'importo, il tuo acquisto sarà salvato con un importo di "
-    "default di <code>0,00€</code> (utile per i regali o se non vuoi rivelare il "
-    "prezzo di un certo acquisto – nel secondo caso, tieni presente che "
-    "questo avrà ripercussioni sui totali mensili e annuali).\n\n"
-    "Tutto quello che aggiungerai al di fuori dell'importo verrà ignorato, "
-    "quindi sentiti pure libero di inserire una qualsiasi "
-    "descrizione riguardante il tuo acquisto."
+HOW_TO_TITLE = (
+    "<b><u>GUIDA</u>  ➔  DARE UN NOME ALL'ACQUISTO</b>\n\n\n"
+    "Per facilitare il riconoscimento degli <i>acquisti</i> all'interno"
+    " del <b>report mensile</b> ti è data facoltà di assegnare loro un breve"
+    " <u>titolo</u> personalizzato; questo sarà mostrato alla destra dell'importo,"
+    " al posto della stringa con data e ora di registrazione di default.\n"
+    "Per assegnare un titolo al tuo <i>acquisto</i>, tutto ciò che devi fare è"
+    ' inserire del testo racchiuso da <code>%...%</code> (es. "<i>%Il mio acquisto%</i>").\n\n'
+    "Tutto il testo in chiaro che aggiungerai al di fuori di prezzo,"
+    " data e titolo verrà ignorato, quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto."
 )
 
-HOW_TO_PAGE_THREE = (
-    "Tieni presente che puoi cambiare, aggiungere o rimuovere l'importo di "
-    "un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n"
-    "   • cercare il messaggio relativo al tuo acquisto;\n"
-    "   • cliccarci sopra (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
-    "   • selezionare <b>Modifica</b>;\n"
-    "   • dopo aver apportato le modifiche, confermare.\n\n"
-    "Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva, "
-    "sempre con la stessa procedura: ti basterà taggare il post con <code>#ultimiacquisti</code> "
-    "in fase di modifica del messaggio e provvederò ad aggiungere un acquisto a quella data."
+HOW_TO_DATE = (
+    "<b><u>GUIDA</u>  ➔  ACQUISTI RETRODATATI</b>\n\n\n"
+    'Se assieme al tag "<code>#ultimiacquisti</code>"'
+    " espliciti una <u>data</u> anteriore ad oggi collocherò"
+    " temporalmente l'<i>acquisto</i> a quel giorno. Tieni presente che:\n\n"
+    "   •  i formati accettati per la data sono"
+    ' <code>DD/MM/YYYY</code> (es. "<i>20/04/2021</i>") e <code>DD/MM/YY</code>'
+    ' (es. "<i>20/04/21</i>") – altri formati saranno ignorati'
+    " o potrebbero generare risultati indesiderati;\n"
+    "   •  in caso di date multiple inserite correttamente,"
+    " prenderò in considerazione <b>soltanto la prima</b> trovata nel post.\n\n"
+    "Se ometti la data, o ne inserisci una futura, il tuo <i>acquisto</i>"
+    " sarà collocato <i>di default</i> alla data di oggi.\n\n"
+    "Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data"
+    " e titolo verrà ignorato, quindi sentiti pure libero di inserire una"
+    " qualsiasi descrizione riguardante il tuo acquisto."
 )
+
+HOW_TO_MODIFY_A_PURCHASE = (
+    "<b><u>GUIDA</u>  ➔  MODIFICA DI UN ACQUISTO</b>\n\n\n"
+    "Tieni presente che puoi <b>cambiare</b>,"
+    " <b>aggiungere</b> o <b>rimuovere</b> le info di un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n\n"
+    "   •  cercare il post relativo al tuo acquisto"
+    " (a tal scopo la <i>funzione di ricerca interna</i> di Telegram può tornarti utile);\n"
+    "   •  cliccarci sopra (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
+    "   •  selezionare <b>Modifica</b>;\n"
+    "   •  dopo aver apportato le modifiche desiderate al messaggio, confermare.\n\n"
+    "Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva,"
+    ' sempre con la stessa procedura: ti basterà taggare il post con "<code>#ultimiacquisti</code>"'
+    " in fase di modifica del messaggio, e provvederò ad aggiungere un acquisto alla data originale del post."
+)
+
+HOW_TO_INTRODUCTION = {
+    "button_text": "🏁  Introduzione",
+    "description": HOW_TO_INTRODUCTION,
+}
+
+HOW_TO_PRICE = {"button_text": "💲 Prezzo", "description": HOW_TO_PRICE}
+
+HOW_TO_TITLE = {"button_text": "🔠  Titolo", "description": HOW_TO_TITLE}
+
+HOW_TO_DATE = {"button_text": "📅  Data", "description": HOW_TO_DATE}
+
+HOW_TO_MODIFY_A_PURCHASE = {
+    "button_text": "✍🏻  Modifica di un acquisto",
+    "description": HOW_TO_MODIFY_A_PURCHASE,
+}
+
+HOW_TO_PAGES = [
+    HOW_TO_INTRODUCTION,
+    HOW_TO_PRICE,
+    HOW_TO_DATE,
+    HOW_TO_TITLE,
+    HOW_TO_MODIFY_A_PURCHASE,
+]
 
 FEEDBACK_SEND_MESSAGE = "Digita il testo che vuoi inviare, assicurandoti di inserire il tutto in un unico messaggio, poi premi Invia:"
 
