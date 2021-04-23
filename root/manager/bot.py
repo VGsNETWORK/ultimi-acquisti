@@ -38,6 +38,7 @@ from root.manager.start import (
     append_commands,
     navigate_command_list,
     remove_commands,
+    show_info,
 )
 from root.manager.feedback import FEEDBACK_CONVERSATION
 
@@ -192,6 +193,9 @@ class BotManager:
 
         self.disp.add_handler(
             CommandHandler("reportannuale", self.year_report.year_report)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=show_info, pattern="show_bot_info")
         )
         self.disp.add_handler(
             CallbackQueryHandler(

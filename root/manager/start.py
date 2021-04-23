@@ -2,6 +2,7 @@
 
 """ File to handle the start command """
 
+from logging import disable
 from os import environ
 import re
 
@@ -26,6 +27,10 @@ from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
 from root.helper.redis_message import message_exist
 import root.util.logger as logger
+from root.contants.VERSION import VERSION
+
+DEVELOPER = '<a href="https://t.me/WMD_Edoardo">Edoardo Zerbo</a>'
+DESIGNER = '<a href="https://t.me/WMD_Lorenzo">Lorenzo Maffii</a>'
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -220,6 +225,13 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
+                    "ℹ️  Info",
+                    "show_bot_info",
+                    "show_bot_info",
+                )
+            ],
+            [
+                create_button(
                     "🆘  Supporto",
                     "send_feedback",
                     "send_feedback",
@@ -323,6 +335,13 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 ],
                 [
                     create_button(
+                        "ℹ️  Info",
+                        "show_bot_info",
+                        "show_bot_info",
+                    )
+                ],
+                [
+                    create_button(
                         "🆘  Supporto",
                         "send_feedback",
                         "send_feedback",
@@ -368,3 +387,28 @@ def back_to_the_start(
     sleep(timeout)
     logger.info("Running the main_menu")
     conversation_main_menu(update, context, message_id, original_message)
+
+
+def show_info(update: Update, context: CallbackContext):
+    message = update.effective_message
+    message_id = message.message_id
+    chat = update.effective_chat
+    keyboard = InlineKeyboardMarkup(
+        [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
+    )
+    message = (
+        f"<u><b>INFO</b></u>\n\n"
+        f"🔄  Versione:  <code>{VERSION}</code>\n\n"
+        f"☕️  Sviluppatore:  {DEVELOPER}\n"
+        f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
+        f"<i>A cura di @VGsNETWORK</i>"
+    )
+
+    context.bot.edit_message_text(
+        chat_id=chat.id,
+        text=message,
+        reply_markup=keyboard,
+        message_id=message_id,
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
