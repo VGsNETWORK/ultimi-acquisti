@@ -6,6 +6,8 @@
 from datetime import datetime
 from functools import total_ordering
 from time import time
+
+from telegram.utils.helpers import effective_message_type
 from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
@@ -105,6 +107,7 @@ class YearReport:
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
         number_of_purchases = count_user_purchases_for_year(user_id, self.year)
         timeout = THREE_MINUTES if number_of_purchases else ONE_MINUTE
+        chat_type = update.effective_chat.type
         if expand:
             try:
                 if is_private or is_owner(message_id, user_id):
@@ -262,6 +265,7 @@ class YearReport:
         """
         user = update.effective_user
         message_id = update.effective_message.message_id
+        chat_type = update.effective_chat.type
         chat_id = update.effective_chat.id
         user_id = user.id
         try:
@@ -311,6 +315,7 @@ class YearReport:
         """
         user = update.effective_user
         message_id = update.effective_message.message_id
+        chat_type = update.effective_chat.type
         chat_id = update.effective_chat.id
         user_id = user.id
         try:

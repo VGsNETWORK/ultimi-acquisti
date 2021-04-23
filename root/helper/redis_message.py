@@ -25,7 +25,7 @@ db_index: int = 15 if is_develop() else 1
 red = redis.Redis(db=db_index)
 
 
-def is_owner(message_id: int, user_id: int) -> bool:
+def is_owner(message_id: int, user_id: int, throw: bool = True) -> bool:
     """Check if a message is owned by the user who's interacting with it
 
     Args:
@@ -41,7 +41,10 @@ def is_owner(message_id: int, user_id: int) -> bool:
         return value.decode() == str(user_id)
     else:
         logger.error(f"** REDIS: {message_key} does not belong to anyone")
-        raise ValueError(f"session ended for the message {message_id}...")
+        if throw:
+            raise ValueError(f"session ended for the message {message_id}...")
+        else:
+            return False
 
 
 def delete_message(message_id: int) -> None:
