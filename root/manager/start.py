@@ -212,7 +212,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "start_hide_commands",
                 ),
             ],
-            [create_button("ℹ️  Guida", "how_to_page_0", "how_to_page_0")],
+            [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
@@ -322,7 +322,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
-                [create_button("ℹ️  Guida", "how_to_page_0", "how_to_page_0")],
+                [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
                 [
                     create_button(
                         "📈  Apri il report mensile", "expand_report", "expand_report"
