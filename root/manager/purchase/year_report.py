@@ -152,8 +152,8 @@ class YearReport:
         timeout = THREE_MINUTES if purchase else ONE_MINUTE
         number_of_purchases = count_user_purchases_for_year(user_id, self.year)
         timeout = THREE_MINUTES if number_of_purchases > 0 else ONE_MINUTE
-        message = append_timeout_message(message, is_private, timeout, is_private)
         if update.effective_message.chat.type == "private":
+            message = append_timeout_message(message, is_private, timeout, is_private)
             self.sender.send_and_edit(
                 update,
                 context,

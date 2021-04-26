@@ -2,11 +2,9 @@
 
 """ File to handle the start command """
 
-from logging import disable
 from os import environ
 import re
 
-from pyrogram.methods.messages import Messages
 from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
@@ -14,7 +12,7 @@ from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
 from telegram.bot import Bot
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
-from root.util.util import create_button, format_error, is_number, retrieve_key
+from root.util.util import create_button, retrieve_key
 from root.contants.messages import (
     START_COMMAND,
     START_COMMANDS_LIST,
@@ -22,10 +20,8 @@ from root.contants.messages import (
     START_COMMANDS_LIST_HEADER,
     START_GROUP_GROUP_APPEND,
 )
-from root.contants.message_timeout import TWO_MINUTES, FIVE_MINUTES
 from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
-from root.helper.redis_message import message_exist
 import root.util.logger as logger
 from root.contants.VERSION import VERSION
 
@@ -52,7 +48,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
         # TODO: Do I really need this ?
-        msg: Message = context.bot.send_message(
+        context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(message),
@@ -128,7 +124,7 @@ def help_end(update: Update, context: CallbackContext):
 
 def conversation_main_menu(
     update: Update,
-    context: CallbackContext,
+    _: CallbackContext,
     message_id: int = None,
     original_message: Message = None,
 ):
@@ -364,7 +360,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
     )
 
 
-def navigate_command_list(update: Update, context: CallbackContext):
+def navigate_command_list(update: Update, _: CallbackContext):
     global COMMAND_MESSAGE
     callback: CallbackQuery = update.callback_query
     page: str = callback.data
@@ -378,7 +374,7 @@ def navigate_command_list(update: Update, context: CallbackContext):
 def back_to_the_start(
     update: Update,
     context: CallbackContext,
-    chat_id: int,
+    _: int,
     message_id: int,
     timeout: int = 0,
     original_message: Message = None,
