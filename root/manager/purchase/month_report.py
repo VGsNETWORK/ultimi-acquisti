@@ -188,7 +188,23 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
-        self.month_report(update, context, True)
+        try:
+            if not is_owner(
+                update.effective_message.message_id, update.effective_user.id
+            ):
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=NOT_MESSAGE_OWNER, show_alert=True
+                )
+                return
+            self.month_report(update, context, True)
+        except Exception:
+            context.bot.answer_callback_query(
+                update.callback_query.id, text=SESSION_ENDED, show_alert=True
+            )
+            self.sender.delete_message(
+                context, update.effective_chat.id, update.effective_message.message_id
+            )
+            return
 
     # =========================================================================
     def retrieve_purchase(self, user: User) -> List[Purchase]:
