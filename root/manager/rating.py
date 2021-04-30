@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 
+from mongoengine.errors import DoesNotExist
+from telegram.user import User
+from root.model.user_rating import UserRating
 from root.util.util import create_button
 from root.manager.start import rating_cancelled, remove_commands
 from root.contants.keyboard import RAITING_KEYBOARD
@@ -10,6 +13,7 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 from root.contants.messages import RATING_PLACEHOLDER, RATING_VALUES
 import root.util.logger as logger
+import re
 
 
 class Rating:
@@ -19,6 +23,40 @@ class Rating:
         self.feedback = {}
         self.message_id = {}
         self.user_message = {}
+
+    def save_to_database(self, user_id):
+        data = self.feedback[user_id]
+        args = []
+        for vote in data:
+            for key in vote.keys():
+                if isinstance(vote[key], str):
+                    args.append(re.sub(r"^\<.*\>$|\"", "", vote[key]))
+                else:
+                    args.append(vote[key])
+        try:
+            user_rating: UserRating = UserRating.objects.get(user_id=user_id)
+            user_rating.user_id = user_id
+            user_rating.ux_vote = args[0]
+            user_rating.ux_comment = args[1]
+            user_rating.functionality_vote = args[2]
+            user_rating.functionality_comment = args[3]
+            user_rating.ui_vote = args[4]
+            user_rating.ui_comment = args[5]
+            user_rating.overall_vote = args[6]
+            user_rating.overall_comment = args[7]
+        except DoesNotExist:
+            user_rating: UserRating = UserRating(
+                user_id=user_id,
+                ux_vote=args[0],
+                ux_comment=args[1],
+                functionality_vote=args[2],
+                functionality_comment=args[3],
+                ui_vote=args[4],
+                ui_comment=args[5],
+                overall_vote=args[6],
+                overall_comment=args[7],
+            )
+        user_rating.save()
 
     def send_feedback(self, update: Update, context: CallbackContext):
         user_id = update.effective_user.id
@@ -80,6 +118,7 @@ class Rating:
         )
         logger.info(self.feedback)
         logger.info("Conversation with user finished")
+        self.save_to_database(user_id)
 
     def create_poll(
         self,
@@ -153,7 +192,7 @@ class Rating:
         if self.user_message[user_id]:
             text = f"\n\n{status}:  {stars}"
         else:
-            text = f"<i>{status}:</i>  {stars}"
+            text = f"{status}:  {stars}"
         self.user_message[user_id] += text
         context.bot.edit_message_text(
             chat_id=chat_id,

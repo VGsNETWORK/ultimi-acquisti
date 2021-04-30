@@ -6,12 +6,13 @@ from root.model.base_model import BaseModel
 
 
 class UserRating(BaseModel):
-    ui_vote = IntField(required=True)
-    ui_comment = StringField()
-    functionality_vote = IntField(required=True)
-    functionality_comment = StringField()
+    user_id = IntField(required=True)
     ux_vote = IntField(required=True)
     ux_comment = StringField()
-    general_vote = IntField(required=True)
-    general_comment = StringField()
+    functionality_vote = IntField(required=True)
+    functionality_comment = StringField()
+    ui_vote = IntField(required=True)
+    ui_comment = StringField()
+    overall_vote = IntField(required=True)
+    overall_comment = StringField()
     approved = BooleanField(default=False)

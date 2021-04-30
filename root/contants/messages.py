@@ -12,19 +12,20 @@ TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
 BOT_NAME = environ["BOT_NAME"]
 
 RATING_VALUES = [
-    "Interfaccia utente",
     "Facilità di utilizzo",
     "Funzionalità",
+    "Interfaccia utente",
     "Esperienza generale",
 ]
 
 RATING_PLACEHOLDER = (
     "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n"
-    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo opzionalmente"
-    " un commento per ogni area di competenza. Tieni presente che aggiungendo un commento il tuo voto"
-    " avrà <b>più peso</b>* nella <i>media pubblica</i> consultabile nella sezione <b>[Menu principale] &gt; [Info]</b> !"
-    "\n\n<i>Lo Staff si riserva il diritto di rimuovere eventuali commenti non idonei al"
-    ' <a href="http://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n*...'
+    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
+    " opzionalmente un commento per ogni area di competenza. Tieni presente che un voto"
+    " provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>  (consultabile"
+    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
+    "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
+    ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
 )
 
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
