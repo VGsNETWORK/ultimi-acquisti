@@ -5,10 +5,12 @@
 from os import environ
 import re
 
+from mongoengine.fields import key_not_string
+
 from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
-from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery
+from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery, message
 from telegram.bot import Bot
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
@@ -228,6 +230,13 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
+                    "⭐  Valuta il bot",
+                    "send_poll",
+                    "send_poll",
+                )
+            ],
+            [
+                create_button(
                     "🆘  Supporto",
                     "send_feedback",
                     "send_feedback",
@@ -276,6 +285,66 @@ def remove_commands(update: Update, context: CallbackContext):
         disable_web_page_preview=True,
         message_id=message.message_id,
         reply_markup=build_keyboard(message),
+        parse_mode="HTML",
+    )
+
+
+def rating_cancelled(update: Update, context: CallbackContext, message_id):
+    answer = update.poll_answer
+    poll_id, first_name = answer.poll_id, answer.user.first_name
+    user_id = answer.user.id
+    poll_data = context.bot_data[poll_id]
+    chat_id = poll_data["chat_id"]
+    text = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "🔻     Mostra i comandi     🔻",
+                    "start_show_commands",
+                    "start_show_commands",
+                )
+            ],
+            [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
+            [
+                create_button(
+                    "📈  Apri il report mensile", "expand_report", "expand_report"
+                ),
+                create_button(
+                    "📈  Apri il report annuale",
+                    f"expand_year_report_{current_year}",
+                    f"expand_year_report_{current_year}",
+                ),
+            ],
+            [
+                create_button(
+                    "ℹ️  Info",
+                    "show_bot_info",
+                    "show_bot_info",
+                )
+            ],
+            [
+                create_button(
+                    "⭐  Valuta il bot",
+                    "send_poll",
+                    "send_poll",
+                )
+            ],
+            [
+                create_button(
+                    "🆘  Supporto",
+                    "send_feedback",
+                    "send_feedback",
+                )
+            ],
+        ]
+    )
+    context.bot.edit_message_text(
+        message_id=message_id,
+        chat_id=chat_id,
+        text=text,
+        reply_markup=keyboard,
+        disable_web_page_preview=True,
         parse_mode="HTML",
     )
 
@@ -334,6 +403,13 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "ℹ️  Info",
                         "show_bot_info",
                         "show_bot_info",
+                    )
+                ],
+                [
+                    create_button(
+                        "⭐  Valuta il bot",
+                        "send_poll",
+                        "send_poll",
                     )
                 ],
                 [

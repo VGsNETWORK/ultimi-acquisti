@@ -3,6 +3,10 @@
 """ File that contains the class to start the bot with the bot api """
 
 import os
+from telegram.ext.messagehandler import MessageHandler
+
+from telegram.ext.pollanswerhandler import PollAnswerHandler
+from root.manager.rating import Rating
 from root.manager.purchase.handle_purchase import (
     confirm_purchase,
     discard_purchase,
@@ -130,6 +134,11 @@ class BotManager:
 
     def add_handler(self):
         """Add handlers for the various operations"""
+        rating = Rating()
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="send_poll", callback=rating.poll)
+        )
+        self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
         self.disp.add_handler(
@@ -138,6 +147,12 @@ class BotManager:
                 bot_help,
                 Filters.regex("how_to"),
             )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=rating.cancel_rating, pattern="cancel_rating")
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=rating.send_feedback, pattern="skip_rating")
         )
         self.disp.add_handler(
             CommandHandler(
@@ -291,6 +306,9 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(callback=discard_purchase, pattern="remove_purchase_*")
+        )
+        self.disp.add_handler(
+            MessageHandler(callback=rating.send_feedback, filters=Filters.text)
         )
 
         if is_develop():

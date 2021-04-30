@@ -24,6 +24,12 @@ def send_command_to_group_keyboard(
     )
 
 
+RAITING_KEYBOARD = [
+    [create_button("➡️  Salta", "skip_rating", "skip_rating")],
+    [create_button("❌  Annulla", "cancel_rating", "cancel_rating")],
+]
+
+
 NEW_PURCHASE_FORMAT = "%23ultimiacquisti%20{}%20{}%0A%0A%25{}%25"
 
 NEW_PURCHASE_TEMPLATE = (
