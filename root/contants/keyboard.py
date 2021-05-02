@@ -82,3 +82,22 @@ def create_wrong_date_keyboard(message_id: int, modified: bool):
             ],
         ]
     )
+
+
+def build_approve_keyboard(code: str, user_id: int):
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "✅  Sì",
+                    f"approve_feedback_{code}_{user_id}",
+                    f"approve_feedback_{code}_{user_id}",
+                ),
+                create_button(
+                    "❌  No",
+                    f"deny_feedback_{code}_{user_id}",
+                    f"deny_feedback_{code}_{user_id}",
+                ),
+            ],
+        ]
+    )

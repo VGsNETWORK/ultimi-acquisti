@@ -6,6 +6,9 @@ from root.model.base_model import BaseModel
 
 
 class UserRating(BaseModel):
+    approve_message_id = IntField(required=True)
+    approve_chat_id = IntField(required=True)
+    code = StringField(required=True)
     user_id = IntField(required=True)
     ux_vote = IntField(required=True)
     ux_comment = StringField()

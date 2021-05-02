@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 
 
-from mongoengine.errors import DoesNotExist
+from datetime import datetime
+from root.helper.user_helper import create_user, retrieve_user
+from telegram.message import Message
 from telegram.user import User
 from root.model.user_rating import UserRating
-from root.util.util import create_button
+from root.util.util import create_button, retrieve_key
 from root.manager.start import rating_cancelled, remove_commands
-from root.contants.keyboard import RAITING_KEYBOARD
+from root.contants.keyboard import RAITING_KEYBOARD, build_approve_keyboard
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.error import BadRequest
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
-from root.contants.messages import RATING_PLACEHOLDER, RATING_VALUES
+from root.contants.messages import (
+    RATING_PLACEHOLDER,
+    RATING_VALUES,
+    build_approve_rating_message,
+)
+from uuid import uuid4
 import root.util.logger as logger
 import re
 
@@ -24,7 +31,7 @@ class Rating:
         self.message_id = {}
         self.user_message = {}
 
-    def save_to_database(self, user_id):
+    def save_to_database(self, user_id: int, context: CallbackContext, user: User):
         data = self.feedback[user_id]
         args = []
         for vote in data:
@@ -33,29 +40,42 @@ class Rating:
                     args.append(re.sub(r"^\<.*\>$|\"", "", vote[key]))
                 else:
                     args.append(vote[key])
-        try:
-            user_rating: UserRating = UserRating.objects.get(user_id=user_id)
-            user_rating.user_id = user_id
-            user_rating.ux_vote = args[0]
-            user_rating.ux_comment = args[1]
-            user_rating.functionality_vote = args[2]
-            user_rating.functionality_comment = args[3]
-            user_rating.ui_vote = args[4]
-            user_rating.ui_comment = args[5]
-            user_rating.overall_vote = args[6]
-            user_rating.overall_comment = args[7]
-        except DoesNotExist:
-            user_rating: UserRating = UserRating(
-                user_id=user_id,
-                ux_vote=args[0],
-                ux_comment=args[1],
-                functionality_vote=args[2],
-                functionality_comment=args[3],
-                ui_vote=args[4],
-                ui_comment=args[5],
-                overall_vote=args[6],
-                overall_comment=args[7],
+        code = str(uuid4()).replace("-", "")[5:20]
+        log_channel = retrieve_key("ERROR_CHANNEL")
+        user_rating: UserRating = UserRating(
+            approve_message_id=0,
+            approve_chat_id=log_channel,
+            code=code,
+            user_id=user_id,
+            ux_vote=args[0],
+            ux_comment=args[1],
+            functionality_vote=args[2],
+            functionality_comment=args[3],
+            ui_vote=args[4],
+            ui_comment=args[5],
+            overall_vote=args[6],
+            overall_comment=args[7],
+        )
+        if not retrieve_user(user.id):
+            create_user(user)
+        message: Message = context.bot.send_message(
+            text=build_approve_rating_message(user_rating, user),
+            chat_id=log_channel,
+            reply_markup=build_approve_keyboard(code, user_id),
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
+        user_rating.approve_message_id = message.message_id
+        user_ratings = UserRating.objects.filter(
+            user_id=user_id, approved=False
+        ).order_by("creation_date")
+        if len(user_ratings) == 1:
+            rating: UserRating = user_ratings[0]
+            context.bot.delete_message(
+                chat_id=rating.approve_chat_id, message_id=rating.approve_message_id
             )
+            rating.delete()
+
         user_rating.save()
 
     def send_feedback(self, update: Update, context: CallbackContext):
@@ -118,7 +138,7 @@ class Rating:
         )
         logger.info(self.feedback)
         logger.info("Conversation with user finished")
-        self.save_to_database(user_id)
+        self.save_to_database(user_id, context, update.effective_user)
 
     def create_poll(
         self,
@@ -210,3 +230,59 @@ class Rating:
         self.status_index[user_id] = 0
         self.status[user_id] = RATING_VALUES[0]
         remove_commands(update, context)
+
+    def deny_rating(self, update: Update, context: CallbackContext):
+        callback = update.callback_query
+        data = callback.data
+        data = data.split("_")
+        user_id = data[-1]
+        code = data[-2]
+        user_rating = UserRating.objects.get(user_id=user_id, code=code)
+        user = retrieve_user(user_id)
+        text = build_approve_rating_message(user_rating, user)
+        text = re.sub("\n\n\n.*$", "", text)
+        user = update.effective_user
+        date = datetime.now()
+        date = date.strftime("%d/%m/%Y alle %H:%M")
+        text += (
+            "\n\n\n❌  <b>Non approvato da"
+            f' <a href="tg://user?id={user.id}">{user.first_name}</a> in data {date}!</b>'
+        )
+        context.bot.edit_message_text(
+            message_id=update.effective_message.message_id,
+            text=text,
+            chat_id=update.effective_chat.id,
+            reply_markup=None,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+        user_rating.delete()
+
+    def approve_rating(self, update: Update, context: CallbackContext):
+        callback = update.callback_query
+        data = callback.data
+        data = data.split("_")
+        user_id = data[-1]
+        code = data[-2]
+        UserRating.objects(user_id=user_id, approved=True).delete()
+        user_rating = UserRating.objects.get(user_id=user_id, code=code)
+        user_rating.approved = True
+        user_rating.save()
+        user = retrieve_user(user_id)
+        text = build_approve_rating_message(user_rating, user)
+        user = update.effective_user
+        text = re.sub("\n\n\n.*$", "", text)
+        date = datetime.now()
+        date = date.strftime("%d/%m/%Y alle %H:%M")
+        text += (
+            "\n\n\n✅  <b>Approvato da"
+            f' <a href="tg://user?id={user.id}">{user.first_name}</a> in data {date}!</b>'
+        )
+        context.bot.edit_message_text(
+            message_id=update.effective_message.message_id,
+            text=text,
+            chat_id=update.effective_chat.id,
+            reply_markup=None,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )

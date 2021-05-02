@@ -209,9 +209,21 @@ class BotManager:
         self.disp.add_handler(
             CommandHandler("reportannuale", self.year_report.year_report)
         )
+
         self.disp.add_handler(
             CallbackQueryHandler(callback=show_info, pattern="show_bot_info")
         )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=rating.approve_rating, pattern="approve_feedback"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=rating.deny_rating, pattern="deny_feedback")
+        )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=navigate_command_list, pattern="command_page_.*"
@@ -231,21 +243,25 @@ class BotManager:
         self.disp.add_handler(
             CommandHandler("reportmensile", self.month_report.month_report)
         )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.month_report.previous_page, pattern="month_previous_page"
             )
         )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.month_report.next_page, pattern="month_next_page"
             )
         )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.month_report.next_year, pattern="month_next_year"
             )
         )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=self.month_report.previous_year, pattern="month_previous_year"
@@ -307,6 +323,7 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(callback=discard_purchase, pattern="remove_purchase_*")
         )
+
         self.disp.add_handler(
             MessageHandler(callback=rating.send_feedback, filters=Filters.text)
         )

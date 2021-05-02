@@ -4,29 +4,14 @@
 
 from datetime import datetime
 from os import environ
+from root.model.user import User
+from root.model.user_rating import UserRating
 import root.util.logger as logger
 
 TODAY = datetime.now()
 TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
 
 BOT_NAME = environ["BOT_NAME"]
-
-RATING_VALUES = [
-    "Facilità di utilizzo",
-    "Funzionalità",
-    "Interfaccia utente",
-    "Esperienza generale",
-]
-
-RATING_PLACEHOLDER = (
-    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n"
-    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
-    " opzionalmente un commento per ogni area di competenza. Tieni presente che un voto"
-    " provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>  (consultabile"
-    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
-    "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
-    ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
-)
 
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
@@ -589,3 +574,59 @@ MESSAGE_EDIT_TIMEOUT = "\n\n\n🕒  <i>Verrai reindirizzato/a alla homepage tra 
 MESSAGE_DELETION_TIMEOUT = (
     "\n\n\n🕒  <i>Questo messaggio si autodistruggerà tra %s.<b>%s</b></i>"
 )
+
+
+RATING_VALUES = [
+    "Facilità di utilizzo",
+    "Funzionalità",
+    "Interfaccia utente",
+    "Esperienza generale",
+]
+
+RATING_PLACEHOLDER = (
+    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n"
+    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
+    " opzionalmente un commento per ogni area di competenza. Tieni presente che un voto"
+    " provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>  (consultabile"
+    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
+    "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
+    ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
+)
+
+
+def build_approve_rating_message(rating: UserRating, user: User):
+    user_id = user.user_id if isinstance(user, User) else user.id
+    ux_comment = (
+        "<b>Non presente</b>" if not rating.ux_comment else f'"{rating.ux_comment}"'
+    )
+    ui_comment = (
+        "<b>Non presente</b>" if not rating.ui_comment else f'"{rating.ui_comment}"'
+    )
+    functionality_comment = (
+        "<b>Non presente</b>"
+        if not rating.functionality_comment
+        else f'"{rating.functionality_comment}"'
+    )
+    overall_comment = (
+        "<b>Non presente</b>"
+        if not rating.overall_comment
+        else f'"{rating.overall_comment}"'
+    )
+
+    return (
+        f'L\'utente <a href="tg://user?id={user_id}">{user.first_name}</a>'
+        " ha dato un feedback al bot con i seguenti voti:\n\n"
+        "<b>Facilità di utilizzo</b>\n"
+        f"– Voto:  {'⭐️' * rating.ux_vote}\n"
+        f"– Commento:  <i>{ux_comment}</i>\n\n"
+        "<b>Funzionalità</b>\n"
+        f"– Voto:  {'⭐️' * rating.functionality_vote}\n"
+        f"– Commento:  <i>{functionality_comment}</i>\n\n"
+        "<b>Interfaccia utente</b>\n"
+        f"– Voto:  {'⭐️' * rating.ui_vote}\n"
+        f"– Commento:  <i>{ui_comment}</i>\n\n"
+        "<b>Esperienza generale</b>\n"
+        f"– Voto:  {'⭐️' * rating.overall_vote}\n"
+        f"– Commento:  <i>{overall_comment}</i>\n\n\n"
+        "Vuoi approvarlo?"
+    )
