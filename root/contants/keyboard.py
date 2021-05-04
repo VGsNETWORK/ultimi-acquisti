@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.model.user_rating import UserRating
 from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
@@ -25,7 +26,7 @@ def send_command_to_group_keyboard(
 
 
 RAITING_KEYBOARD = [
-    [create_button("➡️  Salta", "skip_rating", "skip_rating")],
+    [create_button("⏩  Salta", "skip_rating", "skip_rating")],
     [create_button("❌  Annulla", "cancel_rating", "cancel_rating")],
 ]
 
@@ -84,6 +85,20 @@ def create_wrong_date_keyboard(message_id: int, modified: bool):
     )
 
 
+SHOW_RATING_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "🔄  Vota di nuovo",
+                f"start_poll",
+                f"start_poll",
+            )
+        ],
+        [create_button("↩️  Torna indietro", "send_poll", "send_poll")],
+    ]
+)
+
+
 def build_approve_keyboard(code: str, user_id: int):
     return InlineKeyboardMarkup(
         [
@@ -101,3 +116,49 @@ def build_approve_keyboard(code: str, user_id: int):
             ],
         ]
     )
+
+
+def build_pre_poll_keyboard(approved: UserRating, to_approve: UserRating):
+    if approved or to_approve:
+        message = "🔄  Vota di nuovo"
+    else:
+        message = "🏁  INIZIA!"
+
+    keyboard = []
+
+    if approved:
+        keyboard.append(
+            [
+                create_button(
+                    "✅  Vedi la tua recensione pubblicata",
+                    f"show_rating_{approved.code}",
+                    f"show_rating_{approved.code}",
+                )
+            ]
+        )
+
+    if to_approve:
+        keyboard.append(
+            [
+                create_button(
+                    "⚖️  Vedi la tua recensione pendente",
+                    f"show_rating_{to_approve.code}",
+                    f"show_rating_{to_approve.code}",
+                )
+            ]
+        )
+
+    keyboard.append(
+        [
+            create_button(
+                message,
+                f"start_poll",
+                f"start_poll",
+            )
+        ]
+    )
+
+    keyboard.append(
+        [create_button("↩️  Torna indietro", "cancel_rating", "cancel_rating")]
+    )
+    return InlineKeyboardMarkup(keyboard)

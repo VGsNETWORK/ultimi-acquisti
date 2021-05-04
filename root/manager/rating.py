@@ -2,13 +2,20 @@
 
 
 from datetime import datetime
+
+from telegram.callbackquery import CallbackQuery
 from root.helper.user_helper import create_user, retrieve_user
 from telegram.message import Message
 from telegram.user import User
 from root.model.user_rating import UserRating
 from root.util.util import create_button, retrieve_key
 from root.manager.start import rating_cancelled, remove_commands
-from root.contants.keyboard import RAITING_KEYBOARD, build_approve_keyboard
+from root.contants.keyboard import (
+    RAITING_KEYBOARD,
+    SHOW_RATING_KEYBOARD,
+    build_approve_keyboard,
+    build_pre_poll_keyboard,
+)
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.error import BadRequest
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
@@ -16,7 +23,13 @@ from telegram.update import Update
 from root.contants.messages import (
     RATING_PLACEHOLDER,
     RATING_VALUES,
+    USER_ALREADY_VOTED,
+    USER_ALREADY_VOTED_APPROVED,
+    USER_ALREADY_VOTED_BOTH,
+    USER_ALREADY_VOTED_TO_APPROVE,
+    USER_HAS_NO_VOTE,
     build_approve_rating_message,
+    build_show_rating_message,
 )
 from uuid import uuid4
 import root.util.logger as logger
@@ -167,6 +180,78 @@ class Rating:
         context.bot_data.update(payload)
 
     def poll(self, update: Update, context: CallbackContext) -> None:
+        user_id = update.effective_user.id
+        chat_id = update.effective_chat.id
+        message_id = update.effective_message.message_id
+        approved = UserRating.objects.filter(user_id=user_id, approved=True)
+        to_approve = UserRating.objects.filter(user_id=user_id, approved=False)
+        if approved or to_approve:
+            message = USER_ALREADY_VOTED
+            if approved:
+                approved_message = f"<b>{len(approved)}</b> recensione pubblicata (✅)"
+                approved = approved[0]
+            else:
+                approved_message = ""
+            if to_approve:
+                to_approve_message = (
+                    f"<b>{len(to_approve)}</b> recensione in fase di valutazione (⚖️)"
+                )
+                to_approve = to_approve[0]
+            else:
+                to_approve_message = ""
+            if approved and to_approve_message:
+                message = message % (
+                    approved_message,
+                    " e ",
+                    to_approve_message,
+                    USER_ALREADY_VOTED_BOTH,
+                )
+            elif approved:
+                message = message % (
+                    approved_message,
+                    "",
+                    "",
+                    USER_ALREADY_VOTED_APPROVED,
+                )
+            elif to_approve_message:
+                message = message % (
+                    to_approve_message,
+                    "",
+                    "",
+                    USER_ALREADY_VOTED_TO_APPROVE,
+                )
+        else:
+            message = USER_HAS_NO_VOTE
+
+        context.bot.edit_message_text(
+            chat_id=chat_id,
+            text=message,
+            message_id=message_id,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+            reply_markup=build_pre_poll_keyboard(approved, to_approve),
+        )
+
+    def show_rating(self, update: Update, context: CallbackContext):
+        """ Show user rating """
+        chat_id = update.effective_chat.id
+        user_id = update.effective_user.id
+        message_id = update.effective_message.message_id
+        callback: CallbackQuery = update.callback_query
+        code = callback.data
+        code = code.split("_")[-1]
+        rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
+        message = build_show_rating_message(rating)
+        context.bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=message,
+            reply_markup=SHOW_RATING_KEYBOARD,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
+
+    def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
         chat_id = update.effective_chat.id
         user_id = update.effective_user.id

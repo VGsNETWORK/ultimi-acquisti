@@ -495,6 +495,37 @@ HOW_TO_MODIFY_A_PURCHASE = (
     " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
 )
 
+USER_HAS_NO_VOTE = (
+    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
+    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
+    " opzionalmente un commento per ogni area di competenza. Tieni presente che un"
+    " voto provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>"
+    "  (consultabile nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
+    "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali"
+    ' commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
+    "regolamento</a>.</i>"
+)
+
+USER_ALREADY_VOTED = (
+    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
+    "🗳  Hai %s%s%s.\n<i>%s</i>\n\n"
+    "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
+    ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
+)
+
+USER_ALREADY_VOTED_BOTH = (
+    "Se effettui un'ulteriore votazione, la tua attuale recensione"
+    " pendente verrà sostituita; inoltre, se la nuova recensione viene approvata, quest'ultima"
+    " sostituirà quella attualmente pubblicata."
+)
+
+USER_ALREADY_VOTED_APPROVED = (
+    "Se effettui un'altra votazione e quest'ultima viene approvata, "
+    "la tua attuale recensione pubblicata verrà sostituita."
+)
+
+USER_ALREADY_VOTED_TO_APPROVE = "Se effettui un'altra votazione, la tua attuale recensione pendente verrà sostituita."
+
 HOW_TO_INTRODUCTION = {
     "button_text": "Introduzione",
     "description": HOW_TO_INTRODUCTION,
@@ -592,6 +623,40 @@ RATING_PLACEHOLDER = (
     "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
     ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
 )
+
+
+def build_show_rating_message(rating: UserRating):
+    ux_comment = (
+        "<b>Non presente</b>" if not rating.ux_comment else f'"{rating.ux_comment}"'
+    )
+    ui_comment = (
+        "<b>Non presente</b>" if not rating.ui_comment else f'"{rating.ui_comment}"'
+    )
+    functionality_comment = (
+        "<b>Non presente</b>"
+        if not rating.functionality_comment
+        else f'"{rating.functionality_comment}"'
+    )
+    overall_comment = (
+        "<b>Non presente</b>"
+        if not rating.overall_comment
+        else f'"{rating.overall_comment}"'
+    )
+
+    return (
+        "<b>Facilità di utilizzo</b>\n"
+        f"– Voto:  {'⭐️' * rating.ux_vote}\n"
+        f"– Commento:  <i>{ux_comment}</i>\n\n"
+        "<b>Funzionalità</b>\n"
+        f"– Voto:  {'⭐️' * rating.functionality_vote}\n"
+        f"– Commento:  <i>{functionality_comment}</i>\n\n"
+        "<b>Interfaccia utente</b>\n"
+        f"– Voto:  {'⭐️' * rating.ui_vote}\n"
+        f"– Commento:  <i>{ui_comment}</i>\n\n"
+        "<b>Esperienza generale</b>\n"
+        f"– Voto:  {'⭐️' * rating.overall_vote}\n"
+        f"– Commento:  <i>{overall_comment}</i>\n\n\n"
+    )
 
 
 def build_approve_rating_message(rating: UserRating, user: User):

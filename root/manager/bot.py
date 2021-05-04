@@ -221,6 +221,14 @@ class BotManager:
         )
 
         self.disp.add_handler(
+            CallbackQueryHandler(callback=rating.start_poll, pattern="start_poll")
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=rating.show_rating, pattern="show_rating")
+        )
+
+        self.disp.add_handler(
             CallbackQueryHandler(callback=rating.deny_rating, pattern="deny_feedback")
         )
 
