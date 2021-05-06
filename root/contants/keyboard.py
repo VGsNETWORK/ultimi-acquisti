@@ -78,7 +78,7 @@ NO_PURCHASE_KEYBOARD = InlineKeyboardMarkup(
 
 
 def create_wrong_date_keyboard(message_id: int, modified: bool):
-    discard_text = "❌  ElGrazie del tuo tempo!imina" if modified else "❌  Annulla"
+    discard_text = "❌  Elimina" if modified else "❌  Annulla"
     return InlineKeyboardMarkup(
         [
             [
@@ -101,7 +101,7 @@ SHOW_RATING_KEYBOARD = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "🔄  Vota di nuovo",
+                "🔄  Aggiorna la recensione",
                 f"start_poll",
                 f"start_poll",
             )
