@@ -5,6 +5,9 @@
 from os import environ
 import re
 
+from mongoengine.errors import DoesNotExist
+from root.model.configuration import Configuration
+
 from mongoengine.fields import key_not_string
 
 from root.helper.process_helper import stop_process
@@ -26,6 +29,7 @@ from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
 import root.util.logger as logger
 from root.contants.VERSION import VERSION
+from root.model.user_rating import UserRating
 
 DEVELOPER = '<a href="https://t.me/WMD_Edoardo">Edoardo Zerbo</a>'
 DESIGNER = '<a href="https://t.me/WMD_Lorenzo">Lorenzo Maffii</a>'
@@ -465,11 +469,25 @@ def show_info(update: Update, context: CallbackContext):
     message = update.effective_message
     message_id = message.message_id
     chat = update.effective_chat
+    try:
+        average_rating: Configuration = Configuration.objects.get(code="average_rating")
+        average = average_rating.value
+    except DoesNotExist as _:
+        average = None
     keyboard = InlineKeyboardMarkup(
         [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
     )
+    number_of_reviews = len(UserRating.objects())
+    average_message = int(float(average)) * "⭐️" if average else None
+    average_missing = (5 - (int(float(average)))) * "🕳" if average else None
+    average_message = (
+        f"<b>{'%.2f' % (float(average))}</b>  {average_message}{average_missing}  (basato su {number_of_reviews} recensioni)\n\n"
+        if average_message
+        else None
+    )
     message = (
-        f"<u><b>INFO</b></u>\n\n"
+        f"<u><b>INFO</b></u>\n\n\n"
+        f"{average_message}"
         f"🔄  Versione:  <code>{VERSION}</code>\n\n"
         f"☕️  Sviluppatore:  {DEVELOPER}\n"
         f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
