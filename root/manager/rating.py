@@ -2,7 +2,13 @@
 
 
 from datetime import datetime
-from typing import ContextManager
+
+from mongoengine.errors import DoesNotExist
+from root.model.configuration import Configuration
+from typing import ContextManager, List
+from telegram import user
+import numpy as np
+
 
 from telegram.callbackquery import CallbackQuery
 from root.helper.user_helper import create_user, retrieve_user
@@ -356,6 +362,7 @@ class Rating:
             text=USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF,
             reply_markup=RATING_REVIEWED_KEYBOARD,
         )
+        self.calculate_weighted_average()
 
     def approve_rating(self, update: Update, context: CallbackContext):
         callback = update.callback_query
@@ -390,9 +397,62 @@ class Rating:
             text=USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF,
             reply_markup=RATING_REVIEWED_KEYBOARD,
         )
+        self.calculate_weighted_average()
 
     def delete_reviewed_rating_message(self, update: Update, context: CallbackContext):
         context.bot.delete_message(
             chat_id=update.effective_chat.id,
             message_id=update.effective_message.message_id,
         )
+
+    def calculate_weighted_average(self):
+        FULL_WEIGHT = 1
+        HALF_WEIGHT = 0.25
+        overall_votes = []
+        overall_weights = []
+
+        ui_votes = []
+        ui_weights = []
+
+        ux_votes = []
+        ux_weights = []
+
+        functionality_votes = []
+        functionality_weights = []
+
+        user_ratings: List[UserRating] = UserRating.objects.filter(approved=True)
+        for user_rating in user_ratings:
+            overall_votes.append(user_rating.overall_vote)
+            weight = FULL_WEIGHT if user_rating.overall_comment else HALF_WEIGHT
+            overall_weights.append(weight)
+
+            ui_votes.append(user_rating.ui_vote)
+            weight = FULL_WEIGHT if user_rating.ui_comment else HALF_WEIGHT
+            ui_weights.append(weight)
+
+            ux_votes.append(user_rating.ux_vote)
+            weight = FULL_WEIGHT if user_rating.ux_comment else HALF_WEIGHT
+            ux_weights.append(weight)
+
+            functionality_votes.append(user_rating.functionality_vote)
+            weight = FULL_WEIGHT if user_rating.functionality_comment else HALF_WEIGHT
+            functionality_weights.append(weight)
+
+        overall_vote = np.average(overall_votes, weights=overall_weights)
+        ui_vote = np.average(ui_votes, weights=ui_weights)
+        ux_vote = np.average(ux_votes, weights=ux_weights)
+        functionality_vote = np.average(
+            functionality_votes, weights=functionality_votes
+        )
+        average = np.average([ui_vote, ux_vote, overall_vote, functionality_vote])
+
+        try:
+            average_rating: Configuration = Configuration.objects.get(
+                code="average_rating"
+            )
+            average_rating.value = str(average)
+        except DoesNotExist as _:
+            average_rating: Configuration = Configuration(
+                code="average_rating", value=str(average)
+            )
+        average_rating.save()
