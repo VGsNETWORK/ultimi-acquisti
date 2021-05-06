@@ -500,7 +500,7 @@ USER_HAS_NO_VOTE = (
     "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
     " opzionalmente un commento per ogni area di competenza. Tieni presente che un"
     " voto provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>"
-    "  (consultabile nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
+    "  (consultabile nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n\n"
     "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali"
     ' commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
     "regolamento</a>.</i>"
@@ -508,7 +508,7 @@ USER_HAS_NO_VOTE = (
 
 USER_ALREADY_VOTED = (
     "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
-    "🗳  Hai %s%s%s.\n<i>%s</i>\n\n"
+    "🗳  Hai %s%s%s.\n<i>%s</i>\n\n\n"
     "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
     ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
 )
@@ -619,7 +619,7 @@ RATING_PLACEHOLDER = (
     "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
     " opzionalmente un commento per ogni area di competenza. Tieni presente che un voto"
     " provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>  (consultabile"
-    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n"
+    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n\n"
     "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
     ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
 )
@@ -642,9 +642,12 @@ def build_show_rating_message(rating: UserRating):
         if not rating.overall_comment
         else f'"{rating.overall_comment}"'
     )
-
+    warning = (
+        USER_ALREADY_VOTED_APPROVED
+        if rating.approved
+        else USER_ALREADY_VOTED_TO_APPROVE
+    )
     return (
-        "<b>Facilità di utilizzo</b>\n"
         f"– Voto:  {'⭐️' * rating.ux_vote}\n"
         f"– Commento:  <i>{ux_comment}</i>\n\n"
         "<b>Funzionalità</b>\n"
@@ -656,6 +659,10 @@ def build_show_rating_message(rating: UserRating):
         "<b>Esperienza generale</b>\n"
         f"– Voto:  {'⭐️' * rating.overall_vote}\n"
         f"– Commento:  <i>{overall_comment}</i>\n\n\n"
+        f"<i>{warning}</i>\n\n\n"
+        "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
+        ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
+        "<b>Facilità di utilizzo</b>\n"
     )
 
 
