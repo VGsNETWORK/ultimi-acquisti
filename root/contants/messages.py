@@ -520,9 +520,17 @@ USER_ALREADY_VOTED_BOTH = (
 )
 
 USER_ALREADY_VOTED_APPROVED = (
-    "Se aggiorni la tua recensione, questa verrá sottoposta nuovamente a controllo da parte"
-    " dello Staff; se poi questa viene approvata, la tua attuale recensione pubblicata "
+    "Se aggiorni la tua recensione, questa verrà sottoposta nuovamente a controllo da parte"
+    " dello Staff; se questa viene poi approvata, la tua attuale recensione pubblicata "
     "verrà sostituita."
+)
+
+USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF = (
+    "👍🏻  La tua recensione è stata approvata dallo Staff. Grande!"
+)
+
+USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF = (
+    "👎🏻  La tua recensione non è stata approvata dallo Staff. Riprova!"
 )
 
 USER_ALREADY_VOTED_TO_APPROVE = "Se effettui un'altra votazione, la tua attuale recensione pendente verrà sostituita."

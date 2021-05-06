@@ -31,6 +31,18 @@ RAITING_KEYBOARD = [
 ]
 
 
+RATING_REVIEWED_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "✅  Ho capito",
+                "delete_reviewed_rating_message",
+                "delete_reviewed_rating_message",
+            ),
+        ]
+    ]
+)
+
 NEW_PURCHASE_FORMAT = "%23ultimiacquisti%20{}%20{}%0A%0A%25{}%25"
 
 NEW_PURCHASE_TEMPLATE = (
@@ -66,7 +78,7 @@ NO_PURCHASE_KEYBOARD = InlineKeyboardMarkup(
 
 
 def create_wrong_date_keyboard(message_id: int, modified: bool):
-    discard_text = "❌  Elimina" if modified else "❌  Annulla"
+    discard_text = "❌  ElGrazie del tuo tempo!imina" if modified else "❌  Annulla"
     return InlineKeyboardMarkup(
         [
             [
@@ -120,7 +132,7 @@ def build_approve_keyboard(code: str, user_id: int):
 
 def build_pre_poll_keyboard(approved: UserRating, to_approve: UserRating):
     if approved or to_approve:
-        message = "🔄  Vota di nuovo"
+        message = "🔄  Aggiorna la recensione"
     else:
         message = "🏁  INIZIA!"
 

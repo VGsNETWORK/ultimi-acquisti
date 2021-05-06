@@ -2,6 +2,7 @@
 
 
 from datetime import datetime
+from typing import ContextManager
 
 from telegram.callbackquery import CallbackQuery
 from root.helper.user_helper import create_user, retrieve_user
@@ -12,6 +13,7 @@ from root.util.util import create_button, retrieve_key
 from root.manager.start import rating_cancelled, remove_commands
 from root.contants.keyboard import (
     RAITING_KEYBOARD,
+    RATING_REVIEWED_KEYBOARD,
     SHOW_RATING_KEYBOARD,
     build_approve_keyboard,
     build_pre_poll_keyboard,
@@ -28,6 +30,8 @@ from root.contants.messages import (
     USER_ALREADY_VOTED_BOTH,
     USER_ALREADY_VOTED_TO_APPROVE,
     USER_HAS_NO_VOTE,
+    USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF,
+    USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF,
     build_approve_rating_message,
     build_show_rating_message,
 )
@@ -322,7 +326,7 @@ class Rating:
         data = data.split("_")
         user_id = data[-1]
         code = data[-2]
-        user_rating = UserRating.objects.get(user_id=user_id, code=code)
+        user_rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
         user = retrieve_user(user_id)
         text = build_approve_rating_message(user_rating, user)
         text = re.sub("\n\n\n.*$", "", text)
@@ -341,7 +345,17 @@ class Rating:
             parse_mode="HTML",
             disable_web_page_preview=True,
         )
-        user_rating.delete()
+        user_rating.ui_comment = ""
+        user_rating.ux_comment = ""
+        user_rating.overall_comment = ""
+        user_rating.functionality_comment = ""
+        user_rating.approved = True
+        user_rating.save()
+        context.bot.send_message(
+            chat_id=user_id,
+            text=USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF,
+            reply_markup=RATING_REVIEWED_KEYBOARD,
+        )
 
     def approve_rating(self, update: Update, context: CallbackContext):
         callback = update.callback_query
@@ -370,4 +384,15 @@ class Rating:
             reply_markup=None,
             parse_mode="HTML",
             disable_web_page_preview=True,
+        )
+        context.bot.send_message(
+            chat_id=user_id,
+            text=USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF,
+            reply_markup=RATING_REVIEWED_KEYBOARD,
+        )
+
+    def delete_reviewed_rating_message(self, update: Update, context: CallbackContext):
+        context.bot.delete_message(
+            chat_id=update.effective_chat.id,
+            message_id=update.effective_message.message_id,
         )

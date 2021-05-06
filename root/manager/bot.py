@@ -231,6 +231,12 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.deny_rating, pattern="deny_feedback")
         )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=rating.delete_reviewed_rating_message,
+                pattern="delete_reviewed_rating_message",
+            )
+        )
 
         self.disp.add_handler(
             CallbackQueryHandler(
