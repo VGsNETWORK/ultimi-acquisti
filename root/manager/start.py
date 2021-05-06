@@ -473,17 +473,17 @@ def show_info(update: Update, context: CallbackContext):
         average_rating: Configuration = Configuration.objects.get(code="average_rating")
         average = average_rating.value
     except DoesNotExist as _:
-        average = None
+        average = ""
     keyboard = InlineKeyboardMarkup(
         [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
     )
     number_of_reviews = len(UserRating.objects())
-    average_message = int(float(average)) * "⭐️" if average else None
-    average_missing = (5 - (int(float(average)))) * "🕳" if average else None
+    average_message = int(float(average)) * "⭐️" if average else ""
+    average_missing = (5 - (int(float(average)))) * "🕳" if average else ""
     average_message = (
         f"<b>{'%.2f' % (float(average))}</b>  {average_message}{average_missing}  (basato su {number_of_reviews} recensioni)\n\n"
         if average_message
-        else None
+        else ""
     )
     message = (
         f"<u><b>INFO</b></u>\n\n\n"
