@@ -515,13 +515,14 @@ USER_ALREADY_VOTED = (
 
 USER_ALREADY_VOTED_BOTH = (
     "Se effettui un'ulteriore votazione, la tua attuale recensione"
-    " pendente verrà sostituita; inoltre, se la nuova recensione viene approvata, quest'ultima"
-    " sostituirà quella attualmente pubblicata."
+    " pendente verrà sostituita; inoltre, se la nuova recensione"
+    " viene approvata, quest'ultima sostituirà quella attualmente pubblicata."
 )
 
 USER_ALREADY_VOTED_APPROVED = (
-    "Se effettui un'altra votazione e quest'ultima viene approvata, "
-    "la tua attuale recensione pubblicata verrà sostituita."
+    "Se aggiorni la tua recensione, questa verrá sottoposta nuovamente a controllo da parte"
+    " dello Staff; se poi questa viene approvata, la tua attuale recensione pubblicata "
+    "verrà sostituita."
 )
 
 USER_ALREADY_VOTED_TO_APPROVE = "Se effettui un'altra votazione, la tua attuale recensione pendente verrà sostituita."
@@ -648,6 +649,7 @@ def build_show_rating_message(rating: UserRating):
         else USER_ALREADY_VOTED_TO_APPROVE
     )
     return (
+        "<b>Facilità di utilizzo</b>\n"
         f"– Voto:  {'⭐️' * rating.ux_vote}\n"
         f"– Commento:  <i>{ux_comment}</i>\n\n"
         "<b>Funzionalità</b>\n"
@@ -658,11 +660,10 @@ def build_show_rating_message(rating: UserRating):
         f"– Commento:  <i>{ui_comment}</i>\n\n"
         "<b>Esperienza generale</b>\n"
         f"– Voto:  {'⭐️' * rating.overall_vote}\n"
-        f"– Commento:  <i>{overall_comment}</i>\n\n\n"
+        f"– Commento:  <i>{overall_comment}</i>\n\n"
         f"<i>{warning}</i>\n\n\n"
         "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
         ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
-        "<b>Facilità di utilizzo</b>\n"
     )
 
 
