@@ -656,7 +656,14 @@ def build_show_rating_message(rating: UserRating):
         if rating.approved
         else USER_ALREADY_VOTED_TO_APPROVE
     )
+    header = "%s\n\n\n" % (
+        "✅  <b><u>RECENSIONE PUBBLICATA</u></b>"
+        if rating.approved
+        else "⚖️  <b><u>RECENSIONE PENDENTE</u></b>"
+    )
+
     return (
+        f"{header}"
         "<b>Facilità di utilizzo</b>\n"
         f"– Voto:  {'⭐️' * rating.ux_vote}\n"
         f"– Commento:  <i>{ux_comment}</i>\n\n"
