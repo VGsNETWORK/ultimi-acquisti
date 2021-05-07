@@ -501,16 +501,16 @@ USER_HAS_NO_VOTE = (
     " opzionalmente un commento per ogni area di competenza. Tieni presente che un"
     " voto provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>"
     "  (consultabile nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n\n"
-    "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali"
+    "<b><i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali"
     ' commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
-    "regolamento</a>.</i>"
+    "regolamento</a>.</i></b>"
 )
 
 USER_ALREADY_VOTED = (
     "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
     "🗳  Hai %s%s%s.\n<i>%s</i>\n\n\n"
-    "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
-    ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
+    "<b><i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
+    ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i></b>'
 )
 
 USER_ALREADY_VOTED_BOTH = (
@@ -623,15 +623,7 @@ RATING_VALUES = [
     "Esperienza generale",
 ]
 
-RATING_PLACEHOLDER = (
-    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n"
-    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
-    " opzionalmente un commento per ogni area di competenza. Tieni presente che un voto"
-    " provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>  (consultabile"
-    " nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n\n"
-    "<i>Lo Staff si riserva il diritto di valutare e rimuovere"
-    ' eventuali commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>\n\n\n<b>Dai un voto a...</b>'
-)
+RATING_PLACEHOLDER = "<b>Dai un voto a...</b>"
 
 
 def build_show_rating_message(rating: UserRating):
@@ -675,10 +667,10 @@ def build_show_rating_message(rating: UserRating):
         f"– Commento:  <i>{ui_comment}</i>\n\n"
         "<b>Esperienza generale</b>\n"
         f"– Voto:  {'⭐️' * rating.overall_vote}{'🕳' * (5 - rating.overall_vote)}\n"
-        f"– Commento:  <i>{overall_comment}</i>\n\n"
-        f"<i>{warning}</i>\n\n\n"
-        "<i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
-        ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i>'
+        f"– Commento:  <i>{overall_comment}</i>\n\n\n"
+        f"<i>{warning}</i>\n\n"
+        "<b><i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
+        ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i></b>'
     )
 
 

@@ -114,7 +114,7 @@ class Rating:
         chat_id = update.effective_chat.id
         message_id = update.effective_message.message_id
         text = update.effective_message.text
-        if len(text) > self.MAX_CHARACTERS_ALLOWED:
+        if len(text) > self.MAX_CHARACTERS_ALLOWED and not update.callback_query:
             boundary = len(text) - self.MAX_CHARACTERS_ALLOWED
             user_text = text[: self.MAX_CHARACTERS_ALLOWED]
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
@@ -145,9 +145,9 @@ class Rating:
         if self.status_index[user_id] == 1:
             self.user_message[
                 user_id
-            ] = f"{RATING_VALUES[index - 1]}:  {vote}\nCommento:  <i>{text}</i>"
+            ] = f"<b>{RATING_VALUES[index - 1]}</b>\n– Voto:  {vote}\n– Commento:  <i>{text}</i>"
         else:
-            self.user_message[user_id] += f"\nCommento:  <i>{text}</i>"
+            self.user_message[user_id] += f"\n– Commento:  <i>{text}</i>"
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
@@ -331,9 +331,9 @@ class Rating:
         stars = vote * "⭐️"
         stars += (5 - vote) * "🕳"
         if self.user_message[user_id]:
-            text = f"\n\n{status}:  {stars}"
+            text = f"\n\n<b>{status}</b>\n– Voto:  {stars}"
         else:
-            text = f"{status}:  {stars}"
+            text = f"<b>{status}</b>\n– Voto:  {stars}"
         self.user_message[user_id] += text
         context.bot.edit_message_text(
             chat_id=chat_id,
