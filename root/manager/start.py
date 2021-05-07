@@ -477,7 +477,7 @@ def show_info(update: Update, context: CallbackContext):
     keyboard = InlineKeyboardMarkup(
         [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
     )
-    number_of_reviews = len(UserRating.objects())
+    number_of_reviews = len(UserRating.objects().filter(approved=True))
     average_message = int(float(average)) * "⭐️" if average else ""
     average_missing = (5 - (int(float(average)))) * "🕳" if average else ""
     average_message = (
