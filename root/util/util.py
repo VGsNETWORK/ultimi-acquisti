@@ -7,6 +7,7 @@ from re import sub
 from base64 import b64decode
 import sys
 from types import TracebackType
+import traceback
 from xml.sax.saxutils import escape
 from time import time
 from os.path import split
@@ -233,9 +234,12 @@ def format_error(error: Exception):
     # extreact the information about the exception
     exc_type, _, exc_tb = sys.exc_info()
     # extreact the filename where the exception was raised
+    logger.error(traceback.format_exc())
+    logger.error(exc_tb.tb_frame.f_code.co_filename)
     file_name = split(exc_tb.tb_frame.f_code.co_filename)[1]
     # return a formatted message with the exception info
     return (
+        f"<b>Bot Name:</b>  <code>#ultimiacquisti</code>\n"
         f"<b>Exception Type:</b>  <code>{escape_value(exc_type)}</code>\n"
         f"<b>File Name:</b>  <code>{escape_value(file_name)}</code>\n"
         f"<b>Line Number:</b>  <code>{escape_value(exc_tb.tb_lineno)}</code>\n"

@@ -3,6 +3,7 @@
 """ File that contains the class to start the bot with the bot api """
 
 import os
+import telegram
 from telegram.ext.messagehandler import MessageHandler
 
 from telegram.ext.pollanswerhandler import PollAnswerHandler

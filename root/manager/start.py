@@ -481,7 +481,7 @@ def show_info(update: Update, context: CallbackContext):
     average_message = int(float(average)) * "⭐️" if average else ""
     average_missing = (5 - (int(float(average)))) * "🕳" if average else ""
     average_message = (
-        f"<b>{'%.2f' % (float(average))}</b>  {average_message}{average_missing}  (basato su {number_of_reviews} recensioni)\n\n"
+        f"🌐  Valutazione:\n        <b>{'%.2f' % (float(average))}</b>  {average_message}{average_missing}  (basato su {number_of_reviews} recensioni)\n\n"
         if average_message
         else ""
     )

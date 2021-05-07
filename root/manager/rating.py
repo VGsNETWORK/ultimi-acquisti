@@ -102,6 +102,8 @@ class Rating:
         user_rating.save()
 
     def send_feedback(self, update: Update, context: CallbackContext):
+        if update.effective_user.is_bot or update.effective_chat.type == "channel":
+            return
         user_id = update.effective_user.id
         if not user_id in self.status_index:
             return
