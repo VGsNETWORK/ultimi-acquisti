@@ -478,10 +478,30 @@ def show_info(update: Update, context: CallbackContext):
         [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
     )
     number_of_reviews = len(UserRating.objects().filter(approved=True))
-    average_message = int(float(average)) * "⭐️" if average else ""
-    average_missing = (5 - (int(float(average)))) * "🕳" if average else ""
+    average_message = int(float(average)) * "🌕" if average else ""
+    average_message += f"{(5 - len(average_message)) * '🌑'}"
+    logger.info(average_message)
+    index = int(average.split(".")[0])
+    decimal = average.split(".")[1][0:2]
+    if len(decimal) < 2:
+        decimal += "0"
+    decimal = int(decimal)
+    logger.info(decimal)
+    if decimal != 0:
+        if decimal >= 75:
+            replace = "🌖"
+        if decimal < 75:
+            replace = "🌗"
+        if decimal < 50:
+            replace = "🌘"
+        if decimal < 25:
+            replace = "🌑"
+        average_message = [c for c in average_message]
+        average_message[index] = replace
+        average_message = "".join(average_message)
+
     average_message = (
-        f"🌐  Valutazione:\n        <b>{'%.2f' % (float(average))}</b>  {average_message}{average_missing}  (basato su {number_of_reviews} recensioni)\n\n"
+        f"🌐  Valutazione:\n        <b>{'%.2f' % (float(average))}</b>  {average_message}  (basato su {number_of_reviews} recensioni)\n\n"
         if average_message
         else ""
     )

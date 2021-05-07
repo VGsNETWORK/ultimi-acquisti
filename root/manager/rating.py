@@ -102,7 +102,7 @@ class Rating:
         user_rating.save()
 
     def send_feedback(self, update: Update, context: CallbackContext):
-        if update.effective_user.is_bot or update.effective_chat.type == "channel":
+        if update.effective_chat.type == "channel":
             return
         user_id = update.effective_user.id
         if not user_id in self.status_index:
@@ -118,7 +118,9 @@ class Rating:
             text = "<b>Non presente</b>"
         index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
         vote = self.feedback[user_id][index - 1]["vote"]
-        vote = vote * "⭐️"
+        message_vote = vote * "⭐️"
+        message_vote += "🕳" * (5 - vote)
+        vote = message_vote
         if self.status_index[user_id] == 1:
             self.user_message[
                 user_id
@@ -306,6 +308,7 @@ class Rating:
         index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
         status = RATING_VALUES[index]
         stars = vote * "⭐️"
+        stars += (5 - vote) * "🕳"
         if self.user_message[user_id]:
             text = f"\n\n{status}:  {stars}"
         else:
