@@ -137,7 +137,7 @@ class BotManager:
         """Add handlers for the various operations"""
         rating = Rating()
         self.disp.add_handler(
-            CallbackQueryHandler(pattern="send_poll", callback=rating.poll)
+            CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )
         self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)

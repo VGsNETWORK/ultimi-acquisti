@@ -18,7 +18,7 @@ from root.model.user_rating import UserRating
 from root.util.util import create_button, retrieve_key
 from root.manager.start import rating_cancelled, remove_commands
 from root.contants.keyboard import (
-    RAITING_KEYBOARD,
+    RATING_KEYBOARD,
     RATING_REVIEWED_KEYBOARD,
     SHOW_RATING_KEYBOARD,
     build_approve_keyboard,
@@ -53,6 +53,7 @@ class Rating:
         self.feedback = {}
         self.message_id = {}
         self.user_message = {}
+        self.MAX_CHARACTERS_ALLOWED = 256
 
     def save_to_database(self, user_id: int, context: CallbackContext, user: User):
         data = self.feedback[user_id]
@@ -112,8 +113,28 @@ class Rating:
         logger.info("ricevuto feedback")
         chat_id = update.effective_chat.id
         message_id = update.effective_message.message_id
+        text = update.effective_message.text
+        if len(text) > self.MAX_CHARACTERS_ALLOWED:
+            boundary = len(text) - self.MAX_CHARACTERS_ALLOWED
+            user_text = text[: self.MAX_CHARACTERS_ALLOWED]
+            context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+            text = self.user_message[user_id]
+            text += f"\n\n\n🚫  <b>Limite superato di {boundary} caratteri!</b>"
+            text += f'\nEcco quello che hai inserito (tagliato a {self.MAX_CHARACTERS_ALLOWED} caratteri):\n<i>"{user_text}"</i>'
+            text += f"\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>"
+            try:
+                context.bot.edit_message_text(
+                    chat_id=chat_id,
+                    message_id=self.message_id[user_id],
+                    text=text,
+                    reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
+                    parse_mode="HTML",
+                )
+            except BadRequest:
+                pass
+            return
         if not update.callback_query:
-            text = f'"{update.effective_message.text}"'
+            text = f'"{text}"'
         else:
             text = "<b>Non presente</b>"
         index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
@@ -156,8 +177,8 @@ class Rating:
                     [
                         create_button(
                             "↩️  Torna indietro",
-                            "send_poll",
-                            "send_poll",
+                            "rating_menu",
+                            "rating_menu",
                         )
                     ]
                 ]
@@ -317,8 +338,9 @@ class Rating:
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=self.user_message[user_id] + "\n\n\n<b>Inserisci un commento:</b>",
-            reply_markup=InlineKeyboardMarkup(RAITING_KEYBOARD),
+            text=self.user_message[user_id]
+            + f"\n\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>",
+            reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
             parse_mode="HTML",
         )
         self.status[user_id] = RATING_VALUES[self.status_index[user_id]]

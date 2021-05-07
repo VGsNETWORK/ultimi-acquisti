@@ -235,8 +235,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             [
                 create_button(
                     "⭐  Valuta il bot",
-                    "send_poll",
-                    "send_poll",
+                    "rating_menu",
+                    "rating_menu",
                 )
             ],
             [
@@ -330,8 +330,8 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             [
                 create_button(
                     "⭐  Valuta il bot",
-                    "send_poll",
-                    "send_poll",
+                    "rating_menu",
+                    "rating_menu",
                 )
             ],
             [
@@ -412,8 +412,8 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 [
                     create_button(
                         "⭐  Valuta il bot",
-                        "send_poll",
-                        "send_poll",
+                        "rating_menu",
+                        "rating_menu",
                     )
                 ],
                 [

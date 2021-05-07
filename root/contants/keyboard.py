@@ -25,9 +25,9 @@ def send_command_to_group_keyboard(
     )
 
 
-RAITING_KEYBOARD = [
+RATING_KEYBOARD = [
     [create_button("⏩  Salta", "skip_rating", "skip_rating")],
-    [create_button("❌  Annulla", "send_poll", "send_poll")],
+    [create_button("❌  Annulla", "rating_menu", "rating_menu")],
 ]
 
 
@@ -106,7 +106,7 @@ SHOW_RATING_KEYBOARD = InlineKeyboardMarkup(
                 f"start_poll",
             )
         ],
-        [create_button("↩️  Torna indietro", "send_poll", "send_poll")],
+        [create_button("↩️  Torna indietro", "rating_menu", "rating_menu")],
     ]
 )
 
