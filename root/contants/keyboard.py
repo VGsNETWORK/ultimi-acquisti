@@ -27,7 +27,7 @@ def send_command_to_group_keyboard(
 
 RAITING_KEYBOARD = [
     [create_button("⏩  Salta", "skip_rating", "skip_rating")],
-    [create_button("❌  Annulla", "cancel_rating", "cancel_rating")],
+    [create_button("❌  Annulla", "send_poll", "send_poll")],
 ]
 
 

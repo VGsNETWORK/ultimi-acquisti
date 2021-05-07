@@ -156,8 +156,8 @@ class Rating:
                     [
                         create_button(
                             "↩️  Torna indietro",
-                            "start_hide_commands",
-                            "start_hide_commands",
+                            "send_poll",
+                            "send_poll",
                         )
                     ]
                 ]
