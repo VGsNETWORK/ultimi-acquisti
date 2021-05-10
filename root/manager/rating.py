@@ -54,6 +54,7 @@ class Rating:
         self.message_id = {}
         self.user_message = {}
         self.MAX_CHARACTERS_ALLOWED = 256
+        self.MAX_CHARACTERS_SPLIT = 400
 
     def save_to_database(self, user_id: int, context: CallbackContext, user: User):
         data = self.feedback[user_id]
@@ -116,7 +117,11 @@ class Rating:
         text = update.effective_message.text
         if len(text) > self.MAX_CHARACTERS_ALLOWED and not update.callback_query:
             boundary = len(text) - self.MAX_CHARACTERS_ALLOWED
-            user_text = text[: self.MAX_CHARACTERS_ALLOWED]
+            user_text = text[: self.MAX_CHARACTERS_SPLIT]
+            user_text = [t for t in user_text]
+            user_text.insert(self.MAX_CHARACTERS_ALLOWED, "<s>")
+            user_text.append("</s>")
+            user_text = "".join(user_text)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
             text = self.user_message[user_id]
             text += f"\n\n\n🚫  <b>Limite superato di {boundary} caratteri!</b>"
@@ -359,6 +364,7 @@ class Rating:
         data = data.split("_")
         user_id = data[-1]
         code = data[-2]
+        UserRating.objects(user_id=user_id, approved=True).delete()
         user_rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
         user = retrieve_user(user_id)
         text = build_approve_rating_message(user_rating, user)
@@ -388,6 +394,7 @@ class Rating:
             chat_id=user_id,
             text=USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF,
             reply_markup=RATING_REVIEWED_KEYBOARD,
+            parse_mode="HTML",
         )
         self.calculate_weighted_average()
 
@@ -396,6 +403,7 @@ class Rating:
         data = callback.data
         data = data.split("_")
         user_id = data[-1]
+        logger.info(f"approving {user_id}")
         code = data[-2]
         UserRating.objects(user_id=user_id, approved=True).delete()
         user_rating = UserRating.objects.get(user_id=user_id, code=code)

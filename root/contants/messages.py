@@ -530,7 +530,9 @@ USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF = (
 )
 
 USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF = (
-    "👎🏻  La tua recensione non è stata approvata dallo Staff. Riprova!"
+    "👎🏻  La tua recensione non è stata approvata dallo Staff, pertanto solo"
+    " i voti che hai assegnato sono stati mantenuti.\n\n"
+    "💡 <i>Ricorda che le recensioni senza commenti hanno meno incidenza sulla <b>media pubblica</b>.</i>"
 )
 
 USER_ALREADY_VOTED_TO_APPROVE = "Se effettui un'altra votazione, la tua attuale recensione pendente verrà sostituita."
