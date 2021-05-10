@@ -53,6 +53,8 @@ class Rating:
         self.feedback = {}
         self.message_id = {}
         self.user_message = {}
+        self.previous_votes = {}
+        self.previous_comments = {}
         self.MAX_CHARACTERS_ALLOWED = 256
         self.MAX_CHARACTERS_SPLIT = 400
 
@@ -202,9 +204,16 @@ class Rating:
     ):
         answers = list(answers)
         answers.append("❌  Annulla")
+        index = self.status_index[chat_id] if self.status_index[chat_id] >= 0 else 0
+        message = ""
+        if self.previous_votes[chat_id]:
+            vote = self.previous_votes[chat_id][index]
+            stars = vote * "⭐️"
+            stars += (5 - vote) * "🕳"
+            message = f"\n\nVoto precedente:  {stars}"
         message = context.bot.send_poll(
             chat_id,
-            text,
+            f"{text}  (prima:  {stars})\n⠀",
             answers,
             is_anonymous=False,
             allows_multiple_answers=False,
@@ -223,13 +232,17 @@ class Rating:
         user_id = update.effective_user.id
         chat_id = update.effective_chat.id
         message_id = update.effective_message.message_id
-        approved = UserRating.objects.filter(user_id=user_id, approved=True)
-        to_approve = UserRating.objects.filter(user_id=user_id, approved=False)
+        approved: UserRating = UserRating.objects.filter(user_id=user_id, approved=True)
+        to_approve: UserRating = UserRating.objects.filter(
+            user_id=user_id, approved=False
+        )
+        pr = None
         if approved or to_approve:
             message = USER_ALREADY_VOTED
             if approved:
                 approved_message = f"<b>{len(approved)}</b> recensione pubblicata (✅)"
                 approved = approved[0]
+                pr = approved
             else:
                 approved_message = ""
             if to_approve:
@@ -237,6 +250,7 @@ class Rating:
                     f"<b>{len(to_approve)}</b> recensione in fase di valutazione (⚖️)"
                 )
                 to_approve = to_approve[0]
+                pr = to_approve
             else:
                 to_approve_message = ""
             if approved and to_approve_message:
@@ -262,6 +276,15 @@ class Rating:
                 )
         else:
             message = USER_HAS_NO_VOTE
+
+        if pr:
+            # fmt: off
+            self.previous_votes[user_id] = [pr.ux_vote, pr.functionality_vote, pr.ui_vote, pr.overall_vote]
+            self.previous_comments[user_id] = [pr.ux_comment, pr.functionality_comment, pr.ui_comment, pr.overall_comment]
+        else:
+            self.previous_votes[user_id] = None
+            self.previous_votes[user_id] = None
+            # fmt: on
 
         context.bot.edit_message_text(
             chat_id=chat_id,
@@ -335,16 +358,25 @@ class Rating:
         status = RATING_VALUES[index]
         stars = vote * "⭐️"
         stars += (5 - vote) * "🕳"
+
         if self.user_message[user_id]:
             text = f"\n\n<b>{status}</b>\n– Voto:  {stars}"
         else:
             text = f"<b>{status}</b>\n– Voto:  {stars}"
         self.user_message[user_id] += text
+        previous_comment = ""
+        if self.previous_comments[user_id]:
+            previous_comment = self.previous_comments[user_id][index]
+            if previous_comment:
+                previous_comment = f'Commento precedente:  <i>"{previous_comment}"</i>\n\n'
+            else:
+                previous_comment = ""
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
             text=self.user_message[user_id]
-            + f"\n\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>",
+            + f"\n\n\n{previous_comment}<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>\n"
+            + "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
             reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
             parse_mode="HTML",
         )

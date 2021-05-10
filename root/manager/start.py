@@ -500,15 +500,15 @@ def show_info(update: Update, context: CallbackContext):
         average_message[index] = replace
         average_message = "".join(average_message)
 
-    average_header = "🌐 Valutazione:     "
+    average_header = "🌐 Valutazione:"
     average_message = (
-        f"<code>{average_header}</code><b>{'%.2f' % (float(average))}</b>  {average_message}\n"
+        f"<code>{average_header}</code>     <b>{'%.2f' % (float(average))}</b>  {average_message}\n"
         if average_message
         else ""
     )
     if average_message:
         hlength = len(average_header) + 1
-        average_append = f"<code>{' ' * hlength}</code><i>(basato su {number_of_reviews} recensioni)</i>\n\n"
+        average_append = f"<code>{' ' * hlength}</code><i>     (basato su {number_of_reviews} recensioni)</i>\n\n"
         average_message += average_append
     message = (
         f"<u><b>INFO</b></u>\n\n\n"
