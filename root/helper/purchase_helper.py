@@ -199,6 +199,19 @@ def delete_purchase(user_id: int, message_id: int) -> None:
     Purchase.objects.filter(user_id=user_id).get(message_id=message_id).delete()
 
 
+def delete_purchase_from_chat(user_id: int, message_id: int, chat_id: int) -> None:
+    """Delete a purchase a user made
+
+    Args:
+        user_id (int): The user who purchase the item
+        message_id (int): The purchase to delete
+    """
+    logger.info(f"finding purchase {message_id} for user {user_id} on chat {chat_id}")
+    Purchase.objects.filter(user_id=user_id, message_id=message_id).get(
+        chat_id=chat_id
+    ).delete()
+
+
 def delete_purchase_forced(message_id: int, chat_id: int) -> None:
     """Delete a purchase
 

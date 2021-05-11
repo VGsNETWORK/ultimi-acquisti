@@ -150,15 +150,25 @@ class TelegramSender:
                 text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
         else:
             text += ""
-        message: Message = self._bot.send_message(
-            chat_id=chat_id,
-            text=text,
-            reply_to_message_id=reply_to_message_id,
-            reply_markup=reply_markup,
-            parse_mode=parse_mode,
-            disable_notification=True,
-            disable_web_page_preview=True,
-        )
+        if reply_markup:
+            message: Message = self._bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                reply_to_message_id=reply_to_message_id,
+                reply_markup=reply_markup,
+                parse_mode=parse_mode,
+                disable_notification=True,
+                disable_web_page_preview=True,
+            )
+        else:
+            message: Message = self._bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                reply_to_message_id=reply_to_message_id,
+                parse_mode=parse_mode,
+                disable_notification=True,
+                disable_web_page_preview=True,
+            )
         if create_redis:
             add_message(message.message_id, user_id, False)
         if show_timeout:

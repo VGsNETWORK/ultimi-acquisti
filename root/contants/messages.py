@@ -526,12 +526,12 @@ USER_ALREADY_VOTED_APPROVED = (
 )
 
 USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF = (
-    "👍🏻  La tua recensione è stata approvata dallo Staff. Grande!"
+    "👍🏻  La tua recensione <b>è stata approvata</b> dallo Staff. Grande!"
 )
 
 USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF = (
-    "👎🏻  La tua recensione non è stata approvata dallo Staff, pertanto solo"
-    " i voti che hai assegnato sono stati mantenuti.\n\n"
+    "👎🏻  La tua recensione <b>non è stata approvata</b> dallo Staff, pertanto <b>solo i voti</b>"
+    " che hai assegnato sono stati mantenuti.\n\n"
     "💡 <i>Ricorda che le recensioni senza commenti hanno meno incidenza sulla <b>media pubblica</b>.</i>"
 )
 

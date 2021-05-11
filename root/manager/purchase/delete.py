@@ -184,10 +184,19 @@ def remove_purchase(client: Client, message: PyroMessage) -> None:
     """
     message_id: int = message.message_id
     user_id: int = message.from_user.id
+    first_name: str = message.from_user.first_name
     chat_id = message.chat.id
-    purchase_helper.delete_purchase(user_id, message_id)
+    purchase: Purchase = purchase_helper.find_by_message_id_and_chat_id(
+        message_id, chat_id
+    )
+    purchase_helper.delete_purchase_from_chat(user_id, message_id, chat_id)
     sender.send_and_deproto(
-        client, chat_id, PURCHASE_DELETED, message_id, timeout=SERVICE_TIMEOUT
+        client=client,
+        chat_id=chat_id,
+        text=format_purchase_deleted(purchase, PURCHASE_DELETED, user_id, first_name),
+        reply_to_message_id=message_id,
+        timeout=SERVICE_TIMEOUT,
+        reply_markup=None,
     )
 
 
@@ -273,3 +282,33 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     sender.send_and_deproto(
         client, chat_id, message, timeout=SERVICE_TIMEOUT * purchase_messages
     )
+
+
+def format_purchase_deleted(
+    purchase: Purchase, template: str, user_id: int, first_name: str
+):
+    title = purchase.description
+    title = title if title else ""
+    title = title.replace("<", "&lt;").replace(">", "&gt;")
+    title = f"<b>{title}</b>" if title else "acquisto senza nome"
+    title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
+    date: datetime = purchase.creation_date
+    if date.year == datetime.now().year:
+        day = date.day
+        if day == 1 or day == 8 or day == 11:
+            day = "dell'<b>%s</b>" % day
+        else:
+            day = "del <b>%s</b>" % day
+        date = "%s <b>%s</b>" % (day, get_month_string(date.month, False, True))
+    else:
+        day = date.day
+        if day == 1 or day == 8 or day == 11:
+            day = "dell'<b>%s</b>" % day
+        else:
+            day = "del <b>%s</b>" % day
+        date = "%s <b>%s %s</b>" % (
+            day,
+            get_month_string(date.month, False, True),
+            date.year,
+        )
+    return template % (user_id, first_name, title, date)
