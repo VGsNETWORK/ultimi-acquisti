@@ -133,28 +133,24 @@ def handle_purchase(client: Client, message: Message) -> None:
     caption = message.caption if message.caption else message.text
     logger.info("Parsing purchase")
     try:
-        # regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
-        # \d      -> matches a number
-        # +       -> match one or more of the previous
-        # ()      -> capturing groappend = ""up
-        # ?:      -> do not create a capture group (makes no sense but it does not work without)
-        # [\.\',] -> matches . , '
-        # \d{3}   -> matches 3 numbers
-        # ?       -> makes the capturing group optional
-        # ()      -> capturing group
-        # ?:      -> do not create a capture group (makes no sense but it does not work without)
-        # [\.,]   -> marches . or ,
-        # \d{1,2} -> matches one or two numbers
-        # ?       -> makes the capturing group optional
         caption = caption.replace("\n", " ")
         caption = caption.split(" ")
         caption.remove("#ultimiacquisti")
+        # (\d{1,2}\/\d{1,2}\/(\d{4}|\d{2}))
+        # ()            -> capturing group
+        # \d{1,2}       -> matches a number with 1 or 2 decimals
+        # \/            -> matches exactly a '/'
+        # \d{1,2}       -> matches a number with 1 or 2 decimals
+        # \/            -> matches exactly a '/'
+        # ()            -> capturing group
+        # \d{4}|\d{2}   -> matches a number of 4 digits (first), otherwise one with 2
+        # e.g. 12/12/2020 or 12/12/08
         mdate = next(
             (
                 mdate
                 for mdate in caption
                 if (
-                    re.findall(r"(\d{1,2}/\d{1,2}/\d{2}|\d{4})", mdate)
+                    re.findall(r"(\d{1,2}/\d{1,2}/(\d{4}|\d{2}))", mdate)
                     and has_number(mdate)
                 )
             ),
@@ -177,7 +173,20 @@ def handle_purchase(client: Client, message: Message) -> None:
         else:
             title = ""
             append_message[2] = PURCHASE_TITLE_HINT
-        logger.info(caption)
+        logger.info(f"USING CAPTION {caption}")
+        # regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
+        # \d      -> matches a number
+        # +       -> match one or more of the previous
+        # ()      -> capturing groappend = ""up
+        # ?:      -> do not create a capture group (makes no sense but it does not work without)
+        # [\.\',] -> matches . , '
+        # \d{3}   -> matches 3 numbers
+        # ?       -> makes the capturing group optional
+        # ()      -> capturing group
+        # ?:      -> do not create a capture group (makes no sense but it does not work without)
+        # [\.,]   -> marches . or ,
+        # \d{1,2} -> matches one or two numbers
+        # ?       -> makes the capturing group optional
         price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         logger.info(price)
         original_price = price
