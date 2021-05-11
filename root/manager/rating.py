@@ -108,6 +108,8 @@ class Rating:
     def send_feedback(self, update: Update, context: CallbackContext):
         if update.effective_chat.type == "channel":
             return
+        if not update.effective_user.id == update.effective_chat.id:
+            return
         user_id = update.effective_user.id
         if not user_id in self.status_index:
             return
@@ -206,14 +208,17 @@ class Rating:
         answers.append("❌  Annulla")
         index = self.status_index[chat_id] if self.status_index[chat_id] >= 0 else 0
         message = ""
-        if self.previous_votes[chat_id]:
-            vote = self.previous_votes[chat_id][index]
-            stars = vote * "⭐️"
-            stars += (5 - vote) * "🕳"
-            message = f"\n\nVoto precedente:  {stars}"
+        previous = ""
+        if chat_id in self.previous_votes:
+            if self.previous_votes[chat_id]:
+                vote = self.previous_votes[chat_id][index]
+                stars = vote * "⭐️"
+                stars += (5 - vote) * "🕳"
+                message = f"\n\nVoto precedente:  {stars}"
+                previous = f"(prima:  {stars})"
         message = context.bot.send_poll(
             chat_id,
-            f"{text}  (prima:  {stars})\n⠀",
+            f"{text}{previous}\n⠀",
             answers,
             is_anonymous=False,
             allows_multiple_answers=False,
@@ -365,12 +370,13 @@ class Rating:
             text = f"<b>{status}</b>\n– Voto:  {stars}"
         self.user_message[user_id] += text
         previous_comment = ""
-        if self.previous_comments[user_id]:
-            previous_comment = self.previous_comments[user_id][index]
-            if previous_comment:
-                previous_comment = f'Commento precedente:  <i>"{previous_comment}"</i>\n\n'
-            else:
-                previous_comment = ""
+        if user_id in self.previous_comments:
+            if self.previous_comments[user_id]:
+                previous_comment = self.previous_comments[user_id][index]
+                if previous_comment:
+                    previous_comment = f'Commento precedente:  <i>"{previous_comment}"</i>\n\n'
+                else:
+                    previous_comment = ""
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
@@ -504,14 +510,22 @@ class Rating:
             functionality_votes.append(user_rating.functionality_vote)
             weight = FULL_WEIGHT if user_rating.functionality_comment else HALF_WEIGHT
             functionality_weights.append(weight)
+        
+        logger.info(f"OVERALL {overall_votes} {overall_weights}")
+        logger.info(f"UI {ui_votes} {ui_weights}")
+        logger.info(f"UX {ux_votes} {ux_weights}")
+        logger.info(f"FUNC {functionality_votes} {functionality_weights}")
 
         overall_vote = np.average(overall_votes, weights=overall_weights)
+        logger.info(f"OVERALL_VOTE {overall_vote}")
         ui_vote = np.average(ui_votes, weights=ui_weights)
+        logger.info(f"UI_VOTE {ui_vote}")
         ux_vote = np.average(ux_votes, weights=ux_weights)
-        functionality_vote = np.average(
-            functionality_votes, weights=functionality_votes
-        )
+        logger.info(f"UX_VOTE {ux_vote}")
+        functionality_vote = np.average(functionality_votes, weights=functionality_weights)
+        logger.info(f"FUNCTIONALITY_VOTE {functionality_vote}")
         average = np.average([ui_vote, ux_vote, overall_vote, functionality_vote])
+        logger.info(f"AVERAGE {average}")
 
         try:
             average_rating: Configuration = Configuration.objects.get(
