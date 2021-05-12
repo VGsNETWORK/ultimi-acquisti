@@ -466,18 +466,88 @@ def back_to_the_start(
 
 
 def show_info(update: Update, context: CallbackContext):
+    spaces = 5
+    ux_header = "🤹🏻 Facilità di utilizzo:"
+    functionality_header = "➕ Funzionalità:"
+    ui_header = "👁‍🗨 Interfaccia utente:"
+    overall_header = "🌐 Esperienza generale:"
+
     message = update.effective_message
     message_id = message.message_id
     chat = update.effective_chat
     try:
-        average_rating: Configuration = Configuration.objects.get(code="average_rating")
-        average = average_rating.value
+        average: Configuration = Configuration.objects.get(code="average_rating").value
+        ui_vote: Configuration = Configuration.objects.get(code="ui_vote").value
+        ux_vote: Configuration = Configuration.objects.get(code="ux_vote").value
+        overall_vote: Configuration = Configuration.objects.get(
+            code="overall_vote"
+        ).value
+        functionality_vote: Configuration = Configuration.objects.get(
+            code="functionality_vote"
+        ).value
+        logger.info(
+            f"{average} {ui_vote} {ux_vote} {overall_vote} {functionality_vote}"
+        )
     except DoesNotExist as _:
-        average = ""
-    keyboard = InlineKeyboardMarkup(
-        [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
-    )
+        average, functionality_vote, overall_vote, ui_vote, ux_vote = 0, 0, 0, 0, 0
+    keyboard = [
+        [create_button("⭐  Valuta il bot", "rating_menu", "rating_menu")],
+        [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],
+    ]
     number_of_reviews = len(UserRating.objects().filter(approved=True))
+    average_message = create_rating_moons(average)
+    average_header = ux_header
+    hlength = len(average_header)
+    message = f"<u><b>INFO</b></u>\n\n\n"
+
+    callback = update.callback_query
+
+    if callback:
+        data = callback.data
+        if data == "expand_info":
+            button = [
+                create_button(
+                    "🔺     Comprimi valutazione     🔺", "show_bot_info", "show_bot_info"
+                )
+            ]
+            keyboard.insert(0, button)
+            message += f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
+            message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
+            message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
+            message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
+        else:
+            button = [
+                create_button(
+                    "🔻     Espandi valutazione     🔻", "expand_info", "expand_info"
+                )
+            ]
+            keyboard.insert(0, button)
+    average_header = "⭐️ Valutazione:"
+    message += (
+        f"<code>{average_header}{' ' * (hlength-(len(average_header)))}</code>{' ' * spaces}{average_message}\n"
+        if average_message
+        else ""
+    )
+    if average_message:
+        average_append = f"<code>{' ' * (hlength)}</code><i>     (basato su {number_of_reviews} recensioni)</i>\n\n"
+        message += average_append
+    message += f"🔄  Versione:  <code>{VERSION}</code>\n\n"
+    message += f"☕️  Sviluppatore:  {DEVELOPER}\n"
+    message += f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
+    message += f"<i>A cura di @VGsNETWORK</i>"
+
+    context.bot.edit_message_text(
+        chat_id=chat.id,
+        text=message,
+        reply_markup=InlineKeyboardMarkup(keyboard),
+        message_id=message_id,
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
+
+
+def create_rating_moons(average):
+    logger.info(f"creating message for {average}")
     average_message = int(float(average)) * "🌕" if average else ""
     average_message += f"{(5 - len(average_message)) * '🌑'}"
     logger.info(average_message)
@@ -496,34 +566,10 @@ def show_info(update: Update, context: CallbackContext):
             replace = "🌘"
         if decimal < 25:
             replace = "🌑"
+        logger.info(average_message)
         average_message = [c for c in average_message]
+        logger.info(average_message)
         average_message[index] = replace
-        average_message = "".join(average_message)
-
-    average_header = "🌐 Valutazione:"
-    average_message = (
-        f"<code>{average_header}</code>     <b>{'%.2f' % (float(average))}</b>  {average_message}\n"
-        if average_message
-        else ""
-    )
-    if average_message:
-        hlength = len(average_header) + 1
-        average_append = f"<code>{' ' * hlength}</code><i>     (basato su {number_of_reviews} recensioni)</i>\n\n"
-        average_message += average_append
-    message = (
-        f"<u><b>INFO</b></u>\n\n\n"
-        f"{average_message}"
-        f"🔄  Versione:  <code>{VERSION}</code>\n\n"
-        f"☕️  Sviluppatore:  {DEVELOPER}\n"
-        f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
-        f"<i>A cura di @VGsNETWORK</i>"
-    )
-
-    context.bot.edit_message_text(
-        chat_id=chat.id,
-        text=message,
-        reply_markup=keyboard,
-        message_id=message_id,
-        parse_mode="HTML",
-        disable_web_page_preview=True,
-    )
+        logger.info(average_message)
+    message = "".join(average_message)
+    return f"<b>{'%.2f' % (float(average))}</b>  {message}"

@@ -6,7 +6,7 @@ from datetime import datetime
 from mongoengine.errors import DoesNotExist
 from root.model.configuration import Configuration
 from typing import ContextManager, List
-from telegram import user
+from telegram import poll, user
 import numpy as np
 
 
@@ -17,6 +17,7 @@ from telegram.user import User
 from root.model.user_rating import UserRating
 from root.util.util import create_button, retrieve_key
 from root.manager.start import rating_cancelled, remove_commands
+from root.helper.configuration import ConfigurationHelper
 from root.contants.keyboard import (
     RATING_KEYBOARD,
     RATING_REVIEWED_KEYBOARD,
@@ -55,6 +56,7 @@ class Rating:
         self.user_message = {}
         self.previous_votes = {}
         self.previous_comments = {}
+        self.configuration_helper = ConfigurationHelper()
         self.MAX_CHARACTERS_ALLOWED = 256
         self.MAX_CHARACTERS_SPLIT = 400
 
@@ -131,6 +133,7 @@ class Rating:
             text += f"\n\n\n🚫  <b>Limite superato di {boundary} caratteri!</b>"
             text += f'\nEcco quello che hai inserito (tagliato a {self.MAX_CHARACTERS_ALLOWED} caratteri):\n<i>"{user_text}"</i>'
             text += f"\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>"
+            text += "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
             try:
                 context.bot.edit_message_text(
                     chat_id=chat_id,
@@ -215,7 +218,7 @@ class Rating:
                 stars = vote * "⭐️"
                 stars += (5 - vote) * "🕳"
                 message = f"\n\nVoto precedente:  {stars}"
-                previous = f"(prima:  {stars})"
+                previous = f"  (prima:  {stars})"
         message = context.bot.send_poll(
             chat_id,
             f"{text}{previous}\n⠀",
@@ -308,16 +311,19 @@ class Rating:
         callback: CallbackQuery = update.callback_query
         code = callback.data
         code = code.split("_")[-1]
-        rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
-        message = build_show_rating_message(rating)
-        context.bot.edit_message_text(
-            chat_id=chat_id,
-            message_id=message_id,
-            text=message,
-            reply_markup=SHOW_RATING_KEYBOARD,
-            disable_web_page_preview=True,
-            parse_mode="HTML",
-        )
+        try:
+            rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
+            message = build_show_rating_message(rating)
+            context.bot.edit_message_text(
+                chat_id=chat_id,
+                message_id=message_id,
+                text=message,
+                reply_markup=SHOW_RATING_KEYBOARD,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+            )
+        except DoesNotExist:
+            self.poll(update, context)
 
     def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
@@ -469,6 +475,7 @@ class Rating:
             chat_id=user_id,
             text=USER_MESSAGE_REVIEW_APPROVED_FROM_STAFF,
             reply_markup=RATING_REVIEWED_KEYBOARD,
+            parse_mode="HTML",
         )
         self.calculate_weighted_average()
 
@@ -479,6 +486,7 @@ class Rating:
         )
 
     def calculate_weighted_average(self):
+        update_configuration = self.configuration_helper.update_configuration
         FULL_WEIGHT = 1
         HALF_WEIGHT = 0.25
         overall_votes = []
@@ -518,22 +526,16 @@ class Rating:
 
         overall_vote = np.average(overall_votes, weights=overall_weights)
         logger.info(f"OVERALL_VOTE {overall_vote}")
+        update_configuration("overall_vote", str(overall_vote))
         ui_vote = np.average(ui_votes, weights=ui_weights)
         logger.info(f"UI_VOTE {ui_vote}")
+        update_configuration("ui_vote", str(ui_vote))
         ux_vote = np.average(ux_votes, weights=ux_weights)
         logger.info(f"UX_VOTE {ux_vote}")
+        update_configuration("ux_vote", str(ux_vote))
         functionality_vote = np.average(functionality_votes, weights=functionality_weights)
         logger.info(f"FUNCTIONALITY_VOTE {functionality_vote}")
+        update_configuration("functionality_vote", str(functionality_vote))
         average = np.average([ui_vote, ux_vote, overall_vote, functionality_vote])
         logger.info(f"AVERAGE {average}")
-
-        try:
-            average_rating: Configuration = Configuration.objects.get(
-                code="average_rating"
-            )
-            average_rating.value = str(average)
-        except DoesNotExist as _:
-            average_rating: Configuration = Configuration(
-                code="average_rating", value=str(average)
-            )
-        average_rating.save()
+        update_configuration("average_rating", str(average))

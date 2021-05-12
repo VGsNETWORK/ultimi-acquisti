@@ -216,6 +216,10 @@ class BotManager:
         )
 
         self.disp.add_handler(
+            CallbackQueryHandler(callback=show_info, pattern="expand_info")
+        )
+
+        self.disp.add_handler(
             CallbackQueryHandler(
                 callback=rating.approve_rating, pattern="approve_feedback"
             )
