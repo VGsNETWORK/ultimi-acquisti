@@ -511,10 +511,13 @@ def show_info(update: Update, context: CallbackContext):
                 )
             ]
             keyboard.insert(0, button)
-            message += f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
-            message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
-            message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
-            message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
+            message += f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
+            message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
+            message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
+            message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
+            message += (
+                f"<code>{' ' * hlength}</code>{' ' * spaces}<code>{'─' * 13}</code>\n"
+            )
         else:
             button = [
                 create_button(

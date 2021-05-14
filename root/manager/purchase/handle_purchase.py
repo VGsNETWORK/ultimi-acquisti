@@ -119,6 +119,7 @@ def handle_purchase(client: Client, message: Message) -> None:
     caption = message.caption if message.caption else message.text
     if not "#ultimiacquisti" in caption:
         return
+    caption = re.sub("@\w+", "", message)
     if message.edit_date:
         date = datetime.fromtimestamp(message.date)
         logger.info(f"formatted date {date}")
