@@ -697,7 +697,7 @@ def build_approve_rating_message(rating: UserRating, user: User):
 
     return (
         f'L\'utente <a href="tg://user?id={user_id}">{user.first_name}</a>'
-        " ha dato un feedback al bot con i seguenti voti:\n\n"
+        " ha recensito il bot dando i seguenti voti:\n\n"
         "<b>Facilità di utilizzo</b>\n"
         f"– Voto:  {'⭐️' * rating.ux_vote}{'🕳' * (5 - rating.ux_vote)}\n"
         f"– Commento:  <i>{ux_comment}</i>\n\n"

@@ -70,10 +70,10 @@ class Rating:
                 else:
                     args.append(vote[key])
         code = str(uuid4()).replace("-", "")[5:20]
-        log_channel = retrieve_key("ERROR_CHANNEL")
+        feedback_channel = retrieve_key("FEEDBACK_CHANNEL")
         user_rating: UserRating = UserRating(
             approve_message_id=0,
-            approve_chat_id=log_channel,
+            approve_chat_id=feedback_channel,
             code=code,
             user_id=user_id,
             ux_vote=args[0],
@@ -89,7 +89,7 @@ class Rating:
             create_user(user)
         message: Message = context.bot.send_message(
             text=build_approve_rating_message(user_rating, user),
-            chat_id=log_channel,
+            chat_id=feedback_channel,
             reply_markup=build_approve_keyboard(code, user_id),
             disable_web_page_preview=True,
             parse_mode="HTML",
