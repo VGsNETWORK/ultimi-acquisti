@@ -211,7 +211,7 @@ def PURCHASE_RECAP_APPEND(
             message += "\n📅  <b>Data:</b>  <code>%s</code>" % date.strftime("%d/%m/%Y")
             message += "  (default)" if ddate else ""
         if title:
-            message += "\n🔤  <b>Titolo:</b>  <code>%s</code>" % title
+            message += '\n🔤  <b>Titolo:</b>  "<code>%s</code>"' % title
             message += "  (default)" if dtitle else ""
     return message
 
