@@ -237,6 +237,7 @@ class Rating:
         context.bot_data.update(payload)
 
     def poll(self, update: Update, context: CallbackContext) -> None:
+        data = update.callback_query.data
         user_id = update.effective_user.id
         chat_id = update.effective_chat.id
         message_id = update.effective_message.message_id
@@ -300,7 +301,7 @@ class Rating:
             message_id=message_id,
             parse_mode="HTML",
             disable_web_page_preview=True,
-            reply_markup=build_pre_poll_keyboard(approved, to_approve),
+            reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
         )
 
     def show_rating(self, update: Update, context: CallbackContext):

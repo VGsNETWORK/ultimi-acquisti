@@ -491,7 +491,11 @@ def show_info(update: Update, context: CallbackContext):
     except DoesNotExist as _:
         average, functionality_vote, overall_vote, ui_vote, ux_vote = 0, 0, 0, 0, 0
     keyboard = [
-        [create_button("⭐  Valuta il bot", "rating_menu", "rating_menu")],
+        [
+            create_button(
+                "⭐  Valuta il bot", "rating_menu_from_info", "rating_menu_from_info"
+            )
+        ],
         [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],
     ]
     number_of_reviews = len(UserRating.objects().filter(approved=True))

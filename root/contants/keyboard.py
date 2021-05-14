@@ -130,7 +130,12 @@ def build_approve_keyboard(code: str, user_id: int):
     )
 
 
-def build_pre_poll_keyboard(approved: UserRating, to_approve: UserRating):
+def build_pre_poll_keyboard(
+    approved: UserRating, to_approve: UserRating, callback_data: str
+):
+    back_callback = (
+        "show_bot_info" if callback_data == "rating_menu_from_info" else "cancel_rating"
+    )
     if approved or to_approve:
         message = "🔄  Aggiorna la recensione"
     else:
@@ -170,7 +175,5 @@ def build_pre_poll_keyboard(approved: UserRating, to_approve: UserRating):
         ]
     )
 
-    keyboard.append(
-        [create_button("↩️  Torna indietro", "cancel_rating", "cancel_rating")]
-    )
+    keyboard.append([create_button("↩️  Torna indietro", back_callback, back_callback)])
     return InlineKeyboardMarkup(keyboard)
