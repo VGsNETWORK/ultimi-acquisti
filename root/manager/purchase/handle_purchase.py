@@ -105,7 +105,9 @@ def handle_purchase(client: Client, message: Message) -> None:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    # me di un mese fa, avevi tanto torto...
     if message.forward_from:
+        logger.info("the message has been forwarded")
         return
     original_message = message
     edited = message.edit_date
@@ -119,7 +121,7 @@ def handle_purchase(client: Client, message: Message) -> None:
     caption = message.caption if message.caption else message.text
     if not "#ultimiacquisti" in caption:
         return
-    caption = re.sub("@\w+", "", message)
+    caption = re.sub("@\w+", "", caption)
     if message.edit_date:
         date = datetime.fromtimestamp(message.date)
         logger.info(f"formatted date {date}")
@@ -188,12 +190,13 @@ def handle_purchase(client: Client, message: Message) -> None:
         # [\.,]   -> marches . or ,
         # \d{1,2} -> matches one or two numbers
         # ?       -> makes the capturing group optional
-        price = re.findall(r"\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
+        price = re.findall(r"(?:\s|^)\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         logger.info(price)
         original_price = price
         if len(price) == 0:
             append_message[0] = PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
+        price = price.strip()
         price = convert_to_float(price)
         caption = title
         result = {"name": caption, "price": price, "error": None}
