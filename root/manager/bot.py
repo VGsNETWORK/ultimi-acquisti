@@ -132,6 +132,8 @@ class BotManager:
             context.bot.send_message(
                 chat_id=update.effective_chat.id, text="✅  Acquisti cancellati"
             )
+        else:
+            logger.info("this is not a development environment, ARE YOU CRAZY?")
 
     def add_handler(self):
         """Add handlers for the various operations"""
@@ -344,9 +346,9 @@ class BotManager:
             CallbackQueryHandler(callback=discard_purchase, pattern="remove_purchase_*")
         )
 
+        if is_develop():
+            self.disp.add_handler(CommandHandler("h4x0r", self.delete_all_purchases))
+
         self.disp.add_handler(
             MessageHandler(callback=rating.send_feedback, filters=Filters.text)
         )
-
-        if is_develop():
-            self.disp.add_handler(CommandHandler("h4x0r", self.delete_all_purchases))
