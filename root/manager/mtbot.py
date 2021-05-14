@@ -24,7 +24,10 @@ def purchase_in_database(_, __, message: Message) -> bool:
     Returns:
         bool: If the message was a purchase
     """
+    logger.info(_)
+    logger.info(__)
     if message.chat:
+        logger.info(f"checking {message.message_id}")
         return bool(purchase_exists(message.message_id, message.chat.id))
 
 
@@ -53,9 +56,7 @@ class Mtbot:
 
     def setup_userbot(self):
         """Setup the userbot handlers"""
-        self.user.add_handler(
-            DeletedMessagesHandler(deleted_purchase_message, filters=purchase_filter)
-        )
+        self.user.add_handler(DeletedMessagesHandler(deleted_purchase_message))
 
     def run_bot(self):
         """Run the bot"""

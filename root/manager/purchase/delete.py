@@ -223,6 +223,10 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
             purchases.append(purchase.creation_date)
             titles.append(purchase.description)
             purchase_helper.delete_purchase_forced(message_id, message.chat.id)
+        else:
+            chat_id = None
+    if not chat_id:
+        return
     user: ChatMember = client.get_chat_member(chat_id, user_id)
     user: User = user.user
     message = PURCHASES_DELETED if purchase_messages > 1 else PURCHASE_DELETED
