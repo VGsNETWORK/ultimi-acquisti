@@ -187,8 +187,8 @@ PURCHASE_EMPTY_TITLE_HINT = (
 )
 
 PURCHASE_DATE_HINT = (
-    "\n📅  Puoi collocare retroattivamente il tuo acquisto"
-    " specificando una <b>data</b> antecedente ad oggi nel formato <code>DD/MM/YYYY</code>."
+    "\n📅  Puoi collocare il tuo acquisto nel passato"
+    " specificando una <b>data</b> anteriore ad oggi nel formato <code>DD/MM/YY(YY)</code>."
 )
 
 PURCHASE_HINT_NO_HINT = "\n\n<i>Il tuo acquisto è completo. Niente male!</i>  😉"
