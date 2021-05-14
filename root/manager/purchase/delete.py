@@ -234,6 +234,7 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     if purchase_messages > 1:
         message = message % (user_id, name, purchase_messages)
         append = []
+        purchases, titles = (list(t) for t in zip(*sorted(zip(purchases, titles))))
         for purchase in zip(purchases, titles):
             title = f"<b>{purchase[1]}</b>" if purchase[1] else "acquisto senza nome"
             title = title if title != "<b>&lt;vuoto&gt;</b>" else "acquisto senza nome"
