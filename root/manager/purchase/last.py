@@ -111,6 +111,9 @@ def last_purchase(update: Update, context: CallbackContext) -> None:
             )
         except BadRequest:
             if chat_type == "private":
+                message = append_timeout_message(
+                    message, is_private, ONE_MINUTE, is_private
+                )
                 sender.send_and_edit(
                     update,
                     context,
