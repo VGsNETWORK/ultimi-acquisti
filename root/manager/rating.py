@@ -404,6 +404,14 @@ class Rating:
         remove_commands(update, context)
 
     def deny_rating(self, update: Update, context: CallbackContext):
+        message: Message = update.effective_message
+        first_name = None
+        if message.entities:
+            entity = message.entities[0]
+            try:
+                first_name = entity['user']['first_name']
+            except Exception as e:
+                logger.error(e)
         callback = update.callback_query
         data = callback.data
         data = data.split("_")
@@ -412,6 +420,8 @@ class Rating:
         UserRating.objects(user_id=user_id, approved=True).delete()
         user_rating: UserRating = UserRating.objects.get(user_id=user_id, code=code)
         user = retrieve_user(user_id)
+        if first_name:
+            user.first_name = first_name
         text = build_approve_rating_message(user_rating, user)
         text = re.sub("\n\n\n.*$", "", text)
         user = update.effective_user
@@ -419,7 +429,7 @@ class Rating:
         date = date.strftime("%d/%m/%Y alle %H:%M")
         text += (
             "\n\n\n❌  <b>Non approvato da"
-            f' <a href="tg://user?id={user.id}">{user.first_name}</a> in data {date}!</b>'
+            f' <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a> in data {date}!</b>'
         )
         context.bot.edit_message_text(
             message_id=update.effective_message.message_id,
@@ -444,6 +454,14 @@ class Rating:
         self.calculate_weighted_average()
 
     def approve_rating(self, update: Update, context: CallbackContext):
+        message: Message = update.effective_message
+        first_name = None
+        if message.entities:
+            entity = message.entities[0]
+            try:
+                first_name = entity['user']['first_name']
+            except Exception as e:
+                logger.error(e)
         callback = update.callback_query
         data = callback.data
         data = data.split("_")
@@ -455,6 +473,8 @@ class Rating:
         user_rating.approved = True
         user_rating.save()
         user = retrieve_user(user_id)
+        if first_name:
+            user.first_name = first_name
         text = build_approve_rating_message(user_rating, user)
         user = update.effective_user
         text = re.sub("\n\n\n.*$", "", text)
@@ -462,7 +482,7 @@ class Rating:
         date = date.strftime("%d/%m/%Y alle %H:%M")
         text += (
             "\n\n\n✅  <b>Approvato da"
-            f' <a href="tg://user?id={user.id}">{user.first_name}</a> in data {date}!</b>'
+            f' <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a> in data {date}!</b>'
         )
         context.bot.edit_message_text(
             message_id=update.effective_message.message_id,
