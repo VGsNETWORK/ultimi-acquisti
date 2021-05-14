@@ -141,10 +141,10 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
         expand = True
         message = NO_PURCHASE % (user.id, user.first_name)
         keyboard = NO_PURCHASE_KEYBOARD
-    message = append_timeout_message(
-        message, is_private, LONG_SERVICE_TIMEOUT, is_private
-    )
     if update.effective_message.chat.type == "private":
+        message = append_timeout_message(
+            message, is_private, LONG_SERVICE_TIMEOUT, is_private
+        )
         sender.send_and_edit(
             update,
             context,
