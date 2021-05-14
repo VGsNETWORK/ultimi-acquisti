@@ -106,7 +106,7 @@ def handle_purchase(client: Client, message: Message) -> None:
         message (Message): The message received
     """
     # me di un mese fa, avevi tanto torto...
-    if message.forward_from:
+    if message.forward_from_chat or message.forward_from:
         logger.info("the message has been forwarded")
         return
     original_message = message
@@ -190,13 +190,13 @@ def handle_purchase(client: Client, message: Message) -> None:
         # [\.,]   -> marches . or ,
         # \d{1,2} -> matches one or two numbers
         # ?       -> makes the capturing group optional
-        price = re.findall(r"(?:\s|^)\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
+        price = re.findall(r"(?:\s|^|€)\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         logger.info(price)
         original_price = price
         if len(price) == 0:
             append_message[0] = PURCHASE_PRICE_HINT
         price = price[0] if len(price) != 0 else "0.00"
-        price = price.strip()
+        price = price.strip().replace("€", "")
         price = convert_to_float(price)
         caption = title
         result = {"name": caption, "price": price, "error": None}
