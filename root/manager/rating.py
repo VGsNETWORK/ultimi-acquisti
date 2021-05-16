@@ -384,18 +384,46 @@ class Rating:
                     previous_comment = f'Commento precedente:  <i>"{previous_comment}"</i>\n\n'
                 else:
                     previous_comment = ""
-        context.bot.edit_message_text(
-            chat_id=chat_id,
-            message_id=self.message_id[user_id],
-            text=self.user_message[user_id]
-            + f"\n\n\n{previous_comment}<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>\n"
-            + "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
-            reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
-            parse_mode="HTML",
-        )
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat_id,
+                message_id=self.message_id[user_id],
+                text=self.user_message[user_id]
+                + f"\n\n\n{previous_comment}<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>\n"
+                + "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
+                reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
+                parse_mode="HTML",
+            )
+        except BadRequest:
+            pass
         self.status[user_id] = RATING_VALUES[self.status_index[user_id]]
         context.bot.delete_message(chat_id=chat_id, message_id=message_id)
         self.status_index[user_id] += 1
+        logger.info(self.status_index[user_id])
+
+    def go_back_rating(self, update: Update, context: CallbackContext):
+        user_id = update.effective_user.id
+        chat_id = update.effective_chat.id
+        index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
+        if update.callback_query:
+            context.bot.answer_callback_query(update.callback_query.id)
+        index -= 1
+        self.status_index[user_id] = index
+        status = RATING_VALUES[index]
+        self.status[user_id] = status
+        logger.info(f"creo con index {index}")
+        user_message = self.user_message[user_id]
+        logger.info(user_message.split("\n\n")[:-1])
+        user_message = "\n\n".join(user_message.split("\n\n")[:-1])
+        self.user_message[user_id] = user_message
+        self.create_poll(f"{status}", chat_id, context)
+        context.bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=self.message_id[user_id],
+            text=self.user_message[user_id] + "\n\n\n<b>Dai un voto a...</b>",
+            parse_mode="HTML",
+        )
+        return
 
     def cancel_rating(self, update: Update, context: CallbackContext):
         user_id = update.effective_user.id

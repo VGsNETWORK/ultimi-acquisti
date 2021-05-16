@@ -141,6 +141,11 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="previous_rating", callback=rating.go_back_rating
+            )
+        )
 
         self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)
