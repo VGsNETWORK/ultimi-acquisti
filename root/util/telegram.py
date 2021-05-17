@@ -244,6 +244,37 @@ class TelegramSender:
             args=(update, context, chat_id, message.message_id, timeout),
         )
 
+    def edit_and_delete(
+        self,
+        original_message: int,
+        context: CallbackContext,
+        chat_id: int,
+        text: str,
+        reply_markup=None,
+        timeout: int = 360,
+        parse_mode: str = "HTML",
+    ):
+        if random.choice(range(100)) > 87:
+            text += MESSAGE_DELETION_TIMEOUT % (
+                ttm(timeout),
+                random.choice(MESSAGE_DELETION_FUNNY_APPEND),
+            )
+        else:
+            text += MESSAGE_DELETION_TIMEOUT % (ttm(timeout), "")
+        context.bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=original_message,
+            text=text,
+            disable_web_page_preview=True,
+            parse_mode=parse_mode,
+            reply_markup=reply_markup,
+        )
+        create_process(
+            name_prefix=original_message,
+            target=self.delete_message,
+            args=(context, chat_id, original_message, timeout),
+        )
+
     def send_and_delete(
         self,
         original_message: int,

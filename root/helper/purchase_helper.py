@@ -366,3 +366,11 @@ def retrieve_sum_between_date(
     )
     value = -1.0 if negative else 0.0
     return value if len(res) == 0 else res[0]["total"]
+
+
+def delete_all_for_user_and_chat(user_id: int, chat_id: int):
+    Purchase.objects(user_id=user_id, chat_id=chat_id).delete()
+
+
+def count_all_for_user_and_chat(user_id: int, chat_id: int):
+    return Purchase.objects(user_id=user_id, chat_id=chat_id).count()

@@ -3,6 +3,8 @@
 """ File that contains the class to start the bot with the bot api """
 
 import os
+from re import A
+from root.manager.bulk_delete import bulk_delete, cancel_bulk_delete
 import telegram
 from telegram.ext.messagehandler import MessageHandler
 
@@ -157,6 +159,18 @@ class BotManager:
                 Filters.regex("how_to"),
             )
         )
+
+        self.disp.add_handler(CommandHandler("l33t", bulk_delete))
+        self.disp.add_handler(CommandHandler("cancellastorico", bulk_delete))
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=bulk_delete, pattern="confirm_bulk_delete")
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=cancel_bulk_delete, pattern="cancel_bulk_delete"
+            )
+        )
+
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.cancel_rating, pattern="cancel_rating")
         )

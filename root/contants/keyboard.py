@@ -178,3 +178,47 @@ def build_pre_poll_keyboard(
 
     keyboard.append([create_button("↩️  Torna indietro", back_callback, back_callback)])
     return InlineKeyboardMarkup(keyboard)
+
+
+def bulk_delete_keyboard(step: int):
+    if step < 4:
+        if step == 3:
+            return InlineKeyboardMarkup(
+                [
+                    [
+                        create_button(
+                            "🌪  CANCELLA IL MIO STORICO DEGLI ACQUISTI",
+                            f"confirm_bulk_delete_{step}",
+                            f"confirm_bulk_delete_{step}",
+                        ),
+                    ],
+                    [
+                        create_button(
+                            "❌  Annulla", "cancel_bulk_delete", "cancel_bulk_delete"
+                        ),
+                    ],
+                ]
+            )
+        else:
+            return InlineKeyboardMarkup(
+                [
+                    [
+                        create_button(
+                            "✅  Sì",
+                            f"confirm_bulk_delete_{step}",
+                            f"confirm_bulk_delete_{step}",
+                        ),
+                        create_button(
+                            "❌  NO", "cancel_bulk_delete", "cancel_bulk_delete"
+                        ),
+                    ]
+                ]
+            )
+    else:
+        return InlineKeyboardMarkup(
+            [
+                [
+                    create_button("🆗  OK", "cancel_bulk_delete", "cancel_bulk_delete"),
+                ]
+            ]
+        )

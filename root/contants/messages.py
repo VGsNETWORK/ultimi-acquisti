@@ -712,3 +712,34 @@ def build_approve_rating_message(rating: UserRating, user: User):
         f"– Commento:  <i>{overall_comment}</i>\n\n\n"
         "Vuoi approvarlo?"
     )
+
+
+BULK_DELETE_MESSAGE = [
+    (
+        "Hai deciso di <b>cancellare l'intero storico dei tuoi acquisti</b>.\n"
+        "Questo <b>eliminerà dal tuo profilo tutti gli acquisti che hai salvato finora nel gruppo %s</b>."
+        " <i>I post degli acquisti saranno invece mantenuti come parte della conversazione del gruppo</i> — potrai sempre"
+        " decidere di cancellarli manualmente, se vorrai.\n\n"
+        "Sei sicuro di voler procedere? <b>Questa azione è irreversibile.</b>\n\n"
+        "<b>VITE RIMASTE:</b>  ❤️❤️❤️"
+    ),
+    (
+        "Sei <b>davvero</b> sicuro di voler procedere?\n"
+        "Se vai avanti, <b>cancellerai tutti i/gli %s"
+        " acquisti che hai registrato in questo gruppo</b> tramite @UltimiAcquistiBot."
+        " Una volta confermata l'eliminazione, non potrai tornare alla situazione"
+        " immediatamente precedente.\n\n <i>Vuoi <b>davvero</b> continuare?</i>\n\n<b>VITE RIMASTE:</b>  ❤️❤️💔"
+    ),
+    (
+        "<b>Ultima occasione</b> per ripensarci...\n\n"
+        "<b><i>Se confermi ancora 1 volta, non potrai più tornare indietro.</i></b>\n\n"
+        "<b>VITE RIMASTE:</b>  ❤️💔💔"
+    ),
+    "<b>*PUFF*</b>, tutti i tuoi acquisti sono spariti!!!",
+]
+
+BULK_DELETE_NO_PURCHASESE = (
+    "<i>%s</i>, Non hai alcun acquisto da cancellare per questo gruppo."
+)
+
+BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."
