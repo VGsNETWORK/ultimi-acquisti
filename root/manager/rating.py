@@ -407,14 +407,16 @@ class Rating:
         index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
         if update.callback_query:
             context.bot.answer_callback_query(update.callback_query.id)
-        index -= 1
+        index -= 2
+        if index < 0:
+            index = 0
+        self.feedback[user_id] = self.feedback[user_id][:index]
         self.status_index[user_id] = index
         status = RATING_VALUES[index]
         self.status[user_id] = status
         logger.info(f"creo con index {index}")
         user_message = self.user_message[user_id]
-        logger.info(user_message.split("\n\n")[:-1])
-        user_message = "\n\n".join(user_message.split("\n\n")[:-1])
+        user_message = "\n\n".join(user_message.split("\n\n")[:-2])
         self.user_message[user_id] = user_message
         self.create_poll(f"{status}", chat_id, context)
         context.bot.edit_message_text(
