@@ -8,7 +8,7 @@ from root.helper.purchase_helper import (
     delete_all_for_user_and_chat,
 )
 from root.helper.redis_message import add_message, is_owner
-from root.contants.message_timeout import LONG_SERVICE_TIMEOUT
+from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, ONE_MINUTE
 from root.contants.messages import (
     BULK_DELETE_CANCELLED,
     BULK_DELETE_MESSAGE,
@@ -31,28 +31,27 @@ sender = TelegramSender()
 def bulk_delete(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     bot_name: str = retrieve_key("BOT_NAME")
-    command = re.findall("\/\w+", message.text)[0]
+    command = message.text.split("@")[0]
     command = command.replace("/", "")
     message_text = re.sub("^\/\w+@", "", message.text)
     logger.info("private message with message_id: %s" % message.message_id)
-    logger.info(message_text)
-    logger.info(bot_name)
     message_id = message.message_id
     user = update.effective_user
     chat: Chat = update.effective_chat
-    if not bot_name == message_text and message.chat.type != "private":
-        return
+    if message.text.startswith("/"):
+        if not bot_name == message_text and message.chat.type != "private":
+            return
     if chat.type == "private":
         sender.delete_if_private(context, message)
         message = ONLY_GROUP_NO_QUOTE % command
-        message = append_timeout_message(message, True, LONG_SERVICE_TIMEOUT, True)
+        message = append_timeout_message(message, True, ONE_MINUTE, True)
         sender.send_and_edit(
             update,
             context,
             chat.id,
             callback=back_to_the_start,
             text=message,
-            timeout=LONG_SERVICE_TIMEOUT,
+            timeout=ONE_MINUTE,
             reply_markup=send_command_to_group_keyboard("%2F" + command),
         )
         return
