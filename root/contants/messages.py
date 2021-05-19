@@ -274,6 +274,11 @@ NO_PURCHASE = (
     "non hai ancora registrato alcun acquisto su questo bot."
 )
 
+NO_GROUP_PURCHASE = (
+    '⚠  <a href="tg://user?id=%s">%s</a>, '
+    "non hai registrato alcun acquisto in questo gruppo."
+)
+
 NOT_YOUR_PURCHASE = (
     '❌  <a href="tg://user?id=%s">%s</a>, '
     "non puoi cancellare l'acquisto di un altro utente!"
@@ -412,7 +417,7 @@ NO_QUOTE_FOUND = (
     " per lanciare questo comando prova a <b>quotare un utente</b>..."
 )
 
-NOT_MESSAGE_OWNER = "❌  Non puoi navigare tra i report di un altro utente!"
+NOT_MESSAGE_OWNER = "❌  Non puoi interagire con questo messaggio: la richiesta è stata fatta da un altro utente!"
 
 SESSION_ENDED = (
     "❗️ SESSIONE DEL MESSAGGIO SCADUTA\nIl bot è stato aggiornato o riavviato per motivi tecnici."
@@ -714,6 +719,14 @@ def build_approve_rating_message(rating: UserRating, user: User):
     )
 
 
+BULK_DELETE_MESSAGE_SINGLE_PURCHASE = (
+    "Sei <b>davvero</b> sicuro di voler procedere?\n"
+    "Se vai avanti, <b>cancellerai il tuo acquisto"
+    " che hai registrato in questo gruppo</b> tramite @UltimiAcquistiBot."
+    " Una volta confermata l'eliminazione, non potrai tornare alla situazione"
+    " immediatamente precedente.\n\n<i>Vuoi <b>davvero</b> continuare?</i>\n\n<b>VITE RIMASTE:</b>  ❤️❤️💔"
+)
+
 BULK_DELETE_MESSAGE = [
     (
         "Hai deciso di <b>cancellare l'intero storico dei tuoi acquisti</b>.\n"
@@ -725,21 +738,19 @@ BULK_DELETE_MESSAGE = [
     ),
     (
         "Sei <b>davvero</b> sicuro di voler procedere?\n"
-        "Se vai avanti, <b>cancellerai tutti i/gli %s"
+        "Se vai avanti, <b>cancellerai tutti %s %s"
         " acquisti che hai registrato in questo gruppo</b> tramite @UltimiAcquistiBot."
         " Una volta confermata l'eliminazione, non potrai tornare alla situazione"
-        " immediatamente precedente.\n\n <i>Vuoi <b>davvero</b> continuare?</i>\n\n<b>VITE RIMASTE:</b>  ❤️❤️💔"
+        " immediatamente precedente.\n\n<i>Vuoi <b>davvero</b> continuare?</i>\n\n<b>VITE RIMASTE:</b>  ❤️❤️💔"
     ),
     (
         "<b>Ultima occasione</b> per ripensarci...\n\n"
-        "<b><i>Se confermi ancora 1 volta, non potrai più tornare indietro.</i></b>\n\n"
+        "<u><b><i>Se confermi ancora 1 volta, non potrai più tornare indietro.</i></b></u>\n\n"
         "<b>VITE RIMASTE:</b>  ❤️💔💔"
     ),
     "<b>*PUFF*</b>, tutti i tuoi acquisti sono spariti!!!",
 ]
 
-BULK_DELETE_NO_PURCHASESE = (
-    "<i>%s</i>, Non hai alcun acquisto da cancellare per questo gruppo."
-)
+BULK_DELETE_NO_PURCHASE = '<a href="tg://user?id=%s">%s</a>, Non hai alcun acquisto da cancellare per questo gruppo.'
 
 BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."

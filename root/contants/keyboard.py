@@ -183,44 +183,52 @@ def build_pre_poll_keyboard(
 
 
 def bulk_delete_keyboard(step: int):
-    if step < 4:
-        if step == 3:
-            return InlineKeyboardMarkup(
-                [
-                    [
-                        create_button(
-                            "🌪  CANCELLA IL MIO STORICO DEGLI ACQUISTI",
-                            f"confirm_bulk_delete_{step}",
-                            f"confirm_bulk_delete_{step}",
-                        ),
-                    ],
-                    [
-                        create_button(
-                            "❌  Annulla", "cancel_bulk_delete", "cancel_bulk_delete"
-                        ),
-                    ],
-                ]
-            )
-        else:
-            return InlineKeyboardMarkup(
-                [
-                    [
-                        create_button(
-                            "✅  Sì",
-                            f"confirm_bulk_delete_{step}",
-                            f"confirm_bulk_delete_{step}",
-                        ),
-                        create_button(
-                            "❌  NO", "cancel_bulk_delete", "cancel_bulk_delete"
-                        ),
-                    ]
-                ]
-            )
+    if step == 1:
+        confirm_message = "✅  Sì"
+        abort_message = "❌  NO"
+    elif step == 2:
+        confirm_message = "✅  Continua"
+        abort_message = "❌  ANNULLA"
+    elif step == 3:
+        confirm_message = "🌪  CANCELLA IL MIO STORICO"
+        abort_message = "❌  ANNULLA"
     else:
         return InlineKeyboardMarkup(
             [
                 [
                     create_button("🆗  OK", "cancel_bulk_delete", "cancel_bulk_delete"),
                 ]
+            ]
+        )
+    if step < 3:
+        return InlineKeyboardMarkup(
+            [
+                [
+                    create_button(
+                        confirm_message,
+                        f"confirm_bulk_delete_{step}",
+                        f"confirm_bulk_delete_{step}",
+                    ),
+                    create_button(
+                        abort_message, "cancel_bulk_delete", "cancel_bulk_delete"
+                    ),
+                ]
+            ]
+        )
+    else:
+        return InlineKeyboardMarkup(
+            [
+                [
+                    create_button(
+                        confirm_message,
+                        f"confirm_bulk_delete_{step}",
+                        f"confirm_bulk_delete_{step}",
+                    ),
+                ],
+                [
+                    create_button(
+                        abort_message, "cancel_bulk_delete", "cancel_bulk_delete"
+                    ),
+                ],
             ]
         )
