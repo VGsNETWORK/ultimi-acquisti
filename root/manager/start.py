@@ -214,7 +214,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "start_hide_commands",
                 ),
             ],
-            [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
+            [create_button("📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
@@ -227,17 +227,22 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
-                    "ℹ️  Info",
-                    "show_bot_info",
-                    "show_bot_info",
+                    "♥️  Lista dei desideri",
+                    "view_wishlist_0",
+                    "view_wishlist_0",
                 )
             ],
             [
                 create_button(
+                    "ℹ️  Info",
+                    "show_bot_info",
+                    "show_bot_info",
+                ),
+                create_button(
                     "⭐  Valuta il bot",
                     "rating_menu",
                     "rating_menu",
-                )
+                ),
             ],
             [
                 create_button(
@@ -309,7 +314,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "start_show_commands",
                 )
             ],
-            [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
+            [create_button("📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
@@ -322,17 +327,22 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ],
             [
                 create_button(
-                    "ℹ️  Info",
-                    "show_bot_info",
-                    "show_bot_info",
+                    "♥️  Lista dei desideri",
+                    "view_wishlist_0",
+                    "view_wishlist_0",
                 )
             ],
             [
                 create_button(
+                    "ℹ️  Info",
+                    "show_bot_info",
+                    "show_bot_info",
+                ),
+                create_button(
                     "⭐  Valuta il bot",
                     "rating_menu",
                     "rating_menu",
-                )
+                ),
             ],
             [
                 create_button(
@@ -391,7 +401,11 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "start_show_commands",
                     )
                 ],
-                [create_button("📚  Guida", "how_to_page_0", "how_to_page_0")],
+                [
+                    create_button(
+                        "📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0"
+                    )
+                ],
                 [
                     create_button(
                         "📈  Apri il report mensile", "expand_report", "expand_report"
@@ -404,17 +418,22 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 ],
                 [
                     create_button(
-                        "ℹ️  Info",
-                        "show_bot_info",
-                        "show_bot_info",
+                        "♥️  Lista dei desideri",
+                        "view_wishlist_0",
+                        "view_wishlist_0",
                     )
                 ],
                 [
                     create_button(
+                        "ℹ️  Info",
+                        "show_bot_info",
+                        "show_bot_info",
+                    ),
+                    create_button(
                         "⭐  Valuta il bot",
                         "rating_menu",
                         "rating_menu",
-                    )
+                    ),
                 ],
                 [
                     create_button(

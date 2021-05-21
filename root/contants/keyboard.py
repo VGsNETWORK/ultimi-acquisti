@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import List
+from root.model.wishlist import Wishlist
 from root.model.user_rating import UserRating
 from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
@@ -232,3 +234,71 @@ def bulk_delete_keyboard(step: int):
                 ],
             ]
         )
+
+
+ADDED_TO_WISHLIST_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button("↩️  Torna indietro", "view_wishlist_0", "view_wishlist_0"),
+        ],
+    ]
+)
+
+WISHLIST_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button("➕  Aggiungi elemento", "add_to_wishlist", "add_to_wishlist"),
+        ],
+        [
+            create_button("↩️  Torna indietro", "cancel_rating", "cancel_rating"),
+        ],
+    ]
+)
+
+ADD_TO_WISHLIST_ABORT_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+            ),
+        ],
+    ]
+)
+
+
+def create_wishlist_keyboard(
+    page: int,
+    total_pages: int,
+    wishlists: List[Wishlist],
+    first_page: bool,
+    last_page: bool,
+):
+    keyboard = [
+        [
+            create_button("➕  Aggiungi elemento", "add_to_wishlist", "add_to_wishlist"),
+        ],
+    ]
+    for index, wishlist in enumerate(wishlists):
+        index = "%s." % ((index) + (5 * page + 1))
+        keyboard.append(
+            [
+                create_button(index, "empty_button", None),
+                create_button("🗑", "remove_wishlist_%s_%s" % (page, wishlist.id), None),
+            ]
+        )
+    previous_text = "🔚" if first_page else "◄"
+    previous_callback = (
+        "empty_button" if first_page else "view_wishlist_%s" % (page - 1)
+    )
+    next_text = "🔚" if last_page else "►"
+    next_callback = "empty_button" if last_page else "view_wishlist_%s" % (page + 1)
+    if total_pages > 1:
+        keyboard.append(
+            [
+                create_button(previous_text, previous_callback, None),
+                create_button("%s/%s" % (page + 1, total_pages), "empty_button", None),
+                create_button(next_text, next_callback, None),
+            ]
+        )
+    keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
+    return InlineKeyboardMarkup(keyboard)

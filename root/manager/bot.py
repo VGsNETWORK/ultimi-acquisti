@@ -4,6 +4,11 @@
 
 import os
 from re import A
+from root.manager.whishlist import (
+    ADD_IN_WISHLIST_CONVERSATION,
+    remove_wishlist_item,
+    view_wishlist,
+)
 from root.manager.bulk_delete import bulk_delete, cancel_bulk_delete
 import telegram
 from telegram.ext.messagehandler import MessageHandler
@@ -160,6 +165,7 @@ class BotManager:
             )
         )
 
+        self.disp.add_handler(ADD_IN_WISHLIST_CONVERSATION)
         self.disp.add_handler(CommandHandler("l33t", bulk_delete))
         self.disp.add_handler(CommandHandler("cancellastorico", bulk_delete))
         self.disp.add_handler(
@@ -168,6 +174,16 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=cancel_bulk_delete, pattern="cancel_bulk_delete"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=view_wishlist, pattern="view_wishlist")
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=remove_wishlist_item, pattern="remove_wishlist"
             )
         )
 
