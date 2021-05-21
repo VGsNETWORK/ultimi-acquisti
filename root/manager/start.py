@@ -246,6 +246,13 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                )
+            ],
+            [
+                create_button(
                     "🆘  Supporto",
                     "send_feedback",
                     "send_feedback",
@@ -346,6 +353,13 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ],
             [
                 create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                )
+            ],
+            [
+                create_button(
                     "🆘  Supporto",
                     "send_feedback",
                     "send_feedback",
@@ -434,6 +448,13 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "rating_menu",
                         "rating_menu",
                     ),
+                ],
+                [
+                    create_button(
+                        "⚙️  Impostazioni",
+                        "user_settings",
+                        "user_settings",
+                    )
                 ],
                 [
                     create_button(

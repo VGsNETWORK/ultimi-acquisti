@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.model.user import User
 from typing import List
 from root.model.wishlist import Wishlist
 from root.model.user_rating import UserRating
@@ -300,5 +301,18 @@ def create_wishlist_keyboard(
                 create_button(next_text, next_callback, None),
             ]
         )
+    keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
+    return InlineKeyboardMarkup(keyboard)
+
+
+def create_user_settings_keyboard(user: User):
+    keyboard = []
+    icon = "☑️" if not user.show_purchase_tips else "✅"
+    message: str = f"{icon}  Suggerimenti di acquisto"
+    keyboard.append(
+        [
+            create_button(message, "settings_toggle_tips", None),
+        ]
+    )
     keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
     return InlineKeyboardMarkup(keyboard)

@@ -4,6 +4,7 @@
 
 import os
 from re import A
+from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
 from root.manager.whishlist import (
     ADD_IN_WISHLIST_CONVERSATION,
     remove_wishlist_item,
@@ -184,6 +185,16 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=remove_wishlist_item, pattern="remove_wishlist"
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(callback=view_user_settings, pattern="user_settings")
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                callback=settings_toggle_purchase_tips, pattern="settings_toggle_tips"
             )
         )
 

@@ -764,3 +764,11 @@ NO_ELEMENT_IN_WISHLIST = "☹️  La tua lista dei desideri è vuota..."
 ADD_TO_WISHLIST_PROMPT = "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n✍🏻  Inserisci l'elemento da aggiungere alla lista dei desideri:"
 
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
+
+
+USER_SETTINGS_HEADER = "<b><u>IMPOSTAZIONI</u></b>\n\n\n"
+
+USER_SETTINGS_MESSAGE = (
+    f"{USER_SETTINGS_HEADER}In questa sezione potrai "
+    "modificare il modo in cui mi comporterò in alcune situazioni."
+)
