@@ -239,7 +239,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "show_bot_info",
                 ),
                 create_button(
-                    "⭐  Valuta il bot",
+                    "⭐  Valutami",
                     "rating_menu",
                     "rating_menu",
                 ),
@@ -346,7 +346,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "show_bot_info",
                 ),
                 create_button(
-                    "⭐  Valuta il bot",
+                    "⭐  Valutami",
                     "rating_menu",
                     "rating_menu",
                 ),
@@ -444,7 +444,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "show_bot_info",
                     ),
                     create_button(
-                        "⭐  Valuta il bot",
+                        "⭐  Valutami",
                         "rating_menu",
                         "rating_menu",
                     ),
@@ -533,7 +533,7 @@ def show_info(update: Update, context: CallbackContext):
     keyboard = [
         [
             create_button(
-                "⭐  Valuta il bot", "rating_menu_from_info", "rating_menu_from_info"
+                "⭐  Valutami", "rating_menu_from_info", "rating_menu_from_info"
             )
         ],
         [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],

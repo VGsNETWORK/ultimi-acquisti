@@ -101,6 +101,7 @@ def view_wishlist(
 def add_in_wishlist(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
+    message_id = message.message_id
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -108,10 +109,29 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         # ignore all requests coming outside a private chat
         return ConversationHandler.END
     redis_helper.save(user.id, message.message_id)
+    wishlists = find_wishlist_for_user(user.id, page_size=4)
+    message = (
+        "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  .........\n"
+        "<i>Stai inserendo questo elemento</i>\n\n"
+    )
+    if wishlists:
+        message += "\n".join(
+            [
+                (
+                    f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                )
+                for index, wish in enumerate(wishlists)
+            ]
+        )
+        message += "\n\n%s" % ADD_TO_WISHLIST_PROMPT
+    else:
+        message += "\n%s" % ADD_TO_WISHLIST_PROMPT
+    print(message)
     context.bot.edit_message_text(
         chat_id=chat.id,
-        message_id=message.message_id,
-        text=ADD_TO_WISHLIST_PROMPT,
+        message_id=message_id,
+        text=message,
         reply_markup=ADD_TO_WISHLIST_ABORT_KEYBOARD,
         parse_mode="HTML",
     )
