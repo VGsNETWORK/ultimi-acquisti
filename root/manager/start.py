@@ -28,7 +28,7 @@ from root.contants.messages import (
 from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
 import root.util.logger as logger
-from root.contants.VERSION import VERSION
+from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 
 DEVELOPER = '<a href="https://t.me/WMD_Edoardo">Edoardo Zerbo</a>'
@@ -578,7 +578,9 @@ def show_info(update: Update, context: CallbackContext):
     if average_message:
         average_append = f"<code>{' ' * (hlength)}</code><i>     (basato su {number_of_reviews} recensioni)</i>\n\n"
         message += average_append
-    message += f"🔄  Versione:  <code>{VERSION}</code>\n\n"
+    message += (
+        f"🔄  Versione:  <code>{VERSION}</code>     (rilasciata il {LAST_UPDATE})\n\n"
+    )
     message += f"☕️  Sviluppatore:  {DEVELOPER}\n"
     message += f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
     message += f"<i>A cura di @VGsNETWORK</i>"
