@@ -31,7 +31,7 @@ def main():
     with open(VERSION_FILE, "w") as vfile:
         print(f"* Creating version {version}")
         cmd = UPDATE_GIT % version
-        date = datetime.now().strftime("%d/%m/%Y")
+        date = str(datetime.now().strftime("%d/%m/%Y"))
         version = f'VERSION="{version}"\nLAST_UPDATE="{date}"'
         vfile.write(f"#\!/usr/bin/env python3\n{version}")
 
