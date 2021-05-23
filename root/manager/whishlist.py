@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+from os import link
+from subprocess import call
 from root.contants.messages import (
     ADDED_TO_WISHLIST,
+    ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_TO_WISHLIST_PROMPT,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -16,6 +19,7 @@ from typing import List
 from root.model.wishlist import Wishlist
 from root.contants.keyboard import (
     ADDED_TO_WISHLIST_KEYBOARD,
+    ADD_LINK_TO_WISHLIST_ITEM,
     ADD_TO_WISHLIST_ABORT_KEYBOARD,
     create_wishlist_keyboard,
 )
@@ -32,7 +36,7 @@ from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 
-INSERT_ITEM_IN_WISHLIST = range(1)
+INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA = range(2)
 
 
 def remove_wishlist_item(update: Update, context: CallbackContext):
@@ -71,10 +75,15 @@ def view_wishlist(
         # ignore all requests coming outside a private chat
         return
     if wishlists:
+        [logger.info(wish.link) for wish in wishlists]
+        [logger.info(1 if wish.link else 0) for wish in wishlists]
         message = "\n".join(
             [
                 (
-                    f"<b>{(index) + (5 * page + 1)}.</b>  {wish.description}\n"
+                    f'<b>{(index) + (5 * page + 1)}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    if wish.link
+                    else f"<b>{(index) + (5 * page + 1)}.</b>  {wish.description}\n"
                     f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
@@ -119,7 +128,10 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         message += "\n".join(
             [
                 (
-                    f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>'
+                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    if wish.link
+                    else f"<b>{index + 2}.</b>  {wish.description}\n"
                     f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
@@ -165,7 +177,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             message += "\n".join(
                 [
                     (
-                        f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>'
+                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        if wish.link
+                        else f"<b>{index + 2}.</b>  {wish.description}\n"
                         f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlists)
@@ -188,14 +203,34 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             pass
     else:
         Wishlist(user_id=user.id, description=message).save()
-        # build message and keyboard for the message
-        view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
-    return ConversationHandler.END if not overload else INSERT_ITEM_IN_WISHLIST
+        context.bot.edit_message_text(
+            message_id=message_id,
+            chat_id=chat.id,
+            text=ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+            reply_markup=ADD_LINK_TO_WISHLIST_ITEM,
+        )
+    return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
 
 
 def cancel_add_in_wishlist(update: Update, context: CallbackContext):
     update.callback_query.data += "_0"
     view_wishlist(update, context)
+    return ConversationHandler.END
+
+
+def handle_insert_for_link(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    chat: Chat = update.effective_chat
+    message_id = message.message_id
+    user = update.effective_user
+    if not update.callback_query:
+        context.bot.delete_message(chat_id=chat.id, message_id=message.message_id)
+        wishlist: Wishlist = find_wishlist_for_user(user.id, 0, 1)
+        if wishlist:
+            wishlist = wishlist[0]
+            wishlist.link = message.text if message.text else message.caption
+            wishlist.save()
+    view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
     return ConversationHandler.END
 
 
@@ -206,6 +241,12 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     states={
         INSERT_ITEM_IN_WISHLIST: [
             MessageHandler(Filters.text, handle_add_confirm),
+        ],
+        INSERT_ZELDA: [
+            MessageHandler(Filters.entity("url"), handle_insert_for_link),
+            CallbackQueryHandler(
+                callback=handle_insert_for_link, pattern="skip_add_link_to_wishlist"
+            ),
         ],
     },
     fallbacks=[

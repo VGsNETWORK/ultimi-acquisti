@@ -314,3 +314,10 @@ def create_user_settings_keyboard(user: User):
     )
     keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
     return InlineKeyboardMarkup(keyboard)
+
+
+ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
+    [
+        [create_button("⏩  Salta", "skip_add_link_to_wishlist", None)],
+    ]
+)

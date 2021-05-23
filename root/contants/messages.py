@@ -776,3 +776,8 @@ USER_SETTINGS_MESSAGE = (
     f"{USER_SETTINGS_HEADER}<i>In questa sezione potrai "
     "modificare il modo in cui mi comporterò in alcune situazioni.</i>"
 )
+
+
+ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
+    "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:"
+)

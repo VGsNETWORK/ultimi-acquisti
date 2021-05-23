@@ -8,3 +8,4 @@ class Wishlist(BaseModel):
     user_id = IntField()
     description = StringField()
     quantity = IntField()
+    link = StringField()
