@@ -271,7 +271,10 @@ GROUP_NOT_ALLOWED = (
 
 NO_PURCHASE = (
     '⚠  <a href="tg://user?id=%s">%s</a>, '
-    "non hai ancora registrato alcun acquisto su questo bot."
+    "<b>non hai ancora registrato alcun acquisto</b> su questo bot.\n\n"
+    "Per aggiungerne uno, clicca il pulsante sottostante e seleziona un"
+    " <b><u>gruppo in cui sono presente</u></b>: inserirò per te un modello di acquisto nel campo di testo della chat indicata,"
+    " così potrai completarlo con i dati necessari e inviarlo in men che non si dica!\n\n\n"
 )
 
 NO_GROUP_PURCHASE = (
