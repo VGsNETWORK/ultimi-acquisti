@@ -6,7 +6,7 @@ from root.contants.messages import (
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
 )
-from root.util.util import create_button
+from root.util.util import create_button, max_length_error_format
 from root.helper.wishlist import (
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
@@ -95,6 +95,7 @@ def view_wishlist(
             page, total_pages, wishlists, first_page, last_page
         ),
         parse_mode="HTML",
+        disable_web_page_preview=True,
     )
 
 
@@ -111,8 +112,8 @@ def add_in_wishlist(update: Update, context: CallbackContext):
     redis_helper.save(user.id, message.message_id)
     wishlists = find_wishlist_for_user(user.id, page_size=4)
     message = (
-        "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  .........\n"
-        "<i>Stai inserendo questo elemento</i>\n\n"
+        "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  . . . . . .\n"
+        "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
     )
     if wishlists:
         message += "\n".join(
@@ -134,6 +135,7 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         text=message,
         reply_markup=ADD_TO_WISHLIST_ABORT_KEYBOARD,
         parse_mode="HTML",
+        disable_web_page_preview=True,
     )
     return INSERT_ITEM_IN_WISHLIST
 
@@ -153,7 +155,25 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     message_id = redis_helper.retrieve(user.id).decode()
     if len(message) > 128:
         overload = True
-        message = WISHLIST_DESCRIPTION_TOO_LONG
+        wishlists = find_wishlist_for_user(user.id, page_size=4)
+        user_text = max_length_error_format(update.effective_message.text, 128, 200)
+        message = (
+            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  {user_text}\n"
+            f"{WISHLIST_DESCRIPTION_TOO_LONG}"
+        )
+        if wishlists:
+            message += "\n".join(
+                [
+                    (
+                        f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    )
+                    for index, wish in enumerate(wishlists)
+                ]
+            )
+            message += "\n\n%s" % ADD_TO_WISHLIST_PROMPT
+        else:
+            message += "\n%s" % ADD_TO_WISHLIST_PROMPT
         keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
         try:
             context.bot.edit_message_text(
@@ -162,6 +182,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                 message_id=message_id,
                 reply_markup=keyboard,
                 parse_mode="HTML",
+                disable_web_page_preview=True,
             )
         except BadRequest:
             pass

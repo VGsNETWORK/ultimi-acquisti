@@ -758,18 +758,14 @@ BULK_DELETE_NO_PURCHASE = '<a href="tg://user?id=%s">%s</a>, non hai alcun acqui
 
 BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."
 
-WISHLIST_DESCRIPTION_TOO_LONG = (
-    "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n🚫  <b>Limite di 128 caratteri superato!</b>"
-)
+WISHLIST_DESCRIPTION_TOO_LONG = "🚫  <b>Limite di 128 caratteri superato!</b>\n\n"
 
 NO_ELEMENT_IN_WISHLIST = (
     "<i>In questa sezione potrai aggiungere dei promemoria relativi ad articoli che intendi acquistare in un secondo momento.</i>"
     "\n\n☹️  La tua lista dei desideri è vuota..."
 )
 
-ADD_TO_WISHLIST_PROMPT = (
-    "✍🏻  Inserisci l'elemento da aggiungere alla lista dei desideri:"
-)
+ADD_TO_WISHLIST_PROMPT = "Inserisci l'elemento da aggiungere alla lista dei desideri (solo testo; massimo <b>128 caratteri</b>):"
 
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
 

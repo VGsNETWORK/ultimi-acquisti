@@ -211,6 +211,15 @@ def is_number(content: str) -> bool:
         return False
 
 
+def max_length_error_format(content: str, allowed: int, split: int):
+    boundary = len(content) - allowed
+    content = content[:split]
+    content = [t for t in content]
+    content.insert(allowed, "<s>")
+    content.append("</s>")
+    return "".join(content)
+
+
 def is_develop() -> bool:
     """Chek if the profile is set to develop
 
