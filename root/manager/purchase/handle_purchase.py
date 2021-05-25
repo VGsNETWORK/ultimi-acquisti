@@ -98,13 +98,16 @@ def add_purchase(
     create_purchase(user.id, price, message_id, chat_id, creation_date, caption)
 
 
-def handle_purchase(client: Client, message: Message) -> None:
+def handle_purchase(
+    client: Client, message: Message, send_messages_when_finished: bool = True
+) -> None:
     """handle a new or a modified purchase
 
     Args:
         client (Client): The bot who recevied the update
         message (Message): The message received
     """
+    logger.info(send_messages_when_finished)
     # me di un mese fa, avevi tanto torto...
     if message.forward_from_chat or message.forward_from:
         logger.info("the message has been forwarded")
@@ -275,16 +278,17 @@ def handle_purchase(client: Client, message: Message) -> None:
             date = date.strftime("%d/%m/%Y")
         command = NEW_PURCHASE_FORMAT.format(price, date, caption)
         keyboard = send_command_to_group_keyboard(command, command_only=True)
-        sender.send_and_proedit(
-            chat_id,
-            original_message,
-            message,
-            back_to_the_start,
-            keyboard,
-            timeout=ONE_MINUTE,
-            append=True,
-            create_redis=True,
-        )
+        if send_messages_when_finished:
+            sender.send_and_proedit(
+                chat_id,
+                original_message,
+                message,
+                back_to_the_start,
+                keyboard,
+                timeout=ONE_MINUTE,
+                append=True,
+                create_redis=True,
+            )
         return
     if not is_group_allowed(chat_id):
         return
@@ -329,17 +333,18 @@ def handle_purchase(client: Client, message: Message) -> None:
     logger.info(ONE_MINUTE + append_timeout)
     add_message(message_id=message_id, user_id=user_id, add=False)
     if original_message.chat.type != "private":
-        sender.send_and_deproto(
-            client,
-            chat_id,
-            message,
-            keyboard,
-            message_id,
-            create_redis=True,
-            user_id=user_id,
-            timeout=ONE_MINUTE + append_timeout,
-            show_timeout=not custom_date_error,
-        )
+        if send_messages_when_finished:
+            sender.send_and_deproto(
+                client,
+                chat_id,
+                message,
+                keyboard,
+                message_id,
+                create_redis=True,
+                user_id=user_id,
+                timeout=ONE_MINUTE + append_timeout,
+                show_timeout=not custom_date_error,
+            )
     else:
         logger.info("command from a private chat")
         sender.send_and_edit(

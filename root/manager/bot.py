@@ -4,6 +4,7 @@
 
 import os
 from re import A
+from root.manager.retrieve_purchase import update_purchases_for_chat
 from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
 from root.manager.whishlist import (
     ADD_IN_WISHLIST_CONVERSATION,
@@ -146,6 +147,7 @@ class BotManager:
     def add_handler(self):
         """Add handlers for the various operations"""
         rating = Rating()
+        self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )
