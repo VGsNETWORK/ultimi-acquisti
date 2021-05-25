@@ -128,7 +128,7 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         message += "\n".join(
             [
                 (
-                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>'
+                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
                     f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{index + 2}.</b>  {wish.description}\n"
@@ -177,7 +177,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             message += "\n".join(
                 [
                     (
-                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>'
+                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
                         f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
