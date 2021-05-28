@@ -1,24 +1,91 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
+import re
+from root.model.purchase import Purchase
+from typing import List
 from telegram.chat import Chat
 from root.util.util import format_error
 from root.helper.user_helper import is_admin
 from telegram import Update
 from telegram.ext.callbackcontext import CallbackContext
-from root.manager.purchase.handle_purchase import handle_purchase
 from pyrogram import Client
 from pyrogram.types.messages_and_media.message import Message
 from telegram_utils.utils.misc import environment
-from root.helper.purchase_helper import find_by_message_id_and_chat_id
+from root.helper.purchase_helper import convert_to_float, find_by_message_id_and_chat_id
 import telegram_utils.utils.logger as logger
+import json
+
+
+def add_purchase(client: Client, message: Message):
+    if not message.from_user.is_bot:
+        text: str = message.text if message.text else message.caption
+        date: int = message.date
+        date: datetime = datetime.fromtimestamp(date)
+        price: float = 0.00
+        title: str = ""
+        logger.info("extracted message date %s" % date)
+        if message.forward_from_chat or message.forward_from:
+            return None
+        if re.findall(r"(?i)#ultimiacquisti", text):
+            # remove the hashtag from the message
+            text: str = text.replace("#ultimiacquisti", "")
+            text: str = text.strip()
+            # check for a date from the user
+            regex_date: List[str] = re.findall(r"(\d{1,2}/\d{1,2}/(\d{4}|\d{2}))", text)
+            # extract the date if present
+            if regex_date:
+                regex_date: str = regex_date[0]
+                if isinstance(regex_date, tuple):
+                    regex_date: str = regex_date[0]
+                logger.info(regex_date)
+                try:
+                    date: datetime = datetime.strptime(regex_date, "%d/%m/%Y")
+                except ValueError:
+                    date: datetime = datetime.strptime(regex_date, "%d/%m/%y")
+                text: str = text.replace(regex_date, "")
+                text: str = text.strip()
+
+            # check for a price from the user
+            regex_price: List[str] = re.findall(
+                r"(?:\s|^|€)\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", text
+            )
+            # extract the price if present
+            if regex_price:
+                regex_price: str = regex_price[0]
+                price = regex_price
+                price = price.strip().replace("€", "")
+                price = convert_to_float(price)
+                text: str = text.replace(regex_price, "")
+                text: str = text.strip()
+
+            # check for a title from the user
+            regex_title: List[str] = re.findall(r"%.*%", text)
+            if regex_title:
+                regex_title: str = regex_title[0]
+                title = regex_title
+                text: str = text.replace(regex_title, "")
+                text: str = text.strip()
+            logger.info(
+                "Saving message %s : %s" % (message.message_id, message.chat.id)
+            )
+            Purchase(
+                user_id=message.from_user.id,
+                price=price,
+                message_id=message.message_id,
+                chat_id=message.chat.id,
+                description=title,
+            ).save()
+            return True
+        return False
 
 
 def check_message(message: Message, client: Client):
     message_id = message.message_id
     chat_id = message.chat.id
     if not find_by_message_id_and_chat_id(message_id, chat_id):
-        handle_purchase(client, message, False)
-        return True
+        if add_purchase(client, message):
+            return True
     return False
 
 
@@ -26,12 +93,13 @@ def get_messages_for(chat_id: int, client: Client):
     purchases_added = {}
     chat: Chat = client.get_chat(chat_id)
     group_name = chat.title.split(" | ")[0]
-    for message in client.search_messages(chat_id):
+    for message in client.search_messages(chat_id, query=r"#ultimiacquisti"):
         message: Message = message
         text: str = message.text if message.text else message.caption
         if text:
-            if "#ultimiacquisti" in text:
-                if check_message(message, client):
+            if re.findall(r"(?i)#ultimiacquisti", text):
+                purchase = check_message(message, client)
+                if purchase:
                     user_id = message.from_user.id
                     first_name = message.from_user.first_name
                     user_id = str(user_id)

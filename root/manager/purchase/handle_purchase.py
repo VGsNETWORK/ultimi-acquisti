@@ -141,7 +141,11 @@ def handle_purchase(
     try:
         caption = caption.replace("\n", " ")
         caption = caption.split(" ")
-        caption.remove("#ultimiacquisti")
+        if "#ultimiacquisti" in caption:
+            caption.remove("#ultimiacquisti")
+        else:
+            logger.error("x not in list")
+            return
         # (\d{1,2}\/\d{1,2}\/(\d{4}|\d{2}))
         # ()            -> capturing group
         # \d{1,2}       -> matches a number with 1 or 2 decimals
