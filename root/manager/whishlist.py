@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from logging import disable
 from os import link
 from subprocess import call
 from root.contants.messages import (
@@ -144,7 +145,6 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         message += "\n\n%s" % ADD_TO_WISHLIST_PROMPT
     else:
         message += "\n%s" % ADD_TO_WISHLIST_PROMPT
-    print(message)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
@@ -169,9 +169,9 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     context.bot.delete_message(chat_id=chat.id, message_id=message_id)
     overload = False
     message_id = redis_helper.retrieve(user.id).decode()
+    wishlists = find_wishlist_for_user(user.id, page_size=4)
     if len(message) > 128:
         overload = True
-        wishlists = find_wishlist_for_user(user.id, page_size=4)
         user_text = max_length_error_format(update.effective_message.text, 128, 200)
         message = (
             f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  {user_text}\n"
@@ -206,12 +206,35 @@ def handle_add_confirm(update: Update, context: CallbackContext):
         except BadRequest:
             pass
     else:
+        wishlists = wishlists[1:]
         Wishlist(user_id=user.id, description=message).save()
+        message = (
+            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {message}</b>\n"
+            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+        )
+        if wishlists:
+            message += "\n".join(
+                [
+                    (
+                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        if wish.link
+                        else f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    )
+                    for index, wish in enumerate(wishlists)
+                ]
+            )
+        if wishlists:
+            message += "\n"
+        message += f"\n{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
-            text=ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+            text=message,
             reply_markup=ADD_LINK_TO_WISHLIST_ITEM,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
         )
     return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
 
