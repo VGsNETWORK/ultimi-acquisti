@@ -765,7 +765,10 @@ NO_ELEMENT_IN_WISHLIST = (
     "\n\n☹️  La tua lista dei desideri è vuota..."
 )
 
-ADD_TO_WISHLIST_PROMPT = "Inserisci l'elemento da aggiungere alla lista dei desideri (solo testo; massimo <b>128 caratteri</b>):"
+ADD_TO_WISHLIST_PROMPT = (
+    "Inserisci l'elemento da aggiungere alla lista dei"
+    " desideri (solo testo e massimo <b>128 caratteri</b>; il multilinea non è supportato):"
+)
 
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
 

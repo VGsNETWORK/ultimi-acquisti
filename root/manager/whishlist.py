@@ -2,6 +2,7 @@
 
 from logging import disable
 from os import link
+import re
 from subprocess import call
 from root.contants.messages import (
     ADDED_TO_WISHLIST,
@@ -159,7 +160,10 @@ def add_in_wishlist(update: Update, context: CallbackContext):
 def handle_add_confirm(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
-    message = message.text if message.text else message.caption
+    message: str = message.text if message.text else message.caption
+    message: str = message.strip()
+    message: str = message.split("\n")[0]
+    message: str = re.sub(r"\s{2,}", " ", message)
     user: User = update.effective_user
     chat: Chat = update.effective_chat
     if chat.type != "private":
