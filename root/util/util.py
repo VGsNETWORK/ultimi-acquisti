@@ -5,6 +5,7 @@
 from random import randint
 from re import sub
 from base64 import b64decode
+import re
 import sys
 from types import TracebackType
 import traceback
@@ -97,6 +98,11 @@ long_text_month = {
     "dicembre": 12,
     "e̵̓l̴̓u̴̔l̵͋": 13,
 }
+
+
+def remove_url_from_text(message: str):
+    regex = r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
+    return re.sub(regex, "", message)
 
 
 def append_timeout_message(message: str, delete: bool, timeout: int, show_joke: bool):

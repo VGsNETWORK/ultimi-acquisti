@@ -66,6 +66,7 @@ from root.util.util import (
     has_number,
     is_group_allowed,
     is_number,
+    remove_url_from_text,
     retrieve_key,
     ttm,
 )
@@ -122,6 +123,7 @@ def handle_purchase(
     custom_date_error = False
     logger.info("Received message from mtproto")
     caption = message.caption if message.caption else message.text
+    caption = remove_url_from_text(caption)
     if not "#ultimiacquisti" in caption:
         return
     caption = re.sub("@\w+", "", caption)

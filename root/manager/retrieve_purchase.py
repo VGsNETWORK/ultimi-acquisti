@@ -5,7 +5,7 @@ import re
 from root.model.purchase import Purchase
 from typing import List
 from telegram.chat import Chat
-from root.util.util import format_error
+from root.util.util import format_error, remove_url_from_text
 from root.helper.user_helper import is_admin
 from telegram import Update
 from telegram.ext.callbackcontext import CallbackContext
@@ -28,6 +28,7 @@ def add_purchase(client: Client, message: Message):
         if message.forward_from_chat or message.forward_from:
             return None
         if re.findall(r"(?i)#ultimiacquisti", text):
+            text = remove_url_from_text(text)
             # remove the hashtag from the message
             text: str = text.replace("#ultimiacquisti", "")
             text: str = text.strip()
