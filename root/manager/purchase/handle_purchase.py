@@ -123,7 +123,7 @@ def handle_purchase(
     custom_date_error = False
     logger.info("Received message from mtproto")
     caption = message.caption if message.caption else message.text
-    caption = remove_url_from_text(caption)
+    caption = remove_url_from_text(original_message)
     if not "#ultimiacquisti" in caption:
         return
     caption = re.sub("@\w+", "", caption)
@@ -173,6 +173,7 @@ def handle_purchase(
         else:
             mdate = "NO_DATE_TO_PARSE"
         caption = " ".join(caption)
+        caption = remove_url_from_text(original_message)
         title = re.findall(r"%.*%", caption)
         if title:
             title = title[0]

@@ -8,6 +8,8 @@ from base64 import b64decode
 import re
 import sys
 from types import TracebackType
+from telegram.message import Message
+from urlextract import URLExtract
 import traceback
 from xml.sax.saxutils import escape
 from time import time
@@ -20,6 +22,8 @@ from datetime import datetime
 from mongoengine import connect
 from pymongo.mongo_client import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
+from pyrogram.types.messages_and_media import message_entity
+from telegram import Message as TelegramMessage
 from telegram import InlineKeyboardButton
 from root.util.telegram import TelegramSender
 import root.util.logger as logger
@@ -34,6 +38,7 @@ from root.contants.messages import (
     RANDOM_ITEM_LIST,
 )
 
+extractor = URLExtract()
 sender = TelegramSender()
 
 long_month = {
@@ -100,9 +105,33 @@ long_text_month = {
 }
 
 
-def remove_url_from_text(message: str):
-    regex = r"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)"
-    return re.sub(regex, "", message)
+def remove_url_from_text(message: Message):
+    text = message.text if message.text else message.caption
+    entities = [entity.url for entity in message.entities if entity.type == "text_link"]
+    urls = extractor.find_urls(text)
+    for url in urls:
+        text = re.sub(url, "", text)
+    for entity in entities:
+        text = re.sub(entity, "", text)
+    return text
+
+
+def extract_first_link_from_message(message: TelegramMessage):
+    text = message.text if message.text else message.caption
+    entities = message.entities
+    entity = next(
+        entity
+        for entity in entities
+        if entity.type == "text_link" or entity.type == "url"
+    )
+    if entity:
+        if entity.type == "url":
+            urls = extractor.find_urls(text)
+            logger.info(urls)
+            if urls:
+                return urls[0]
+        else:
+            return entity.url
 
 
 def append_timeout_message(message: str, delete: bool, timeout: int, show_joke: bool):

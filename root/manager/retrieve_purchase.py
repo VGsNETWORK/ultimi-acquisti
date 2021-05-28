@@ -28,7 +28,7 @@ def add_purchase(client: Client, message: Message):
         if message.forward_from_chat or message.forward_from:
             return None
         if re.findall(r"(?i)#ultimiacquisti", text):
-            text = remove_url_from_text(text)
+            text = remove_url_from_text(message)
             # remove the hashtag from the message
             text: str = text.replace("#ultimiacquisti", "")
             text: str = text.strip()

@@ -9,7 +9,11 @@ from root.contants.messages import (
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
 )
-from root.util.util import create_button, max_length_error_format
+from root.util.util import (
+    create_button,
+    extract_first_link_from_message,
+    max_length_error_format,
+)
 from root.helper.wishlist import (
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
@@ -229,6 +233,8 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         if wishlist:
             wishlist = wishlist[0]
             wishlist.link = message.text if message.text else message.caption
+            wishlist.link = extract_first_link_from_message(update.effective_message)
+            logger.info(wishlist.link)
             wishlist.save()
     view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
     return ConversationHandler.END
