@@ -10,6 +10,8 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_PROMPT,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
+    WISHLIST_STEP_ONE,
+    WISHLIST_STEP_TWO,
 )
 from root.util.util import (
     create_button,
@@ -143,9 +145,9 @@ def add_in_wishlist(update: Update, context: CallbackContext):
                 for index, wish in enumerate(wishlists)
             ]
         )
-        message += "\n\n%s" % ADD_TO_WISHLIST_PROMPT
+        message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
     else:
-        message += "\n%s" % ADD_TO_WISHLIST_PROMPT
+        message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
@@ -194,9 +196,9 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                     for index, wish in enumerate(wishlists)
                 ]
             )
-            message += "\n\n%s" % ADD_TO_WISHLIST_PROMPT
+            message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
         else:
-            message += "\n%s" % ADD_TO_WISHLIST_PROMPT
+            message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
         keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
         try:
             context.bot.edit_message_text(
@@ -231,7 +233,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             )
         if wishlists:
             message += "\n"
-        message += f"\n{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
+        message += f"\n{WISHLIST_STEP_TWO}{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
