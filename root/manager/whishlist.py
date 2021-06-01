@@ -85,25 +85,37 @@ def view_wishlist(
     if wishlists:
         [logger.info(wish.link) for wish in wishlists]
         [logger.info(1 if wish.link else 0) for wish in wishlists]
-        message = "\n".join(
+        message = ""
+        if append:
+            inc = 1
+            wishlists = list(wishlists)
+            wish: Wishlist = wishlists[0]
+            wishlists.remove(wish)
+            if wish.link:
+                message += f'<b>1.</b>  <a href="{wish.link}">{wish.description}</a>\n{append}\n\n'
+            else:
+                message += f"<b>1.</b>  {wish.description}\n{append}\n\n"
+        else:
+            inc = 0
+        message += "\n".join(
             [
                 (
-                    f'<b>{(index) + (5 * page + 1)}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                    f'<b>{((index) + (5 * page + 1)) + inc}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
                     f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
-                    else f"<b>{(index) + (5 * page + 1)}.</b>  {wish.description}\n"
+                    else f"<b>{((index) + (5 * page + 1)) + inc}.</b>  {wish.description}\n"
                     f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]
         )
+        if append:
+            wishlists.insert(0, wish)
     else:
         message = NO_ELEMENT_IN_WISHLIST
     message = "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n%s" % message
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
-    if append:
-        message += "\n\n%s" % append
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
