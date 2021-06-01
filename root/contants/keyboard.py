@@ -7,6 +7,7 @@ from root.model.user_rating import UserRating
 from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
+from urllib.parse import quote
 
 
 def send_command_to_group_keyboard(
@@ -294,9 +295,21 @@ def create_wishlist_keyboard(
     ]
     for index, wishlist in enumerate(wishlists):
         index = "%s." % ((index) + (5 * page + 1))
+        url = (
+            "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
+            f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wishlist.description)}%25"
+        )
+        if wishlist.link:
+            url += f"%0A%0A{quote(wishlist.link)}"
         keyboard.append(
             [
                 create_button(index, "empty_button", None),
+                create_button(
+                    "♥️  ►  🛍",
+                    "convert_to_purchase_%s_%s_%s" % (index, page, wishlist.id),
+                    None,
+                    url,
+                ),
                 create_button(
                     "🗑", "remove_wishlist_%s_%s_%s" % (index, page, wishlist.id), None
                 ),
