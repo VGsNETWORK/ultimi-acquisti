@@ -4,6 +4,13 @@ from mongoengine.errors import DoesNotExist
 from root.model.wishlist import Wishlist
 
 
+def find_wishlist_by_id(_id: str):
+    try:
+        return Wishlist.objects().get(id=_id)
+    except DoesNotExist:
+        return
+
+
 def remove_wishlist_item_for_user(_id: str):
     try:
         Wishlist.objects().get(id=_id).delete()

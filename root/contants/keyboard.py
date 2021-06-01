@@ -264,6 +264,21 @@ ADD_TO_WISHLIST_ABORT_KEYBOARD = InlineKeyboardMarkup(
     ]
 )
 
+ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "✅  Accetta modifica", "keep_the_current", "keep_the_current"
+            ),
+        ],
+        [
+            create_button(
+                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+            ),
+        ],
+    ]
+)
+
 
 def create_wishlist_keyboard(
     page: int,
@@ -282,7 +297,9 @@ def create_wishlist_keyboard(
         keyboard.append(
             [
                 create_button(index, "empty_button", None),
-                create_button("🗑", "remove_wishlist_%s_%s" % (page, wishlist.id), None),
+                create_button(
+                    "🗑", "remove_wishlist_%s_%s_%s" % (index, page, wishlist.id), None
+                ),
             ]
         )
     previous_text = "🔚" if first_page else "◄"

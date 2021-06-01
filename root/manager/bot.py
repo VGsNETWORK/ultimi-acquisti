@@ -8,6 +8,7 @@ from root.manager.retrieve_purchase import update_purchases_for_chat
 from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
 from root.manager.whishlist import (
     ADD_IN_WISHLIST_CONVERSATION,
+    confirm_wishlist_deletion,
     remove_wishlist_item,
     view_wishlist,
 )
@@ -165,6 +166,12 @@ class BotManager:
                 "start",
                 bot_help,
                 Filters.regex("how_to"),
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                confirm_wishlist_deletion, pattern="confirm_remove_wishlist"
             )
         )
 

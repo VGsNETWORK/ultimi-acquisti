@@ -4,6 +4,7 @@ from logging import disable
 from os import link
 import re
 from subprocess import call
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
     ADDED_TO_WISHLIST,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
@@ -19,6 +20,7 @@ from root.util.util import (
     max_length_error_format,
 )
 from root.helper.wishlist import (
+    find_wishlist_by_id,
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
     remove_wishlist_item_for_user,
@@ -29,6 +31,7 @@ from root.contants.keyboard import (
     ADDED_TO_WISHLIST_KEYBOARD,
     ADD_LINK_TO_WISHLIST_ITEM,
     ADD_TO_WISHLIST_ABORT_KEYBOARD,
+    ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
     create_wishlist_keyboard,
 )
 from telegram import Update
@@ -47,7 +50,7 @@ import telegram_utils.utils.logger as logger
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA = range(2)
 
 
-def remove_wishlist_item(update: Update, context: CallbackContext):
+def confirm_wishlist_deletion(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
@@ -59,6 +62,48 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
             page -= 1
         update.callback_query.data += "_%s" % page
     view_wishlist(update, context)
+
+
+def remove_wishlist_item(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    message_id = message.message_id
+    chat: Chat = update.effective_chat
+    if update.callback_query:
+        context.bot.answer_callback_query(update.callback_query.id)
+        _id = update.callback_query.data.split("_")[-1]
+        page = int(update.callback_query.data.split("_")[-2])
+        index = update.callback_query.data.split("_")[-3]
+        keyboard = [
+            [
+                create_button(
+                    "✅  Sì",
+                    f"confirm_remove_wishlist_{page}_{_id}",
+                    f"confirm_remove_wishlist_{page}_{_id}",
+                ),
+                create_button(
+                    "❌  No",
+                    f"view_wishlist_{page}",
+                    f"view_wishlist_{page}",
+                ),
+            ]
+        ]
+        wish: Wishlist = find_wishlist_by_id(_id)
+        message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+        append = "❌  <i>Stai per cancellare questo elemento</i>"
+        if wish.link:
+            message += f'<b>{index}</b>  <a href="{wish.link}">{wish.description}</a>\n{append}\n\n'
+        else:
+            message += f"<b>{index}</b>  {wish.description}\n{append}\n\n"
+        message += "<b>Vuoi confermare?</b>"
+        keyboard = InlineKeyboardMarkup(keyboard)
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=message,
+            reply_markup=keyboard,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
 
 
 def view_wishlist(
@@ -174,22 +219,30 @@ def add_in_wishlist(update: Update, context: CallbackContext):
 def handle_add_confirm(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
-    message: str = message.text if message.text else message.caption
-    message: str = message.strip()
-    message: str = message.split("\n")[0]
-    message: str = re.sub(r"\s{2,}", " ", message)
     user: User = update.effective_user
     chat: Chat = update.effective_chat
+    if not update.callback_query:
+        message: str = message.text if message.text else message.caption
+        message: str = message.strip()
+        message: str = message.split("\n")[0]
+        message: str = re.sub(r"\s{2,}", " ", message)
+    else:
+        message = redis_helper.retrieve("%s_stored_wishlist" % user.id)
+        message = message.decode()
     if chat.type != "private":
         # ignore all requests coming outside a private chat
         return ConversationHandler.END
     # delete the user message
-    context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+    if not update.callback_query:
+        context.bot.delete_message(chat_id=chat.id, message_id=message_id)
     overload = False
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=4)
     if len(message) > 128:
         overload = True
+        redis_helper.save(
+            "%s_stored_wishlist" % user.id, update.effective_message.text[:128]
+        )
         user_text = max_length_error_format(update.effective_message.text, 128, 200)
         message = (
             f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  {user_text}\n"
@@ -211,7 +264,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
         else:
             message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
-        keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
+        if len(message) <= 128:
+            keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
+        else:
+            keyboard = ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD
         try:
             context.bot.edit_message_text(
                 chat_id=chat.id,
@@ -288,6 +344,9 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     states={
         INSERT_ITEM_IN_WISHLIST: [
             MessageHandler(Filters.text, handle_add_confirm),
+            CallbackQueryHandler(
+                callback=handle_add_confirm, pattern="keep_the_current"
+            ),
         ],
         INSERT_ZELDA: [
             MessageHandler(Filters.entity("url"), handle_insert_for_link),
