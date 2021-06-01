@@ -1,3 +1,3 @@
 # \!/usr/bin/env python3
-VERSION = "1.5.5"
-LAST_UPDATE = "25/05/2021"
+VERSION = "1.5.8"
+LAST_UPDATE = "02/06/2021"
