@@ -234,6 +234,13 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                )
+            ],
+            [
+                create_button(
                     "ℹ️  Info",
                     "show_bot_info",
                     "show_bot_info",
@@ -243,13 +250,6 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "rating_menu",
                     "rating_menu",
                 ),
-            ],
-            [
-                create_button(
-                    "⚙️  Impostazioni",
-                    "user_settings",
-                    "user_settings",
-                )
             ],
             [
                 create_button(
@@ -341,6 +341,13 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ],
             [
                 create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                )
+            ],
+            [
+                create_button(
                     "ℹ️  Info",
                     "show_bot_info",
                     "show_bot_info",
@@ -350,13 +357,6 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "rating_menu",
                     "rating_menu",
                 ),
-            ],
-            [
-                create_button(
-                    "⚙️  Impostazioni",
-                    "user_settings",
-                    "user_settings",
-                )
             ],
             [
                 create_button(
@@ -439,6 +439,13 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 ],
                 [
                     create_button(
+                        "⚙️  Impostazioni",
+                        "user_settings",
+                        "user_settings",
+                    )
+                ],
+                [
+                    create_button(
                         "ℹ️  Info",
                         "show_bot_info",
                         "show_bot_info",
@@ -448,13 +455,6 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "rating_menu",
                         "rating_menu",
                     ),
-                ],
-                [
-                    create_button(
-                        "⚙️  Impostazioni",
-                        "user_settings",
-                        "user_settings",
-                    )
                 ],
                 [
                     create_button(
