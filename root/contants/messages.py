@@ -797,3 +797,20 @@ ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "   •  sono ammessi solamente link;\n"
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
 )
+
+MONTHLY_REPORT_POPUP_MESSAGE = (
+    "Il report mensile ti dà un resoconto degli"
+    " acquisti effettuati nel mese corrente,"
+    " con la possibilità di spostarti avanti"
+    " e indietro di un mese, 12 mesi o di un"
+    " intervallo prefissato di anni."
+)
+
+
+YEARLY_REPORT_POPUP_MESSAGE = (
+    "Il report annuale ti dà un resoconto"
+    " degli acquisti effettuati nell'anno"
+    " corrente, con la possibilità di spostarti"
+    " avanti e indietro di un singolo anno o di"
+    " un intervallo prefissato di anni."
+)

@@ -4,6 +4,14 @@
 
 import os
 from re import A
+from root.contants.messages import (
+    MONTHLY_REPORT_POPUP_MESSAGE,
+    YEARLY_REPORT_POPUP_MESSAGE,
+)
+from root.manager.convert_to_purchase import (
+    ask_confirm_deletion,
+    wishlist_confirm_convertion,
+)
 from root.manager.retrieve_purchase import update_purchases_for_chat
 from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
 from root.manager.whishlist import (
@@ -128,7 +136,9 @@ class BotManager:
         )
 
     def show_alert(self, update: Update, context: CallbackContext, message: str):
-        context.bot.answer_callback_query(update.callback_query.id, text=message)
+        context.bot.answer_callback_query(
+            update.callback_query.id, text=message, show_alert=True
+        )
 
     def empty_button(self, update: Update, context: CallbackContext):
         """The Callback called when the button does nothing
@@ -174,9 +184,23 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(
+                pattern="convert_to_purchase",
+                callback=ask_confirm_deletion,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="delete_wish_and_create_purchase_link",
+                callback=wishlist_confirm_convertion,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
                 pattern="monthly_report_info",
                 callback=lambda update, context: self.show_alert(
-                    update, context, "message"
+                    update, context, MONTHLY_REPORT_POPUP_MESSAGE
                 ),
             )
         )
@@ -185,7 +209,7 @@ class BotManager:
             CallbackQueryHandler(
                 pattern="yearly_report_info",
                 callback=lambda update, context: self.show_alert(
-                    update, context, "message 2"
+                    update, context, YEARLY_REPORT_POPUP_MESSAGE
                 ),
             )
         )

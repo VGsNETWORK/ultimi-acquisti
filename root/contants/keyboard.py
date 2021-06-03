@@ -308,7 +308,6 @@ def create_wishlist_keyboard(
                     "🤍  🔄  🛍",
                     "convert_to_purchase_%s_%s_%s" % (index, page, wishlist.id),
                     None,
-                    url,
                 ),
                 create_button(
                     "🗑", "remove_wishlist_%s_%s_%s" % (index, page, wishlist.id), None
