@@ -305,7 +305,7 @@ def create_wishlist_keyboard(
             [
                 create_button(index, "empty_button", None),
                 create_button(
-                    "♥️  ►  🛍",
+                    "🤍  🔄  🛍",
                     "convert_to_purchase_%s_%s_%s" % (index, page, wishlist.id),
                     None,
                     url,

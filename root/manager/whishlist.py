@@ -89,7 +89,7 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
         ]
         wish: Wishlist = find_wishlist_by_id(_id)
         message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
-        append = "❌  <i>Stai per cancellare questo elemento</i>"
+        append = "🚮  <i>Stai per cancellare questo elemento</i>"
         if wish.link:
             message += f'<b>{index}</b>  <a href="{wish.link}">{wish.description}</a>\n{append}\n\n'
         else:

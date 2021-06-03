@@ -220,9 +220,17 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "📈  Apri il report mensile", "expand_report", "expand_report"
                 ),
                 create_button(
+                    "💡 Report mensile", "monthly_report_info", "monthly_report_info"
+                ),
+            ],
+            [
+                create_button(
                     "📈  Apri il report annuale",
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
+                ),
+                create_button(
+                    "💡 Report annuale", "yearly_report_info", "yearly_report_info"
                 ),
             ],
             [
@@ -321,15 +329,22 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "start_show_commands",
                 )
             ],
-            [create_button("📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
                 ),
                 create_button(
+                    "💡 Report mensile", "monthly_report_info", "monthly_report_info"
+                ),
+            ],
+            [
+                create_button(
                     "📈  Apri il report annuale",
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
+                ),
+                create_button(
+                    "💡 Report annuale", "yearly_report_info", "yearly_report_info"
                 ),
             ],
             [
@@ -425,9 +440,17 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "📈  Apri il report mensile", "expand_report", "expand_report"
                     ),
                     create_button(
+                        "💡 Report mensile", "monthly_report_info", "monthly_report_info"
+                    ),
+                ],
+                [
+                    create_button(
                         "📈  Apri il report annuale",
                         f"expand_year_report_{current_year}",
                         f"expand_year_report_{current_year}",
+                    ),
+                    create_button(
+                        "💡 Report annuale", "yearly_report_info", "yearly_report_info"
                     ),
                 ],
                 [

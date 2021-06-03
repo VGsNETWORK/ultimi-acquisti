@@ -127,6 +127,9 @@ class BotManager:
             text="https://gitlab.com/nautilor/ultimi-acquisti",
         )
 
+    def show_alert(self, update: Update, context: CallbackContext, message: str):
+        context.bot.answer_callback_query(update.callback_query.id, text=message)
+
     def empty_button(self, update: Update, context: CallbackContext):
         """The Callback called when the button does nothing
 
@@ -166,6 +169,24 @@ class BotManager:
                 "start",
                 bot_help,
                 Filters.regex("how_to"),
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="monthly_report_info",
+                callback=lambda update, context: self.show_alert(
+                    update, context, "message"
+                ),
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="yearly_report_info",
+                callback=lambda update, context: self.show_alert(
+                    update, context, "message 2"
+                ),
             )
         )
 
