@@ -174,7 +174,9 @@ def handle_purchase(
             mdate = "NO_DATE_TO_PARSE"
         caption = " ".join(caption)
         # caption = remove_url_from_text(original_message)
-        title = re.findall(r"%.*%", caption)
+        title = re.findall(r"%.*?%", caption)
+        logger.info(caption)
+        logger.info(title)
         if title:
             title = title[0]
             caption = caption.replace(title, "")
