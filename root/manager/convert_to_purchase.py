@@ -68,12 +68,13 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
     wish: Wishlist = find_wishlist_by_id(_id)
     page = int(update.callback_query.data.split("_")[-2])
     wish_description = wish.description
-    if wish.link:
-        wish_description = '<a href="%s">%s</a>' % (wish.link, wish_description)
     url = (
         "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
     )
+    if wish.link:
+        wish_description = '<a href="%s">%s</a>' % (wish.link, wish_description)
+        url += f"%0A%0A{quote(wish.link)}"
     wish.delete()
     keyboard = InlineKeyboardMarkup(
         [
