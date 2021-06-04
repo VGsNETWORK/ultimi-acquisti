@@ -246,12 +246,20 @@ def is_number(content: str) -> bool:
         return False
 
 
-def max_length_error_format(content: str, allowed: int, split: int):
+def max_length_error_format(content: str, allowed: int, split: int, link: str = None):
     boundary = len(content) - allowed
     content = content[:split]
+    if link:
+        stuff = '<b><a href="%s">' % link
+        content = '<b><a href="%s">%s' % (link, content)
     content = [t for t in content]
-    content.insert(allowed, "<s>")
+    if link:
+        content.insert(allowed + len(stuff), "</a></b>")
+        content.insert(allowed + len(stuff) + 1, "<s>")
+    else:
+        content.insert(allowed, "<s>")
     content.append("</s>")
+    logger.info("".join(content))
     return "".join(content)
 
 

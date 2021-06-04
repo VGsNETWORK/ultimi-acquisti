@@ -305,6 +305,11 @@ def create_wishlist_keyboard(
             [
                 create_button(index, "empty_button", None),
                 create_button(
+                    "✏️",
+                    "edit_wishlist_item_%s_%s_%s" % (index, page, wishlist.id),
+                    None,
+                ),
+                create_button(
                     "🤍  🔄  🛍",
                     "convert_to_purchase_%s_%s_%s" % (index, page, wishlist.id),
                     None,
@@ -350,3 +355,72 @@ ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
         [create_button("⏩  Salta", "skip_add_link_to_wishlist", None)],
     ]
 )
+
+
+def build_edit_wishlist_desc_keyboard(
+    _id: str, page: int, index: int, text_limit_reached: bool = False
+):
+    keyboard = [
+        [
+            create_button(
+                "⏩  Salta passaggio",
+                "keep_current_description_%s_%s_%s" % (index, page, _id),
+                None,
+            )
+        ],
+    ]
+    if text_limit_reached:
+        keyboard.insert(
+            0,
+            [
+                create_button(
+                    "✅  Accetta modifica",
+                    "confirm_description_mod_%s_%s_%s" % (index, page, _id),
+                    None,
+                ),
+            ],
+        )
+    keyboard.append(
+        [
+            create_button(
+                "↩️  Torna indietro",
+                "cancel_edit_wishlist_%s_%s_%s" % (index, page, _id),
+                None,
+            )
+        ]
+    )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_edit_wishlist_link_keyboard(
+    _id: str, page: int, index: int, has_link: bool = True
+):
+    keyboard = [
+        [
+            create_button(
+                "⏩  Salta passaggio",
+                "keep_current_link_%s_%s_%s" % (index, page, _id),
+                None,
+            )
+        ]
+    ]
+    if has_link:
+        keyboard.append(
+            [
+                create_button(
+                    "🗑  Rimuovi link",
+                    "remove_link_%s_%s_%s" % (index, page, _id),
+                    None,
+                )
+            ],
+        )
+    keyboard.append(
+        [
+            create_button(
+                "↩️  Torna indietro",
+                "cancel_edit_wishlist_%s_%s_%s" % (index, page, _id),
+                None,
+            ),
+        ]
+    )
+    return InlineKeyboardMarkup(keyboard)

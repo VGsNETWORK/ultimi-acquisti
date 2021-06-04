@@ -4,6 +4,7 @@
 
 import os
 from re import A
+from root.manager.edit_wishlist import EDIT_WISHLIST_CONVERSATION
 from root.contants.messages import (
     MONTHLY_REPORT_POPUP_MESSAGE,
     YEARLY_REPORT_POPUP_MESSAGE,
@@ -195,6 +196,8 @@ class BotManager:
                 callback=wishlist_confirm_convertion,
             )
         )
+
+        self.disp.add_handler(EDIT_WISHLIST_CONVERSATION)
 
         self.disp.add_handler(
             CallbackQueryHandler(

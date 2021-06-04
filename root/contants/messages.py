@@ -778,6 +778,14 @@ ADD_TO_WISHLIST_PROMPT = (
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
 
+EDIT_WISHLIST_PROMPT = (
+    "Inserisci il nuovo testo dell'elemento:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>128 caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
+)
+
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
 
 
@@ -791,6 +799,11 @@ USER_SETTINGS_MESSAGE = (
     " a integrare il tuo acquisto."
 )
 
+EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
+    "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
+    "   •  sono ammessi solamente link;\n"
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
+)
 
 ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
