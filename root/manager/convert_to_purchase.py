@@ -24,9 +24,9 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
     if wish.link:
-        message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>\n{append}\n\n'
+        message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
     else:
-        message += f"<b>{index}</b>  <b>{wish.description}</b>\n{append}\n\n"
+        message += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
     message += (
         "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
         " e cancellerà l'elemento dalla lista dei desideri.</i>"
