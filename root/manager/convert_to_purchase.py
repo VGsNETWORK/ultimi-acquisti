@@ -24,9 +24,9 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
     if wish.link:
-        message += f'<b>{index}</b>  <a href="{wish.link}">{wish.description}</a>\n{append}\n\n'
+        message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>\n{append}\n\n'
     else:
-        message += f"<b>{index}</b>  {wish.description}\n{append}\n\n"
+        message += f"<b>{index}</b>  <b>{wish.description}</b>\n{append}\n\n"
     message += (
         "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
         " e cancellerà l'elemento dalla lista dei desideri.</i>"
@@ -67,7 +67,7 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
     _id = update.callback_query.data.split("_")[-1]
     wish: Wishlist = find_wishlist_by_id(_id)
     page = int(update.callback_query.data.split("_")[-2])
-    wish_description = wish.description
+    wish_description = "<b>%s</b>" % wish.description
     url = (
         "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
