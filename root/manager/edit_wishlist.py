@@ -46,7 +46,7 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
     message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
     append = "✏️  <i>Stai modificando questo elemento</i>"
     if wish.link:
-        message += f'<b>{index}</b>  <b><a href="{wish.link}">{wish.description}</a></b>\n{append}\n\n'
+        message += f'<b>{index}</b>  <b><a href="{wish.link}"><b>{wish.description}</b></a></b>\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  <b>{wish.description}</b>\n{append}\n\n"
     message += "\n%s%s" % (WISHLIST_STEP_ONE, EDIT_WISHLIST_PROMPT)

@@ -3,6 +3,7 @@
 from logging import disable
 from os import link
 import re
+from root.contants.constant import DO_NOT_LOWER_LINKS
 from subprocess import call
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
@@ -322,7 +323,6 @@ def cancel_add_in_wishlist(update: Update, context: CallbackContext):
 def handle_insert_for_link(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
-    message_id = message.message_id
     user = update.effective_user
     if not update.callback_query:
         context.bot.delete_message(chat_id=chat.id, message_id=message.message_id)
@@ -332,6 +332,8 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             wishlist.link = message.text if message.text else message.caption
             wishlist.link = extract_first_link_from_message(update.effective_message)
             logger.info(wishlist.link)
+            if not next(link for link in DO_NOT_LOWER_LINKS if link in wishlist.link, None):
+                wishlist.link = wishlist.link.lower()
             wishlist.save()
     view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
     return ConversationHandler.END
