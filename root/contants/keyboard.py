@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.contants.constant import CATEGORIES
 from root.model.user import User
 from typing import List
 from root.model.wishlist import Wishlist
@@ -383,8 +384,8 @@ def build_edit_wishlist_desc_keyboard(
     keyboard.append(
         [
             create_button(
-                "↩️  Torna indietro",
-                "cancel_edit_wishlist_%s_%s_%s" % (index, page, _id),
+                "❌  Annulla",
+                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
                 None,
             )
         ]
@@ -408,7 +409,7 @@ def build_edit_wishlist_link_keyboard(
         keyboard.append(
             [
                 create_button(
-                    "🗑  Rimuovi link",
+                    "🗑  Rimuovi il link",
                     "remove_link_%s_%s_%s" % (index, page, _id),
                     None,
                 )
@@ -417,8 +418,93 @@ def build_edit_wishlist_link_keyboard(
     keyboard.append(
         [
             create_button(
-                "↩️  Torna indietro",
-                "cancel_edit_wishlist_%s_%s_%s" % (index, page, _id),
+                "❌  Annulla",
+                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
+                None,
+            ),
+        ]
+    )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_add_wishlist_category_keyboard():
+    keyboard = [
+        [
+            create_button(
+                CATEGORIES[1],
+                "add_category_%s" % (1),
+                None,
+            ),
+            create_button(
+                CATEGORIES[2],
+                "add_category_%s" % (2),
+                None,
+            ),
+        ],
+        [
+            create_button(
+                CATEGORIES[3],
+                "add_category_%s" % (3),
+                None,
+            ),
+            create_button(
+                CATEGORIES[4],
+                "add_category_%s" % (4),
+                None,
+            ),
+        ],
+        [
+            create_button(
+                CATEGORIES[0],
+                "add_category_%s" % (0),
+                None,
+            )
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_edit_wishlist_category_keyboard(
+    _id: str, page: int, index: int, has_category: bool = True
+):
+    keyboard = [
+        [
+            create_button(
+                CATEGORIES[1],
+                "edit_category_%s_%s_%s_%s" % (1, index, page, _id),
+                None,
+            ),
+            create_button(
+                CATEGORIES[2],
+                "edit_category_%s_%s_%s_%s" % (2, index, page, _id),
+                None,
+            ),
+        ],
+        [
+            create_button(
+                CATEGORIES[3],
+                "edit_category_%s_%s_%s_%s" % (3, index, page, _id),
+                None,
+            ),
+            create_button(
+                CATEGORIES[4],
+                "edit_category_%s_%s_%s_%s" % (4, index, page, _id),
+                None,
+            ),
+        ],
+        [
+            create_button(
+                CATEGORIES[0],
+                "edit_category_%s_%s_%s_%s" % (0, index, page, _id),
+                None,
+            )
+        ],
+    ]
+    keyboard.append(
+        [
+            create_button(
+                "❌  Annulla",
+                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
                 None,
             ),
         ]

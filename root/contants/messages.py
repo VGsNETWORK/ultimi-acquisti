@@ -766,8 +766,15 @@ NO_ELEMENT_IN_WISHLIST = (
 )
 
 
-WISHLIST_STEP_ONE = "<b>Step 1:</b>\n<i><b><u>Testo</u></b>  ⟶  Link</i>\n\n"
-WISHLIST_STEP_TWO = "<b>Step 2:</b>\n<i>Testo  ⟶  <b><u>Link</u></b></i>\n\n"
+WISHLIST_STEP_ONE = (
+    "<b>Step 1:</b>\n<i><b><u>Testo</u></b>  ⟶  Link  ⟶  Categoria</i>\n\n"
+)
+WISHLIST_STEP_TWO = (
+    "<b>Step 2:</b>\n<i>Testo  ⟶  <b><u>Link</u></b>  ⟶  Categoria</i>\n\n"
+)
+WISHLIST_STEP_THREE = (
+    "<b>Step 3:</b>\n<i>Testo  ⟶  Link  ⟶  <b><u>Categoria</u></b></i>\n\n"
+)
 
 ADD_TO_WISHLIST_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
@@ -805,11 +812,17 @@ EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
 )
 
+EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
+    "Seleziona una nuova categoria per il tuo elemento, oppure conferma quella attuale:"
+)
+
 ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
     "   •  sono ammessi solamente link;\n"
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
 )
+
+ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una categoria per il tuo elemento:"
 
 MONTHLY_REPORT_POPUP_MESSAGE = (
     "Il report mensile ti dà un resoconto degli"

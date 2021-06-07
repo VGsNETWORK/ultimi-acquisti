@@ -3,16 +3,18 @@
 from logging import disable
 from os import link
 import re
-from root.contants.constant import DO_NOT_LOWER_LINKS
+from root.contants.constant import CATEGORIES, DO_NOT_LOWER_LINKS
 from subprocess import call
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
     ADDED_TO_WISHLIST,
+    ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_TO_WISHLIST_PROMPT,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_STEP_ONE,
+    WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
 )
 from root.util.util import (
@@ -26,13 +28,13 @@ from root.helper.wishlist import (
     get_total_wishlist_pages_for_user,
     remove_wishlist_item_for_user,
 )
-from typing import List
 from root.model.wishlist import Wishlist
 from root.contants.keyboard import (
     ADDED_TO_WISHLIST_KEYBOARD,
     ADD_LINK_TO_WISHLIST_ITEM,
     ADD_TO_WISHLIST_ABORT_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
+    build_add_wishlist_category_keyboard,
     create_wishlist_keyboard,
 )
 from telegram import Update
@@ -48,7 +50,7 @@ from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 
-INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA = range(2)
+INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 
 def confirm_wishlist_deletion(update: Update, context: CallbackContext):
@@ -147,10 +149,10 @@ def view_wishlist(
             [
                 (
                     f'<b>{((index) + (5 * page + 1)) + inc}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{((index) + (5 * page + 1)) + inc}.</b>  {wish.description}\n"
-                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]
@@ -195,10 +197,10 @@ def add_in_wishlist(update: Update, context: CallbackContext):
             [
                 (
                     f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]
@@ -254,10 +256,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                 [
                     (
                         f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlists)
                 ]
@@ -292,10 +294,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                 [
                     (
                         f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlists)
                 ]
@@ -312,6 +314,21 @@ def handle_add_confirm(update: Update, context: CallbackContext):
             disable_web_page_preview=True,
         )
     return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
+
+
+def add_category(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    user: User = update.effective_user
+    context.bot.answer_callback_query(update.callback_query.id)
+    data = update.callback_query.data
+    wish: Wishlist = find_wishlist_for_user(user.id, 0, 1)
+    if wish:
+        wish = wish[0]
+        category = int(data.split("_")[-1])
+        wish.category = CATEGORIES[category]
+        wish.save()
+        view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
+        return ConversationHandler.END
 
 
 def cancel_add_in_wishlist(update: Update, context: CallbackContext):
@@ -337,8 +354,51 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             ):
                 wishlist.link = wishlist.link.lower()
             wishlist.save()
-    view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
-    return ConversationHandler.END
+    message_id = redis_helper.retrieve(user.id).decode()
+    wishlists = find_wishlist_for_user(user.id, page_size=5)
+    wishlist = wishlists[0]
+    wishlists = wishlists[1:]
+    if not wishlist.link:
+        message = (
+            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {wishlist.description}</b>\n"
+            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+        )
+    else:
+        message = (
+            f'<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  <a href="{wishlist.link}">{wishlist.description}</a></b>\n'
+            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+        )
+    if wishlists:
+        message += "\n".join(
+            [
+                (
+                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    if wish.link
+                    else f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                )
+                for index, wish in enumerate(wishlists)
+            ]
+        )
+        message += "\n\n%s%s" % (
+            WISHLIST_STEP_THREE,
+            ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
+        )
+    else:
+        message += "\n%s%s" % (
+            WISHLIST_STEP_THREE,
+            ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
+        )
+    context.bot.edit_message_text(
+        message_id=message_id,
+        chat_id=chat.id,
+        text=message,
+        reply_markup=build_add_wishlist_category_keyboard(),
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
+    return ADD_CATEGORY
 
 
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
@@ -356,6 +416,12 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
             MessageHandler(Filters.entity("url"), handle_insert_for_link),
             CallbackQueryHandler(
                 callback=handle_insert_for_link, pattern="skip_add_link_to_wishlist"
+            ),
+        ],
+        ADD_CATEGORY: [
+            CallbackQueryHandler(
+                callback=add_category,
+                pattern="add_category",
             ),
         ],
     },

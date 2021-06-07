@@ -9,3 +9,4 @@ class Wishlist(BaseModel):
     description = StringField()
     quantity = IntField()
     link = StringField()
+    category = StringField()

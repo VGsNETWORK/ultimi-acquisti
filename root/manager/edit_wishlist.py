@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.contants.constant import CATEGORIES
 from root.manager.whishlist import view_wishlist
 from root.util.util import extract_first_link_from_message, max_length_error_format
 from root.model.user import User
@@ -7,15 +8,18 @@ import telegram_utils.helper.redis as redis_helper
 from telegram.chat import Chat
 from telegram.message import Message
 from root.contants.keyboard import (
+    build_edit_wishlist_category_keyboard,
     build_edit_wishlist_desc_keyboard,
     build_edit_wishlist_link_keyboard,
 )
 from root.contants.messages import (
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+    EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_WISHLIST_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_STEP_ONE,
+    WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
 )
 from root.helper.wishlist import find_wishlist_by_id
@@ -28,7 +32,7 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 import telegram_utils.utils.logger as logger
 
-EDIT_WISHLIST_TEXT, EDIT_ZELDA = range(2)
+EDIT_WISHLIST_TEXT, EDIT_ZELDA, EDIT_CATEGORY = range(3)
 
 
 def edit_wishlist_item(update: Update, context: CallbackContext):
@@ -140,11 +144,15 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     if update.callback_query:
         _id = update.callback_query.data.split("_")[-1]
+        page = int(update.callback_query.data.split("_")[-2])
+        index = update.callback_query.data.split("_")[-3]
     else:
         context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         message_id = redis_helper.retrieve(user.id).decode()
         data = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
         _id = data.split("_")[-1]
+        page = int(data.split("_")[-2])
+        index = data.split("_")[-3]
         link = message.text if message.text else message.caption
         link = extract_first_link_from_message(update.effective_message)
         logger.info(link)
@@ -155,6 +163,41 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
             wish.link = ""
     else:
         wish.link = link
+    wish.save()
+    ask = "*" if not wish.description == text else ""
+    wish.description = text
+    redis_helper.save("%s_stored_wishlist" % user.id, text)
+    message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+    append = "✏️  <i>Stai modificando questo elemento</i>"
+    if wish.link:
+        message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>\n{append}\n\n'
+    else:
+        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>\n{append}\n\n"
+    message += "\n%s%s" % (WISHLIST_STEP_THREE, EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE)
+    context.bot.edit_message_text(
+        message_id=message_id,
+        chat_id=chat.id,
+        text=message,
+        reply_markup=build_edit_wishlist_category_keyboard(
+            _id, page, index, wish.category
+        ),
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
+    return EDIT_CATEGORY
+
+
+def edit_category(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    context.bot.answer_callback_query(update.callback_query.id)
+    data = update.callback_query.data
+    _id = data.split("_")[-1]
+    if "keep_category" in data:
+        cancel_edit_wishlist(update, context)
+        return ConversationHandler.END
+    category = int(data.split("_")[-4])
+    wish: Wishlist = find_wishlist_by_id(_id)
+    wish.category = CATEGORIES[category]
     wish.save()
     cancel_edit_wishlist(update, context)
     return ConversationHandler.END
@@ -200,11 +243,18 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
                 pattern="remove_link",
             ),
         ],
+        EDIT_CATEGORY: [
+            CallbackQueryHandler(
+                callback=edit_category,
+                pattern="edit_category",
+            ),
+        ],
     },
     fallbacks=[
+        CallbackQueryHandler(callback=edit_wishlist_link, pattern="keep_category"),
         CallbackQueryHandler(
             cancel_edit_wishlist,
-            pattern="cancel_edit_wishlist",
+            pattern="cancel_add_to_wishlist",
         ),
     ],
 )
