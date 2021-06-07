@@ -2,7 +2,6 @@
 
 from root.manager.whishlist import view_wishlist
 from root.util.util import extract_first_link_from_message, max_length_error_format
-from telegram.error import BadRequest
 from root.model.user import User
 import telegram_utils.helper.redis as redis_helper
 from telegram.chat import Chat

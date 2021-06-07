@@ -332,7 +332,9 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             wishlist.link = message.text if message.text else message.caption
             wishlist.link = extract_first_link_from_message(update.effective_message)
             logger.info(wishlist.link)
-            if not next(link for link in DO_NOT_LOWER_LINKS if link in wishlist.link, None):
+            if not next(
+                (link for link in DO_NOT_LOWER_LINKS if link in wishlist.link), None
+            ):
                 wishlist.link = wishlist.link.lower()
             wishlist.save()
     view_wishlist(update, context, ADDED_TO_WISHLIST, "0")

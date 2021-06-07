@@ -250,15 +250,16 @@ def max_length_error_format(content: str, allowed: int, split: int, link: str = 
     boundary = len(content) - allowed
     content = content[:split]
     if link:
-        stuff = '<b><a href="%s">' % link
-        content = '<b><a href="%s">%s' % (link, content)
+        stuff = '<a href="%s">' % link
+        content = '<a href="%s">%s' % (link, content)
     content = [t for t in content]
     if link:
-        content.insert(allowed + len(stuff), "</a></b>")
+        content.insert(allowed + len(stuff), "</a>")
         content.insert(allowed + len(stuff) + 1, "<s>")
     else:
-        content.insert(allowed, "<s>")
+        content.insert(allowed, "</b><s>")
     content.append("</s>")
+    content.insert(0, "<b>")
     logger.info("".join(content))
     return "".join(content)
 
