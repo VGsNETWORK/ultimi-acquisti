@@ -3,7 +3,7 @@
 from logging import disable
 from os import link
 import re
-from root.contants.constant import CATEGORIES, DO_NOT_LOWER_LINKS
+from root.contants.constant import CATEGORIES
 from subprocess import call
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
@@ -352,10 +352,12 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             wishlist.link = message.text if message.text else message.caption
             wishlist.link = extract_first_link_from_message(update.effective_message)
             logger.info(wishlist.link)
-            if not next(
-                (link for link in DO_NOT_LOWER_LINKS if link in wishlist.link), None
-            ):
-                wishlist.link = wishlist.link.lower()
+            if "/" in wishlist.link:
+                link = wishlist.link
+                link = re.sub(r".*//", "", link)
+                link = link.split("/")
+                link[0] = link[0].lower()
+                wishlist.link = "/".join(link)
             wishlist.save()
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=5)
