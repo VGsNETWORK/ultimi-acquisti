@@ -157,8 +157,14 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
         if "remove_link" in update.callback_query.data:
-            wish.link = ""
+            removed = "1"
+            redis_helper.save("%s_removed_link" % user.id, removed)
+        else:
+            removed = "0"
+            redis_helper.save("%s_removed_link" % user.id, removed)
     else:
+        removed = "0"
+        redis_helper.save("%s_removed_link" % user.id, removed)
         wish.link = link
     wish.save()
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
@@ -167,7 +173,8 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     redis_helper.save("%s_stored_wishlist" % user.id, text)
     message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
     append = "✏️  <i>Stai modificando questo elemento</i>"
-    if wish.link:
+
+    if removed == "0":
         message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
@@ -197,7 +204,9 @@ def edit_category(update: Update, context: CallbackContext):
     category = int(data.split("_")[-4])
     wish: Wishlist = find_wishlist_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
-    ask = "*" if not wish.description == text else ""
+    removed: str = redis_helper.retrieve("%s_removed_link" % user.id)
+    if removed == "1":
+        wish.link = ""
     wish.description = text
     wish.category = CATEGORIES[category]
     wish.save()
