@@ -366,6 +366,8 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 link = link.split("/")
                 link[0] = link[0].lower()
                 wishlist.link = "/".join(link)
+            else:
+                wishlist.link = wishlist.link.lower()
             wishlist.save()
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=5)
