@@ -84,7 +84,6 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
         page = int(data.split("_")[-2])
         index = data.split("_")[-3]
         text = message.text
-
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
         if "keep_current_description" in update.callback_query.data:
@@ -141,7 +140,6 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     message_id: int = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
-    text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     if update.callback_query:
         _id = update.callback_query.data.split("_")[-1]
         page = int(update.callback_query.data.split("_")[-2])
@@ -157,13 +155,13 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         link = extract_first_link_from_message(update.effective_message)
         logger.info(link)
     wish: Wishlist = find_wishlist_by_id(_id)
-    wish.description = text
     if update.callback_query:
         if "remove_link" in update.callback_query.data:
             wish.link = ""
     else:
         wish.link = link
     wish.save()
+    text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     ask = "*" if not wish.description == text else ""
     wish.description = text
     redis_helper.save("%s_stored_wishlist" % user.id, text)
@@ -189,6 +187,7 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
 
 def edit_category(update: Update, context: CallbackContext):
     message: Message = update.effective_message
+    user: User = update.effective_user
     context.bot.answer_callback_query(update.callback_query.id)
     data = update.callback_query.data
     _id = data.split("_")[-1]
@@ -197,6 +196,9 @@ def edit_category(update: Update, context: CallbackContext):
         return ConversationHandler.END
     category = int(data.split("_")[-4])
     wish: Wishlist = find_wishlist_by_id(_id)
+    text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
+    ask = "*" if not wish.description == text else ""
+    wish.description = text
     wish.category = CATEGORIES[category]
     wish.save()
     cancel_edit_wishlist(update, context)

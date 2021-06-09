@@ -467,39 +467,50 @@ def build_add_wishlist_category_keyboard():
 def build_edit_wishlist_category_keyboard(
     _id: str, page: int, index: int, has_category: bool = True
 ):
-    keyboard = [
+    assigned = False
+    categories = CATEGORIES
+    categories = categories[1:]
+    categories = zip(*(iter(categories),) * 2)
+    keyboard = []
+    for category in categories:
+        first, second = category
+        first_index, second_index = CATEGORIES.index(first), CATEGORIES.index(second)
+        if has_category == first:
+            if "  " in first:
+                first = "✅  %s" % first.split("  ")[1]
+            else:
+                first = "✅  %s" % first.split(" ")[1]
+            assigned = True
+        elif has_category == second:
+            if "  " in second:
+                second = "✅  %s" % second.split("  ")[1]
+            else:
+                second = "✅  %s" % second.split(" ")[1]
+            assigned = True
+        keyboard.append(
+            [
+                create_button(
+                    first,
+                    "edit_category_%s_%s_%s_%s" % (first_index, index, page, _id),
+                    None,
+                ),
+                create_button(
+                    second,
+                    "edit_category_%s_%s_%s_%s" % (second_index, index, page, _id),
+                    None,
+                ),
+            ]
+        )
+    others = "✅  %s" % CATEGORIES[0].split("  ")[1] if not assigned else CATEGORIES[0]
+    keyboard.append(
         [
             create_button(
-                CATEGORIES[1],
-                "edit_category_%s_%s_%s_%s" % (1, index, page, _id),
-                None,
-            ),
-            create_button(
-                CATEGORIES[2],
-                "edit_category_%s_%s_%s_%s" % (2, index, page, _id),
-                None,
-            ),
-        ],
-        [
-            create_button(
-                CATEGORIES[3],
-                "edit_category_%s_%s_%s_%s" % (3, index, page, _id),
-                None,
-            ),
-            create_button(
-                CATEGORIES[4],
-                "edit_category_%s_%s_%s_%s" % (4, index, page, _id),
-                None,
-            ),
-        ],
-        [
-            create_button(
-                CATEGORIES[0],
+                others,
                 "edit_category_%s_%s_%s_%s" % (0, index, page, _id),
                 None,
             )
-        ],
-    ]
+        ]
+    )
     keyboard.append(
         [
             create_button(
