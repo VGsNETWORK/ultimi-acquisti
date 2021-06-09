@@ -260,7 +260,9 @@ ADD_TO_WISHLIST_ABORT_KEYBOARD = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+                "❌  Annulla",
+                "cancel_add_to_wishlist_NO_DELETE",
+                "cancel_add_to_wishlist_NO",
             ),
         ],
     ]
@@ -275,7 +277,9 @@ ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD = InlineKeyboardMarkup(
         ],
         [
             create_button(
-                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+                "❌  Annulla",
+                "cancel_add_to_wishlist_NO_DELETE",
+                "cancel_add_to_wishlist_NO",
             ),
         ],
     ]
@@ -353,8 +357,9 @@ def create_user_settings_keyboard(user: User):
 
 ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
     [
-        [create_button("⏩  Salta", "skip_add_link_to_wishlist", None)],
-    ]
+        [create_button("⏩  Salta passaggio", "skip_add_link_to_wishlist", None)],
+        [create_button("❌  Annulla", "cancel_add_to_wishlist", None)],
+    ],
 )
 
 
@@ -459,6 +464,11 @@ def build_add_wishlist_category_keyboard():
                 "add_category_%s" % (0),
                 None,
             )
+        ],
+        [
+            create_button(
+                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+            ),
         ],
     ]
     return InlineKeyboardMarkup(keyboard)

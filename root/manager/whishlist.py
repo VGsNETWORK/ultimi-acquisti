@@ -335,6 +335,14 @@ def add_category(update: Update, context: CallbackContext):
 
 
 def cancel_add_in_wishlist(update: Update, context: CallbackContext):
+    data = update.callback_query.data
+    logger.info(data)
+    if not "NO_DELETE" in data:
+        user: User = update.effective_user
+        wish: Wishlist = find_wishlist_for_user(user.id, 0, 1)
+        if wish:
+            wish = wish[0]
+            wish.delete()
     update.callback_query.data += "_0"
     view_wishlist(update, context)
     return ConversationHandler.END
