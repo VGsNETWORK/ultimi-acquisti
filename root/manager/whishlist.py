@@ -188,6 +188,7 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         return ConversationHandler.END
     redis_helper.save(user.id, message.message_id)
     wishlists = find_wishlist_for_user(user.id, page_size=4)
+    logger.info("PAGED QUERY %s " % len(wishlists))
     message = (
         "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  . . . . . .\n"
         "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
@@ -241,6 +242,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     overload = False
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=4)
+    logger.info("PAGED QUERY %s" % len(wishlists))
     if len(message) > 128:
         overload = True
         redis_helper.save(
@@ -283,7 +285,8 @@ def handle_add_confirm(update: Update, context: CallbackContext):
         except BadRequest:
             pass
     else:
-        wishlists = wishlists[1:]
+        wishlists = wishlists[:4]
+        logger.info("PAGED QUERY %s" % len(wishlists))
         Wishlist(user_id=user.id, description=message).save()
         message = (
             f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {message}</b>\n"
@@ -357,7 +360,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=5)
     wishlist = wishlists[0]
-    wishlists = wishlists[1:]
+    wishlists = wishlists[1:5]
     if not wishlist.link:
         message = (
             f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {wishlist.description}</b>\n"
