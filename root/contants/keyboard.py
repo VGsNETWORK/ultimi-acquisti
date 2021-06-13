@@ -576,7 +576,16 @@ def create_go_back_to_wishlist_photo_keyboard(_id: str):
     )
 
 
-def create_cancel_wishlist_photo_keyboard(_id: str):
+def create_cancel_wishlist_photo_keyboard(_id: str, sended: bool = False):
+
     return InlineKeyboardMarkup(
-        [[create_button("❌  Annulla", "cancel_add_photo_%s" % _id, None)]]
+        [
+            [
+                create_button(
+                    "❌  Annulla" if not sended else "✅  Concludi inserimento",
+                    "cancel_add_photo_%s" % _id,
+                    None,
+                )
+            ]
+        ]
     )

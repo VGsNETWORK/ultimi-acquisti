@@ -842,7 +842,7 @@ YEARLY_REPORT_POPUP_MESSAGE = (
 )
 
 
-VIEW_WISHLIST_PHOTO_MESSAGE = "Hai aggiunto <code>%s</code> foto per <b>%s</b>."
+VIEW_WISHLIST_PHOTO_MESSAGE = "Hai aggiunto  <code>%s</code>  foto per <b>%s</b>."
 
 VIEW_NO_WISHLIST_PHOTO_MESSAGE = "Qui puoi aggiungere delle foto per <b>%s</b>."
 
@@ -851,3 +851,5 @@ REQUEST_WISHLIST_PHOTO = "Invia adesso <b>come foto</b> (non come <i>file</i>) l
 WISHLIST_PHOTO_LIMIT_REACHED = "\n\n<i><b>Limite massimo di foto raggiunto!</b>\nSe vuoi aggiungerne di nuove, devi prima eliminarne qualcuna.</i>"
 
 SINGLE_WISHLIST_PHOTO_ADDED = "\n\n✅  <i><b>%s foto</b> aggiunta con successo!</i>"
+
+ASK_FOR_PHOTOS_PREPEND = "<i>Foto inviate finora:</i>  <code>%s</code>"

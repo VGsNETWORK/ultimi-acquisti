@@ -4,6 +4,8 @@
 
 import os
 from re import A
+
+from telegram_utils.utils.tutils import delete_if_private
 from root.manager.wishlist_photo import (
     ADD_WISHLIST_PHOTO_CONVERSATION,
     delete_photos_and_go_to_wishlist,
@@ -181,6 +183,12 @@ class BotManager:
 
         # self.disp.add_handler(MessageHandler(Filters.photo, extract_photo_from_message))
         self.disp.add_handler(ADD_WISHLIST_PHOTO_CONVERSATION)
+        self.disp.add_handler(
+            MessageHandler(
+                Filters.photo,
+                lambda update, context: delete_if_private(update.effective_message),
+            )
+        )
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="go_back_from_wishlist_photos",
