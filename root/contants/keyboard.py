@@ -9,6 +9,7 @@ from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
 from urllib.parse import quote
+import telegram_utils.utils.logger as logger
 
 
 def send_command_to_group_keyboard(
@@ -306,9 +307,18 @@ def create_wishlist_keyboard(
         )
         if wishlist.link:
             url += f"%0A%0A{quote(wishlist.link)}"
+        photos = "➕ " if not wishlist.photos else "%s  " % len(wishlist.photos)
+        # I hate that they are not aligned
+        if wishlist.user_id == 84872221:
+            photos = ""
         keyboard.append(
             [
                 create_button(index, "empty_button", None),
+                create_button(
+                    "%s🖼" % photos,
+                    "view_wishlist_photo_%s" % wishlist.id,
+                    None,
+                ),
                 create_button(
                     "✏️",
                     "edit_wishlist_item_%s_%s_%s" % (index, page, wishlist.id),
@@ -531,3 +541,42 @@ def build_edit_wishlist_category_keyboard(
         ]
     )
     return InlineKeyboardMarkup(keyboard)
+
+
+def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[int]):
+    photos = wishlist.photos
+    if len(photos) < 10:
+        keyboard = [
+            [
+                create_button(
+                    "➕  Aggiungi foto", "ask_for_wishlist_photo_%s" % wishlist.id, None
+                )
+            ]
+        ]
+    else:
+        keyboard = []
+    for index, photo in enumerate(photos):
+        keyboard.append(
+            [
+                create_button("%s." % (index + 1), "empty_button", None),
+                create_button(
+                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                ),
+            ]
+        )
+    keyboard.append(
+        [create_button("↩️  Torna indietro", "go_back_from_wishlist_photos_0", None)]
+    )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def create_go_back_to_wishlist_photo_keyboard(_id: str):
+    return InlineKeyboardMarkup(
+        [[create_button("↩️  Torna indietro", "view_wishlist_photo_%s" % _id, None)]]
+    )
+
+
+def create_cancel_wishlist_photo_keyboard(_id: str):
+    return InlineKeyboardMarkup(
+        [[create_button("❌  Annulla", "cancel_add_photo_%s" % _id, None)]]
+    )

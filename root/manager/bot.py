@@ -4,6 +4,13 @@
 
 import os
 from re import A
+from root.manager.wishlist_photo import (
+    ADD_WISHLIST_PHOTO_CONVERSATION,
+    delete_photos_and_go_to_wishlist,
+    delete_wishlist_photo,
+    extract_photo_from_message,
+    view_wishlist_photos,
+)
 from root.manager.edit_wishlist import EDIT_WISHLIST_CONVERSATION
 from root.contants.messages import (
     MONTHLY_REPORT_POPUP_MESSAGE,
@@ -169,6 +176,28 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="previous_rating", callback=rating.go_back_rating
+            )
+        )
+
+        # self.disp.add_handler(MessageHandler(Filters.photo, extract_photo_from_message))
+        self.disp.add_handler(ADD_WISHLIST_PHOTO_CONVERSATION)
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="go_back_from_wishlist_photos",
+                callback=delete_photos_and_go_to_wishlist,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="delete_wishlist_photo",
+                callback=delete_wishlist_photo,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="view_wishlist_photo", callback=view_wishlist_photos
             )
         )
 

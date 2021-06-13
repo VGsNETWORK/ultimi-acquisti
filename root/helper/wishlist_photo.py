@@ -36,20 +36,3 @@ def find_wishlist_for_user(user_id: int, page: int = 0, page_size: int = 5):
         .skip(page * page_size)
         .limit(page_size)
     )
-
-
-def add_photo(_id: str, photo: str):
-    wish: Wishlist = find_wishlist_by_id(_id)
-    if wish:
-        if len(wish.photos) < 10:
-            wish.photos.append(photo)
-            wish.save()
-        else:
-            raise ValueError("max photo size reached")
-
-
-def remove_photo(_id: str, photo: str):
-    wish: Wishlist = find_wishlist_by_id(_id)
-    if wish:
-        wish.photos.remove(photo)
-        wish.save()
