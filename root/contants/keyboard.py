@@ -316,7 +316,7 @@ def create_wishlist_keyboard(
                 create_button(index, "empty_button", None),
                 create_button(
                     "%s🖼" % photos,
-                    "view_wishlist_photo_%s" % wishlist.id,
+                    "view_wishlist_photo_%s_%s" % (page, wishlist.id),
                     None,
                 ),
                 create_button(

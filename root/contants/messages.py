@@ -848,6 +848,6 @@ VIEW_NO_WISHLIST_PHOTO_MESSAGE = "Qui puoi aggiungere delle foto per <b>%s</b>."
 
 REQUEST_WISHLIST_PHOTO = "Invia adesso <b>come foto</b> (non come <i>file</i>) le immagini che vuoi aggiungere:"
 
-WISHLIST_PHOTO_LIMIT_REACHED = "<b>Limite massimo di foto raggiunto!</b>\nSe vuoi aggiungerne di nuove, devi prima eliminarne qualcuna.</i>"
+WISHLIST_PHOTO_LIMIT_REACHED = "\n\n<i><b>Limite massimo di foto raggiunto!</b>\nSe vuoi aggiungerne di nuove, devi prima eliminarne qualcuna.</i>"
 
-SINGLE_WISHLIST_PHOTO_ADDED = "✅  <i>%s foto aggiunta con successo!</i>"
+SINGLE_WISHLIST_PHOTO_ADDED = "\n\n✅  <i><b>%s foto</b> aggiunta con successo!</i>"

@@ -164,6 +164,7 @@ def view_wishlist(
     message = "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n%s" % message
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
+    logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
