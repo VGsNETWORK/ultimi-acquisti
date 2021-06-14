@@ -122,6 +122,16 @@ def view_wishlist(
     user: User = update.effective_user
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
+        data = update.callback_query.data
+        if "convert" in data:
+            messages = redis_helper.retrieve("%s_photos_message" % user.id)
+            if messages:
+                messages = messages.decode()
+                messages = eval(messages)
+            else:
+                messages = []
+            for m_id in messages:
+                context.bot.delete_message(chat_id=chat.id, message_id=m_id)
     if not page:
         page = int(update.callback_query.data.split("_")[-1])
     else:

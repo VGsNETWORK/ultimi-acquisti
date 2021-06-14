@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 
+from root.contants.messages import ASK_FOR_CONVERT_WISHLIST
+from typing import List
+
+from telegram.files.inputmedia import InputMediaPhoto
+from root.model.user import User
 from root.manager.whishlist import view_wishlist
 from urllib.parse import quote
 from root.helper.wishlist import find_wishlist_by_id
@@ -11,17 +16,20 @@ from telegram.chat import Chat
 from telegram.ext import CallbackContext
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
+import telegram_utils.helper.redis as redis_helper
 
 
 def ask_confirm_deletion(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     context.bot.answer_callback_query(update.callback_query.id)
+    context.bot.delete_message(chat_id=chat.id, message_id=message.message_id)
+    user: User = update.effective_user
     message_id = message.message_id
     _id = update.callback_query.data.split("_")[-1]
     page = int(update.callback_query.data.split("_")[-2])
     index = update.callback_query.data.split("_")[-3]
-    message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+    text = ""
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
     if not wish:
@@ -29,13 +37,14 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         view_wishlist(update, context)
         return
     if wish.link:
-        message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
+        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
     else:
-        message += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
-    message += (
-        "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
-        " e cancellerà l'elemento dalla lista dei desideri.</i>"
-    )
+        text += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+    # text += (
+    #    "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
+    #    " e cancellerà l'elemento dalla lista dei desideri.</i>"
+    # )
+    text += ASK_FOR_CONVERT_WISHLIST
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -48,20 +57,34 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
             [
                 create_button(
                     "❌  Annulla",
-                    f"view_wishlist_{page}",
-                    f"view_wishlist_{page}",
+                    f"view_wishlist_convert_{page}",
+                    f"view_wishlist_convert_{page}",
                 ),
             ],
         ]
     )
-    context.bot.edit_message_text(
+    photos: List = wish.photos
+    photos = [InputMediaPhoto(media=photo) for photo in photos]
+    if len(photos) > 1:
+        message: List[Message] = context.bot.send_media_group(
+            chat_id=chat.id, media=photos
+        )
+        message = [m.message_id for m in message]
+    else:
+        message: Message = context.bot.send_photo(
+            chat_id=chat.id, photo=photos[0].media
+        )
+        message = [message.message_id]
+    redis_helper.save("%s_photos_message" % user.id, str(message))
+    message: Message = context.bot.send_message(
         chat_id=chat.id,
-        message_id=message_id,
-        text=message,
+        text=text,
         reply_markup=keyboard,
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
+    message_id: int = message.message_id
+    redis_helper.save("%s_redis_message" % user.id, message_id)
 
 
 def wishlist_confirm_convertion(update: Update, context: CallbackContext):
@@ -69,6 +92,7 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     message_id = message.message_id
     context.bot.answer_callback_query(update.callback_query.id)
+    user: User = update.effective_user
     _id = update.callback_query.data.split("_")[-1]
     wish: Wishlist = find_wishlist_by_id(_id)
     page = int(update.callback_query.data.split("_")[-2])
@@ -106,6 +130,15 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
         " premendo il tasto sottostante e selezionando un gruppo <b><u>dove sono presente</u></b>."
         % wish_description
     )
+    messages = redis_helper.retrieve("%s_photos_message" % user.id)
+    if messages:
+        messages = messages.decode()
+        messages = eval(messages)
+    else:
+        messages = []
+    for message_id in messages:
+        context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+    message_id = redis_helper.retrieve("%s_redis_message" % user.id).decode()
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,

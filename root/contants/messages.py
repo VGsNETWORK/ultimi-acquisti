@@ -853,3 +853,14 @@ WISHLIST_PHOTO_LIMIT_REACHED = "\n\n<i><b>Limite massimo di foto raggiunto!</b>\
 SINGLE_WISHLIST_PHOTO_ADDED = "\n\n✅  <i><b>%s foto</b> aggiunta con successo!</i>"
 
 ASK_FOR_PHOTOS_PREPEND = "<i>Foto inviate finora:</i>  <code>%s</code>"
+
+
+ASK_FOR_CONVERT_WISHLIST = (
+    "<b>Vuoi continuare?</b>\n"
+    "<i>Questa azione è irreversibile, e <b><u>cancellerà sia "
+    "l'elemento che le sue foto</u></b> dalla lista dei desideri.</i>\n"
+    "⚠️  <i>Dal momento che il template di acquisto che verrà creato "
+    "se procedi <b><u>non può ereditare delle foto</u></b>, te le ho "
+    "inviate tutte qui sopra per darti la possibilità di salvarle e "
+    "allegarle nel post di acquisto.</i>"
+)
