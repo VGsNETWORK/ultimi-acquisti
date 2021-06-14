@@ -54,9 +54,9 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
         view_wishlist(update, context)
         return
     if wish.link:
-        message += f'<b>{index}</b>  <b><a href="{wish.link}"><b>{wish.description}</b></a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
+        message += f'<b>{index}</b>  <b><a href="{wish.link}"><b>{wish.description}</b></a></b>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
-        message += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+        message += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
     message += "\n%s%s" % (WISHLIST_STEP_ONE, EDIT_WISHLIST_PROMPT)
     keyboard = build_edit_wishlist_desc_keyboard(_id, page, index)
     context.bot.edit_message_text(
@@ -118,9 +118,9 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
         message = WISHLIST_HEADER
         append = "✏️  <i>Stai modificando questo elemento</i>"
         if wish.link:
-            message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
+            message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<i>{wish.category}</i>)\n{append}\n\n'
         else:
-            message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+            message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
         if not wish.link:
             message += "\n%s%s" % (WISHLIST_STEP_TWO, ADD_LINK_TO_WISHLIST_ITEM_MESSAGE)
         else:
@@ -180,9 +180,9 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     append = "✏️  <i>Stai modificando questo elemento</i>"
 
     if removed == "0":
-        message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
+        message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
-        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
     message += "\n%s%s" % (WISHLIST_STEP_THREE, EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE)
     context.bot.edit_message_text(
         message_id=message_id,

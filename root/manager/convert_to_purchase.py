@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from telegram.error import BadRequest
 from root.contants.messages import ASK_FOR_CONVERT_WISHLIST, WISHLIST_HEADER
 from typing import List
 
@@ -37,9 +38,9 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         view_wishlist(update, context)
         return
     if wish.link:
-        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
+        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
-        text += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+        text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
     # text += (
     #    "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
     #    " e cancellerà l'elemento dalla lista dei desideri.</i>"
@@ -70,11 +71,13 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
             chat_id=chat.id, media=photos
         )
         message = [m.message_id for m in message]
-    else:
+    elif len(photos) == 1:
         message: Message = context.bot.send_photo(
             chat_id=chat.id, photo=photos[0].media
         )
         message = [message.message_id]
+    else:
+        mesasge = []
     redis_helper.save("%s_photos_message" % user.id, str(message))
     message: Message = context.bot.send_message(
         chat_id=chat.id,
@@ -130,14 +133,16 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
         " premendo il tasto sottostante e selezionando un gruppo <b><u>dove sono presente</u></b>."
         % wish_description
     )
-    messages = redis_helper.retrieve("%s_photos_message" % user.id)
+    messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
     if messages:
-        messages = messages.decode()
         messages = eval(messages)
     else:
         messages = []
     for message_id in messages:
-        context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+        try:
+            context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+        except BadRequest:
+            pass
     message_id = redis_helper.retrieve("%s_redis_message" % user.id).decode()
     context.bot.edit_message_text(
         chat_id=chat.id,

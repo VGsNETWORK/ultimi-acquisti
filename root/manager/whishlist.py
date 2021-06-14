@@ -99,9 +99,9 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
             view_wishlist(update, context)
             return
         if wish.link:
-            message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
+            message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
         else:
-            message += f"<b>{index}</b>  <b>{wish.description}</b>  (<i>{wish.category}</i>)\n{append}\n\n"
+            message += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
         message += "<b>Vuoi confermare?</b>"
         keyboard = InlineKeyboardMarkup(keyboard)
         context.bot.edit_message_text(
@@ -125,14 +125,16 @@ def view_wishlist(
         context.bot.answer_callback_query(update.callback_query.id)
         data = update.callback_query.data
         if "convert" in data:
-            messages = redis_helper.retrieve("%s_photos_message" % user.id)
+            messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
             if messages:
-                messages = messages.decode()
                 messages = eval(messages)
             else:
                 messages = []
             for m_id in messages:
-                context.bot.delete_message(chat_id=chat.id, message_id=m_id)
+                try:
+                    context.bot.delete_message(chat_id=chat.id, message_id=m_id)
+                except BadRequest:
+                    pass
     if not page:
         page = int(update.callback_query.data.split("_")[-1])
     else:
