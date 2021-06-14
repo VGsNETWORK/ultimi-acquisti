@@ -13,6 +13,7 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_PROMPT,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
+    WISHLIST_HEADER,
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
@@ -91,7 +92,7 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
             ]
         ]
         wish: Wishlist = find_wishlist_by_id(_id)
-        message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+        message = WISHLIST_HEADER
         append = "🚮  <i>Stai per cancellare questo elemento</i>"
         if not wish:
             update.callback_query.data += "_%s" % page
@@ -175,7 +176,7 @@ def view_wishlist(
             wishlists.insert(0, wish)
     else:
         message = NO_ELEMENT_IN_WISHLIST
-    message = "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n%s" % message
+    message = "%s%s" % (WISHLIST_HEADER, message)
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
@@ -205,7 +206,7 @@ def add_in_wishlist(update: Update, context: CallbackContext):
     wishlists = find_wishlist_for_user(user.id, page_size=4)
     logger.info("PAGED QUERY %s " % len(wishlists))
     message = (
-        "<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  . . . . . .\n"
+        f"{WISHLIST_HEADER}<b>1.</b>  . . . . . .\n"
         "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
     )
     if wishlists:
@@ -265,7 +266,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
         )
         user_text = max_length_error_format(update.effective_message.text, 128, 200)
         message = (
-            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  {user_text}\n"
+            f"{WISHLIST_HEADER}<b>1.</b>  {user_text}\n"
             f"{WISHLIST_DESCRIPTION_TOO_LONG}"
         )
         if wishlists:
@@ -304,7 +305,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
         logger.info("PAGED QUERY %s" % len(wishlists))
         Wishlist(user_id=user.id, description=message).save()
         message = (
-            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {message}</b>\n"
+            f"{WISHLIST_HEADER}<b>1.  {message}</b>\n"
             "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
         )
         if wishlists:
@@ -390,12 +391,12 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     wishlists = wishlists[1:5]
     if not wishlist.link:
         message = (
-            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  {wishlist.description}</b>\n"
+            f"{WISHLIST_HEADER}<b>1.  {wishlist.description}</b>\n"
             "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
         )
     else:
         message = (
-            f'<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.  <a href="{wishlist.link}">{wishlist.description}</a></b>\n'
+            f'{WISHLIST_HEADER}<b>1.  <a href="{wishlist.link}">{wishlist.description}</a></b>\n'
             "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
         )
     if wishlists:

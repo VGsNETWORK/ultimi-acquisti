@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from os import environ
+from root.contants.VERSION import WISHLIST_VERSION
 from root.model.user import User
 from root.model.user_rating import UserRating
 import root.util.logger as logger
@@ -864,3 +865,5 @@ ASK_FOR_CONVERT_WISHLIST = (
     "inviate tutte qui sopra per darti la possibilità di salvarle e "
     "allegarle nel post di acquisto.</i>"
 )
+
+WISHLIST_HEADER = f"<b><u>LISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISHLIST_VERSION}</code>)\n\n\n"

@@ -18,6 +18,7 @@ from root.contants.messages import (
     EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_WISHLIST_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
+    WISHLIST_HEADER,
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
@@ -46,7 +47,7 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
     wish: Wishlist = find_wishlist_by_id(_id)
     index = update.callback_query.data.split("_")[-3]
     redis_helper.save("%s_%s" % (user.id, user.id), "%s_%s_%s" % (index, page, _id))
-    message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+    message = WISHLIST_HEADER
     append = "✏️  <i>Stai modificando questo elemento</i>"
     if not wish:
         update.callback_query.data += "_%s" % page
@@ -102,7 +103,7 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
             update.effective_message.text, 128, 200, wish.link
         )
         message = (
-            f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n<b>1.</b>  {user_text}\n"
+            f"{WISHLIST_HEADER}<b>1.</b>  {user_text}\n"
             f"{WISHLIST_DESCRIPTION_TOO_LONG}"
         )
         message += "\n%s%s" % (WISHLIST_STEP_ONE, EDIT_WISHLIST_PROMPT)
@@ -114,7 +115,7 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
         ask = "*" if not wish.description == text else ""
         wish.description = text
         redis_helper.save("%s_stored_wishlist" % user.id, text)
-        message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+        message = WISHLIST_HEADER
         append = "✏️  <i>Stai modificando questo elemento</i>"
         if wish.link:
             message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
@@ -175,7 +176,7 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     ask = "*" if not wish.description == text else ""
     wish.description = text
     redis_helper.save("%s_stored_wishlist" % user.id, text)
-    message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+    message = WISHLIST_HEADER
     append = "✏️  <i>Stai modificando questo elemento</i>"
 
     if removed == "0":

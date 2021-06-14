@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-from root.contants.messages import ASK_FOR_CONVERT_WISHLIST
+from root.contants.messages import ASK_FOR_CONVERT_WISHLIST, WISHLIST_HEADER
 from typing import List
 
 from telegram.files.inputmedia import InputMediaPhoto
@@ -124,7 +124,7 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
             ],
         ]
     )
-    message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
+    message = WISHLIST_HEADER
     message += (
         "😃  Link di acquisto per <b>%s</b> creato!\n\nPuoi registrare il tuo nuovo acquisto"
         " premendo il tasto sottostante e selezionando un gruppo <b><u>dove sono presente</u></b>."
