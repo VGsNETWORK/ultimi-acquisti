@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from root.manager.whishlist import view_wishlist
 from urllib.parse import quote
 from root.helper.wishlist import find_wishlist_by_id
 from root.model.wishlist import Wishlist
@@ -23,6 +24,10 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
+    if not wish:
+        update.callback_query.data += "_%s" % page
+        view_wishlist(update, context)
+        return
     if wish.link:
         message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>  (<i>{wish.category}</i>)\n{append}\n\n'
     else:

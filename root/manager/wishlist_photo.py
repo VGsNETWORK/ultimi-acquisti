@@ -122,6 +122,10 @@ def view_wishlist_photos(update: Update, context: CallbackContext, append: str =
         wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
     wishlist: Wishlist = find_wishlist_by_id(wish_id)
+    if not wishlist:
+        update.callback_query.data += "_%s" % page
+        view_wishlist(update, context)
+        return
     photos: List[str] = wishlist.photos
     if not photos:
         text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist.description)

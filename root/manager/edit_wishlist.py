@@ -48,6 +48,10 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
     redis_helper.save("%s_%s" % (user.id, user.id), "%s_%s_%s" % (index, page, _id))
     message = f"<b><u>LISTA DEI DESIDERI</u></b>\n\n\n"
     append = "✏️  <i>Stai modificando questo elemento</i>"
+    if not wish:
+        update.callback_query.data += "_%s" % page
+        view_wishlist(update, context)
+        return
     if wish.link:
         message += f'<b>{index}</b>  <b><a href="{wish.link}"><b>{wish.description}</b></a></b>  (<i>{wish.category}</i>)\n{append}\n\n'
     else:

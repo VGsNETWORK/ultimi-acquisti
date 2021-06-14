@@ -7,7 +7,6 @@ from root.model.wishlist import Wishlist
 def find_wishlist_by_id(_id: str):
     try:
         wish: Wishlist = Wishlist.objects().get(id=_id)
-        wish.photos.reverse()
         return wish
     except DoesNotExist:
         return
@@ -45,7 +44,7 @@ def add_photo(_id: str, photo: str):
     wish: Wishlist = find_wishlist_by_id(_id)
     if wish:
         if len(wish.photos) < 10:
-            wish.photos.append(photo)
+            wish.photos.insert(0, photo)
             wish.save()
         else:
             raise ValueError("max photo size reached")
