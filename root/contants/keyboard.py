@@ -555,7 +555,32 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
         ]
     else:
         keyboard = []
-    for index, photo in enumerate(photos):
+    index = 0
+    photo_groups = zip(*(iter(photos),) * 3)
+    for photo_group in photo_groups:
+        group = []
+        for _ in photo_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    photo_groups = zip(*(iter(photos[index:]),) * 2)
+    for photo_group in photo_groups:
+        group = []
+        for _ in photo_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    for _ in photos[index:]:
         keyboard.append(
             [
                 create_button("%s." % (index + 1), "empty_button", None),
@@ -564,6 +589,7 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
                 ),
             ]
         )
+        index += 1
     keyboard.append(
         [create_button("↩️  Torna indietro", "go_back_from_wishlist_photos_0", None)]
     )
