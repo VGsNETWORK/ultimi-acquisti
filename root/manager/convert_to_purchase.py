@@ -41,11 +41,13 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
         text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
-    # text += (
-    #    "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
-    #    " e cancellerà l'elemento dalla lista dei desideri.</i>"
-    # )
-    text += ASK_FOR_CONVERT_WISHLIST
+    if not wish.photos:
+        text += (
+            "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
+            " e <u><b>cancellerà l'elemento</b></u> dalla lista dei desideri.</i>"
+        )
+    else:
+        text += ASK_FOR_CONVERT_WISHLIST
     keyboard = InlineKeyboardMarkup(
         [
             [
