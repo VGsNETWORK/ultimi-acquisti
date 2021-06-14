@@ -208,8 +208,9 @@ def edit_category(update: Update, context: CallbackContext):
     category = int(data.split("_")[-4])
     wish: Wishlist = find_wishlist_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
-    removed: str = redis_helper.retrieve("%s_removed_link" % user.id)
+    removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()
     if removed == "1":
+        logger.info("removing old url %s" % wish.link)
         wish.link = ""
     wish.description = text
     wish.category = CATEGORIES[category]
