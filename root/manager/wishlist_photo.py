@@ -223,7 +223,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         chat_id=update.effective_chat.id,
         text=text,
         message_id=message_id,
-        reply_markup=create_cancel_wishlist_photo_keyboard(wish_id, True),
+        reply_markup=create_cancel_wishlist_photo_keyboard(wish_id, True, True),
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
@@ -236,7 +236,16 @@ def ask_for_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     redis_helper.save("%s_photo_sended" % user.id, "0")
     text: str = REQUEST_WISHLIST_PHOTO
-    wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
+    wish_id = update.callback_query.data.split("_")[-1]
+    wish_id_ = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
+    if wish_id_ != wish_id:
+        page = update.callback_query.data.split("_")[-2]
+        if not page.isnumeric():
+            page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+        redis_helper.save("%s_current_page" % user.id, page)
+    else:
+        page = 0
+    redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
     wishlist: Wishlist = find_wishlist_by_id(wish_id)
     if wishlist.photos:
         text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
@@ -257,7 +266,9 @@ def ask_for_photo(update: Update, context: CallbackContext):
         chat_id=message.chat_id,
         text=text,
         message_id=message.message_id,
-        reply_markup=create_cancel_wishlist_photo_keyboard(wish_id),
+        reply_markup=create_cancel_wishlist_photo_keyboard(
+            wish_id, photos=wishlist.photos, page=page
+        ),
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
@@ -267,7 +278,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
 
 
 def cancel_add_photo(update: Update, context: CallbackContext):
-    view_wishlist_photos(update, context)
+    if not "go_back" in update.callback_query.data:
+        view_wishlist_photos(update, context)
+    else:
+        view_wishlist(update, context)
     return ConversationHandler.END
 
 
@@ -285,6 +299,10 @@ ADD_WISHLIST_PHOTO_CONVERSATION = ConversationHandler(
         CallbackQueryHandler(
             cancel_add_photo,
             pattern="cancel_add_photo",
+        ),
+        CallbackQueryHandler(
+            cancel_add_photo,
+            pattern="cancel_and_go_back",
         ),
     ],
 )

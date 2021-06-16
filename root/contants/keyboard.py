@@ -310,6 +310,10 @@ def create_wishlist_keyboard(
         photos = " ➕ " if not wishlist.photos else "%s  " % len(wishlist.photos)
         if wishlist.photos and len(wishlist.photos) < 10:
             photos = "   %s" % photos
+        if wishlist.photos:
+            photo_callback: str = "view_wishlist_photo_%s_%s" % (page, wishlist.id)
+        else:
+            photo_callback: str = "ask_for_wishlist_photo_%s_%s" % (page, wishlist.id)
         # I hate that they are not aligned
         if wishlist.user_id == 84872221:
             photos = ""
@@ -318,7 +322,7 @@ def create_wishlist_keyboard(
                 create_button(index, "empty_button", None),
                 create_button(
                     "%s🖼" % photos,
-                    "view_wishlist_photo_%s_%s" % (page, wishlist.id),
+                    photo_callback,
                     None,
                 ),
                 create_button(
@@ -604,14 +608,21 @@ def create_go_back_to_wishlist_photo_keyboard(_id: str):
     )
 
 
-def create_cancel_wishlist_photo_keyboard(_id: str, sended: bool = False):
-
+def create_cancel_wishlist_photo_keyboard(
+    _id: str, sended: bool = False, photos: bool = False, page: int = 0
+):
+    callback: str = (
+        "cancel_add_photo_%s" % _id
+        if photos
+        else "cancel_and_go_back_%s_%s" % (_id, page)
+    )
+    logger.info(callback)
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
                     "❌  Annulla" if not sended else "✅  Concludi inserimento",
-                    "cancel_add_photo_%s" % _id,
+                    callback,
                     None,
                 )
             ]
