@@ -8,6 +8,9 @@ from re import A
 from telegram_utils.utils.tutils import delete_if_private
 from root.manager.wishlist_photo import (
     ADD_WISHLIST_PHOTO_CONVERSATION,
+    abort_delete_all_wishlist_photos,
+    ask_delete_all_wishlist_photos,
+    confirm_delete_all_wishlist_photos,
     delete_photos_and_go_to_wishlist,
     delete_wishlist_photo,
     extract_photo_from_message,
@@ -26,6 +29,9 @@ from root.manager.retrieve_purchase import update_purchases_for_chat
 from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
 from root.manager.whishlist import (
     ADD_IN_WISHLIST_CONVERSATION,
+    abort_delete_all_wishlist_elements,
+    ask_delete_all_wishlist_elements,
+    confirm_delete_all_wishlist_elements,
     confirm_wishlist_deletion,
     remove_wishlist_item,
     view_wishlist,
@@ -189,6 +195,49 @@ class BotManager:
                 lambda update, context: delete_if_private(update.effective_message),
             )
         )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="ask_delete_all_wishlist_photos",
+                callback=ask_delete_all_wishlist_photos,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="confirm_delete_all_wishlist_photos",
+                callback=confirm_delete_all_wishlist_photos,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="abort_delete_all_wishlist_photos",
+                callback=abort_delete_all_wishlist_photos,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="ask_delete_all_wishlist_elements",
+                callback=ask_delete_all_wishlist_elements,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="confirm_delete_all_wishlist",
+                callback=confirm_delete_all_wishlist_elements,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="abort_delete_all_wishlist",
+                callback=abort_delete_all_wishlist_elements,
+            )
+        )
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="go_back_from_wishlist_photos",

@@ -2,6 +2,7 @@
 
 from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
+    DELETE_ALL_WISHLIST_ITEMS_PHOTOS,
     REQUEST_WISHLIST_PHOTO,
     SINGLE_WISHLIST_PHOTO_ADDED,
     VIEW_WISHLIST_PHOTO_MESSAGE,
@@ -9,10 +10,12 @@ from root.contants.messages import (
     WISHLIST_PHOTO_LIMIT_REACHED,
 )
 from telegram.error import BadRequest
+from root.helper import wishlist
 from root.manager.whishlist import view_wishlist
 from root.contants.keyboard import (
     build_view_wishlist_photos_keyboard,
     create_cancel_wishlist_photo_keyboard,
+    create_delete_all_wishlist_photos_keyboard,
 )
 from telegram.chat import Chat
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
@@ -21,7 +24,12 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 from telegram.files.inputmedia import InputMediaPhoto
 from root.model.wishlist import Wishlist
-from root.helper.wishlist import add_photo, find_wishlist_by_id, remove_photo
+from root.helper.wishlist import (
+    add_photo,
+    delete_wishlist_photos,
+    find_wishlist_by_id,
+    remove_photo,
+)
 from typing import List
 from telegram import Update
 from telegram.ext import CallbackContext
@@ -35,6 +43,67 @@ from telegram_utils.utils.tutils import delete_if_private
 
 
 ADD_PHOTO = range(1)
+
+
+def ask_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    chat: Chat = update.effective_chat
+    user: User = update.effective_user
+    wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
+    wishlist: Wishlist = find_wishlist_by_id(wish_id)
+    context.bot.edit_message_text(
+        chat_id=chat.id,
+        message_id=message.message_id,
+        text=DELETE_ALL_WISHLIST_ITEMS_PHOTOS % wishlist.description,
+        reply_markup=create_delete_all_wishlist_photos_keyboard(),
+        disable_web_page_preview=True,
+        parse_mode="HTML",
+    )
+
+
+def confirm_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    message: Message = update.effective_message
+    wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
+    messages = redis_helper.retrieve("%s_photos_message" % update.effective_user.id)
+    if messages:
+        messages = messages.decode()
+        messages: List[str] = eval(messages)
+    else:
+        messages = []
+    messages = [str(m) for m in messages]
+    logger.info(messages)
+    try:
+        for message_id in messages:
+            context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
+    except BadRequest:
+        pass
+    delete_wishlist_photos(wish_id)
+    update.callback_query.data += "_%s" % wish_id
+    page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+    update.callback_query.data += "_%s" % page
+    view_wishlist(update, context)
+
+
+def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    message: Message = update.effective_message
+    messages = redis_helper.retrieve("%s_photos_message" % update.effective_user.id)
+    if messages:
+        messages = messages.decode()
+        messages: List[str] = eval(messages)
+    else:
+        messages = []
+    messages = [str(m) for m in messages]
+    logger.info(messages)
+    try:
+        for message_id in messages:
+            context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
+    except BadRequest:
+        pass
+    wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
+    update.callback_query.data += "_%s" % wish_id
+    view_wishlist_photos(update, context)
 
 
 def delete_wishlist_photo(update: Update, context: CallbackContext):
@@ -53,8 +122,6 @@ def delete_wishlist_photo(update: Update, context: CallbackContext):
     else:
         messages = []
     messages = [str(m) for m in messages]
-    logger.info(messages)
-    logger.info(message_id)
     index = messages.index(str(message_id))
     photo = photos[index]
     photos.remove(photo)

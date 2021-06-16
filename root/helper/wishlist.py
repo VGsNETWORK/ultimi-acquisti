@@ -19,6 +19,21 @@ def remove_wishlist_item_for_user(_id: str):
         return
 
 
+def delete_all_wishlist_for_user(user_id: int):
+    try:
+        for element in Wishlist.objects().filter(user_id=user_id):
+            element.delete()
+    except Exception:
+        return
+
+
+def delete_wishlist_photos(wish_id: str):
+    wish: Wishlist = find_wishlist_by_id(wish_id)
+    if wish:
+        wish.photos = []
+        wish.save()
+
+
 def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
     total_products = Wishlist.objects().filter(user_id=user_id).count() / page_size
     if int(total_products) == 0:

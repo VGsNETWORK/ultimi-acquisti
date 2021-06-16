@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 from logging import disable
-from os import link
 import re
 from root.contants.constant import CATEGORIES
-from subprocess import call
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
     ADDED_TO_WISHLIST,
     ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_TO_WISHLIST_PROMPT,
+    DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
@@ -24,6 +23,7 @@ from root.util.util import (
     max_length_error_format,
 )
 from root.helper.wishlist import (
+    delete_all_wishlist_for_user,
     find_wishlist_by_id,
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
@@ -36,6 +36,7 @@ from root.contants.keyboard import (
     ADD_TO_WISHLIST_ABORT_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
     build_add_wishlist_category_keyboard,
+    create_delete_all_wishlist_items_keyboard,
     create_wishlist_keyboard,
 )
 from telegram import Update
@@ -52,6 +53,31 @@ import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
+
+
+def ask_delete_all_wishlist_elements(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    chat: Chat = update.effective_chat
+    page: str = update.callback_query.data.split("_")[-1]
+    context.bot.edit_message_text(
+        chat_id=chat.id,
+        message_id=message.message_id,
+        text=DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
+        reply_markup=create_delete_all_wishlist_items_keyboard(page),
+        disable_web_page_preview=True,
+        parse_mode="HTML",
+    )
+
+
+def confirm_delete_all_wishlist_elements(update: Update, context: CallbackContext):
+    delete_all_wishlist_for_user(update.effective_user.id)
+    update.callback_query.data += "_0"
+    view_wishlist(update, context)
+
+
+def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
+    page: str = update.callback_query.data.split("_")[-1]
+    view_wishlist(update, context, page=int(page))
 
 
 def confirm_wishlist_deletion(update: Update, context: CallbackContext):

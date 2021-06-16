@@ -867,3 +867,16 @@ ASK_FOR_CONVERT_WISHLIST = (
 )
 
 WISHLIST_HEADER = f"<b><u>LISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISHLIST_VERSION}</code>)\n\n\n"
+
+
+# TODO: create query to retrieve all number of all wishlist items and all photos
+DELETE_ALL_WISHLIST_ITEMS_MESSAGE = (
+    f"{WISHLIST_HEADER}🚮  <i>Stai per cancellare <b>tutti gli "
+    "elementi</b> e <b>tutte le foto</b> della lista dei "
+    "desideri.</i>\n\n<b>Vuoi confermare?</b>"
+)
+
+DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (
+    "🚮  <i>Stai per cancellare tutte le foto di "
+    "<b>%s</b>.</i>\n\n<b>Vuoi confermare?</b>"
+)

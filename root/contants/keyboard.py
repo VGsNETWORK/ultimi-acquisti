@@ -354,6 +354,16 @@ def create_wishlist_keyboard(
                 create_button(next_text, next_callback, None),
             ]
         )
+    if wishlists:
+        keyboard.append(
+            [
+                create_button(
+                    "🗑  Cancella tutto",
+                    "ask_delete_all_wishlist_elements_%s" % page,
+                    None,
+                )
+            ]
+        )
     keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
     return InlineKeyboardMarkup(keyboard)
 
@@ -597,6 +607,13 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
         )
         index += 1
     keyboard.append(
+        [
+            create_button(
+                "🗑  Cancella tutte le foto", "ask_delete_all_wishlist_photos", None
+            )
+        ]
+    )
+    keyboard.append(
         [create_button("↩️  Torna indietro", "go_back_from_wishlist_photos_0", None)]
     )
     return InlineKeyboardMarkup(keyboard)
@@ -626,5 +643,43 @@ def create_cancel_wishlist_photo_keyboard(
                     None,
                 )
             ]
+        ]
+    )
+
+
+def create_delete_all_wishlist_items_keyboard(page: int = 0):
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "✅  Sì",
+                    "confirm_delete_all_wishlist",
+                    "confirm_delete_all_wishlist",
+                ),
+                create_button(
+                    "❌  No",
+                    "abort_delete_all_wishlist_%s" % page,
+                    "abort_delete_all_wishlist_%s" % page,
+                ),
+            ],
+        ]
+    )
+
+
+def create_delete_all_wishlist_photos_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "✅  Sì",
+                    "confirm_delete_all_wishlist_photos",
+                    "confirm_delete_all_wishlist_photos",
+                ),
+                create_button(
+                    "❌  No",
+                    "abort_delete_all_wishlist_photos",
+                    "abort_delete_all_wishlist_photos",
+                ),
+            ],
         ]
     )
