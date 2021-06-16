@@ -218,6 +218,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     redis_helper.save("%s_photo_sended" % user.id, photo_sended)
     logger.info(message_id)
     text: str = REQUEST_WISHLIST_PHOTO
+    text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
     text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
     message: Message = context.bot.edit_message_text(
         chat_id=update.effective_chat.id,
@@ -235,7 +236,6 @@ def ask_for_photo(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
     redis_helper.save("%s_photo_sended" % user.id, "0")
-    text: str = REQUEST_WISHLIST_PHOTO
     wish_id = update.callback_query.data.split("_")[-1]
     wish_id_ = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     if wish_id_ != wish_id:
@@ -247,6 +247,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
         page = 0
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
     wishlist: Wishlist = find_wishlist_by_id(wish_id)
+    text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
     if wishlist.photos:
         text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
     messages = redis_helper.retrieve("%s_photos_message" % user.id)
