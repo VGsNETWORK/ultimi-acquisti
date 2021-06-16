@@ -305,13 +305,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
     redis_helper.save("%s_photo_sended" % user.id, "0")
     wish_id = update.callback_query.data.split("_")[-1]
     wish_id_ = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
-    if wish_id_ != wish_id:
-        page = update.callback_query.data.split("_")[-2]
-        if not page.isnumeric():
-            page = redis_helper.retrieve("%s_current_page" % user.id).decode()
-        redis_helper.save("%s_current_page" % user.id, page)
-    else:
-        page = 0
+    page = update.callback_query.data.split("_")[-2]
+    if not page.isnumeric():
+        page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+    redis_helper.save("%s_current_page" % user.id, page)
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
     wishlist: Wishlist = find_wishlist_by_id(wish_id)
     text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
@@ -346,9 +343,13 @@ def ask_for_photo(update: Update, context: CallbackContext):
 
 
 def cancel_add_photo(update: Update, context: CallbackContext):
+    user: User = update.effective_user
     if not "go_back" in update.callback_query.data:
         view_wishlist_photos(update, context)
     else:
+        page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+        logger.info(f"THIS IS THE {page}")
+        update.callback_query.data += "_%s" % page
         view_wishlist(update, context)
     return ConversationHandler.END
 
