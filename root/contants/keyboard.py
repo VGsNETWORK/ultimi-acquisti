@@ -307,7 +307,9 @@ def create_wishlist_keyboard(
         )
         if wishlist.link:
             url += f"%0A%0A{quote(wishlist.link)}"
-        photos = "➕ " if not wishlist.photos else "%s  " % len(wishlist.photos)
+        photos = " ➕ " if not wishlist.photos else "%s  " % len(wishlist.photos)
+        if wishlist.photos and len(wishlist.photos) < 10:
+            photos = "   %s" % photos
         # I hate that they are not aligned
         if wishlist.user_id == 84872221:
             photos = ""
