@@ -77,7 +77,7 @@ def confirm_delete_all_wishlist_elements(update: Update, context: CallbackContex
 
 def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     page: str = update.callback_query.data.split("_")[-1]
-    view_wishlist(update, context, page=int(page))
+    view_wishlist(update, context)
 
 
 def confirm_wishlist_deletion(update: Update, context: CallbackContext):
