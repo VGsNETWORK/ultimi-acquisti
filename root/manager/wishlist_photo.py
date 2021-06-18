@@ -307,6 +307,15 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         photo_sended += 1
     wishlist: Wishlist = find_wishlist_by_id(wish_id)
     if len(wishlist.photos) == 10:
+        messages = redis_helper.retrieve("%s_photos_message" % user.id)
+        if messages:
+            messages = messages.decode()
+            messages = eval(messages)
+            try:
+                for message_id in messages:
+                    context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+            except BadRequest:
+                pass
         view_wishlist_photos(update, context, message)
         return ConversationHandler.END
     redis_helper.save("%s_photo_sended" % user.id, photo_sended)

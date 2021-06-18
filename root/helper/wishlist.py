@@ -2,6 +2,8 @@
 
 from mongoengine.errors import DoesNotExist
 from root.model.wishlist import Wishlist
+import telegram_utils.utils.logger as logger
+from pymongo.command_cursor import CommandCursor
 
 
 def find_wishlist_by_id(_id: str):
@@ -25,6 +27,10 @@ def delete_all_wishlist_for_user(user_id: int):
             element.delete()
     except Exception:
         return
+
+
+def count_all_wishlist_elements_for_user(user_id: int):
+    return len(Wishlist.objects().filter(user_id=user_id))
 
 
 def delete_wishlist_photos(wish_id: str):
@@ -70,3 +76,15 @@ def remove_photo(_id: str, photo: str):
     if wish:
         wish.photos.remove(photo)
         wish.save()
+
+
+def count_all_wishlists_photos(user_id: int):
+    query = [
+        {"$match": {"user_id": user_id, "photos": {"$ne": None}}},
+        {"$group": {"_id": "$user_id", "total": {"$sum": {"$size": "$photos"}}}},
+    ]
+    cursor: CommandCursor = Wishlist.objects().aggregate(query)
+    total = 0
+    for user in cursor:
+        total = user["total"]
+    return total

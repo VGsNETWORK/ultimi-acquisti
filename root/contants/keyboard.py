@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.helper.wishlist import count_all_wishlist_elements_for_user
 from root.contants.constant import CATEGORIES
 from root.model.user import User
 from typing import List
@@ -355,15 +356,18 @@ def create_wishlist_keyboard(
             ]
         )
     if wishlists:
-        keyboard.append(
-            [
-                create_button(
-                    "🗑  Cancella tutto",
-                    "ask_delete_all_wishlist_elements_%s" % page,
-                    None,
-                )
-            ]
-        )
+        wishlist = wishlists[0]
+        number: int = count_all_wishlist_elements_for_user(wishlist.user_id)
+        if number > 1:
+            keyboard.append(
+                [
+                    create_button(
+                        "🗑  Cancella tutti e %s gli elementi" % number,
+                        "ask_delete_all_wishlist_elements_%s" % page,
+                        None,
+                    )
+                ]
+            )
     keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
     return InlineKeyboardMarkup(keyboard)
 
@@ -610,7 +614,9 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
         keyboard.append(
             [
                 create_button(
-                    "🗑  Cancella tutte le foto", "ask_delete_all_wishlist_photos", None
+                    "🗑  Cancella tutte e %s le foto" % len(wishlist.photos),
+                    "ask_delete_all_wishlist_photos",
+                    None,
                 )
             ]
         )

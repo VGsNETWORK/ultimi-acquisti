@@ -23,6 +23,8 @@ from root.util.util import (
     max_length_error_format,
 )
 from root.helper.wishlist import (
+    count_all_wishlist_elements_for_user,
+    count_all_wishlists_photos,
     delete_all_wishlist_for_user,
     find_wishlist_by_id,
     find_wishlist_for_user,
@@ -57,12 +59,15 @@ INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 def ask_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     message: Message = update.effective_message
+    user: User = update.effective_user
     chat: Chat = update.effective_chat
     page: str = update.callback_query.data.split("_")[-1]
+    wishlists = count_all_wishlist_elements_for_user(user.id)
+    photos = count_all_wishlists_photos(user.id)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
-        text=DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
+        text=DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (wishlists, photos),
         reply_markup=create_delete_all_wishlist_items_keyboard(page),
         disable_web_page_preview=True,
         parse_mode="HTML",
