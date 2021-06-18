@@ -871,9 +871,15 @@ WISHLIST_HEADER = f"<b><u>LISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISH
 
 # TODO: create query to retrieve all number of all wishlist items and all photos
 DELETE_ALL_WISHLIST_ITEMS_MESSAGE = (
-    f"{WISHLIST_HEADER}🚮  <i>Stai per cancellare <b>%s "
-    "elementi</b> e <b>%s foto</b> della lista dei "
-    "desideri.</i>\n\n<b>Vuoi confermare?</b>"
+    f"{WISHLIST_HEADER}<b>%s elementi, %s foto</b>\n🚮  "
+    "<i>Stai per cancellare <b>tutti gli elementi</b> e <b>tutte le foto</b> della lista dei desideri."
+    "</i>\n\n<b>Vuoi confermare?</b>"
+)
+
+DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
+    f"{WISHLIST_HEADER}<b>%s elementi</b>\n🚮  "
+    "<i>Stai per cancellare <b>tutti gli elementi</b> della lista dei desideri."
+    "</i>\n\n<b>Vuoi confermare?</b>"
 )
 
 DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (

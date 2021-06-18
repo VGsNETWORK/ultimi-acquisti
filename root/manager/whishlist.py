@@ -10,6 +10,7 @@ from root.contants.messages import (
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_TO_WISHLIST_PROMPT,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
+    DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
@@ -57,6 +58,12 @@ import telegram_utils.utils.logger as logger
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 
+def has_photo(wishlist: Wishlist):
+    if wishlist.user_id == 84872221:
+        return ""
+    return "  •  🖼" if wishlist.photos else ""
+
+
 def ask_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
@@ -64,10 +71,14 @@ def ask_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     page: str = update.callback_query.data.split("_")[-1]
     wishlists = count_all_wishlist_elements_for_user(user.id)
     photos = count_all_wishlists_photos(user.id)
+    if photos > 0:
+        text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (wishlists, photos)
+    else:
+        text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (wishlists)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
-        text=DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (wishlists, photos),
+        text=text,
         reply_markup=create_delete_all_wishlist_items_keyboard(page),
         disable_web_page_preview=True,
         parse_mode="HTML",
@@ -125,6 +136,9 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
         wish: Wishlist = find_wishlist_by_id(_id)
         message = WISHLIST_HEADER
         append = "🚮  <i>Stai per cancellare questo elemento</i>"
+        if wish:
+            if wish.photos:
+                append += "<i> e <b>%s</b> foto</i>" % len(wish.photos)
         if not wish:
             update.callback_query.data += "_%s" % page
             view_wishlist(update, context)
@@ -197,10 +211,10 @@ def view_wishlist(
             [
                 (
                     f'<b>{((index) + (5 * page + 1)) + inc}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{((index) + (5 * page + 1)) + inc}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]
@@ -247,10 +261,10 @@ def add_in_wishlist(update: Update, context: CallbackContext):
             [
                 (
                     f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]
@@ -307,10 +321,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                 [
                     (
                         f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlists)
                 ]
@@ -346,10 +360,10 @@ def handle_add_confirm(update: Update, context: CallbackContext):
                 [
                     (
                         f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlists)
                 ]
@@ -437,10 +451,10 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             [
                 (
                     f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     if wish.link
                     else f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlists)
             ]

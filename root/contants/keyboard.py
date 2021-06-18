@@ -317,7 +317,10 @@ def create_wishlist_keyboard(
             photo_callback: str = "ask_for_wishlist_photo_%s_%s" % (page, wishlist.id)
         # I hate that they are not aligned
         if wishlist.user_id == 84872221:
-            photos = ""
+            btns = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
+            icon = len(wishlist.photos) - 1
+            icon = btns[icon]
+            photos = " 0️⃣  " if not wishlist.photos else " %s  " % icon
         keyboard.append(
             [
                 create_button(index, "empty_button", None),
