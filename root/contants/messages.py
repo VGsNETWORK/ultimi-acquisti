@@ -883,6 +883,7 @@ DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
 )
 
 DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (
-    "🚮  <i>Stai per cancellare tutte le foto di "
-    "<b>%s</b>.</i>\n\n<b>Vuoi confermare?</b>"
+    "<b>%s foto</b>\n"
+    "🚮  <i>Stai per cancellare <b>tutte le foto</b> aggiunte per <b>%s</b>.</i>\n\n"
+    "<b>Vuoi confermare?</b>"
 )

@@ -11,6 +11,7 @@ from root.contants.messages import (
 )
 from telegram.error import BadRequest
 from root.helper import wishlist
+from root.manager import whishlist
 from root.manager.whishlist import view_wishlist
 from root.contants.keyboard import (
     build_view_wishlist_photos_keyboard,
@@ -54,7 +55,8 @@ def ask_delete_all_wishlist_photos(update: Update, context: CallbackContext):
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
-        text=DELETE_ALL_WISHLIST_ITEMS_PHOTOS % wishlist.description,
+        text=DELETE_ALL_WISHLIST_ITEMS_PHOTOS
+        % (len(wishlist.photos), wishlist.description),
         reply_markup=create_delete_all_wishlist_photos_keyboard(),
         disable_web_page_preview=True,
         parse_mode="HTML",
