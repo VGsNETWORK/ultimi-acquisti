@@ -87,7 +87,9 @@ def confirm_delete_all_wishlist_photos(update: Update, context: CallbackContext)
 
 def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
     user: User = update.effective_user
+    chat: Chat = update.effective_chat
     message: Message = update.effective_message
+    message_id = message.message_id
     messages = redis_helper.retrieve("%s_photos_message" % update.effective_user.id)
     if messages:
         messages = messages.decode()
@@ -95,15 +97,30 @@ def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
     else:
         messages = []
     messages = [str(m) for m in messages]
-    logger.info(messages)
-    try:
-        for message_id in messages:
-            context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
-    except BadRequest:
-        pass
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     update.callback_query.data += "_%s" % wish_id
-    view_wishlist_photos(update, context)
+    # view_wishlist_photos(update, context)
+    wishlist: Wishlist = find_wishlist_by_id(wish_id)
+    photos: List[str] = wishlist.photos
+    if not photos:
+        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist.description)
+        keyboard = build_view_wishlist_photos_keyboard(wishlist, [])
+    else:
+        text = VIEW_WISHLIST_PHOTO_MESSAGE % (
+            len(wishlist.photos),
+            wishlist.description,
+        )
+        logger.info("sending %s photos" % len(photos))
+        message = [m for m in messages]
+        keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
+    context.bot.edit_message_text(
+        chat_id=chat.id,
+        message_id=message_id,
+        text=text,
+        reply_markup=keyboard,
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
 
 
 def delete_wishlist_photo(update: Update, context: CallbackContext):
