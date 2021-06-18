@@ -802,7 +802,7 @@ USER_SETTINGS_HEADER = "<b><u>IMPOSTAZIONI</u></b>\n\n\n"
 USER_SETTINGS_MESSAGE = (
     f"{USER_SETTINGS_HEADER}<i>In questa sezione potrai "
     "modificare il modo in cui mi comporterò in alcune situazioni.</i>\n\n"
-    "<b>Suggerimenti di acquisto</b>  =  In fase di aggiunta di un acquisto,"
+    "<b>Suggerimenti di acquisto</b>\nIn fase di aggiunta di un acquisto,"
     " mostra dei consigli relativi a dettagli che non hai inserito e che servono"
     " a integrare il tuo acquisto."
 )
