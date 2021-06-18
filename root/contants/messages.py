@@ -858,12 +858,14 @@ ASK_FOR_PHOTOS_PREPEND = "<i>Foto inviate finora:</i>  <code>%s</code> / 10"
 
 ASK_FOR_CONVERT_WISHLIST = (
     "<b>Vuoi continuare?</b>\n"
-    "<i>Questa azione è irreversibile, e <b><u>cancellerà sia "
-    "l'elemento che le sue foto</u></b> dalla lista dei desideri.</i>\n"
-    "⚠️  <i>Dal momento che il template di acquisto che verrà creato "
-    "se procedi <b><u>non può ereditare delle foto</u></b>, te le ho "
-    "inviate tutte qui sopra per darti la possibilità di salvarle e "
-    "allegarle nel post di acquisto.</i>"
+    "<i>Questa azione è irreversibile, "
+    "e <b><u>cancellerà sia l'elemento che le sue "
+    "foto</u></b> dalla lista dei desideri.</i>\n"
+    "⚠️  <i>Dal momento che il template di acquisto che "
+    "verrà creato se procedi <b><u>non può ereditare delle "
+    "foto</u></b>, ti ho inviato qui sopra tutte quelle che hai "
+    "aggiunto per questo elemento per darti la possibilità "
+    "di salvarle e allegarle al futuro post di acquisto.</i>"
 )
 
 WISHLIST_HEADER = f"<b><u>LISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISHLIST_VERSION}</code>)\n\n\n"
