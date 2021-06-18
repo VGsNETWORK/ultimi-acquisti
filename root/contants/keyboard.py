@@ -606,13 +606,14 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
             ]
         )
         index += 1
-    keyboard.append(
-        [
-            create_button(
-                "🗑  Cancella tutte le foto", "ask_delete_all_wishlist_photos", None
-            )
-        ]
-    )
+    if len(wishlist.photos) > 1:
+        keyboard.append(
+            [
+                create_button(
+                    "🗑  Cancella tutte le foto", "ask_delete_all_wishlist_photos", None
+                )
+            ]
+        )
     keyboard.append(
         [create_button("↩️  Torna indietro", "go_back_from_wishlist_photos_0", None)]
     )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from root.contants.keyboard import create_user_settings_keyboard
-from root.helper.user_helper import retrieve_user
+from root.helper.user_helper import create_user, retrieve_user
 from root.contants.messages import USER_SETTINGS_HEADER, USER_SETTINGS_MESSAGE
 from telegram import Update
 from telegram.ext import CallbackContext
@@ -22,6 +22,10 @@ def view_user_settings(update: Update, context: CallbackContext):
     user = update.effective_user
     message_id = message.message_id
     user = retrieve_user(user.id)
+    if not user:
+        user = update.effective_user
+        create_user(user)
+        user = retrieve_user(user.id)
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
