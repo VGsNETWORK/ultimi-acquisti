@@ -189,7 +189,12 @@ def delete_photos_and_go_to_wishlist(update: Update, context: CallbackContext):
     view_wishlist(update, context, page=int(page))
 
 
-def view_wishlist_photos(update: Update, context: CallbackContext, append: str = None):
+def view_wishlist_photos(
+    update: Update,
+    context: CallbackContext,
+    append: str = None,
+    send_photo: bool = True,
+):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
@@ -216,7 +221,9 @@ def view_wishlist_photos(update: Update, context: CallbackContext, append: str =
         keyboard = build_view_wishlist_photos_keyboard(wishlist, [])
     else:
         logger.info(message_id)
-        context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
+        if send_photo:
+            logger.info("deleting message")
+            context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
             len(wishlist.photos),
             wishlist.description,
@@ -224,25 +231,28 @@ def view_wishlist_photos(update: Update, context: CallbackContext, append: str =
         logger.info("sending %s photos" % len(photos))
         photos = [InputMediaPhoto(media=photo) for photo in photos]
         if len(photos) > 1:
-            message: List[Message] = context.bot.send_media_group(
-                chat_id=chat.id, media=photos
-            )
-            message = [m.message_id for m in message]
+            if send_photo:
+                message: List[Message] = context.bot.send_media_group(
+                    chat_id=chat.id, media=photos
+                )
+                message = [m.message_id for m in message]
+                redis_helper.save("%s_photos_message" % user.id, str(message))
             keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
         else:
-            message: Message = context.bot.send_photo(
-                chat_id=chat.id, photo=photos[0].media
-            )
-            message = [message.message_id]
+            if send_photo:
+                message: Message = context.bot.send_photo(
+                    chat_id=chat.id, photo=photos[0].media
+                )
+                message = [message.message_id]
+                redis_helper.save("%s_photos_message" % user.id, str(message))
             keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
-        redis_helper.save("%s_photos_message" % user.id, str(message))
     if len(photos) == 10:
         text += WISHLIST_PHOTO_LIMIT_REACHED
     else:
         if append:
             text += append
     logger.info(text)
-    if photos:
+    if photos and send_photo:
         context.bot.send_message(
             chat_id=chat.id,
             text=text,
@@ -304,6 +314,19 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     text: str = REQUEST_WISHLIST_PHOTO
     text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
     text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
+    messages = redis_helper.retrieve("%s_photos_message" % user.id)
+    logger.info("extracted wish_id and mesasges")
+    if messages:
+        messages = messages.decode()
+        messages = eval(messages)
+    else:
+        messages = []
+    logger.info("deleting photo messages")
+    try:
+        for m in messages:
+            context.bot.delete_message(chat_id=chat.id, message_id=m)
+    except BadRequest:
+        pass
     message: Message = context.bot.edit_message_text(
         chat_id=update.effective_chat.id,
         text=text,
@@ -331,19 +354,19 @@ def ask_for_photo(update: Update, context: CallbackContext):
     text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
     if wishlist.photos:
         text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
-    messages = redis_helper.retrieve("%s_photos_message" % user.id)
-    logger.info("extracted wish_id and mesasges")
-    if messages:
-        messages = messages.decode()
-        messages = eval(messages)
-    else:
-        messages = []
-    logger.info("deleting photo messages")
-    try:
-        for message_id in messages:
-            context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
-    except BadRequest:
-        pass
+    # messages = redis_helper.retrieve("%s_photos_message" % user.id)
+    # logger.info("extracted wish_id and mesasges")
+    # if messages:
+    #     messages = messages.decode()
+    #     messages = eval(messages)
+    # else:
+    #     messages = []
+    # logger.info("deleting photo messages")
+    # try:
+    #     for message_id in messages:
+    #         context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
+    # except BadRequest:
+    #     pass
     message: Message = context.bot.edit_message_text(
         chat_id=message.chat_id,
         text=text,
@@ -362,7 +385,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
 def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if not "go_back" in update.callback_query.data:
-        view_wishlist_photos(update, context)
+        view_wishlist_photos(update, context, send_photo=False)
     else:
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
         logger.info(f"THIS IS THE {page}")
