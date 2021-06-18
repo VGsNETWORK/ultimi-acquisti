@@ -174,6 +174,8 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     wish.save()
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     ask = "*" if not wish.description == text else ""
+    ask = "*" if removed == "1" else ask
+    ask = "*" if not update.callback_query else ask
     wish.description = text
     redis_helper.save("%s_stored_wishlist" % user.id, text)
     message = WISHLIST_HEADER
