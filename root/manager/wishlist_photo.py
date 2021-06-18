@@ -394,7 +394,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
 def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if not "go_back" in update.callback_query.data:
-        view_wishlist_photos(update, context, send_photo=False)
+        if not "sended" in update.callback_query.data:
+            view_wishlist_photos(update, context, send_photo=False)
+        else:
+            view_wishlist_photos(update, context, send_photo=True)
     else:
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
         logger.info(f"THIS IS THE {page}")

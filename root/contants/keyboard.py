@@ -635,11 +635,13 @@ def create_go_back_to_wishlist_photo_keyboard(_id: str):
 def create_cancel_wishlist_photo_keyboard(
     _id: str, sended: bool = False, photos: bool = False, page: int = 0
 ):
-    callback: str = (
-        "cancel_add_photo_%s" % _id
-        if photos
-        else "cancel_and_go_back_%s_%s" % (_id, page)
-    )
+    if photos:
+        if sended:
+            callback = "cancel_add_photo_sended_%s" % _id
+        else:
+            callback = "cancel_add_photo_%s" % _id
+    else:
+        callback = "cancel_and_go_back_%s_%s" % (_id, page)
     logger.info(callback)
     return InlineKeyboardMarkup(
         [
