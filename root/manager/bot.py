@@ -189,6 +189,7 @@ class BotManager:
 
         # self.disp.add_handler(MessageHandler(Filters.photo, extract_photo_from_message))
         self.disp.add_handler(ADD_WISHLIST_PHOTO_CONVERSATION)
+        self.disp.add_handler(ADD_IN_WISHLIST_CONVERSATION)
         self.disp.add_handler(
             MessageHandler(
                 Filters.photo,
@@ -309,7 +310,6 @@ class BotManager:
             )
         )
 
-        self.disp.add_handler(ADD_IN_WISHLIST_CONVERSATION)
         self.disp.add_handler(CommandHandler("l33t", bulk_delete))
         self.disp.add_handler(CommandHandler("cancellastorico", bulk_delete))
         self.disp.add_handler(

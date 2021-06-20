@@ -768,21 +768,21 @@ NO_ELEMENT_IN_WISHLIST = (
 
 
 WISHLIST_STEP_ONE = (
-    "<b>Step 1:</b>\n<i><b><u>Testo</u></b>  ⟶  Link  ⟶  Categoria</i>\n\n"
+    "<b>Step 1:</b>\n<i><b><u>Testo e Foto</u></b>  ⟶  Link  ⟶  Categoria</i>\n\n"
 )
 WISHLIST_STEP_TWO = (
-    "<b>Step 2:</b>\n<i>Testo  ⟶  <b><u>Link</u></b>  ⟶  Categoria</i>\n\n"
+    "<b>Step 2:</b>\n<i>Testo e Foto  ⟶  <b><u>Link</u></b>  ⟶  Categoria</i>\n\n"
 )
 WISHLIST_STEP_THREE = (
-    "<b>Step 3:</b>\n<i>Testo  ⟶  Link  ⟶  <b><u>Categoria</u></b></i>\n\n"
+    "<b>Step 3:</b>\n<i>Testo e Foto  ⟶  Link  ⟶  <b><u>Categoria</u></b></i>\n\n"
 )
 
 ADD_TO_WISHLIST_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
     " desideri:\n"
-    "   •  solo testo;\n"
-    "   •  massimo <b>128 caratteri</b>;\n"
-    "   •  testo su più righe non supportato.\n"
+    "   •  sono supportati sia del testo che un massimo di <b>10</b> foto;\n"
+    "   •  testo o didascalia di massimo <b>128 caratteri</b>;\n"
+    "   •  testo o didascalia su più righe non supportati.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
 

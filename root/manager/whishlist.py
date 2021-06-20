@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
 from logging import disable
+import operator
 import re
+from typing import List, overload
+
+from telegram.files.photosize import PhotoSize
+from telegram_utils.utils.tutils import delete_if_private
 from root.contants.constant import CATEGORIES
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.contants.messages import (
@@ -56,6 +61,134 @@ import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
+
+
+def retrieve_photos_append(user: User):
+    rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    rphotos = eval(rphotos.decode()) if rphotos else []
+    if len(rphotos) > 0:
+        append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
+    else:
+        append = ""
+    return append
+
+
+def check_message_length(
+    message_id: int,
+    chat: Chat,
+    message: str,
+    context: CallbackContext,
+    update: Update,
+    user: User,
+    wishlists: List[Wishlist],
+    is_photo: bool = False,
+):
+    if len(message) > 128:
+        redis_helper.save(
+            "%s_stored_wishlist" % user.id, update.effective_message.text[:128]
+        )
+        user_text = max_length_error_format(update.effective_message.text, 128, 200)
+        message = (
+            f"{WISHLIST_HEADER}<b>1.</b>  {user_text}{retrieve_photos_append(user)}\n"
+            f"{WISHLIST_DESCRIPTION_TOO_LONG}"
+        )
+        if wishlists:
+            message += "\n".join(
+                [
+                    (
+                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        if wish.link
+                        else f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    )
+                    for index, wish in enumerate(wishlists)
+                ]
+            )
+            message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+        else:
+            message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+        if len(message) <= 128:
+            keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
+        else:
+            keyboard = ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                text=message,
+                message_id=message_id,
+                reply_markup=keyboard,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            )
+        except BadRequest:
+            pass
+        return True
+    else:
+        if not is_photo:
+            wishlists = wishlists[:4]
+            logger.info("PAGED QUERY %s" % len(wishlists))
+            Wishlist(user_id=user.id, description=message).save()
+            message = (
+                f"{WISHLIST_HEADER}<b>1.  {message}</b>{retrieve_photos_append(user)}\n"
+                "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+            )
+            if wishlists:
+                message += "\n".join(
+                    [
+                        (
+                            f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            if wish.link
+                            else f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        )
+                        for index, wish in enumerate(wishlists)
+                    ]
+                )
+            if wishlists:
+                message += "\n"
+            message += f"\n{WISHLIST_STEP_TWO}{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
+            context.bot.edit_message_text(
+                message_id=message_id,
+                chat_id=chat.id,
+                text=message,
+                reply_markup=ADD_LINK_TO_WISHLIST_ITEM,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            )
+        else:
+            wishlists = find_wishlist_for_user(user.id, page_size=4)
+            logger.info("PAGED QUERY %s " % len(wishlists))
+            message = (
+                f"{WISHLIST_HEADER}<b>1.</b>  . . . . . .{retrieve_photos_append(user)}\n"
+                "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+            )
+            if wishlists:
+                message += "\n".join(
+                    [
+                        (
+                            f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            if wish.link
+                            else f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        )
+                        for index, wish in enumerate(wishlists)
+                    ]
+                )
+                message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+            else:
+                message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=message,
+                reply_markup=ADD_TO_WISHLIST_ABORT_KEYBOARD,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            )
+        return False
 
 
 def has_photo(wishlist: Wishlist):
@@ -243,6 +376,8 @@ def add_in_wishlist(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id
+    redis_helper.save("%s_stored_wishlist" % user.id, "")
+    redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -306,79 +441,9 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=4)
     logger.info("PAGED QUERY %s" % len(wishlists))
-    if len(message) > 128:
-        overload = True
-        redis_helper.save(
-            "%s_stored_wishlist" % user.id, update.effective_message.text[:128]
-        )
-        user_text = max_length_error_format(update.effective_message.text, 128, 200)
-        message = (
-            f"{WISHLIST_HEADER}<b>1.</b>  {user_text}\n"
-            f"{WISHLIST_DESCRIPTION_TOO_LONG}"
-        )
-        if wishlists:
-            message += "\n".join(
-                [
-                    (
-                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                        if wish.link
-                        else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                    )
-                    for index, wish in enumerate(wishlists)
-                ]
-            )
-            message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
-        else:
-            message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
-        if len(message) <= 128:
-            keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
-        else:
-            keyboard = ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD
-        try:
-            context.bot.edit_message_text(
-                chat_id=chat.id,
-                text=message,
-                message_id=message_id,
-                reply_markup=keyboard,
-                parse_mode="HTML",
-                disable_web_page_preview=True,
-            )
-        except BadRequest:
-            pass
-    else:
-        wishlists = wishlists[:4]
-        logger.info("PAGED QUERY %s" % len(wishlists))
-        Wishlist(user_id=user.id, description=message).save()
-        message = (
-            f"{WISHLIST_HEADER}<b>1.  {message}</b>\n"
-            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
-        )
-        if wishlists:
-            message += "\n".join(
-                [
-                    (
-                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                        if wish.link
-                        else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                    )
-                    for index, wish in enumerate(wishlists)
-                ]
-            )
-        if wishlists:
-            message += "\n"
-        message += f"\n{WISHLIST_STEP_TWO}{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
-        context.bot.edit_message_text(
-            message_id=message_id,
-            chat_id=chat.id,
-            text=message,
-            reply_markup=ADD_LINK_TO_WISHLIST_ITEM,
-            parse_mode="HTML",
-            disable_web_page_preview=True,
-        )
+    overload = check_message_length(
+        message_id, chat, message, context, update, user, wishlists
+    )
     return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
 
 
@@ -388,9 +453,13 @@ def add_category(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     data = update.callback_query.data
     wish: Wishlist = find_wishlist_for_user(user.id, 0, 1)
+    rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    rphotos = eval(rphotos.decode()) if rphotos else []
+    logger.info("adding [%s] photos" % rphotos)
     if wish:
         wish = wish[0]
         category = int(data.split("_")[-1])
+        wish.photos = rphotos
         wish.category = CATEGORIES[category]
         wish.save()
         view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
@@ -438,7 +507,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     wishlists = wishlists[1:5]
     if not wishlist.link:
         message = (
-            f"{WISHLIST_HEADER}<b>1.  {wishlist.description}</b>\n"
+            f"{WISHLIST_HEADER}<b>1.  {wishlist.description}</b>{retrieve_photos_append(user)}\n"
             "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
         )
     else:
@@ -479,12 +548,55 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     return ADD_CATEGORY
 
 
+def extract_photo_from_message(update: Update, context: CallbackContext):
+    logger.info("RECEIVED PHOTO")
+    message: Message = update.effective_message
+    delete_if_private(message)
+    chat: Chat = update.effective_chat
+    user: User = update.effective_user
+    photo: List[PhotoSize] = message.photo
+    if photo:
+        logger.info("Received compressed photo")
+        photo: PhotoSize = max(photo, key=operator.attrgetter("file_size"))
+        photo: str = photo.file_id
+    if not photo:
+        if message.document:
+            print("Received not compressed photo")
+            photo: str = message.document.file_id
+    rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    if rphotos:
+        rphotos = eval(rphotos.decode())
+    else:
+        rphotos = []
+    if not len(photo) == 10:
+        rphotos.append(photo)
+    redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
+    caption = message.caption
+    if caption:
+        caption: str = caption.strip()
+        caption: str = caption.split("\n")[0]
+        caption: str = re.sub(r"\s{2,}", " ", caption)
+    else:
+        caption = redis_helper.retrieve("%s_stored_wishlist" % user.id)
+        caption = caption.decode()
+    logger.info("this is the [%s] caption" % caption)
+    message_id = redis_helper.retrieve(user.id).decode()
+    wishlists = find_wishlist_for_user(user.id, page_size=4)
+    is_photo = not len(caption) > 1
+    overload = check_message_length(
+        message_id, chat, caption, context, update, user, wishlists, is_photo
+    )
+    logger.info(not caption or overload)
+    return INSERT_ITEM_IN_WISHLIST if is_photo or overload else INSERT_ZELDA
+
+
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(add_in_wishlist, pattern="add_to_wishlist"),
     ],
     states={
         INSERT_ITEM_IN_WISHLIST: [
+            MessageHandler(Filters.photo, extract_photo_from_message),
             MessageHandler(Filters.text, handle_add_confirm),
             CallbackQueryHandler(
                 callback=handle_add_confirm, pattern="keep_the_current"
