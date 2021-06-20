@@ -258,8 +258,34 @@ WISHLIST_KEYBOARD = InlineKeyboardMarkup(
     ]
 )
 
-ADD_TO_WISHLIST_ABORT_KEYBOARD = InlineKeyboardMarkup(
+ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD = InlineKeyboardMarkup(
     [
+        [
+            create_button(
+                "☑️  Inserimento ciclico",
+                "toggle_cycle_insert",
+                "toggle_cycle_insert",
+            )
+        ],
+        [
+            create_button(
+                "❌  Annulla",
+                "cancel_add_to_wishlist_NO_DELETE",
+                "cancel_add_to_wishlist_NO",
+            ),
+        ],
+    ]
+)
+
+ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "✅  Inserimento ciclico",
+                "toggle_cycle_insert",
+                "toggle_cycle_insert",
+            )
+        ],
         [
             create_button(
                 "❌  Annulla",

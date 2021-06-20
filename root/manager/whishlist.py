@@ -41,7 +41,8 @@ from root.model.wishlist import Wishlist
 from root.contants.keyboard import (
     ADDED_TO_WISHLIST_KEYBOARD,
     ADD_LINK_TO_WISHLIST_ITEM,
-    ADD_TO_WISHLIST_ABORT_KEYBOARD,
+    ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
+    ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
     build_add_wishlist_category_keyboard,
     create_delete_all_wishlist_items_keyboard,
@@ -109,7 +110,7 @@ def check_message_length(
         else:
             message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
         if len(message) <= 128:
-            keyboard = ADD_TO_WISHLIST_ABORT_KEYBOARD
+            keyboard = ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD
         else:
             keyboard = ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD
         try:
@@ -184,7 +185,7 @@ def check_message_length(
                 chat_id=chat.id,
                 message_id=message_id,
                 text=message,
-                reply_markup=ADD_TO_WISHLIST_ABORT_KEYBOARD,
+                reply_markup=ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
             )
@@ -372,12 +373,18 @@ def view_wishlist(
     )
 
 
-def add_in_wishlist(update: Update, context: CallbackContext):
+def clear_redis(user: User):
+    redis_helper.save("%s_stored_wishlist" % user.id, "")
+    redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
+
+
+def add_in_wishlist(
+    update: Update, context: CallbackContext, cycle_insert: bool = False
+):
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id
-    redis_helper.save("%s_stored_wishlist" % user.id, "")
-    redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
+    clear_redis(user)
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -407,14 +414,19 @@ def add_in_wishlist(update: Update, context: CallbackContext):
         message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
     else:
         message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
-    context.bot.edit_message_text(
-        chat_id=chat.id,
-        message_id=message_id,
-        text=message,
-        reply_markup=ADD_TO_WISHLIST_ABORT_KEYBOARD,
-        parse_mode="HTML",
-        disable_web_page_preview=True,
-    )
+    try:
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=message,
+            reply_markup=ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD
+            if not cycle_insert
+            else ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+    except BadRequest:
+        pass
     return INSERT_ITEM_IN_WISHLIST
 
 
@@ -462,6 +474,13 @@ def add_category(update: Update, context: CallbackContext):
         wish.photos = rphotos
         wish.category = CATEGORIES[category]
         wish.save()
+        cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+        if cycle_insert:
+            if len(cycle_insert) > 0:
+                cycle_insert = eval(cycle_insert.decode())
+                if cycle_insert:
+                    add_in_wishlist(update, context, cycle_insert)
+                    return INSERT_ITEM_IN_WISHLIST
         view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
         return ConversationHandler.END
 
@@ -590,6 +609,21 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     return INSERT_ITEM_IN_WISHLIST if is_photo or overload else INSERT_ZELDA
 
 
+def toggle_cycle_insert(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+    if cycle_insert:
+        if len(cycle_insert) > 0:
+            cycle_insert = eval(cycle_insert.decode())
+            cycle_insert = not cycle_insert
+        else:
+            cycle_insert = True
+    else:
+        cycle_insert = True
+    redis_helper.save("%s_cycle_insert" % user.id, str(cycle_insert))
+    add_in_wishlist(update, context, cycle_insert)
+
+
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(add_in_wishlist, pattern="add_to_wishlist"),
@@ -600,6 +634,9 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
             MessageHandler(Filters.text, handle_add_confirm),
             CallbackQueryHandler(
                 callback=handle_add_confirm, pattern="keep_the_current"
+            ),
+            CallbackQueryHandler(
+                callback=toggle_cycle_insert, pattern="toggle_cycle_insert"
             ),
         ],
         INSERT_ZELDA: [
