@@ -676,7 +676,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     logger.info("this is the [%s] caption" % caption)
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=4)
-    is_photo = not len(caption) > 1
+    is_photo = True
     overload = check_message_length(
         message_id, chat, caption, context, update, user, wishlists, is_photo
     )
