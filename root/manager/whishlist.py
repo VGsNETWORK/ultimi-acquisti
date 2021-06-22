@@ -4,6 +4,8 @@ from logging import disable
 import operator
 import re
 from typing import List, overload
+from telegram import message
+from telegram.files.inputmedia import InputMediaPhoto
 
 from telegram.files.photosize import PhotoSize
 from telegram_utils.utils.tutils import delete_if_private
@@ -232,6 +234,7 @@ def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext)
 
 def confirm_wishlist_deletion(update: Update, context: CallbackContext):
     user: User = update.effective_user
+    chat: Chat = update.effective_chat
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
         _id = update.callback_query.data.split("_")[-1]
@@ -241,6 +244,20 @@ def confirm_wishlist_deletion(update: Update, context: CallbackContext):
         if page + 1 > total_pages:
             page -= 1
         update.callback_query.data += "_%s" % page
+    message_id = redis_helper.retrieve("%s_redis_message" % user.id).decode()
+    if message_id:
+        message_id = int(message_id)
+        update.effective_message.message_id = message_id
+    messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
+    if messages:
+        messages = eval(messages)
+    else:
+        messages = []
+    for message_id in messages:
+        try:
+            context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+        except BadRequest:
+            pass
     view_wishlist(update, context)
 
 
@@ -248,6 +265,7 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id = message.message_id
     chat: Chat = update.effective_chat
+    user: User = update.effective_user
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
         _id = update.callback_query.data.split("_")[-1]
@@ -262,13 +280,18 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
                 ),
                 create_button(
                     "❌  No",
-                    f"view_wishlist_{page}",
-                    f"view_wishlist_{page}",
+                    f"cancel_remove_wishlist_{page}",
+                    f"cancel_remove_wishlist_{page}",
                 ),
             ]
         ]
         wish: Wishlist = find_wishlist_by_id(_id)
-        message = WISHLIST_HEADER
+        if wish.photos:
+            context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+        if not wish.photos:
+            text = WISHLIST_HEADER
+        else:
+            text = ""
         append = "🚮  <i>Stai per cancellare questo elemento</i>"
         if wish:
             if wish.photos:
@@ -278,19 +301,66 @@ def remove_wishlist_item(update: Update, context: CallbackContext):
             view_wishlist(update, context)
             return
         if wish.link:
-            message += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
+            text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
         else:
-            message += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
-        message += "<b>Vuoi confermare?</b>"
+            text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
+        text += "<b>Vuoi confermare?</b>"
         keyboard = InlineKeyboardMarkup(keyboard)
-        context.bot.edit_message_text(
-            chat_id=chat.id,
-            message_id=message_id,
-            text=message,
-            reply_markup=keyboard,
-            disable_web_page_preview=True,
-            parse_mode="HTML",
-        )
+        photos: List = wish.photos
+        photos = [InputMediaPhoto(media=photo) for photo in photos]
+        if len(photos) > 1:
+            message: List[Message] = context.bot.send_media_group(
+                chat_id=chat.id, media=photos
+            )
+            message = [m.message_id for m in message]
+        elif len(photos) == 1:
+            message: Message = context.bot.send_photo(
+                chat_id=chat.id, photo=photos[0].media
+            )
+            message = [message.message_id]
+        else:
+            message = []
+        redis_helper.save("%s_photos_message" % user.id, str(message))
+        if wish.photos:
+            message: Message = context.bot.send_message(
+                chat_id=chat.id,
+                text=text,
+                reply_markup=keyboard,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+            )
+        else:
+            message: Message = context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=text,
+                reply_markup=keyboard,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+            )
+        message_id: int = message.message_id
+        redis_helper.save("%s_redis_message" % user.id, message_id)
+
+
+def abort_delete_item_wishlist(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    chat: Chat = update.effective_chat
+    message_id = redis_helper.retrieve("%s_redis_message" % user.id).decode()
+    if message_id:
+        message_id = int(message_id)
+        update.effective_message.message_id = message_id
+    messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
+    logger.info(messages)
+    if messages:
+        messages = eval(messages)
+    else:
+        messages = []
+    for message_id in messages:
+        try:
+            context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+        except BadRequest:
+            pass
+    view_wishlist(update, context)
 
 
 def view_wishlist(

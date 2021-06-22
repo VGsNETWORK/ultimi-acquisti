@@ -30,6 +30,7 @@ from root.manager.user_settings import settings_toggle_purchase_tips, view_user_
 from root.manager.whishlist import (
     ADD_IN_WISHLIST_CONVERSATION,
     abort_delete_all_wishlist_elements,
+    abort_delete_item_wishlist,
     ask_delete_all_wishlist_elements,
     confirm_delete_all_wishlist_elements,
     confirm_wishlist_deletion,
@@ -194,6 +195,12 @@ class BotManager:
             MessageHandler(
                 Filters.photo,
                 lambda update, context: delete_if_private(update.effective_message),
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                abort_delete_item_wishlist, pattern="cancel_remove_wishlist"
             )
         )
 
