@@ -777,6 +777,16 @@ WISHLIST_STEP_THREE = (
     "<b>Step 3:</b>\n<i>Testo e Foto  ⟶  Link  ⟶  <b><u>Categoria</u></b></i>\n\n"
 )
 
+WISHLIST_EDIT_STEP_ONE = (
+    "<b>Step 1:</b>\n<i><b><u>Testo</u></b>  ⟶  Link  ⟶  Categoria</i>\n\n"
+)
+WISHLIST_EDIT_STEP_TWO = (
+    "<b>Step 2:</b>\n<i>Testo  ⟶  <b><u>Link</u></b>  ⟶  Categoria</i>\n\n"
+)
+WISHLIST_EDIT_STEP_THREE = (
+    "<b>Step 3:</b>\n<i>Testo  ⟶  Link  ⟶  <b><u>Categoria</u></b></i>\n\n"
+)
+
 ADD_TO_WISHLIST_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
     " desideri:\n"

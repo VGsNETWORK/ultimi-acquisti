@@ -19,9 +19,9 @@ from root.contants.messages import (
     EDIT_WISHLIST_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
-    WISHLIST_STEP_ONE,
-    WISHLIST_STEP_THREE,
-    WISHLIST_STEP_TWO,
+    WISHLIST_EDIT_STEP_ONE,
+    WISHLIST_EDIT_STEP_THREE,
+    WISHLIST_EDIT_STEP_TWO,
 )
 from root.helper.wishlist import find_wishlist_by_id
 from root.model.wishlist import Wishlist
@@ -57,7 +57,7 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
         message += f'<b>{index}</b>  <b><a href="{wish.link}"><b>{wish.description}</b></a></b>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
-    message += "\n%s%s" % (WISHLIST_STEP_ONE, EDIT_WISHLIST_PROMPT)
+    message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
     keyboard = build_edit_wishlist_desc_keyboard(_id, page, index)
     context.bot.edit_message_text(
         chat_id=chat.id,
@@ -106,7 +106,7 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
             f"{WISHLIST_HEADER}<b>1.</b>  {user_text}\n"
             f"{WISHLIST_DESCRIPTION_TOO_LONG}"
         )
-        message += "\n%s%s" % (WISHLIST_STEP_ONE, EDIT_WISHLIST_PROMPT)
+        message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
         keyboard = build_edit_wishlist_desc_keyboard(_id, page, index, True)
         redis_helper.save(
             "%s_stored_wishlist" % user.id, update.effective_message.text[:128]
@@ -122,10 +122,13 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
         else:
             message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
         if not wish.link:
-            message += "\n%s%s" % (WISHLIST_STEP_TWO, ADD_LINK_TO_WISHLIST_ITEM_MESSAGE)
+            message += "\n%s%s" % (
+                WISHLIST_EDIT_STEP_TWO,
+                ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+            )
         else:
             message += "\n%s%s" % (
-                WISHLIST_STEP_TWO,
+                WISHLIST_EDIT_STEP_TWO,
                 EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
             )
         keyboard = build_edit_wishlist_link_keyboard(_id, page, index, wish.link)
@@ -185,7 +188,10 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<i>{wish.category}</i>)\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
-    message += "\n%s%s" % (WISHLIST_STEP_THREE, EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE)
+    message += "\n%s%s" % (
+        WISHLIST_EDIT_STEP_THREE,
+        EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
+    )
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
