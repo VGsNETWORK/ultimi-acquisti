@@ -373,18 +373,23 @@ def view_wishlist(
     )
 
 
-def clear_redis(user: User):
+def clear_redis(user: User, toggle_cycle: bool = False):
     redis_helper.save("%s_stored_wishlist" % user.id, "")
     redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
+    if not toggle_cycle:
+        redis_helper.save("%s_cycle_insert" % user.id, str(False))
 
 
 def add_in_wishlist(
-    update: Update, context: CallbackContext, cycle_insert: bool = False
+    update: Update,
+    context: CallbackContext,
+    cycle_insert: bool = False,
+    toggle_cycle: bool = False,
 ):
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id
-    clear_redis(user)
+    clear_redis(user, toggle_cycle)
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -479,7 +484,7 @@ def add_category(update: Update, context: CallbackContext):
             if len(cycle_insert) > 0:
                 cycle_insert = eval(cycle_insert.decode())
                 if cycle_insert:
-                    add_in_wishlist(update, context, cycle_insert)
+                    add_in_wishlist(update, context, cycle_insert, cycle_insert)
                     return INSERT_ITEM_IN_WISHLIST
         view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
         return ConversationHandler.END
@@ -612,16 +617,20 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
 def toggle_cycle_insert(update: Update, context: CallbackContext):
     user: User = update.effective_user
     cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+    logger.info(cycle_insert)
     if cycle_insert:
         if len(cycle_insert) > 0:
             cycle_insert = eval(cycle_insert.decode())
             cycle_insert = not cycle_insert
         else:
+            logger.info("not long enough")
             cycle_insert = True
     else:
+        logger.info("not found")
         cycle_insert = True
+    logger.info(cycle_insert)
     redis_helper.save("%s_cycle_insert" % user.id, str(cycle_insert))
-    add_in_wishlist(update, context, cycle_insert)
+    add_in_wishlist(update, context, cycle_insert, True)
 
 
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(

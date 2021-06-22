@@ -20,11 +20,14 @@ from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
 
 
+def show_photo(wishlist: Wishlist):
+    return f"  •  <i>{len(wishlist.photos)} foto</i>" if wishlist.photos else ""
+
+
 def ask_confirm_deletion(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     context.bot.answer_callback_query(update.callback_query.id)
-    context.bot.delete_message(chat_id=chat.id, message_id=message.message_id)
     user: User = update.effective_user
     message_id = message.message_id
     _id = update.callback_query.data.split("_")[-1]
@@ -33,14 +36,16 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     text = ""
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
+    if wish.photos:
+        context.bot.delete_message(chat_id=chat.id, message_id=message_id)
     if not wish:
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context)
         return
     if wish.link:
-        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
+        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
     else:
-        text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
+        text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
     if not wish.photos:
         text += (
             "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
@@ -81,13 +86,23 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     else:
         mesasge = []
     redis_helper.save("%s_photos_message" % user.id, str(message))
-    message: Message = context.bot.send_message(
-        chat_id=chat.id,
-        text=text,
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-        parse_mode="HTML",
-    )
+    if wish.photos:
+        message: Message = context.bot.send_message(
+            chat_id=chat.id,
+            text=text,
+            reply_markup=keyboard,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
+    else:
+        message: Message = context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=text,
+            reply_markup=keyboard,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
     message_id: int = message.message_id
     redis_helper.save("%s_redis_message" % user.id, message_id)
 
