@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.handlers.handlers import extractor
 from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
     DELETE_ALL_WISHLIST_ITEMS_PHOTOS,
@@ -342,7 +343,12 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         chat_id=update.effective_chat.id,
         text=text,
         message_id=message_id,
-        reply_markup=create_cancel_wishlist_photo_keyboard(wish_id, True, True),
+        reply_markup=create_cancel_wishlist_photo_keyboard(
+            wish_id,
+            True,
+            True,
+            download_supported=extractor.is_supported(wishlist.link),
+        ),
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
@@ -383,7 +389,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
         text=text,
         message_id=message.message_id,
         reply_markup=create_cancel_wishlist_photo_keyboard(
-            wish_id, photos=wishlist.photos, page=page
+            wish_id,
+            photos=wishlist.photos,
+            page=page,
+            download_supported=extractor.is_supported(wishlist.link),
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -408,6 +417,41 @@ def cancel_add_photo(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+def download_photo_automatically(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    chat: Chat = update.effective_chat
+    data: str = update.callback_query.data
+    data = data.split("_")[-1]
+    wishlist: Wishlist = find_wishlist_by_id(data)
+    pictures = extractor.load_url(wishlist.link)
+    if wishlist.photos:
+        for photo in wishlist.photos:
+            if photo in pictures:
+                pictures.remove(photo)
+    pictures = pictures[:10]
+    if len(wishlist.photos) == 0:
+        wishlist.photos = pictures
+    else:
+        messages = redis_helper.retrieve("%s_photos_message" % user.id)
+        if messages:
+            messages = messages.decode()
+            messages = eval(messages)
+            try:
+                for message_id in messages:
+                    context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+            except BadRequest:
+                pass
+        total_left = 10 - len(wishlist.photos)
+        pictures = pictures[:total_left]
+        wishlist.photos = wishlist.photos + pictures
+        wishlist.photos = (
+            wishlist.photos[-1] if len(wishlist.photos) > 10 else wishlist.photos
+        )
+    wishlist.save()
+    view_wishlist_photos(update, context)
+    return ConversationHandler.END
+
+
 ADD_WISHLIST_PHOTO_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -416,7 +460,12 @@ ADD_WISHLIST_PHOTO_CONVERSATION = ConversationHandler(
         ),
     ],
     states={
-        ADD_PHOTO: [MessageHandler(Filters.photo, extract_photo_from_message)],
+        ADD_PHOTO: [
+            MessageHandler(Filters.photo, extract_photo_from_message),
+            CallbackQueryHandler(
+                download_photo_automatically, pattern="auto_download_pictures"
+            ),
+        ],
     },
     fallbacks=[
         CallbackQueryHandler(

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.helper import keyboard
 from root.helper.wishlist import count_all_wishlist_elements_for_user
 from root.contants.constant import CATEGORIES
 from root.model.user import User
@@ -663,7 +664,11 @@ def create_go_back_to_wishlist_photo_keyboard(_id: str):
 
 
 def create_cancel_wishlist_photo_keyboard(
-    _id: str, sended: bool = False, photos: bool = False, page: int = 0
+    _id: str,
+    sended: bool = False,
+    photos: bool = False,
+    page: int = 0,
+    download_supported: bool = False,
 ):
     if photos:
         if sended:
@@ -673,17 +678,27 @@ def create_cancel_wishlist_photo_keyboard(
     else:
         callback = "cancel_and_go_back_%s_%s" % (_id, page)
     logger.info(callback)
-    return InlineKeyboardMarkup(
+    keyboard = [
         [
+            create_button(
+                "❌  Annulla" if not sended else "✅  Concludi inserimento",
+                callback,
+                None,
+            )
+        ]
+    ]
+    if download_supported:
+        keyboard.insert(
+            0,
             [
                 create_button(
-                    "❌  Annulla" if not sended else "✅  Concludi inserimento",
-                    callback,
+                    "⬇️  Scarica dal web",
+                    "auto_download_pictures_%s" % _id,
                     None,
                 )
-            ]
-        ]
-    )
+            ],
+        )
+    return InlineKeyboardMarkup(keyboard)
 
 
 def create_delete_all_wishlist_items_keyboard(page: int = 0):

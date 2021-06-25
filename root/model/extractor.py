@@ -15,7 +15,23 @@ class Extractor:
     def add_handler(self, handler: ExtractorHandler):
         self.handlers.append(handler)
 
+    def is_supported(self, url: str):
+        if url:
+            return next(
+                (
+                    handler.match in url
+                    for handler in self.handlers
+                    if handler.match in url
+                ),
+                False,
+            )
+        return False
+
     def load_url(self, url: str):
+        if not url:
+            return []
+        if not url.startswith("http"):
+            url = "https://%s" % url
         handler: ExtractorHandler = next(
             (handler for handler in self.handlers if handler.match in url), None
         )

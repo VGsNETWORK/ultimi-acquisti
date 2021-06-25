@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup as bs4
 from root.model.extractor_handler import ExtractorHandler
 
 
-MATCH: str = "multiplayer.com/"
+MATCH: str = "multiplayer.com"
 
 
 def load_picture(data: bs4):

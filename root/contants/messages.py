@@ -824,9 +824,10 @@ EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
 )
 
 SUPPORTED_LINKS_MESSAGE = (
-    "🆕  Da oggi i seguenti siti supportano il download automatico delle foto:\n"
-    "•  GameStop.it\n"
-    "•  Multiplayer.com"
+    "🆕  Da oggi i seguenti siti supportano il download automatico delle foto:\n\n"
+    "•  GameStop.it;\n"
+    "•  Multiplayer.com.\n\n"
+    "Aggiungi ora un prodotto e lascia che sia io a occuparmi delle scartoffie!"
 )
 
 EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
