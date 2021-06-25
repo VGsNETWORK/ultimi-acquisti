@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-
-from logging import disable
+# region
 import operator
 import re
-from typing import List, overload
-from telegram import message
+from typing import List
 from telegram.files.inputmedia import InputMediaPhoto
 
 from telegram.files.photosize import PhotoSize
@@ -19,6 +17,7 @@ from root.contants.messages import (
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
+    SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_STEP_ONE,
@@ -41,7 +40,6 @@ from root.helper.wishlist import (
 )
 from root.model.wishlist import Wishlist
 from root.contants.keyboard import (
-    ADDED_TO_WISHLIST_KEYBOARD,
     ADD_LINK_TO_WISHLIST_ITEM,
     ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
@@ -62,6 +60,9 @@ from telegram.message import Message
 from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
+from root.handlers.handlers import extractor
+
+# endregion
 
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
@@ -584,6 +585,21 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         if wishlist:
             wishlist = wishlist[0]
             wishlist.link = message.text if message.text else message.caption
+            pictures = extractor.load_url(wishlist.link)
+            rphotos: List[str] = redis_helper.retrieve(
+                "%s_%s_photos" % (user.id, user.id)
+            )
+            if rphotos:
+                rphotos = eval(rphotos.decode())
+            else:
+                rphotos = []
+            if len(pictures) > 0:
+                total_left = 10 - len(rphotos)
+                pictures = pictures[:total_left]
+                rphotos = rphotos + pictures
+                rphotos = rphotos[-1] if len(rphotos) > 10 else rphotos
+                redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
+            logger.info("THESE ARE THE PICTURES %s" % pictures)
             wishlist.link = extract_first_link_from_message(update.effective_message)
             logger.info(wishlist.link)
             if "/" in wishlist.link:
@@ -703,6 +719,13 @@ def toggle_cycle_insert(update: Update, context: CallbackContext):
     add_in_wishlist(update, context, cycle_insert, True)
 
 
+def show_step_two_toast(update: Update, context: CallbackContext):
+    context.bot.answer_callback_query(
+        update.callback_query.id, text=SUPPORTED_LINKS_MESSAGE, show_alert=True
+    )
+    return INSERT_ZELDA
+
+
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(add_in_wishlist, pattern="add_to_wishlist"),
@@ -720,6 +743,9 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
         ],
         INSERT_ZELDA: [
             MessageHandler(Filters.entity("url"), handle_insert_for_link),
+            CallbackQueryHandler(
+                callback=show_step_two_toast, pattern="show_step_2_advance"
+            ),
             CallbackQueryHandler(
                 callback=handle_insert_for_link, pattern="skip_add_link_to_wishlist"
             ),

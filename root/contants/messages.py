@@ -823,6 +823,12 @@ EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
 )
 
+SUPPORTED_LINKS_MESSAGE = (
+    "🆕  Da oggi i seguenti siti supportano il download automatico delle foto:\n"
+    "•  GameStop.it\n"
+    "•  Multiplayer.com"
+)
+
 EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
     "Seleziona una nuova categoria per il tuo elemento, oppure conferma quella attuale:"
 )

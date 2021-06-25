@@ -417,6 +417,7 @@ def create_user_settings_keyboard(user: User):
 ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
     [
         [create_button("⏩  Salta passaggio", "skip_add_link_to_wishlist", None)],
+        [create_button("⚡️ Funzioni avanzate", "show_step_2_advance", None)],
         [create_button("❌  Annulla", "cancel_add_to_wishlist", None)],
     ],
 )
