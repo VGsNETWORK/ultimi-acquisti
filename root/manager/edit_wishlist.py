@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from typing import List
+from root.handlers.handlers import extractor
 from root.contants.constant import CATEGORIES
 from root.manager.whishlist import view_wishlist
 from root.util.util import extract_first_link_from_message, max_length_error_format
@@ -169,6 +171,17 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         logger.info(link)
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
+        if not "remove_link" in update.callback_query.data:
+            pictures = extractor.load_url(link)
+            pictures = pictures[:10]
+        else:
+            pictures = []
+    else:
+        pictures = extractor.load_url(link)
+        pictures = pictures[:10]
+    redis_helper.save("%s_%s_photos" % (user.id, user.id), str(pictures))
+    logger.info("THESE ARE THE PICTURES %s" % pictures)
+    if update.callback_query:
         if "remove_link" in update.callback_query.data:
             removed = "1"
             redis_helper.save("%s_removed_link" % user.id, removed)
@@ -228,6 +241,9 @@ def edit_category(update: Update, context: CallbackContext):
         wish.link = ""
     wish.description = text
     wish.category = CATEGORIES[category]
+    rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    rphotos = eval(rphotos.decode()) if rphotos else None
+    wish.photos = rphotos if rphotos else wish.photos
     wish.save()
     cancel_edit_wishlist(update, context)
     return ConversationHandler.END
