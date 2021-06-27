@@ -159,6 +159,7 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         _id = update.callback_query.data.split("_")[-1]
         page = int(update.callback_query.data.split("_")[-2])
         index = update.callback_query.data.split("_")[-3]
+        link = None
     else:
         context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         message_id = redis_helper.retrieve(user.id).decode()
@@ -172,8 +173,11 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
         if not "remove_link" in update.callback_query.data:
-            pictures = extractor.load_url(link)
-            pictures = pictures[:10]
+            if link:
+                pictures = extractor.load_url(link)
+                pictures = pictures[:10]
+            else:
+                pictures = []
         else:
             pictures = []
     else:

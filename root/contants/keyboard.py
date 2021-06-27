@@ -321,14 +321,28 @@ def create_wishlist_keyboard(
     wishlists: List[Wishlist],
     first_page: bool,
     last_page: bool,
+    inc: int = 0,
 ):
     keyboard = [
         [
             create_button("➕  Aggiungi elemento", "add_to_wishlist", "add_to_wishlist"),
         ],
     ]
+    if wishlists:
+        wishlists = list(wishlists)
+        wish = wishlists[-1]
+        last = str(((wishlists.index(wish)) + (5 * page + 1)) + inc)
+        wish = wishlists[0]
+        first = str(0 + (5 * page + 1) + inc)
+        add_space = len(last) > len(first)
+    else:
+        add_space = False
     for index, wishlist in enumerate(wishlists):
         index = "%s." % ((index) + (5 * page + 1))
+        if index == "%s." % last:
+            space = ""
+        else:
+            space = "  " if add_space else ""
         url = (
             "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
             f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wishlist.description)}%25"
@@ -350,7 +364,7 @@ def create_wishlist_keyboard(
             photos = " 0️⃣  " if not wishlist.photos else " %s  " % icon
         keyboard.append(
             [
-                create_button(index, "empty_button", None),
+                create_button(f"{space}{index}", "empty_button", None),
                 create_button(
                     "%s🖼" % photos,
                     photo_callback,

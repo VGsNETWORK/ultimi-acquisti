@@ -412,18 +412,34 @@ def view_wishlist(
                 message += f"<b>1.</b>  {wish.description}\n{append}\n\n"
         else:
             inc = 0
-        message += "\n".join(
-            [
-                (
-                    f'<b>{((index) + (5 * page + 1)) + inc}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                    if wish.link
-                    else f"<b>{((index) + (5 * page + 1)) + inc}.</b>  {wish.description}\n"
+        msgs = []
+        if wishlists:
+            wishlists = list(wishlists)
+            wish = wishlists[-1]
+            last = str(((wishlists.index(wish)) + (5 * page + 1)) + inc)
+            wish = wishlists[0]
+            first = str(0 + (5 * page + 1) + inc)
+            add_space = len(last) > len(first)
+        else:
+            add_space = False
+        for index, wish in enumerate(wishlists):
+            index = ((index) + (5 * page + 1)) + inc
+            if index == int(last):
+                space = ""
+            else:
+                space = "  " if add_space else ""
+            if wish.link:
+                m = (
+                    f'<b>{space}{index}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
                     f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
-                for index, wish in enumerate(wishlists)
-            ]
-        )
+            else:
+                m = (
+                    f"<b>{space}{index}.</b>  {wish.description}\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                )
+            msgs.append(m)
+        message += "\n".join(msgs)
         if append:
             wishlists.insert(0, wish)
     else:
@@ -437,7 +453,7 @@ def view_wishlist(
         message_id=message_id,
         text=message,
         reply_markup=create_wishlist_keyboard(
-            page, total_pages, wishlists, first_page, last_page
+            page, total_pages, wishlists, first_page, last_page, inc
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,

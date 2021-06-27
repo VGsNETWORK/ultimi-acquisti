@@ -791,8 +791,8 @@ ADD_TO_WISHLIST_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
     " desideri:\n"
     "   •  sono supportati sia del testo che un massimo di <b>10</b> foto;\n"
-    "   •  testo o didascalia di massimo <b>128 caratteri</b>;\n"
-    "   •  testo o didascalia su più righe non supportati.\n"
+    "   •  testo di massimo <b>128 caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
 
@@ -878,7 +878,7 @@ ASK_FOR_CONVERT_WISHLIST = (
     "<i>Questa azione è irreversibile, "
     "e <b><u>cancellerà sia l'elemento che le sue "
     "foto</u></b> dalla lista dei desideri.</i>\n"
-    "⚠️  <i>Dal momento che il template di acquisto che "
+    "⚠️  <i>Dal mof is for family intro songmento che il template di acquisto che "
     "verrà creato se procedi <b><u>non può ereditare delle "
     "foto</u></b>, ti ho inviato qui sopra tutte quelle che hai "
     "aggiunto per questo elemento per darti la possibilità "
