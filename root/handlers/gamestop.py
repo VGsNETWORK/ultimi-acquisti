@@ -2,7 +2,7 @@
 
 from bs4 import BeautifulSoup as bs4
 from root.model.extractor_handler import ExtractorHandler
-
+import telegram_utils.utils.logger as logger
 
 MATCH: str = "gamestop.it"
 
@@ -16,4 +16,10 @@ def load_picture(data: bs4):
     return pictures
 
 
-gamestop_handler: ExtractorHandler = ExtractorHandler(MATCH, load_picture)
+def validate(data: bs4):
+    data = data.find("fieldset", {"class": "err404"})
+    logger.info(data)
+    return False if data else True
+
+
+gamestop_handler: ExtractorHandler = ExtractorHandler(MATCH, load_picture, validate)

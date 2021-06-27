@@ -7,3 +7,4 @@ from dataclasses import dataclass
 class ExtractorHandler:
     match: str
     load_picture: callable
+    validate: callable

@@ -124,6 +124,7 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
     if wish.link:
         wish_description = '<a href="%s">%s</a>' % (wish.link, wish_description)
         url += f"%0A%0A{quote(wish.link)}"
+    url += "%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
     wish.delete()
     keyboard = InlineKeyboardMarkup(
         [

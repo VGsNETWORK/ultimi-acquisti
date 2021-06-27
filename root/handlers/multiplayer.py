@@ -13,4 +13,9 @@ def load_picture(data: bs4):
     return [picture["href"] for picture in pictures]
 
 
-multiplayer_handler: ExtractorHandler = ExtractorHandler(MATCH, load_picture)
+def validate(data: bs4):
+    data = data.find("div", {"class": "tout1_404_4Tell"})
+    return False if data else True
+
+
+multiplayer_handler: ExtractorHandler = ExtractorHandler(MATCH, load_picture, validate)
