@@ -17,6 +17,7 @@ from root.contants.messages import (
     EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_WISHLIST_PROMPT,
+    SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_EDIT_STEP_ONE,
@@ -242,6 +243,13 @@ def cancel_edit_wishlist(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+def show_step_two_toast(update: Update, context: CallbackContext):
+    context.bot.answer_callback_query(
+        update.callback_query.id, text=SUPPORTED_LINKS_MESSAGE, show_alert=True
+    )
+    return EDIT_ZELDA
+
+
 EDIT_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -263,6 +271,9 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
             ),
         ],
         EDIT_ZELDA: [
+            CallbackQueryHandler(
+                callback=show_step_two_toast, pattern="show_step_2_advance"
+            ),
             MessageHandler(Filters.entity("url"), edit_wishlist_link),
             CallbackQueryHandler(
                 callback=edit_wishlist_link, pattern="keep_current_link"

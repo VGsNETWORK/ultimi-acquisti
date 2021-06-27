@@ -482,6 +482,9 @@ def build_edit_wishlist_link_keyboard(
             ],
         )
     keyboard.append(
+        [create_button("⚡️ Funzioni avanzate", "show_step_2_advance", None)]
+    )
+    keyboard.append(
         [
             create_button(
                 "❌  Annulla",
