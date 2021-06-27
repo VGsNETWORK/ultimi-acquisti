@@ -9,7 +9,10 @@ MATCH: str = "multiplayer.com"
 
 def load_picture(data: bs4):
     pictures = data.find("div", {"id": "row-image-gallery"})
-    pictures = pictures.findAll("a", {"data-gallery": "#gallery"})
+    if pictures:
+        pictures = pictures.findAll("a", {"data-gallery": "#gallery"})
+    else:
+        pictures = data.findAll("a", {"class": "main-image"})
     return [picture["href"] for picture in pictures]
 
 
