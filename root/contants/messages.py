@@ -857,9 +857,9 @@ EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE = (
 
 SUPPORTED_LINKS_MESSAGE = (
     "🆕  Da oggi i seguenti siti supportano il download automatico delle foto:\n\n"
-    "   •  GameStop.it ;\n"
-    "   •  Multiplayer.com .\n\n"
-    "Aggiungi ora un prodotto e lascia che sia io a occuparmi delle scartoffie!"
+    "  •  GameStop.it ;\n"
+    "  •  Multiplayer.com .\n\n"
+    "Aggiungi ora un link al prodotto e lascia che sia io a occuparmi delle scartoffie!"
 )
 
 EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
@@ -869,7 +869,9 @@ EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
 ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
     "   •  sono ammessi solamente link;\n"
-    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
+    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle foto</i>,"
+    " sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album."
 )
 
 ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una categoria per il tuo elemento:"
