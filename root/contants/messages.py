@@ -790,7 +790,27 @@ WISHLIST_EDIT_STEP_THREE = (
 ADD_TO_WISHLIST_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
     " desideri:\n"
+    "   •  sono supportati sia del testo che altre <b>%s</b> foto;\n"
+    "   •  se hai delle foto da aggiungere, assicurati di inserirle tutte prima del testo;\n"
+    "   •  testo di massimo <b>128 caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
+)
+
+ADD_TO_WISHLIST_START_PROMPT = (
+    "Inserisci l'elemento da aggiungere alla lista dei"
+    " desideri:\n"
     "   •  sono supportati sia del testo che un massimo di <b>10</b> foto;\n"
+    "   •  se hai delle foto da aggiungere, assicurati di inserirle tutte prima del testo;\n"
+    "   •  testo di massimo <b>128 caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
+)
+
+ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT = (
+    "Inserisci l'elemento da aggiungere alla lista dei"
+    " desideri:\n"
+    "   •  sono supportati sia del testo <s>che un massimo di 10 foto</s>;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
@@ -820,7 +840,19 @@ USER_SETTINGS_MESSAGE = (
 EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
     "   •  sono ammessi solamente link;\n"
-    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo."
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
+    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
+    "automatico delle foto</i>, <u><b>tutte le foto attualmente salvate per questo elemento"
+    " verranno sostituite da quelle nuove</b></u>."
+)
+
+EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE = (
+    "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
+    "   •  sono ammessi solamente link;\n"
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
+    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
+    "automatico delle foto</i>, <u><b>tutte le foto attualmente salvate per questo elemento"
+    " verranno sostituite da quelle nuove</b></u>."
 )
 
 SUPPORTED_LINKS_MESSAGE = (

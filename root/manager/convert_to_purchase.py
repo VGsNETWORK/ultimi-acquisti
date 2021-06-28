@@ -33,11 +33,13 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     _id = update.callback_query.data.split("_")[-1]
     page = int(update.callback_query.data.split("_")[-2])
     index = update.callback_query.data.split("_")[-3]
-    text = ""
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
     wish: Wishlist = find_wishlist_by_id(_id)
     if wish.photos:
+        text = ""
         context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+    else:
+        text = WISHLIST_HEADER
     if not wish:
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context)

@@ -13,7 +13,9 @@ from root.contants.messages import (
     ADDED_TO_WISHLIST,
     ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+    ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
+    ADD_TO_WISHLIST_START_PROMPT,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
@@ -88,6 +90,11 @@ def check_message_length(
     is_photo: bool = False,
 ):
     if len(message) > 128:
+        rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+        if rphotos:
+            rphotos = eval(rphotos.decode())
+        else:
+            rphotos = []
         redis_helper.save(
             "%s_stored_wishlist" % user.id, update.effective_message.text[:128]
         )
@@ -109,9 +116,19 @@ def check_message_length(
                     for index, wish in enumerate(wishlists)
                 ]
             )
-            message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+            append = (
+                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                if len(rphotos) < 10
+                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+            )
+            message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
         else:
-            message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+            append = (
+                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                if len(rphotos) < 10
+                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+            )
+            message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
         if len(message) <= 128:
             keyboard = ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD
         else:
@@ -168,6 +185,13 @@ def check_message_length(
                 f"{WISHLIST_HEADER}<b>1.</b>  . . . . . .{retrieve_photos_append(user)}\n"
                 "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
             )
+            rphotos: List[str] = redis_helper.retrieve(
+                "%s_%s_photos" % (user.id, user.id)
+            )
+            if rphotos:
+                rphotos = eval(rphotos.decode())
+            else:
+                rphotos = []
             if wishlists:
                 message += "\n".join(
                     [
@@ -181,9 +205,19 @@ def check_message_length(
                         for index, wish in enumerate(wishlists)
                     ]
                 )
-                message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+                append = (
+                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                    if len(rphotos) < 10
+                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                )
+                message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
             else:
-                message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+                append = (
+                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                    if len(rphotos) < 10
+                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                )
+                message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
             context.bot.edit_message_text(
                 chat_id=chat.id,
                 message_id=message_id,
@@ -477,6 +511,7 @@ def add_in_wishlist(
     user: User = update.effective_user
     message_id = message.message_id
     clear_redis(user, toggle_cycle)
+    rphotos = []
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -503,9 +538,20 @@ def add_in_wishlist(
                 for index, wish in enumerate(wishlists)
             ]
         )
-        message += "\n\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+        logger.info(len(rphotos))
+        append = (
+            ADD_TO_WISHLIST_START_PROMPT
+            if len(rphotos) < 10
+            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+        )
+        message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
     else:
-        message += "\n%s%s" % (WISHLIST_STEP_ONE, ADD_TO_WISHLIST_PROMPT)
+        append = (
+            ADD_TO_WISHLIST_START_PROMPT
+            if len(rphotos) < 10
+            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+        )
+        message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
     try:
         context.bot.edit_message_text(
             chat_id=chat.id,
@@ -695,6 +741,8 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         rphotos = eval(rphotos.decode())
     else:
         rphotos = []
+    if len(rphotos) == 10:
+        return INSERT_ITEM_IN_WISHLIST
     if not len(photo) == 10:
         rphotos.append(photo)
     redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
