@@ -878,7 +878,7 @@ ASK_FOR_CONVERT_WISHLIST = (
     "<i>Questa azione è irreversibile, "
     "e <b><u>cancellerà sia l'elemento che le sue "
     "foto</u></b> dalla lista dei desideri.</i>\n"
-    "⚠️  <i>Dal mof is for family intro songmento che il template di acquisto che "
+    "⚠️  <i>Dal momento che il template di acquisto che "
     "verrà creato se procedi <b><u>non può ereditare delle "
     "foto</u></b>, ti ho inviato qui sopra tutte quelle che hai "
     "aggiunto per questo elemento per darti la possibilità "
