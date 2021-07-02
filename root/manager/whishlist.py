@@ -420,7 +420,10 @@ def view_wishlist(
                 except BadRequest:
                     pass
     if not page:
-        page = int(update.callback_query.data.split("_")[-1])
+        if update.callback_query:
+            page = int(update.callback_query.data.split("_")[-1])
+        else:
+            page = 0
     else:
         page = int(page)
         message_id = redis_helper.retrieve(user.id).decode()
@@ -482,16 +485,27 @@ def view_wishlist(
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
-    context.bot.edit_message_text(
-        chat_id=chat.id,
-        message_id=message_id,
-        text=message,
-        reply_markup=create_wishlist_keyboard(
-            page, total_pages, wishlists, first_page, last_page, inc
-        ),
-        parse_mode="HTML",
-        disable_web_page_preview=True,
-    )
+    if update.callback_query:
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=message,
+            reply_markup=create_wishlist_keyboard(
+                page, total_pages, wishlists, first_page, last_page, inc
+            ),
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+    else:
+        context.bot.send_message(
+            chat_id=chat.id,
+            text=message,
+            reply_markup=create_wishlist_keyboard(
+                page, total_pages, wishlists, first_page, last_page, inc
+            ),
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
 
 
 def clear_redis(user: User, toggle_cycle: bool = False):
