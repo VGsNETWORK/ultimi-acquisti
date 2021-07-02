@@ -967,4 +967,15 @@ AD_MESSAGE_THREE = (
     f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
 )
 
-ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE]
+AD_MESSAGE_FOUR = (
+    "Quest'anno avresti tanto voluto fare quella cosa... "
+    "sai bene a cosa mi riferisco... quella cosa lì che tieni in pausa da anni!\n"
+    "Lancia subito il comando <code>/spesaannuale</code> per fare il punto"
+    " della situazione e vedere se ci riuscirai! Tifo per te 🤞🏻!\n\n\n"
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando, "
+    f'<a href="t.me/{BOT_NAME}?start=command_list_6">clicca qui</a> e poi su "<b>AVVIA</b>".</i>\n\n'
+    "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
+)
+
+ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE, AD_MESSAGE_FOUR]
