@@ -47,7 +47,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         params (str): the params passed to the /start command
     """
     params = params.rstrip().lstrip()
-    if params == "command_list":
+    if "command_list" in params:
         append_commands(update, context)
     if params == "start":
         message: Message = update.message if update.message else update.edited_message
@@ -183,7 +183,16 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         message: Message = callback.message
     else:
         message: Message = update.effective_message
+        try:
+            page: int = int(message.text.split("_")[-1])
+            page -= 1
+        except Exception:
+            page = 0
     max_pages = len(START_COMMANDS_LIST)
+    if page > max_pages - 1:
+        page = max_pages - 1
+    elif page < 0:
+        page = 0
     keyboard = InlineKeyboardMarkup(
         [
             [
