@@ -2,8 +2,12 @@
 
 """ File that contains the class to start the bot with the bot api """
 
+from datetime import date, datetime, time
 import os
-from re import A
+from random import random
+import random
+from root.manager.advertisement_handler import command_send_advertisement
+from telegram_utils.utils.misc import environment
 
 from telegram_utils.utils.tutils import delete_if_private
 from root.manager.wishlist_photo import (
@@ -178,6 +182,36 @@ class BotManager:
     def add_handler(self):
         """Add handlers for the various operations"""
         rating = Rating()
+
+        self.disp.job_queue.stop()
+        try:
+            hours = [10, 12, 15, 17]
+            whens = [time(hour=h, minute=0) for h in hours]
+            groups = retrieve_key("AD_GROUPS")
+            if not groups:
+                logger.error("empty ad groups")
+                groups = []
+            else:
+                groups = eval(groups)
+            days = [1, 4, 8, 12, 17, 23, 26, 30]
+
+            for i in range(0, len(groups)):
+                # fmt: off
+                group = random.choice(groups); groups.remove(group)
+                when = random.choice(whens); whens.remove(when)
+                # fmt: on
+                for i in range(0, 2):
+                    day = random.choice(days)
+                    days.remove(day)
+                    self.disp.job_queue.run_monthly(
+                        callback="", context={"group": group}, day=day, when=when
+                    )
+        except Exception as e:
+            logger.error(e)
+        logger.info("adding ad test command")
+        if is_develop():
+            logger.info("adding ad test command")
+            self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
@@ -387,6 +421,13 @@ class BotManager:
                 "start",
                 year_purchase,
                 Filters.regex("yearly_expense"),
+            )
+        )
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                view_wishlist,
+                Filters.regex("wishlist"),
             )
         )
         self.disp.add_handler(CommandHandler("start", handle_start))

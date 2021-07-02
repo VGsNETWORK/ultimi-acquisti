@@ -841,9 +841,8 @@ EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
     "   •  sono ammessi solamente link;\n"
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
-    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
-    "automatico delle foto</i>, <u><b>tutte le foto attualmente salvate per questo elemento"
-    " verranno sostituite da quelle nuove</b></u>."
+    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
+    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album."
 )
 
 EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE = (
@@ -940,3 +939,25 @@ DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (
     "🚮  <i>Stai per cancellare <b>tutte le foto</b> aggiunte per <b>%s</b>.</i>\n\n"
     "<b>Vuoi confermare?</b>"
 )
+
+AD_MESSAGE_ONE = (
+    "Sapevi che puoi <b>registrare e tracciare i tuoi acquisti</b> in questo gruppo?\n"
+    "Per farlo ti basta inviare un messaggio di qualsiasi tipo (testo, foto compressa "
+    'o non, file, etc.) contenente l\'<b>hashtag</b> "<code>#ultimiacquisti</code>"!\n\n'
+    "💡 <i>Per maggiori informazioni sul mio funzionamento, "
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a>.</i>'
+)
+
+AD_MESSAGE_TWO = (
+    "Ehi tu... sì, proprio tu col portafogli bucato... "
+    "scommetto che ti farebbe comodo un modo per <b>annotare gli "
+    "articoli che ti interessano</b> senza il timore di perderli... "
+    "beh, non disperare: da oggi puoi farlo!\n"
+    f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> '
+    '(e, nella schermata seguente, su "<b>AVVIA</b>") per imbrigliare '
+    "il tuo prossimo affare!\n\n\n"
+    "<i>Per maggiori informazioni sul mio funzionamento, invece, "
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a>.</i>'
+)
+
+ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO]

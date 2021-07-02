@@ -139,7 +139,7 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
                 append,
             )
         else:
-            if wish.photos:
+            if not wish.photos:
                 append = EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE
             else:
                 append = EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE
