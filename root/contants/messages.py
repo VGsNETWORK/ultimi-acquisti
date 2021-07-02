@@ -942,22 +942,29 @@ DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (
 
 AD_MESSAGE_ONE = (
     "Sapevi che puoi <b>registrare e tracciare i tuoi acquisti</b> in questo gruppo?\n"
-    "Per farlo ti basta inviare un messaggio di qualsiasi tipo (testo, foto compressa "
-    'o non, file, etc.) contenente l\'<b>hashtag</b> "<code>#ultimiacquisti</code>"!\n\n'
+    "Per farlo ti basta inviare un messaggio di qualsiasi tipo (testo, foto compressa o "
+    'non, file, etc.) contenente l\'<b>hashtag</b> "<code>#ultimiacquisti</code>"!\n\n\n'
     "💡 <i>Per maggiori informazioni sul mio funzionamento, "
-    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a>.</i>'
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
 )
 
 AD_MESSAGE_TWO = (
     "Ehi tu... sì, proprio tu col portafogli bucato... "
-    "scommetto che ti farebbe comodo un modo per <b>annotare gli "
-    "articoli che ti interessano</b> senza il timore di perderli... "
-    "beh, non disperare: da oggi puoi farlo!\n"
-    f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> '
-    '(e, nella schermata seguente, su "<b>AVVIA</b>") per imbrigliare '
-    "il tuo prossimo affare!\n\n\n"
+    "scommetto che ti farebbe comodo un modo per <b>annotare gli articoli che ti interessano</b> "
+    "senza il timore di perderli... beh, non disperare: da oggi puoi farlo!\n"
+    f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> (e poi su "<b>AVVIA</b>") '
+    "per imbrigliare il tuo prossimo affare!\n\n\n"
     "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
-    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a>.</i>'
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
 )
 
-ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO]
+AD_MESSAGE_THREE = (
+    "Come dici? La voce interiore della tua coscienza si sta chiedendo se questo mese ce la farai a pagare le bollette?\n"
+    "Riafferra ORA il <b>controllo delle tue finanze</b> con il comando <code>/spesamensile</code>!\n\n\n"
+    "💡 <i>Per maggiori informazioni sull'utilizzo di questo comando, "
+    f'<a href="t.me/{BOT_NAME}?start=command_list_3">clicca qui</a> e poi su "<b>AVVIA</b>".</i>\n\n'
+    "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
+    f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
+)
+
+ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE]

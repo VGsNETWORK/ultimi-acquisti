@@ -99,6 +99,9 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
         text = message.text
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
+        if "from_category" in update.callback_query.data:
+            text = wish.description
+    if update.callback_query:
         if "keep_current_description" in update.callback_query.data:
             text = wish.description
         if "confirm_description_mod" in update.callback_query.data:
@@ -279,6 +282,16 @@ def show_step_two_toast(update: Update, context: CallbackContext):
     return EDIT_ZELDA
 
 
+def go_back(update: Update, context: CallbackContext):
+    if update.callback_query:
+        if "from_link" in update.callback_query.data:
+            edit_wishlist_item(update, context)
+            return EDIT_WISHLIST_TEXT
+        elif "from_category" in update.callback_query.data:
+            edit_wishlist_description(update, context)
+            return EDIT_ZELDA
+
+
 EDIT_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -311,12 +324,14 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
                 callback=edit_wishlist_link,
                 pattern="remove_link",
             ),
+            CallbackQueryHandler(callback=go_back, pattern="go_back_from_link"),
         ],
         EDIT_CATEGORY: [
             CallbackQueryHandler(
                 callback=edit_category,
                 pattern="edit_category",
             ),
+            CallbackQueryHandler(callback=go_back, pattern="go_back_from_category"),
         ],
     },
     fallbacks=[

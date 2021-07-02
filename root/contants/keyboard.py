@@ -504,6 +504,15 @@ def build_edit_wishlist_link_keyboard(
     keyboard.append(
         [
             create_button(
+                "↩️  Torna indietro",
+                "go_back_from_link_%s_%s_%s" % (index, page, _id),
+                None,
+            )
+        ]
+    )
+    keyboard.append(
+        [
+            create_button(
                 "❌  Annulla",
                 "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
                 None,
@@ -599,6 +608,15 @@ def build_edit_wishlist_category_keyboard(
             create_button(
                 others,
                 "edit_category_%s_%s_%s_%s" % (0, index, page, _id),
+                None,
+            )
+        ]
+    )
+    keyboard.append(
+        [
+            create_button(
+                "↩️  Torna indietro",
+                "go_back_from_category_%s_%s_%s" % (index, page, _id),
                 None,
             )
         ]
