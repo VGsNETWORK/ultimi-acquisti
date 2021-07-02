@@ -956,7 +956,7 @@ AD_MESSAGE_TWO = (
     f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> '
     '(e, nella schermata seguente, su "<b>AVVIA</b>") per imbrigliare '
     "il tuo prossimo affare!\n\n\n"
-    "<i>Per maggiori informazioni sul mio funzionamento, invece, "
+    "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
     f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a>.</i>'
 )
 

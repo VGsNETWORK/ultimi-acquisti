@@ -149,6 +149,7 @@ def check_message_length(
         if not is_photo:
             wishlists = wishlists[:4]
             logger.info("PAGED QUERY %s" % len(wishlists))
+            logger.info("SAVING IT PLEASE")
             Wishlist(user_id=user.id, description=message).save()
             message = (
                 f"{WISHLIST_HEADER}<b>1.  {message}</b>{retrieve_photos_append(user)}\n"
@@ -480,6 +481,7 @@ def view_wishlist(
         if append:
             wishlists.insert(0, wish)
     else:
+        inc = 0
         message = NO_ELEMENT_IN_WISHLIST
     message = "%s%s" % (WISHLIST_HEADER, message)
     first_page = page + 1 == 1
@@ -592,6 +594,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
         message: str = message.strip()
         message: str = message.split("\n")[0]
         message: str = re.sub(r"\s{2,}", " ", message)
+        redis_helper.save("%s_stored_wishlist" % user.id, message)
     else:
         message = redis_helper.retrieve("%s_stored_wishlist" % user.id)
         message = message.decode()
@@ -604,6 +607,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     overload = False
     message_id = redis_helper.retrieve(user.id).decode()
     wishlists = find_wishlist_for_user(user.id, page_size=4)
+    logger.info(f"THIS IS THE {message}")
     logger.info("PAGED QUERY %s" % len(wishlists))
     overload = check_message_length(
         message_id, chat, message, context, update, user, wishlists
@@ -805,6 +809,20 @@ def show_step_two_toast(update: Update, context: CallbackContext):
     return INSERT_ZELDA
 
 
+def go_back(update: Update, context: CallbackContext):
+    wish: Wishlist = find_wishlist_for_user(update.effective_user.id, 0, 1)
+    if wish:
+        wish = wish[0]
+        wish.delete()
+    if update.callback_query:
+        if "from_link" in update.callback_query.data:
+            add_in_wishlist(update, context)
+            return INSERT_ITEM_IN_WISHLIST
+        elif "from_category" in update.callback_query.data:
+            handle_add_confirm(update, context)
+            return INSERT_ZELDA
+
+
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(add_in_wishlist, pattern="add_to_wishlist"),
@@ -828,12 +846,14 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
             CallbackQueryHandler(
                 callback=handle_insert_for_link, pattern="skip_add_link_to_wishlist"
             ),
+            CallbackQueryHandler(callback=go_back, pattern="go_back_from_link"),
         ],
         ADD_CATEGORY: [
             CallbackQueryHandler(
                 callback=add_category,
                 pattern="add_category",
             ),
+            CallbackQueryHandler(callback=go_back, pattern="go_back_from_category"),
         ],
     },
     fallbacks=[

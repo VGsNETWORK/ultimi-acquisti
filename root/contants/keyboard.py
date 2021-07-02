@@ -432,7 +432,10 @@ def create_user_settings_keyboard(user: User):
 ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
     [
         [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
-        [create_button("⏩  Salta passaggio", "skip_add_link_to_wishlist", None)],
+        [
+            create_button("↩️  Torna indietro", "go_back_from_link", None),
+            create_button("⏩  Salta passaggio", "skip_add_link_to_wishlist", None),
+        ],
         [create_button("❌  Annulla", "cancel_add_to_wishlist", None)],
     ],
 )
@@ -543,6 +546,7 @@ def build_add_wishlist_category_keyboard():
                 None,
             )
         ],
+        [create_button("↩️  Torna indietro", "go_back_from_category", None)],
         [
             create_button(
                 "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
