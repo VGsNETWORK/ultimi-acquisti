@@ -49,6 +49,9 @@ def edit_wishlist_item(update: Update, context: CallbackContext):
     message_id = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    if update.callback_query:
+        if "from_link" in update.callback_query.data:
+            redis_helper.save("%s_%s_user_link" % (user.id, user.id), "")
     redis_helper.save(user.id, message_id)
     _id = update.callback_query.data.split("_")[-1]
     page = int(update.callback_query.data.split("_")[-2])
@@ -105,7 +108,6 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
                 text = text.decode()
             else:
                 text = wish.description
-            logger.info(text)
     if update.callback_query:
         if "keep_current_description" in update.callback_query.data:
             text = wish.description
@@ -186,6 +188,7 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         index = data.split("_")[-3]
         link = message.text if message.text else message.caption
         link = extract_first_link_from_message(update.effective_message)
+        redis_helper.save("%s_%s_user_link" % (user.id, user.id), link)
         logger.info(link)
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
@@ -213,7 +216,6 @@ def edit_wishlist_link(update: Update, context: CallbackContext):
         removed = "0"
         redis_helper.save("%s_removed_link" % user.id, removed)
         wish.link = link
-    wish.save()
     text = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     ask = "*" if not wish.description == text else ""
     ask = "*" if removed == "1" else ask
@@ -265,6 +267,9 @@ def edit_category(update: Update, context: CallbackContext):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else None
     wish.photos = rphotos if rphotos else wish.photos
+    link = redis_helper.retrieve("%s_%s_user_link" % (user.id, user.id))
+    if link:
+        wish.link = link.decode()
     wish.save()
     cancel_edit_wishlist(update, context)
     return ConversationHandler.END
