@@ -482,10 +482,15 @@ def build_edit_wishlist_link_keyboard(
     keyboard = [
         [
             create_button(
+                "↩️  Torna indietro",
+                "go_back_from_link_%s_%s_%s" % (index, page, _id),
+                None,
+            ),
+            create_button(
                 "⏩  Salta passaggio",
                 "keep_current_link_%s_%s_%s" % (index, page, _id),
                 None,
-            )
+            ),
         ]
     ]
     keyboard.insert(
@@ -501,15 +506,6 @@ def build_edit_wishlist_link_keyboard(
                 )
             ],
         )
-    keyboard.append(
-        [
-            create_button(
-                "↩️  Torna indietro",
-                "go_back_from_link_%s_%s_%s" % (index, page, _id),
-                None,
-            )
-        ]
-    )
     keyboard.append(
         [
             create_button(
