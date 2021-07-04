@@ -811,13 +811,27 @@ def show_step_two_toast(update: Update, context: CallbackContext):
 
 
 def go_back(update: Update, context: CallbackContext):
+    user: User = update.effective_user
     wish: Wishlist = find_wishlist_for_user(update.effective_user.id, 0, 1)
     if wish:
         wish = wish[0]
         wish.delete()
     if update.callback_query:
         if "from_link" in update.callback_query.data:
-            add_in_wishlist(update, context)
+            cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+            if cycle_insert:
+                if len(cycle_insert) > 0:
+                    cycle_insert = eval(cycle_insert.decode())
+                else:
+                    logger.info("not long enough")
+                    cycle_insert = False
+            else:
+                logger.info("not found")
+                cycle_insert = False
+            logger.info(cycle_insert)
+            add_in_wishlist(
+                update, context, toggle_cycle=cycle_insert, cycle_insert=cycle_insert
+            )
             return INSERT_ITEM_IN_WISHLIST
         elif "from_category" in update.callback_query.data:
             handle_add_confirm(update, context)
