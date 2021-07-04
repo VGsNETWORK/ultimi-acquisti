@@ -18,6 +18,7 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_START_PROMPT,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
+    EDIT_WISHLIST_LINK_NO_PHOTOS,
     NO_ELEMENT_IN_WISHLIST,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -170,7 +171,8 @@ def check_message_length(
                 )
             if wishlists:
                 message += "\n"
-            message += f"\n{WISHLIST_STEP_TWO}{ADD_LINK_TO_WISHLIST_ITEM_MESSAGE}"
+            append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
+            message += f"\n{WISHLIST_STEP_TWO}{append}"
             context.bot.edit_message_text(
                 message_id=message_id,
                 chat_id=chat.id,

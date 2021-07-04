@@ -840,18 +840,18 @@ USER_SETTINGS_MESSAGE = (
 EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
     "   •  sono ammessi solamente link;\n"
-    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
-    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
-    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album."
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo%s."
 )
 
-EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE = (
-    "Se vuoi che il tuo elemento riporti a una pagina web diversa da quella precedente, puoi inserirne ora il link:\n"
-    "   •  sono ammessi solamente link;\n"
-    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
-    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
+EDIT_WISHLIST_LINK_EXISTING_PHOTOS = (
+    ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
     "automatico delle foto</i>, <u><b>tutte le foto attualmente salvate per questo elemento"
-    " verranno sostituite da quelle nuove</b></u>."
+    " verranno sostituite da quelle nuove</b></u>"
+)
+
+EDIT_WISHLIST_LINK_NO_PHOTOS = (
+    ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
+    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album"
 )
 
 SUPPORTED_LINKS_MESSAGE = (
@@ -868,9 +868,7 @@ EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
 ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
     "   •  sono ammessi solamente link;\n"
-    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo;\n"
-    "   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle foto</i>,"
-    " sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album."
+    "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo%s."
 )
 
 ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una categoria per il tuo elemento:"

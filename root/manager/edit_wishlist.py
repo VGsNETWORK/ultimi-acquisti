@@ -18,7 +18,8 @@ from root.contants.messages import (
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
-    EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE,
+    EDIT_WISHLIST_LINK_EXISTING_PHOTOS,
+    EDIT_WISHLIST_LINK_NO_PHOTOS,
     EDIT_WISHLIST_PROMPT,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -139,24 +140,16 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
             message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
         else:
             message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
+
         if not wish.link:
-            if wish.photos:
-                append = EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE
-            else:
-                append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE
-            message += "\n%s%s" % (
-                WISHLIST_EDIT_STEP_TWO,
-                append,
-            )
+            append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE
         else:
-            if not wish.photos:
-                append = EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE
-            else:
-                append = EDIT_LINK_TO_WISHLIST_PHOTOS_ITEM_MESSAGE
-            message += "\n%s%s" % (
-                WISHLIST_EDIT_STEP_TWO,
-                append,
-            )
+            append = EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE
+        if wish.photos:
+            append = append % EDIT_WISHLIST_LINK_EXISTING_PHOTOS
+        else:
+            append = append % EDIT_WISHLIST_LINK_NO_PHOTOS
+        message += f"\n{WISHLIST_EDIT_STEP_TWO}{append}"
         keyboard = build_edit_wishlist_link_keyboard(_id, page, index, wish.link)
     context.bot.edit_message_text(
         chat_id=chat.id,
