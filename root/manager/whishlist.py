@@ -704,7 +704,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         )
     else:
         message = (
-            f'{WISHLIST_HEADER}<b>1.  <a href="{wishlist.link}">{wishlist.description}</a></b>\n'
+            f'{WISHLIST_HEADER}<b>1.  <a href="{wishlist.link}">{wishlist.description}</a></b>{retrieve_photos_append(user)}\n'
             "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
         )
     if wishlists:
