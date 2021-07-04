@@ -977,3 +977,9 @@ AD_MESSAGE_FOUR = (
 )
 
 ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE, AD_MESSAGE_FOUR]
+
+
+MALFORMED_VALID_LINK = (
+    "\n\n\n⚠️  <i>Il dominio web inserito supporta il <b>download automatico delle foto</b>,"
+    " ma la pagina indicata è inesistente oppure non conforme al pattern richiesto.</i>"
+)

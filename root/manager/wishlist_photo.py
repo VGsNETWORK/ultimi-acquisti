@@ -4,6 +4,7 @@ from root.handlers.handlers import extractor
 from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
     DELETE_ALL_WISHLIST_ITEMS_PHOTOS,
+    MALFORMED_VALID_LINK,
     REQUEST_WISHLIST_PHOTO,
     SINGLE_WISHLIST_PHOTO_ADDED,
     VIEW_WISHLIST_PHOTO_MESSAGE,
@@ -371,6 +372,8 @@ def ask_for_photo(update: Update, context: CallbackContext):
     text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
     if wishlist.photos:
         text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
+    if not extractor.validate_url(wishlist.link):
+        text += MALFORMED_VALID_LINK
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
     # if messages:
