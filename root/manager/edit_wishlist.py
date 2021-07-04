@@ -100,7 +100,12 @@ def edit_wishlist_description(update: Update, context: CallbackContext):
     wish: Wishlist = find_wishlist_by_id(_id)
     if update.callback_query:
         if "from_category" in update.callback_query.data:
-            text = wish.description
+            text = redis_helper.retrieve("%s_stored_wishlist" % user.id)
+            if text:
+                text = text.decode()
+            else:
+                text = wish.description
+            logger.info(text)
     if update.callback_query:
         if "keep_current_description" in update.callback_query.data:
             text = wish.description
