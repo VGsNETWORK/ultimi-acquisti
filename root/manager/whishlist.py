@@ -523,6 +523,7 @@ def add_in_wishlist(
     cycle_insert: bool = False,
     toggle_cycle: bool = False,
 ):
+    logger.info("received add to wishlist")
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id

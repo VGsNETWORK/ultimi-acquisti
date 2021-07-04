@@ -4,6 +4,8 @@
 
 import random
 from datetime import datetime
+
+from telegram.chat import Chat
 from root.manager.start import back_to_the_start
 from root.contants.keyboard import send_command_to_group_keyboard
 from pyrogram.types.user_and_chats.chat_member import ChatMember
@@ -51,6 +53,7 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         context (CallbackContext): The context of the telegram bot
     """
     message: Message = update.message if update.message else update.edited_message
+    chat: Chat = update.effective_chat
     command: str = message.text.split(" ")[0]
     command = command.split("@")[0]
     keyboard = send_command_to_group_keyboard(command)
@@ -64,8 +67,8 @@ def delete_purchase(update: Update, context: CallbackContext) -> None:
         create_user(user)
     user_id = user.id
     first_name = user.first_name
-    chat_type = message.chat.type
-    if message.chat.type == "private":
+    chat_type = chat.type
+    if chat_type == "private":
         sender.delete_previous_message(
             message.from_user.id, message.message_id + 1, chat_id, context
         )
@@ -212,6 +215,9 @@ def deleted_purchase_message(client: Client, messages: List[PyroMessage]) -> Non
     titles = []
     purchase_messages = 0
     for message in messages:
+        if not message.chat:
+            chat_id = None
+            continue
         message_id = message.message_id
         if purchase_helper.purchase_exists(message_id, message.chat.id):
             purchase_messages += 1
