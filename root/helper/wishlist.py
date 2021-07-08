@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 
-from mongoengine.errors import DoesNotExist
-from root.model.wishlist import Wishlist
+from typing import List
+
 import telegram_utils.utils.logger as logger
+from mongoengine.errors import DoesNotExist
 from pymongo.command_cursor import CommandCursor
+from root.helper.user_helper import change_wishlist
+from root.model import user, wishlist
+from root.model.wishlist import Wishlist
+from root.model.wishlist_element import WishlistElement
 
 
 def find_wishlist_by_id(_id: str):
@@ -14,30 +19,58 @@ def find_wishlist_by_id(_id: str):
         return
 
 
-def remove_wishlist_item_for_user(_id: str):
+def create_wishlist(description: str, title: str, user_id: int):
+    Wishlist(description=description, title=title, user_id=user_id).save()
+
+
+def create_wishlist_if_empty(user_id: int):
+    logger.info("creating wishlist")
     try:
-        Wishlist.objects().get(id=_id).delete()
+        wishlists = Wishlist.objects().filter(user_id=user_id)
+        if len(wishlists) == 0:
+            logger.info("CREATING WISHLIST FOR USER %s" % user_id)
+            wish = Wishlist(
+                title="La mia Lista",
+                user_id=user_id,
+                description="",
+                default_wishlist=True,
+            ).save()
+            change_wishlist(user_id, str(wish.id))
+            assign_all_wishlist_elements(user_id, str(wish.id))
+            return True
+        return False
+    except Exception as e:
+        return False
+
+
+def assign_all_wishlist_elements(user_id: int, wishlist_id: str):
+    elements: List[WishlistElement] = WishlistElement.objects().filter(user_id=user_id)
+    logger.info("CHANGING %s with [%s] for %s" % (len(elements), wishlist_id, user_id))
+    for element in elements:
+        logger.info("OLD [%s] - NEW [%s]" % (wishlist_id, element.wishlist_id))
+        element.wishlist_id = wishlist_id
+        logger.info("OLD [%s] - NEW [%s]" % (wishlist_id, element.wishlist_id))
+        element.save()
+
+
+def find_default_wishlist(user_id: int):
+    try:
+        return Wishlist.objects().get(user_id=user_id, default_wishlist=True)
+    except DoesNotExist:
+        return None
+
+
+def remove_wishlist_for_user(_id: str, user_id: int):
+    try:
+        wish: Wishlist = Wishlist.objects().get(id=_id)
+        if not wish.default_wishlist:
+            wish.delete()
     except DoesNotExist:
         return
 
 
-def delete_all_wishlist_for_user(user_id: int):
-    try:
-        for element in Wishlist.objects().filter(user_id=user_id):
-            element.delete()
-    except Exception:
-        return
-
-
-def count_all_wishlist_elements_for_user(user_id: int):
+def count_all_wishlists_for_user(user_id: int):
     return len(Wishlist.objects().filter(user_id=user_id))
-
-
-def delete_wishlist_photos(wish_id: str):
-    wish: Wishlist = find_wishlist_by_id(wish_id)
-    if wish:
-        wish.photos = []
-        wish.save()
 
 
 def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
@@ -59,32 +92,3 @@ def find_wishlist_for_user(user_id: int, page: int = 0, page_size: int = 5):
         .limit(page_size)
     )
     return wish
-
-
-def add_photo(_id: str, photo: str):
-    wish: Wishlist = find_wishlist_by_id(_id)
-    if wish:
-        if len(wish.photos) < 10:
-            wish.photos.insert(0, photo)
-            wish.save()
-        else:
-            raise ValueError("max photo size reached")
-
-
-def remove_photo(_id: str, photo: str):
-    wish: Wishlist = find_wishlist_by_id(_id)
-    if wish:
-        wish.photos.remove(photo)
-        wish.save()
-
-
-def count_all_wishlists_photos(user_id: int):
-    query = [
-        {"$match": {"user_id": user_id, "photos": {"$ne": None}}},
-        {"$group": {"_id": "$user_id", "total": {"$sum": {"$size": "$photos"}}}},
-    ]
-    cursor: CommandCursor = Wishlist.objects().aggregate(query)
-    total = 0
-    for user in cursor:
-        total = user["total"]
-    return total

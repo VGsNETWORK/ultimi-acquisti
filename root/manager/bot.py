@@ -6,43 +6,51 @@ from datetime import date, datetime, time
 import os
 from random import random
 import random
+from root.manager.view_other_wishlists import (
+    ADD_NEW_WISHLIST,
+    view_other_wishlists,
+)
+from root.manager.wishlist_elements_middleware import (
+    ask_delete_wishlist_list,
+    change_current_wishlist,
+    confirm_delete_wishlist_list,
+)
 from root.manager.advertisement_handler import command_send_advertisement
 from telegram_utils.utils.misc import environment
 
 from telegram_utils.utils.tutils import delete_if_private
-from root.manager.wishlist_photo import (
+from root.manager.wishlist_element_photo import (
     ADD_WISHLIST_PHOTO_CONVERSATION,
-    abort_delete_all_wishlist_photos,
-    ask_delete_all_wishlist_photos,
-    confirm_delete_all_wishlist_photos,
-    delete_photos_and_go_to_wishlist,
-    delete_wishlist_photo,
+    abort_delete_all_wishlist_element_photos,
+    ask_delete_all_wishlist_element_photos,
+    confirm_delete_all_wishlist_element_photos,
+    delete_photos_and_go_to_wishlist_element,
+    delete_wishlist_element_photo,
     extract_photo_from_message,
-    view_wishlist_photos,
+    view_wishlist_element_photos,
 )
-from root.manager.edit_wishlist import EDIT_WISHLIST_CONVERSATION
+from root.manager.edit_wishlist_element import EDIT_WISHLIST_CONVERSATION
 from root.contants.messages import (
     MONTHLY_REPORT_POPUP_MESSAGE,
     YEARLY_REPORT_POPUP_MESSAGE,
 )
 from root.manager.convert_to_purchase import (
     ask_confirm_deletion,
-    wishlist_confirm_convertion,
+    wishlist_element_confirm_convertion,
 )
 from root.manager.retrieve_purchase import update_purchases_for_chat
 from root.manager.user_settings import settings_toggle_purchase_tips, view_user_settings
-from root.manager.whishlist import (
+from root.manager.wishlist_element import (
     ADD_IN_WISHLIST_CONVERSATION,
     abort_delete_all_wishlist_elements,
-    abort_delete_item_wishlist,
+    abort_delete_item_wishlist_element,
     ask_delete_all_wishlist_elements,
     confirm_delete_all_wishlist_elements,
-    confirm_wishlist_deletion,
-    remove_wishlist_item,
+    confirm_wishlist_element_deletion,
+    remove_wishlist_element_item,
     view_wishlist,
 )
 from root.manager.bulk_delete import bulk_delete, cancel_bulk_delete
-import telegram
 from telegram.ext.messagehandler import MessageHandler
 
 from telegram.ext.pollanswerhandler import PollAnswerHandler
@@ -222,6 +230,12 @@ class BotManager:
             )
         )
 
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="view_other_wishlists", callback=view_other_wishlists
+            )
+        )
+
         # self.disp.add_handler(MessageHandler(Filters.photo, extract_photo_from_message))
         self.disp.add_handler(ADD_WISHLIST_PHOTO_CONVERSATION)
         self.disp.add_handler(ADD_IN_WISHLIST_CONVERSATION)
@@ -234,28 +248,48 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                abort_delete_item_wishlist, pattern="cancel_remove_wishlist"
+                change_current_wishlist, pattern="change_current_wishlist"
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="ask_delete_all_wishlist_photos",
-                callback=ask_delete_all_wishlist_photos,
+                ask_delete_wishlist_list,
+                pattern="ask_delete_wishlist_and_elements",
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="confirm_delete_all_wishlist_photos",
-                callback=confirm_delete_all_wishlist_photos,
+                confirm_delete_wishlist_list, pattern="confirm_delete_wishlist_list"
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="abort_delete_all_wishlist_photos",
-                callback=abort_delete_all_wishlist_photos,
+                abort_delete_item_wishlist_element,
+                pattern="cancel_remove_wishlist_element",
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="ask_delete_all_wishlist_element_photos",
+                callback=ask_delete_all_wishlist_element_photos,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="confirm_delete_all_wishlist_element_photos",
+                callback=confirm_delete_all_wishlist_element_photos,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="abort_delete_all_wishlist_element_photos",
+                callback=abort_delete_all_wishlist_element_photos,
             )
         )
 
@@ -268,41 +302,43 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="confirm_delete_all_wishlist",
+                pattern="confirm_delete_all_wishlist_element",
                 callback=confirm_delete_all_wishlist_elements,
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="abort_delete_all_wishlist",
+                pattern="abort_delete_all_wishlist_element",
                 callback=abort_delete_all_wishlist_elements,
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="go_back_from_wishlist_photos",
-                callback=delete_photos_and_go_to_wishlist,
+                pattern="go_back_from_wishlist_element_photos",
+                callback=delete_photos_and_go_to_wishlist_element,
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="delete_wishlist_photo",
-                callback=delete_wishlist_photo,
+                pattern="delete_wishlist_element_photo",
+                callback=delete_wishlist_element_photo,
             )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="view_wishlist_photo", callback=view_wishlist_photos
+                pattern="view_wishlist_element_photo",
+                callback=view_wishlist_element_photos,
             )
         )
 
         self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
+        self.disp.add_handler(ADD_NEW_WISHLIST)
         self.disp.add_handler(
             CommandHandler(
                 "start",
@@ -321,7 +357,7 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="delete_wish_and_create_purchase_link",
-                callback=wishlist_confirm_convertion,
+                callback=wishlist_element_confirm_convertion,
             )
         )
 
@@ -347,7 +383,8 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                confirm_wishlist_deletion, pattern="confirm_remove_wishlist"
+                confirm_wishlist_element_deletion,
+                pattern="confirm_remove_wishlist_element",
             )
         )
 
@@ -363,12 +400,14 @@ class BotManager:
         )
 
         self.disp.add_handler(
-            CallbackQueryHandler(callback=view_wishlist, pattern="view_wishlist")
+            CallbackQueryHandler(
+                callback=view_wishlist, pattern="view_wishlist_element"
+            )
         )
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                callback=remove_wishlist_item, pattern="remove_wishlist"
+                callback=remove_wishlist_element_item, pattern="remove_wishlist_element"
             )
         )
 
@@ -427,7 +466,7 @@ class BotManager:
             CommandHandler(
                 "start",
                 view_wishlist,
-                Filters.regex("wishlist"),
+                Filters.regex("wishlist_element"),
             )
         )
         self.disp.add_handler(CommandHandler("start", handle_start))

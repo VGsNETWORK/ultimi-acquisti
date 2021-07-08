@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
 
 from mongoengine.errors import DoesNotExist
-from root.model.wishlist import Wishlist
+from root.model.wishlist_element import WishlistElement
 
 
-def find_wishlist_by_id(_id: str):
+def find_wishlist_element_by_id(_id: str):
     try:
-        wish: Wishlist = Wishlist.objects().get(id=_id)
+        wish: WishlistElement = WishlistElement.objects().get(id=_id)
         wish.photos.reverse()
         return wish
     except DoesNotExist:
         return
 
 
-def remove_wishlist_item_for_user(_id: str):
+def remove_wishlist_element_item_for_user(_id: str):
     try:
-        Wishlist.objects().get(id=_id).delete()
+        WishlistElement.objects().get(id=_id).delete()
     except DoesNotExist:
         return
 
 
-def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
-    total_products = Wishlist.objects().filter(user_id=user_id).count() / page_size
+def get_total_wishlist_element_pages_for_user(user_id: int, page_size: int = 5):
+    total_products = (
+        WishlistElement.objects().filter(user_id=user_id).count() / page_size
+    )
     if int(total_products) == 0:
         return 1
     elif int(total_products) < total_products:
@@ -30,10 +32,10 @@ def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
         return int(total_products)
 
 
-def find_wishlist_for_user(user_id: int, page: int = 0, page_size: int = 5):
+def find_wishlist_element_for_user(user_id: int, page: int = 0, page_size: int = 5):
 
-    wish: Wishlist = (
-        Wishlist.objects()
+    wish: WishlistElement = (
+        WishlistElement.objects()
         .filter(user_id=user_id)
         .order_by("-creation_date")
         .skip(page * page_size)

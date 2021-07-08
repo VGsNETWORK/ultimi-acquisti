@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
 
+from root.helper.user_helper import get_current_wishlist_id
+from root.helper.wishlist import find_wishlist_by_id
+from root.model.wishlist import Wishlist
 from telegram.error import BadRequest
 from root.contants.messages import ASK_FOR_CONVERT_WISHLIST, WISHLIST_HEADER
 from typing import List
 
 from telegram.files.inputmedia import InputMediaPhoto
 from root.model.user import User
-from root.manager.whishlist import view_wishlist
+from root.manager.wishlist_element import view_wishlist
 from urllib.parse import quote
-from root.helper.wishlist import find_wishlist_by_id
-from root.model.wishlist import Wishlist
+from root.helper.wishlist_element import find_wishlist_element_by_id
+from root.model.wishlist_element import WishlistElement
 from root.util.util import create_button
 from telegram import Update
 from telegram.chat import Chat
@@ -20,8 +23,12 @@ from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
 
 
-def show_photo(wishlist: Wishlist):
-    return f"  •  <i>{len(wishlist.photos)} foto</i>" if wishlist.photos else ""
+def show_photo(wishlist_element: WishlistElement):
+    return (
+        f"  •  <i>{len(wishlist_element.photos)} foto</i>"
+        if wishlist_element.photos
+        else ""
+    )
 
 
 def ask_confirm_deletion(update: Update, context: CallbackContext):
@@ -34,12 +41,15 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     page = int(update.callback_query.data.split("_")[-2])
     index = update.callback_query.data.split("_")[-3]
     append = "🔄  <i>Stai per convertire questo elemento in un acquisto</i>"
-    wish: Wishlist = find_wishlist_by_id(_id)
+    wish: WishlistElement = find_wishlist_element_by_id(_id)
     if wish.photos:
         text = ""
         context.bot.delete_message(chat_id=chat.id, message_id=message_id)
     else:
-        text = WISHLIST_HEADER
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        text = WISHLIST_HEADER % title
     if not wish:
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context)
@@ -67,8 +77,8 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
             [
                 create_button(
                     "❌  Annulla",
-                    f"view_wishlist_convert_{page}",
-                    f"view_wishlist_convert_{page}",
+                    f"view_wishlist_element_convert_{page}",
+                    f"view_wishlist_element_convert_{page}",
                 ),
             ],
         ]
@@ -109,14 +119,14 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     redis_helper.save("%s_redis_message" % user.id, message_id)
 
 
-def wishlist_confirm_convertion(update: Update, context: CallbackContext):
+def wishlist_element_confirm_convertion(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     message_id = message.message_id
     context.bot.answer_callback_query(update.callback_query.id)
     user: User = update.effective_user
     _id = update.callback_query.data.split("_")[-1]
-    wish: Wishlist = find_wishlist_by_id(_id)
+    wish: WishlistElement = find_wishlist_element_by_id(_id)
     page = int(update.callback_query.data.split("_")[-2])
     wish_description = "<b>%s</b>" % wish.description
     url = (
@@ -141,13 +151,17 @@ def wishlist_confirm_convertion(update: Update, context: CallbackContext):
             [
                 create_button(
                     "↩️  Torna indietro",
-                    f"view_wishlist_{page}",
-                    f"view_wishlist_{page}",
+                    f"view_wishlist_element_{page}",
+                    f"view_wishlist_element_{page}",
                 ),
             ],
         ]
     )
-    message = WISHLIST_HEADER
+    wishlist_id = get_current_wishlist_id(user.id)
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    title = f"{wishlist.title.upper()}  –  "
+    text = WISHLIST_HEADER % title
+    message = WISHLIST_HEADER % title
     message += (
         "😃  Link di acquisto per <b>%s</b> creato!\n\nPuoi registrare il tuo nuovo acquisto"
         " premendo il tasto sottostante e selezionando un gruppo <b><u>dove sono presente</u></b>."

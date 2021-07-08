@@ -19,3 +19,4 @@ class User(BaseModel):
     user_id = IntField(required=True, unique=True)
     is_admin = BooleanField(default=False)
     show_purchase_tips = BooleanField(default=True)
+    current_wishlist = StringField(default="")

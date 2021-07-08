@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+from root.helper import wishlist_element
+from root.helper.wishlist import count_all_wishlists_for_user
+from root.model.wishlist import Wishlist
 from root.helper import keyboard
-from root.helper.wishlist import count_all_wishlist_elements_for_user
+from root.helper.wishlist_element import count_all_wishlist_elements_for_user
 from root.contants.constant import CATEGORIES
 from root.model.user import User
 from typing import List
-from root.model.wishlist import Wishlist
+from root.model.wishlist_element import WishlistElement
 from root.model.user_rating import UserRating
 from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
@@ -243,7 +246,11 @@ def bulk_delete_keyboard(step: int):
 ADDED_TO_WISHLIST_KEYBOARD = InlineKeyboardMarkup(
     [
         [
-            create_button("↩️  Torna indietro", "view_wishlist_0", "view_wishlist_0"),
+            create_button(
+                "↩️  Torna indietro",
+                "view_wishlist_element_0",
+                "view_wishlist_element_0",
+            ),
         ],
     ]
 )
@@ -251,7 +258,11 @@ ADDED_TO_WISHLIST_KEYBOARD = InlineKeyboardMarkup(
 WISHLIST_KEYBOARD = InlineKeyboardMarkup(
     [
         [
-            create_button("➕  Aggiungi elemento", "add_to_wishlist", "add_to_wishlist"),
+            create_button(
+                "➕  Aggiungi elemento",
+                "add_to_wishlist_element",
+                "add_to_wishlist_element",
+            ),
         ],
         [
             create_button("↩️  Torna indietro", "cancel_rating", "cancel_rating"),
@@ -271,8 +282,8 @@ ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD = InlineKeyboardMarkup(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_NO_DELETE",
-                "cancel_add_to_wishlist_NO",
+                "cancel_add_to_wishlist_element_NO_DELETE",
+                "cancel_add_to_wishlist_element_NO",
             ),
         ],
     ]
@@ -290,8 +301,8 @@ ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD = InlineKeyboardMarkup(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_NO_DELETE",
-                "cancel_add_to_wishlist_NO",
+                "cancel_add_to_wishlist_element_NO_DELETE",
+                "cancel_add_to_wishlist_element_NO",
             ),
         ],
     ]
@@ -307,37 +318,41 @@ ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD = InlineKeyboardMarkup(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_NO_DELETE",
-                "cancel_add_to_wishlist_NO",
+                "cancel_add_to_wishlist_element_NO_DELETE",
+                "cancel_add_to_wishlist_element_NO",
             ),
         ],
     ]
 )
 
 
-def create_wishlist_keyboard(
+def create_wishlist_element_keyboard(
     page: int,
     total_pages: int,
-    wishlists: List[Wishlist],
+    wishlist_elements: List[WishlistElement],
     first_page: bool,
     last_page: bool,
     inc: int = 0,
 ):
     keyboard = [
         [
-            create_button("➕  Aggiungi elemento", "add_to_wishlist", "add_to_wishlist"),
+            create_button(
+                "➕  Aggiungi elemento",
+                "add_to_wishlist_element",
+                "add_to_wishlist_element",
+            ),
         ],
     ]
-    if wishlists:
-        wishlists = list(wishlists)
-        wish = wishlists[-1]
-        last = str(((wishlists.index(wish)) + (5 * page + 1)) + inc)
-        wish = wishlists[0]
+    if wishlist_elements:
+        wishlist_elements = list(wishlist_elements)
+        wish = wishlist_elements[-1]
+        last = str(((wishlist_elements.index(wish)) + (5 * page + 1)) + inc)
+        wish = wishlist_elements[0]
         first = str(0 + (5 * page + 1) + inc)
         add_space = len(last) > len(first)
     else:
         add_space = False
-    for index, wishlist in enumerate(wishlists):
+    for index, wishlist_element in enumerate(wishlist_elements):
         index = "%s." % ((index) + (5 * page + 1))
         if index == "%s." % last:
             space = ""
@@ -345,23 +360,33 @@ def create_wishlist_keyboard(
             space = "  " if add_space else ""
         url = (
             "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
-            f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wishlist.description)}%25"
+            f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wishlist_element.description)}%25"
         )
-        if wishlist.link:
-            url += f"%0A%0A{quote(wishlist.link)}"
-        photos = " ➕ " if not wishlist.photos else "%s  " % len(wishlist.photos)
-        if wishlist.photos and len(wishlist.photos) < 10:
+        if wishlist_element.link:
+            url += f"%0A%0A{quote(wishlist_element.link)}"
+        photos = (
+            " ➕ "
+            if not wishlist_element.photos
+            else "%s  " % len(wishlist_element.photos)
+        )
+        if wishlist_element.photos and len(wishlist_element.photos) < 10:
             photos = "   %s" % photos
-        if wishlist.photos:
-            photo_callback: str = "view_wishlist_photo_%s_%s" % (page, wishlist.id)
+        if wishlist_element.photos:
+            photo_callback: str = "view_wishlist_element_photo_%s_%s" % (
+                page,
+                wishlist_element.id,
+            )
         else:
-            photo_callback: str = "ask_for_wishlist_photo_%s_%s" % (page, wishlist.id)
+            photo_callback: str = "ask_for_wishlist_element_photo_%s_%s" % (
+                page,
+                wishlist_element.id,
+            )
         # I hate that they are not aligned
-        if wishlist.user_id == 84872221:
+        if wishlist_element.user_id == 84872221:
             btns = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
-            icon = len(wishlist.photos) - 1
+            icon = len(wishlist_element.photos) - 1
             icon = btns[icon]
-            photos = " 0️⃣  " if not wishlist.photos else " %s  " % icon
+            photos = " 0️⃣  " if not wishlist_element.photos else " %s  " % icon
         keyboard.append(
             [
                 create_button(f"{space}{index}", "empty_button", None),
@@ -372,25 +397,31 @@ def create_wishlist_keyboard(
                 ),
                 create_button(
                     "✏️",
-                    "edit_wishlist_item_%s_%s_%s" % (index, page, wishlist.id),
+                    "edit_wishlist_element_item_%s_%s_%s"
+                    % (index, page, wishlist_element.id),
                     None,
                 ),
                 create_button(
                     "🤍  🔄  🛍",
-                    "convert_to_purchase_%s_%s_%s" % (index, page, wishlist.id),
+                    "convert_to_purchase_%s_%s_%s" % (index, page, wishlist_element.id),
                     None,
                 ),
                 create_button(
-                    "🗑", "remove_wishlist_%s_%s_%s" % (index, page, wishlist.id), None
+                    "🗑",
+                    "remove_wishlist_element_%s_%s_%s"
+                    % (index, page, wishlist_element.id),
+                    None,
                 ),
             ]
         )
     previous_text = "🔚" if first_page else "◄"
     previous_callback = (
-        "empty_button" if first_page else "view_wishlist_%s" % (page - 1)
+        "empty_button" if first_page else "view_wishlist_element_%s" % (page - 1)
     )
     next_text = "🔚" if last_page else "►"
-    next_callback = "empty_button" if last_page else "view_wishlist_%s" % (page + 1)
+    next_callback = (
+        "empty_button" if last_page else "view_wishlist_element_%s" % (page + 1)
+    )
     if total_pages > 1:
         keyboard.append(
             [
@@ -399,20 +430,28 @@ def create_wishlist_keyboard(
                 create_button(next_text, next_callback, None),
             ]
         )
-    if wishlists:
-        wishlist = wishlists[0]
-        number: int = count_all_wishlist_elements_for_user(wishlist.user_id)
+    if wishlist_elements:
+        wishlist_element = wishlist_elements[0]
+        number: int = count_all_wishlist_elements_for_user(
+            wishlist_element.user_id, wishlist_element.wishlist_id
+        )
         if number > 1:
+            wishlist_id = wishlist_element.wishlist_id
             keyboard.append(
                 [
                     create_button(
                         "🗑  Cancella tutti e %s gli elementi" % number,
-                        "ask_delete_all_wishlist_elements_%s" % page,
+                        "ask_delete_all_wishlist_elements_%s_%s" % (wishlist_id, page),
                         None,
                     )
                 ]
             )
-    keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", None)])
+    keyboard.append(
+        [
+            create_button("↩️  Torna indietro", "cancel_rating", None),
+            create_button("🔰  Altre liste", "view_other_wishlists_0", None),
+        ]
+    )
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -434,14 +473,16 @@ ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
         [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
         [
             create_button("↩️  Torna indietro", "go_back_from_link", None),
-            create_button("⏩  Salta passaggio", "skip_add_link_to_wishlist", None),
+            create_button(
+                "⏩  Salta passaggio", "skip_add_link_to_wishlist_element", None
+            ),
         ],
-        [create_button("❌  Annulla", "cancel_add_to_wishlist", None)],
+        [create_button("❌  Annulla", "cancel_add_to_wishlist_element", None)],
     ],
 )
 
 
-def build_edit_wishlist_desc_keyboard(
+def build_edit_wishlist_element_desc_keyboard(
     _id: str, page: int, index: int, text_limit_reached: bool = False
 ):
     keyboard = [
@@ -468,7 +509,7 @@ def build_edit_wishlist_desc_keyboard(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
+                "cancel_add_to_wishlist_element_%s_%s_%s" % (index, page, _id),
                 None,
             )
         ]
@@ -476,7 +517,7 @@ def build_edit_wishlist_desc_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_edit_wishlist_link_keyboard(
+def build_edit_wishlist_element_link_keyboard(
     _id: str, page: int, index: int, has_link: bool = True
 ):
     keyboard = [
@@ -510,7 +551,7 @@ def build_edit_wishlist_link_keyboard(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
+                "cancel_add_to_wishlist_element_%s_%s_%s" % (index, page, _id),
                 None,
             ),
         ]
@@ -518,7 +559,7 @@ def build_edit_wishlist_link_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_add_wishlist_category_keyboard():
+def build_add_wishlist_element_category_keyboard():
     keyboard = [
         [
             create_button(
@@ -554,14 +595,16 @@ def build_add_wishlist_category_keyboard():
         [create_button("↩️  Torna indietro", "go_back_from_category", None)],
         [
             create_button(
-                "❌  Annulla", "cancel_add_to_wishlist", "cancel_add_to_wishlist"
+                "❌  Annulla",
+                "cancel_add_to_wishlist_element",
+                "cancel_add_to_wishlist_element",
             ),
         ],
     ]
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_edit_wishlist_category_keyboard(
+def build_edit_wishlist_element_category_keyboard(
     _id: str, page: int, index: int, has_category: bool = True
 ):
     assigned = False
@@ -621,7 +664,7 @@ def build_edit_wishlist_category_keyboard(
         [
             create_button(
                 "❌  Annulla",
-                "cancel_add_to_wishlist_%s_%s_%s" % (index, page, _id),
+                "cancel_add_to_wishlist_element_%s_%s_%s" % (index, page, _id),
                 None,
             ),
         ]
@@ -629,13 +672,17 @@ def build_edit_wishlist_category_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[int]):
-    photos = wishlist.photos
+def build_view_wishlist_element_photos_keyboard(
+    wishlist_element: WishlistElement, message_ids: List[int]
+):
+    photos = wishlist_element.photos
     if len(photos) < 10:
         keyboard = [
             [
                 create_button(
-                    "➕  Aggiungi foto", "ask_for_wishlist_photo_%s" % wishlist.id, None
+                    "➕  Aggiungi foto",
+                    "ask_for_wishlist_element_photo_%s" % wishlist_element.id,
+                    None,
                 )
             ]
         ]
@@ -649,7 +696,7 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
             group.append(create_button("%s." % (index + 1), "empty_button", None))
             group.append(
                 create_button(
-                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                    "🗑", "delete_wishlist_element_photo_%s" % message_ids[index], None
                 )
             )
             index += 1
@@ -661,7 +708,7 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
             group.append(create_button("%s." % (index + 1), "empty_button", None))
             group.append(
                 create_button(
-                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                    "🗑", "delete_wishlist_element_photo_%s" % message_ids[index], None
                 )
             )
             index += 1
@@ -671,34 +718,44 @@ def build_view_wishlist_photos_keyboard(wishlist: Wishlist, message_ids: List[in
             [
                 create_button("%s." % (index + 1), "empty_button", None),
                 create_button(
-                    "🗑", "delete_wishlist_photo_%s" % message_ids[index], None
+                    "🗑", "delete_wishlist_element_photo_%s" % message_ids[index], None
                 ),
             ]
         )
         index += 1
-    if len(wishlist.photos) > 1:
+    if len(wishlist_element.photos) > 1:
         keyboard.append(
             [
                 create_button(
-                    "🗑  Cancella tutte e %s le foto" % len(wishlist.photos),
-                    "ask_delete_all_wishlist_photos",
+                    "🗑  Cancella tutte e %s le foto" % len(wishlist_element.photos),
+                    "ask_delete_all_wishlist_element_photos",
                     None,
                 )
             ]
         )
     keyboard.append(
-        [create_button("↩️  Torna indietro", "go_back_from_wishlist_photos_0", None)]
+        [
+            create_button(
+                "↩️  Torna indietro", "go_back_from_wishlist_element_photos_0", None
+            )
+        ]
     )
     return InlineKeyboardMarkup(keyboard)
 
 
-def create_go_back_to_wishlist_photo_keyboard(_id: str):
+def create_go_back_to_wishlist_element_photo_keyboard(_id: str):
     return InlineKeyboardMarkup(
-        [[create_button("↩️  Torna indietro", "view_wishlist_photo_%s" % _id, None)]]
+        [
+            [
+                create_button(
+                    "↩️  Torna indietro", "view_wishlist_element_photo_%s" % _id, None
+                )
+            ]
+        ]
     )
 
 
-def create_cancel_wishlist_photo_keyboard(
+def create_cancel_wishlist_element_photo_keyboard(
     _id: str,
     sended: bool = False,
     photos: bool = False,
@@ -736,39 +793,127 @@ def create_cancel_wishlist_photo_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def create_delete_all_wishlist_items_keyboard(page: int = 0):
+def create_delete_all_wishlist_element_items_keyboard(
+    page: int = 0, from_wishlist=False, wishlist_id=""
+):
+    if from_wishlist:
+        yes_callback = "confirm_delete_wishlist_list_%s" % wishlist_id
+        no_callback = "view_other_wishlists_%s" % page
+    else:
+        yes_callback = "confirm_delete_all_wishlist_element_%s" % wishlist_id
+        no_callback = "abort_delete_all_wishlist_element_%s" % page
+
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
                     "✅  Sì",
-                    "confirm_delete_all_wishlist",
-                    "confirm_delete_all_wishlist",
+                    yes_callback,
+                    yes_callback,
+                ),
+                create_button("❌  No", no_callback, no_callback),
+            ],
+        ]
+    )
+
+
+def create_delete_all_wishlist_element_photos_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "✅  Sì",
+                    "confirm_delete_all_wishlist_element_photos",
+                    "confirm_delete_all_wishlist_element_photos",
                 ),
                 create_button(
                     "❌  No",
-                    "abort_delete_all_wishlist_%s" % page,
-                    "abort_delete_all_wishlist_%s" % page,
+                    "abort_delete_all_wishlist_element_photos",
+                    "abort_delete_all_wishlist_element_photos",
                 ),
             ],
         ]
     )
 
 
-def create_delete_all_wishlist_photos_keyboard():
+def create_other_wishlist_keyboard(
+    page: int,
+    total_pages: int,
+    wishlists: List[Wishlist],
+    first_page: bool,
+    last_page: bool,
+    inc: int = 0,
+    total_lists=0,
+    current_wishlist="",
+):
+    if total_lists < 10:
+        keyboard = [
+            [
+                create_button(
+                    "➕  Crea nuova lista",
+                    "add_new_wishlist",
+                    "add_new_wishlist",
+                ),
+            ],
+        ]
+    else:
+        keyboard = []
+    if wishlists:
+        wishlists = list(wishlists)
+        wish = wishlists[-1]
+        last = str(((wishlists.index(wish)) + (5 * page + 1)) + inc)
+        wish = wishlists[0]
+        first = str(0 + (5 * page + 1) + inc)
+        add_space = len(last) > len(first)
+    else:
+        add_space = False
+    wishlists.reverse()
+    for index, wishlist in enumerate(wishlists):
+        # I hate that they are not aligned
+        if not str(wishlist.id) == current_wishlist:
+            title = wishlist.title
+        else:
+            title = "✅  %s" % wishlist.title
+        line = [
+            create_button(title, "change_current_wishlist_%s" % str(wishlist.id), None)
+        ]
+        if not wishlist.default_wishlist:
+            line.append(
+                create_button(
+                    "🗑",
+                    "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
+                    None,
+                )
+            )
+        keyboard.append(line)
+    previous_text = "🔚" if first_page else "◄"
+    previous_callback = (
+        "empty_button" if first_page else "view_other_wishlists_%s" % (page - 1)
+    )
+    next_text = "🔚" if last_page else "►"
+    next_callback = (
+        "empty_button" if last_page else "view_other_wishlists_%s" % (page + 1)
+    )
+    if total_pages > 1:
+        keyboard.append(
+            [
+                create_button(previous_text, previous_callback, None),
+                create_button("%s/%s" % (page + 1, total_pages), "empty_button", None),
+                create_button(next_text, next_callback, None),
+            ]
+        )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def add_new_wishlist_keyboard():
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
-                    "✅  Sì",
-                    "confirm_delete_all_wishlist_photos",
-                    "confirm_delete_all_wishlist_photos",
+                    "❌  Annulla",
+                    "cancel_add_to_wishlist",
+                    "cancel_add_to_wishlist",
                 ),
-                create_button(
-                    "❌  No",
-                    "abort_delete_all_wishlist_photos",
-                    "abort_delete_all_wishlist_photos",
-                ),
-            ],
+            ]
         ]
     )

@@ -2,9 +2,29 @@
 
 """ File with various functions to help handle users """
 
+from typing import List
 from telegram import User as TelegramUser
 from mongoengine.errors import DoesNotExist
 from root.model.user import User
+import telegram_utils.utils.logger as logger
+
+
+def get_current_wishlist_id(user_id: int):
+    user: User = retrieve_user(user_id)
+    if user:
+        return user.current_wishlist
+    return None
+
+
+def change_wishlist(user_id: int, wishlist_id: str):
+    user: User = retrieve_user(user_id)
+    if user:
+        logger.info(
+            "changing default wishlist for user %s with [%s]"
+            % (user.user_id, wishlist_id)
+        )
+        user.current_wishlist = str(wishlist_id)
+        user.save()
 
 
 def user_exists(user_id: int) -> bool:
@@ -67,7 +87,7 @@ def retrieve_user(user_id: int) -> User:
         return None
 
 
-def retrieve_admins() -> [User]:
+def retrieve_admins() -> List[User]:
     """Get all admins of the bot
 
     Returns:

@@ -12,13 +12,11 @@ from root.contants.messages import (
     WISHLIST_PHOTO_LIMIT_REACHED,
 )
 from telegram.error import BadRequest
-from root.helper import wishlist
-from root.manager import whishlist
-from root.manager.whishlist import view_wishlist
+from root.manager.wishlist_element import view_wishlist
 from root.contants.keyboard import (
-    build_view_wishlist_photos_keyboard,
-    create_cancel_wishlist_photo_keyboard,
-    create_delete_all_wishlist_photos_keyboard,
+    build_view_wishlist_element_photos_keyboard,
+    create_cancel_wishlist_element_photo_keyboard,
+    create_delete_all_wishlist_element_photos_keyboard,
 )
 from telegram.chat import Chat
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
@@ -26,11 +24,11 @@ from telegram.ext.conversationhandler import ConversationHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 from telegram.files.inputmedia import InputMediaPhoto
-from root.model.wishlist import Wishlist
-from root.helper.wishlist import (
+from root.model.wishlist_element import WishlistElement
+from root.helper.wishlist_element import (
     add_photo,
-    delete_wishlist_photos,
-    find_wishlist_by_id,
+    delete_wishlist_element_photos,
+    find_wishlist_element_by_id,
     remove_photo,
 )
 from typing import List
@@ -48,24 +46,26 @@ from telegram_utils.utils.tutils import delete_if_private
 ADD_PHOTO = range(1)
 
 
-def ask_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+def ask_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
         text=DELETE_ALL_WISHLIST_ITEMS_PHOTOS
-        % (len(wishlist.photos), wishlist.description),
-        reply_markup=create_delete_all_wishlist_photos_keyboard(),
+        % (len(wishlist_element.photos), wishlist_element.description),
+        reply_markup=create_delete_all_wishlist_element_photos_keyboard(),
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
 
 
-def confirm_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+def confirm_delete_all_wishlist_element_photos(
+    update: Update, context: CallbackContext
+):
     user: User = update.effective_user
     message: Message = update.effective_message
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
@@ -82,14 +82,14 @@ def confirm_delete_all_wishlist_photos(update: Update, context: CallbackContext)
             context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     except BadRequest:
         pass
-    delete_wishlist_photos(wish_id)
+    delete_wishlist_element_photos(wish_id)
     update.callback_query.data += "_%s" % wish_id
     page = redis_helper.retrieve("%s_current_page" % user.id).decode()
     update.callback_query.data += "_%s" % page
     view_wishlist(update, context)
 
 
-def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
+def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
@@ -103,20 +103,22 @@ def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
     messages = [str(m) for m in messages]
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     update.callback_query.data += "_%s" % wish_id
-    # view_wishlist_photos(update, context)
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
-    photos: List[str] = wishlist.photos
+    # view_wishlist_element_photos(update, context)
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
+    photos: List[str] = wishlist_element.photos
     if not photos:
-        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist.description)
-        keyboard = build_view_wishlist_photos_keyboard(wishlist, [])
+        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
-            len(wishlist.photos),
-            wishlist.description,
+            len(wishlist_element.photos),
+            wishlist_element.description,
         )
         logger.info("sending %s photos" % len(photos))
         message = [m for m in messages]
-        keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
+        keyboard = build_view_wishlist_element_photos_keyboard(
+            wishlist_element, message
+        )
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
@@ -127,15 +129,15 @@ def abort_delete_all_wishlist_photos(update: Update, context: CallbackContext):
     )
 
 
-def delete_wishlist_photo(update: Update, context: CallbackContext):
+def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     message_id = update.callback_query.data.split("_")[-1]
     context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
-    photos: List[str] = wishlist.photos
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
+    photos: List[str] = wishlist_element.photos
     messages = redis_helper.retrieve("%s_photos_message" % user.id)
     if messages:
         messages = messages.decode()
@@ -146,19 +148,21 @@ def delete_wishlist_photo(update: Update, context: CallbackContext):
     index = messages.index(str(message_id))
     photo = photos[index]
     photos.remove(photo)
-    wishlist.photos = photos
+    wishlist_element.photos = photos
     remove_photo(wish_id, photo)
     messages.remove(str(message_id))
     redis_helper.save("%s_photos_message" % user.id, str(messages))
     if not photos:
-        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist.description)
-        keyboard = build_view_wishlist_photos_keyboard(wishlist, [])
+        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
-            len(wishlist.photos),
-            wishlist.description,
+            len(wishlist_element.photos),
+            wishlist_element.description,
         )
-        keyboard = build_view_wishlist_photos_keyboard(wishlist, messages)
+        keyboard = build_view_wishlist_element_photos_keyboard(
+            wishlist_element, messages
+        )
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
@@ -169,7 +173,7 @@ def delete_wishlist_photo(update: Update, context: CallbackContext):
     )
 
 
-def delete_photos_and_go_to_wishlist(update: Update, context: CallbackContext):
+def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message: Message = update.effective_message
     messages = redis_helper.retrieve("%s_photos_message" % user.id)
@@ -193,7 +197,7 @@ def delete_photos_and_go_to_wishlist(update: Update, context: CallbackContext):
     view_wishlist(update, context, page=int(page))
 
 
-def view_wishlist_photos(
+def view_wishlist_element_photos(
     update: Update,
     context: CallbackContext,
     append: str = None,
@@ -214,23 +218,23 @@ def view_wishlist_photos(
     else:
         wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
-    if not wishlist:
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
+    if not wishlist_element:
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context)
         return
-    photos: List[str] = wishlist.photos
+    photos: List[str] = wishlist_element.photos
     if not photos:
-        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist.description)
-        keyboard = build_view_wishlist_photos_keyboard(wishlist, [])
+        text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         logger.info(message_id)
         if send_photo:
             logger.info("deleting message")
             context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
-            len(wishlist.photos),
-            wishlist.description,
+            len(wishlist_element.photos),
+            wishlist_element.description,
         )
         logger.info("sending %s photos" % len(photos))
         photos = [InputMediaPhoto(media=photo) for photo in photos]
@@ -241,7 +245,9 @@ def view_wishlist_photos(
                 )
                 message = [m.message_id for m in message]
                 redis_helper.save("%s_photos_message" % user.id, str(message))
-            keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
+            keyboard = build_view_wishlist_element_photos_keyboard(
+                wishlist_element, message
+            )
         else:
             if send_photo:
                 message: Message = context.bot.send_photo(
@@ -249,7 +255,9 @@ def view_wishlist_photos(
                 )
                 message = [message.message_id]
                 redis_helper.save("%s_photos_message" % user.id, str(message))
-            keyboard = build_view_wishlist_photos_keyboard(wishlist, message)
+            keyboard = build_view_wishlist_element_photos_keyboard(
+                wishlist_element, message
+            )
     if len(photos) == 10:
         text += WISHLIST_PHOTO_LIMIT_REACHED
     else:
@@ -301,7 +309,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         logger.info("photo limit reached")
         redis_helper.save("%s_photo_reached" % (user.id), "true")
         message: str = WISHLIST_PHOTO_LIMIT_REACHED
-    logger.info("viewing wishlist with append")
+    logger.info("viewing wishlist_element with append")
     message_id = redis_helper.retrieve("%s_ask_photo_message" % user.id).decode()
     photo_sended: str = redis_helper.retrieve("%s_photo_sended" % user.id).decode()
     if not photo_sended.isnumeric():
@@ -309,8 +317,8 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     else:
         photo_sended = int(photo_sended)
         photo_sended += 1
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
-    if len(wishlist.photos) == 10:
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
+    if len(wishlist_element.photos) == 10:
         messages = redis_helper.retrieve("%s_photos_message" % user.id)
         if messages:
             messages = messages.decode()
@@ -320,13 +328,13 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
                     context.bot.delete_message(chat_id=chat.id, message_id=message_id)
             except BadRequest:
                 pass
-        view_wishlist_photos(update, context, message)
+        view_wishlist_element_photos(update, context, message)
         return ConversationHandler.END
     redis_helper.save("%s_photo_sended" % user.id, photo_sended)
     logger.info(message_id)
     text: str = REQUEST_WISHLIST_PHOTO
-    text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
-    text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
+    text: str = REQUEST_WISHLIST_PHOTO % wishlist_element.description
+    text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist_element.photos), text)
     messages = redis_helper.retrieve("%s_photos_message" % user.id)
     logger.info("extracted wish_id and mesasges")
     if messages:
@@ -344,11 +352,11 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         chat_id=update.effective_chat.id,
         text=text,
         message_id=message_id,
-        reply_markup=create_cancel_wishlist_photo_keyboard(
+        reply_markup=create_cancel_wishlist_element_photo_keyboard(
             wish_id,
             True,
             True,
-            download_supported=extractor.is_supported(wishlist.link),
+            download_supported=extractor.is_supported(wishlist_element.link),
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -368,11 +376,14 @@ def ask_for_photo(update: Update, context: CallbackContext):
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
     redis_helper.save("%s_current_page" % user.id, page)
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
-    wishlist: Wishlist = find_wishlist_by_id(wish_id)
-    text: str = REQUEST_WISHLIST_PHOTO % wishlist.description
-    if wishlist.photos:
-        text = "%s\n\n%s" % (ASK_FOR_PHOTOS_PREPEND % len(wishlist.photos), text)
-    if not extractor.validate_url(wishlist.link):
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
+    text: str = REQUEST_WISHLIST_PHOTO % wishlist_element.description
+    if wishlist_element.photos:
+        text = "%s\n\n%s" % (
+            ASK_FOR_PHOTOS_PREPEND % len(wishlist_element.photos),
+            text,
+        )
+    if not extractor.validate_url(wishlist_element.link):
         text += MALFORMED_VALID_LINK
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
@@ -391,11 +402,11 @@ def ask_for_photo(update: Update, context: CallbackContext):
         chat_id=message.chat_id,
         text=text,
         message_id=message.message_id,
-        reply_markup=create_cancel_wishlist_photo_keyboard(
+        reply_markup=create_cancel_wishlist_element_photo_keyboard(
             wish_id,
-            photos=wishlist.photos,
+            photos=wishlist_element.photos,
             page=page,
-            download_supported=extractor.is_supported(wishlist.link),
+            download_supported=extractor.is_supported(wishlist_element.link),
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -409,9 +420,9 @@ def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if not "go_back" in update.callback_query.data:
         if not "sended" in update.callback_query.data:
-            view_wishlist_photos(update, context, send_photo=False)
+            view_wishlist_element_photos(update, context, send_photo=False)
         else:
-            view_wishlist_photos(update, context, send_photo=True)
+            view_wishlist_element_photos(update, context, send_photo=True)
     else:
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
         logger.info(f"THIS IS THE {page}")
@@ -425,15 +436,15 @@ def download_photo_automatically(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     data: str = update.callback_query.data
     data = data.split("_")[-1]
-    wishlist: Wishlist = find_wishlist_by_id(data)
-    pictures = extractor.load_url(wishlist.link)
-    if wishlist.photos:
-        for photo in wishlist.photos:
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(data)
+    pictures = extractor.load_url(wishlist_element.link)
+    if wishlist_element.photos:
+        for photo in wishlist_element.photos:
             if photo in pictures:
                 pictures.remove(photo)
     pictures = pictures[:10]
-    if len(wishlist.photos) == 0:
-        wishlist.photos = pictures
+    if len(wishlist_element.photos) == 0:
+        wishlist_element.photos = pictures
     else:
         messages = redis_helper.retrieve("%s_photos_message" % user.id)
         if messages:
@@ -444,14 +455,16 @@ def download_photo_automatically(update: Update, context: CallbackContext):
                     context.bot.delete_message(chat_id=chat.id, message_id=message_id)
             except BadRequest:
                 pass
-        total_left = 10 - len(wishlist.photos)
+        total_left = 10 - len(wishlist_element.photos)
         pictures = pictures[:total_left]
-        wishlist.photos = wishlist.photos + pictures
-        wishlist.photos = (
-            wishlist.photos[-1] if len(wishlist.photos) > 10 else wishlist.photos
+        wishlist_element.photos = wishlist_element.photos + pictures
+        wishlist_element.photos = (
+            wishlist_element.photos[-1]
+            if len(wishlist_element.photos) > 10
+            else wishlist_element.photos
         )
-    wishlist.save()
-    view_wishlist_photos(update, context)
+    wishlist_element.save()
+    view_wishlist_element_photos(update, context)
     return ConversationHandler.END
 
 
@@ -459,7 +472,7 @@ ADD_WISHLIST_PHOTO_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
             ask_for_photo,
-            pattern="ask_for_wishlist_photo",
+            pattern="ask_for_wishlist_element_photo",
         ),
     ],
     states={

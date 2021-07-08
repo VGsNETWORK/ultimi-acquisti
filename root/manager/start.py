@@ -245,8 +245,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             [
                 create_button(
                     "♥️  Lista dei desideri",
-                    "view_wishlist_0",
-                    "view_wishlist_0",
+                    "view_wishlist_element_0",
+                    "view_wishlist_element_0",
                 )
             ],
             [
@@ -359,8 +359,8 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             [
                 create_button(
                     "♥️  Lista dei desideri",
-                    "view_wishlist_0",
-                    "view_wishlist_0",
+                    "view_wishlist_element_0",
+                    "view_wishlist_element_0",
                 )
             ],
             [
@@ -465,8 +465,8 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 [
                     create_button(
                         "♥️  Lista dei desideri",
-                        "view_wishlist_0",
-                        "view_wishlist_0",
+                        "view_wishlist_element_0",
+                        "view_wishlist_element_0",
                     )
                 ],
                 [

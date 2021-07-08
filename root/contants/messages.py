@@ -766,6 +766,8 @@ NO_ELEMENT_IN_WISHLIST = (
     "\n\n☹️  La tua lista dei desideri è vuota..."
 )
 
+NO_OTHER_WISHLISTS = "☹️  La tua lista dei desideri è vuota..."
+
 
 WISHLIST_STEP_ONE = (
     "<b>Step 1:</b>\n<i><b><u>Testo e Foto</u></b>  ⟶  Link  ⟶  Categoria</i>\n\n"
@@ -916,18 +918,18 @@ ASK_FOR_CONVERT_WISHLIST = (
     "di salvarle e allegarle al futuro post di acquisto.</i>"
 )
 
-WISHLIST_HEADER = f"<b><u>LISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISHLIST_VERSION}</code>)\n\n\n"
+WISHLIST_HEADER = f"<b><u>%sLISTA DEI DESIDERI</u></b>     (Versione:  <code>{WISHLIST_VERSION}</code>)\n\n\n"
 
 
-# TODO: create query to retrieve all number of all wishlist items and all photos
+# TODO: create query to retrieve all number of all wishlist_element items and all photos
 DELETE_ALL_WISHLIST_ITEMS_MESSAGE = (
-    f"{WISHLIST_HEADER}<b>%s elementi, %s foto</b>\n🚮  "
+    f"{WISHLIST_HEADER % ''}<b>%s elementi, %s foto</b>\n🚮  "
     "<i>Stai per cancellare <b>tutti gli elementi</b> e <b>tutte le foto</b> della lista dei desideri."
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
 
 DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
-    f"{WISHLIST_HEADER}<b>%s elementi</b>\n🚮  "
+    f"{WISHLIST_HEADER % ''}<b>%s elementi</b>\n🚮  "
     "<i>Stai per cancellare <b>tutti gli elementi</b> della lista dei desideri."
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
@@ -950,7 +952,7 @@ AD_MESSAGE_TWO = (
     "Ehi tu... sì, proprio tu col portafogli bucato... "
     "scommetto che ti farebbe comodo un modo per <b>annotare gli articoli che ti interessano</b> "
     "senza il timore di perderli... beh, non disperare: da oggi puoi farlo!\n"
-    f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> (e poi su "<b>AVVIA</b>") '
+    f'<a href="t.me/{BOT_NAME}?start=wishlist_element"><b>Clicca qui</b></a> (e poi su "<b>AVVIA</b>") '
     "per imbrigliare il tuo prossimo affare!\n\n\n"
     "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
     f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
