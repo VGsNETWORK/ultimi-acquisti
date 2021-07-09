@@ -313,7 +313,10 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
         _id = update.callback_query.data.split("_")[-1]
         page = int(update.callback_query.data.split("_")[-2])
         remove_wishlist_element_item_for_user(_id)
-        total_pages = get_total_wishlist_element_pages_for_user(user.id)
+        wishlist_id = get_current_wishlist_id(user.id)
+        total_pages = get_total_wishlist_element_pages_for_user(
+            user.id, wishlist_id=wishlist_id
+        )
         if page + 1 > total_pages:
             page -= 1
         update.callback_query.data += "_%s" % page
@@ -470,7 +473,9 @@ def view_wishlist(
     else:
         page = int(page)
         message_id = redis_helper.retrieve(user.id).decode()
-    total_pages = get_total_wishlist_element_pages_for_user(user.id)
+    total_pages = get_total_wishlist_element_pages_for_user(
+        user.id, wishlist_id=wishlist_id
+    )
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist_elements = find_wishlist_element_for_user(
         user.id, page, wishlist_id=wishlist_id

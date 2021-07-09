@@ -56,9 +56,14 @@ def delete_wishlist_element_photos(wish_id: str):
         wish.save()
 
 
-def get_total_wishlist_element_pages_for_user(user_id: int, page_size: int = 5):
+def get_total_wishlist_element_pages_for_user(
+    user_id: int, page_size: int = 5, wishlist_id=""
+):
     total_products = (
-        WishlistElement.objects().filter(user_id=user_id).count() / page_size
+        WishlistElement.objects()
+        .filter(user_id=user_id, wishlist_id=wishlist_id)
+        .count()
+        / page_size
     )
     if int(total_products) == 0:
         return 1
