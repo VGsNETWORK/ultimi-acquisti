@@ -83,10 +83,12 @@ def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
         return int(total_products)
 
 
-def find_wishlist_for_user(user_id: int, page: int = 0, page_size: int = 5):
+def find_wishlist_for_user(
+    user_id: int, page: int = 0, page_size: int = 5, default_wishlist: bool = False
+):
     wish: Wishlist = (
         Wishlist.objects()
-        .filter(user_id=user_id)
+        .filter(user_id=user_id, default_wishlist=default_wishlist)
         .order_by("-creation_date")
         .skip(page * page_size)
         .limit(page_size)

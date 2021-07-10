@@ -19,6 +19,7 @@ from root.model.wishlist_element import WishlistElement
 from root.helper.wishlist import (
     count_all_wishlists_for_user,
     create_wishlist,
+    find_default_wishlist,
     find_wishlist_by_id,
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
@@ -83,7 +84,11 @@ def view_other_wishlists(
         page = int(page)
         message_id = redis_helper.retrieve(user.id).decode()
     total_pages = get_total_wishlist_pages_for_user(user.id)
+    wishlist_element: Wishlist = find_default_wishlist(user.id)
     wishlist_elements: List[Wishlist] = find_wishlist_for_user(user.id, page)
+    if page == 0:
+        wishlist_elements = list(wishlist_elements)
+        wishlist_elements.insert(0, wishlist_element)
 
     chat: Chat = update.effective_chat
     if chat.type != "private":

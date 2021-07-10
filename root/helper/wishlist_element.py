@@ -103,9 +103,15 @@ def remove_photo(_id: str, photo: str):
         wish.save()
 
 
-def count_all_wishlist_elements_photos(user_id: int):
+def count_all_wishlist_elements_photos(user_id: int, wishlist_id: int):
     query = [
-        {"$match": {"user_id": user_id, "photos": {"$ne": None}}},
+        {
+            "$match": {
+                "user_id": user_id,
+                "wishlist_id": wishlist_id,
+                "photos": {"$ne": None},
+            }
+        },
         {"$group": {"_id": "$user_id", "total": {"$sum": {"$size": "$photos"}}}},
     ]
     cursor: CommandCursor = WishlistElement.objects().aggregate(query)

@@ -267,7 +267,7 @@ def ask_delete_all_wishlist_elements(
     page: str = update.callback_query.data.split("_")[-1]
     wishlist_id = update.callback_query.data.split("_")[-2]
     wishlist_elements = count_all_wishlist_elements_for_user(user.id, wishlist_id)
-    photos = count_all_wishlist_elements_photos(user.id)
+    photos = count_all_wishlist_elements_photos(user.id, wishlist_id)
     if photos > 0:
         text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (wishlist_elements, photos)
     else:

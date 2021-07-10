@@ -867,7 +867,6 @@ def create_other_wishlist_keyboard(
         add_space = len(last) > len(first)
     else:
         add_space = False
-    wishlists.reverse()
     for index, wishlist in enumerate(wishlists):
         # I hate that they are not aligned
         if not str(wishlist.id) == current_wishlist:
