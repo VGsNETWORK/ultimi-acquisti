@@ -84,8 +84,9 @@ def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
 
 
 def find_wishlist_for_user(
-    user_id: int, page: int = 0, page_size: int = 5, default_wishlist: bool = False
+    user_id: int, page: int = 0, page_size: int = 10, default_wishlist: bool = False
 ):
+    logger.info(f"page: {page} - page_size: {page_size} - default: {default_wishlist}")
     wish: Wishlist = (
         Wishlist.objects()
         .filter(user_id=user_id, default_wishlist=default_wishlist)

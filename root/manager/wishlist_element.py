@@ -5,7 +5,11 @@ import re
 from root.model.wishlist import Wishlist
 from root.manager.view_other_wishlists import view_other_wishlists
 from root.helper.user_helper import get_current_wishlist_id, retrieve_user
-from root.helper.wishlist import create_wishlist_if_empty, find_wishlist_by_id
+from root.helper.wishlist import (
+    count_all_wishlists_for_user,
+    create_wishlist_if_empty,
+    find_wishlist_by_id,
+)
 from typing import List
 from telegram.files.inputmedia import InputMediaPhoto
 
@@ -266,12 +270,22 @@ def ask_delete_all_wishlist_elements(
     chat: Chat = update.effective_chat
     page: str = update.callback_query.data.split("_")[-1]
     wishlist_id = update.callback_query.data.split("_")[-2]
+    wishlist = find_wishlist_by_id(wishlist_id)
     wishlist_elements = count_all_wishlist_elements_for_user(user.id, wishlist_id)
     photos = count_all_wishlist_elements_photos(user.id, wishlist_id)
     if photos > 0:
-        text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (wishlist_elements, photos)
+        text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
+            f"{wishlist.title.upper()}  –  ",
+            wishlist_elements,
+            "o" if wishlist_elements == 1 else "i",
+            photos,
+        )
     else:
-        text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (wishlist_elements)
+        text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (
+            f"{wishlist.title.upper()}  –  ",
+            wishlist_elements,
+            "o" if wishlist_elements == 1 else "i",
+        )
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,
@@ -484,7 +498,7 @@ def view_wishlist(
     chat: Chat = update.effective_chat
     if chat.type != "private":
         # ignore all requests coming outside a private chat
-        return
+        return ConversationHandler.END
     if wishlist_elements:
         [logger.info(wish.link) for wish in wishlist_elements]
         [logger.info(1 if wish.link else 0) for wish in wishlist_elements]
@@ -539,13 +553,20 @@ def view_wishlist(
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
+    total_wishlists = count_all_wishlists_for_user(user.id)
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
             message_id=message_id,
             text=message,
             reply_markup=create_wishlist_element_keyboard(
-                page, total_pages, wishlist_elements, first_page, last_page, inc
+                page,
+                total_pages,
+                wishlist_elements,
+                first_page,
+                last_page,
+                inc,
+                total_wishlists,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,
@@ -555,7 +576,13 @@ def view_wishlist(
             chat_id=chat.id,
             text=message,
             reply_markup=create_wishlist_element_keyboard(
-                page, total_pages, wishlist_elements, first_page, last_page, inc
+                page,
+                total_pages,
+                wishlist_elements,
+                first_page,
+                last_page,
+                inc,
+                total_wishlists,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,

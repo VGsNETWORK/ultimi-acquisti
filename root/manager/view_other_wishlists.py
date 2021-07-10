@@ -86,6 +86,11 @@ def view_other_wishlists(
     total_pages = get_total_wishlist_pages_for_user(user.id)
     wishlist_element: Wishlist = find_default_wishlist(user.id)
     wishlist_elements: List[Wishlist] = find_wishlist_for_user(user.id, page)
+    wishlist_ids = [str(wish.id) for wish in wishlist_elements]
+    while current_wishlist in wishlist_ids:
+        page += 1
+        wishlist_elements: List[Wishlist] = find_wishlist_for_user(user.id, page)
+        wishlist_ids = [str(wish.id) for wish in wishlist_elements]
     if page == 0:
         wishlist_elements = list(wishlist_elements)
         wishlist_elements.insert(0, wishlist_element)
@@ -94,6 +99,7 @@ def view_other_wishlists(
     if chat.type != "private":
         # ignore all requests coming outside a private chat
         return
+    logger.info(wishlist_elements)
     if wishlist_elements:
         message = ""
         if append:
@@ -164,13 +170,15 @@ def add_wishlist(
     user: User = update.effective_user
     message_id = message.message_id
     redis_helper.save("%s_%s_new_wishlist", message_id)
+    data = update.callback_query.data
+    from_element = "from_element" in data
     try:
         message = "Per piacere inserisci il nome della tua wishlist."
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
             text=message,
-            reply_markup=add_new_wishlist_keyboard(),
+            reply_markup=add_new_wishlist_keyboard(from_element),
             disable_web_page_preview=True,
             parse_mode="HTML",
         )
@@ -183,7 +191,7 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
     user: User = update.effective_user
-    chat: Chat = update.effective_chat
+    cdopohat: Chat = update.effective_chat
     delete_if_private(message)
     message = message.text
     message: str = message.split("\n")[0]

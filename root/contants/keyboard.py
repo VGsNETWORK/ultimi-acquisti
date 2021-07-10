@@ -333,6 +333,7 @@ def create_wishlist_element_keyboard(
     first_page: bool,
     last_page: bool,
     inc: int = 0,
+    total_wishlists: int = 0,
 ):
     keyboard = [
         [
@@ -446,10 +447,18 @@ def create_wishlist_element_keyboard(
                     )
                 ]
             )
+    if total_wishlists > 1:
+        tmessage = "🔀  Cambia lista"
+        tcall = "view_other_wishlists_0"
+    else:
+
+        tmessage = "➕  Nuova lista"
+        tcall = "add_new_wishlist_from_element"
+
     keyboard.append(
         [
             create_button("↩️  Torna indietro", "cancel_rating", None),
-            create_button("🔰  Altre liste", "view_other_wishlists_0", None),
+            create_button(tmessage, tcall, None),
         ]
     )
     return InlineKeyboardMarkup(keyboard)
@@ -893,25 +902,21 @@ def create_other_wishlist_keyboard(
     next_callback = (
         "empty_button" if last_page else "view_other_wishlists_%s" % (page + 1)
     )
-    if total_pages > 1:
-        keyboard.append(
-            [
-                create_button(previous_text, previous_callback, None),
-                create_button("%s/%s" % (page + 1, total_pages), "empty_button", None),
-                create_button(next_text, next_callback, None),
-            ]
-        )
     return InlineKeyboardMarkup(keyboard)
 
 
-def add_new_wishlist_keyboard():
+def add_new_wishlist_keyboard(from_element: bool):
+    # TODO: fix
+    callback = (
+        "cancel_add_to_wishlist" if not from_element else "cancel_add_to_wishlist"
+    )
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
                     "❌  Annulla",
-                    "cancel_add_to_wishlist",
-                    "cancel_add_to_wishlist",
+                    callback,
+                    callback,
                 ),
             ]
         ]

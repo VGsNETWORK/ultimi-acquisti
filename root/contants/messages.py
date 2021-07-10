@@ -923,13 +923,13 @@ WISHLIST_HEADER = f"<b><u>%sLISTA DEI DESIDERI</u></b>     (Versione:  <code>{WI
 
 # TODO: create query to retrieve all number of all wishlist_element items and all photos
 DELETE_ALL_WISHLIST_ITEMS_MESSAGE = (
-    f"{WISHLIST_HEADER % ''}<b>%s elementi, %s foto</b>\n🚮  "
+    f"{WISHLIST_HEADER}<b>%s element%s, %s foto</b>\n🚮  "
     "<i>Stai per cancellare <b>tutti gli elementi</b> e <b>tutte le foto</b> della lista dei desideri."
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
 
 DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
-    f"{WISHLIST_HEADER % ''}<b>%s elementi</b>\n🚮  "
+    f"{WISHLIST_HEADER}<b>%s element%s</b>\n🚮  "
     "<i>Stai per cancellare <b>tutti gli elementi</b> della lista dei desideri."
     "</i>\n\n<b>Vuoi confermare?</b>"
 )

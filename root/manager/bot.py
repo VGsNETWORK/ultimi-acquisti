@@ -466,7 +466,7 @@ class BotManager:
             CommandHandler(
                 "start",
                 view_wishlist,
-                Filters.regex("wishlist_element"),
+                Filters.regex("wishlist"),
             )
         )
         self.disp.add_handler(CommandHandler("start", handle_start))
