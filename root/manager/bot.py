@@ -6,6 +6,7 @@ from datetime import date, datetime, time
 import os
 from random import random
 import random
+from root.manager.rename_wishlist import EDIT_WISHLIST_NAME
 from root.manager.view_other_wishlists import (
     ADD_NEW_WISHLIST,
     view_other_wishlists,
@@ -15,7 +16,10 @@ from root.manager.wishlist_elements_middleware import (
     change_current_wishlist,
     confirm_delete_wishlist_list,
 )
-from root.manager.advertisement_handler import command_send_advertisement
+from root.manager.advertisement_handler import (
+    command_send_advertisement,
+    send_advertisement,
+)
 from telegram_utils.utils.misc import environment
 
 from telegram_utils.utils.tutils import delete_if_private
@@ -93,6 +97,7 @@ from root.manager.start import (
     show_info,
 )
 from root.manager.feedback import FEEDBACK_CONVERSATION
+from telegram_utils.utils.tutils import log
 
 
 class BotManager:
@@ -211,8 +216,14 @@ class BotManager:
                 for i in range(0, 2):
                     day = random.choice(days)
                     days.remove(day)
+                    log(
+                        f"👷  Aggiunto scheduler <code>ads</code> nel gruppo {group} nel giorno {day} alle ore {when}"
+                    )
                     self.disp.job_queue.run_monthly(
-                        callback="", context={"group": group}, day=day, when=when
+                        callback=send_advertisement,
+                        context={"group": group},
+                        day=day,
+                        when=when,
                     )
         except Exception as e:
             logger.error(e)
@@ -338,6 +349,7 @@ class BotManager:
         self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
+        self.disp.add_handler(EDIT_WISHLIST_NAME)
         self.disp.add_handler(ADD_NEW_WISHLIST)
         self.disp.add_handler(
             CommandHandler(

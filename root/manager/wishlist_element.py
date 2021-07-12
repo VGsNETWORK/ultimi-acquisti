@@ -24,8 +24,11 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
+    DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE,
+    DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
+    DELETE_WISHLIST_ITEMS_APPEND,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     NO_ELEMENT_IN_WISHLIST,
     SUPPORTED_LINKS_MESSAGE,
@@ -273,19 +276,51 @@ def ask_delete_all_wishlist_elements(
     wishlist = find_wishlist_by_id(wishlist_id)
     wishlist_elements = count_all_wishlist_elements_for_user(user.id, wishlist_id)
     photos = count_all_wishlist_elements_photos(user.id, wishlist_id)
-    if photos > 0:
-        text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
-            f"{wishlist.title.upper()}  –  ",
-            wishlist_elements,
-            "o" if wishlist_elements == 1 else "i",
-            photos,
-        )
+    if from_wishlist:
+        if photos:
+            text = "(%s element%s, %s foto)" % (
+                wishlist_elements,
+                "o" if wishlist_elements == 1 else "i",
+                photos,
+            )
+            append = DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND
+        elif wishlist_elements:
+            text = "(%s element%s)" % (
+                wishlist_elements,
+                "o" if wishlist_elements == 1 else "i",
+            )
+            append = DELETE_WISHLIST_ITEMS_APPEND
+        else:
+            text = "(lista vuota)"
+            append = ""
+        if photos > 0:
+            text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
+                "",
+                f"{wishlist.title}",
+                text,
+                append,
+            )
+        else:
+            text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
+                "",
+                f"{wishlist.title}",
+                text,
+                append,
+            )
     else:
-        text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (
-            f"{wishlist.title.upper()}  –  ",
-            wishlist_elements,
-            "o" if wishlist_elements == 1 else "i",
-        )
+        if photos > 0:
+            text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
+                f"{wishlist.title.upper()}  –  ",
+                wishlist_elements,
+                "o" if wishlist_elements == 1 else "i",
+                photos,
+            )
+        else:
+            text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (
+                f"{wishlist.title.upper()}  –  ",
+                wishlist_elements,
+                "o" if wishlist_elements == 1 else "i",
+            )
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message.message_id,

@@ -761,6 +761,8 @@ BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."
 
 WISHLIST_DESCRIPTION_TOO_LONG = "🚫  <b>Limite di 128 caratteri superato!</b>\n\n"
 
+WISHLIST_TITLE_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>\n\n"
+
 NO_ELEMENT_IN_WISHLIST = (
     "<i>In questa sezione potrai aggiungere dei promemoria relativi ad articoli che intendi acquistare in un secondo momento.</i>"
     "\n\n☹️  La tua lista dei desideri è vuota..."
@@ -924,15 +926,27 @@ WISHLIST_HEADER = f"<b><u>%sLISTA DEI DESIDERI</u></b>     (Versione:  <code>{WI
 # TODO: create query to retrieve all number of all wishlist_element items and all photos
 DELETE_ALL_WISHLIST_ITEMS_MESSAGE = (
     f"{WISHLIST_HEADER}<b>%s element%s, %s foto</b>\n🚮  "
-    "<i>Stai per cancellare <b>tutti gli elementi</b> e <b>tutte le foto</b> della lista dei desideri."
+    "<i>Stai per cancellare <b>tutti gli elementi</b> e <b>tutte le foto</b> della lista dei desideri"
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
 
 DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
     f"{WISHLIST_HEADER}<b>%s element%s</b>\n🚮  "
-    "<i>Stai per cancellare <b>tutti gli elementi</b> della lista dei desideri."
+    "<i>Stai per cancellare <b>tutti gli elementi</b> della lista dei desideri"
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
+
+DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE = (
+    f"{WISHLIST_HEADER}<b>%s\n%s</b>\n🚮  "
+    "<i>Stai per cancellare questa lista dei desideri%s"
+    "</i>\n\n<b>Vuoi confermare?</b>"
+)
+
+DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND = (
+    " e <b>tutti gli elementi e le foto</b> al suo interno"
+)
+
+DELETE_WISHLIST_ITEMS_APPEND = " e <b>tutti gli elementi</b> al suo interno"
 
 DELETE_ALL_WISHLIST_ITEMS_PHOTOS = (
     "<b>%s foto</b>\n"
@@ -952,7 +966,7 @@ AD_MESSAGE_TWO = (
     "Ehi tu... sì, proprio tu col portafogli bucato... "
     "scommetto che ti farebbe comodo un modo per <b>annotare gli articoli che ti interessano</b> "
     "senza il timore di perderli... beh, non disperare: da oggi puoi farlo!\n"
-    f'<a href="t.me/{BOT_NAME}?start=wishlist_element"><b>Clicca qui</b></a> (e poi su "<b>AVVIA</b>") '
+    f'<a href="t.me/{BOT_NAME}?start=wishlist"><b>Clicca qui</b></a> (e poi su "<b>AVVIA</b>") '
     "per imbrigliare il tuo prossimo affare!\n\n\n"
     "💡 <i>Per maggiori informazioni sul mio funzionamento, invece, "
     f'<a href="t.me/{BOT_NAME}?start=how_to">clicca qui</a> e poi su "<b>AVVIA</b>".</i>'
@@ -984,4 +998,19 @@ ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE, AD_MESSAGE_FOU
 MALFORMED_VALID_LINK = (
     "\n\n\n⚠️  <i>Il dominio web inserito supporta il <b>download automatico delle foto</b>,"
     " ma la pagina indicata è inesistente oppure non conforme al pattern richiesto.</i>"
+)
+
+ADD_WISHLIST_TITLE_PROMPT = (
+    "Inserisci il titolo della nuova lista dei desideri:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+)
+
+EDIT_WISHLIST_TITLE_PROMPT = (
+    "<code>%s</code>\n✏️  <i>Stai rinominando questa lista</i>\n\n"
+    "Inserisci il nuovo titolo della lista dei desideri:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
 )

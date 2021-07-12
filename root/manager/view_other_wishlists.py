@@ -2,13 +2,17 @@
 # region
 import operator
 import re
+from root.util.util import max_length_error_format
 from root.helper.user_helper import get_current_wishlist_id
 from typing import List
 from telegram.files.inputmedia import InputMediaPhoto
 
 from telegram_utils.utils.tutils import delete_if_private
 from root.contants.messages import (
+    ADD_WISHLIST_TITLE_PROMPT,
+    WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
+    WISHLIST_TITLE_TOO_LONG,
 )
 from root.helper import wishlist
 from root.helper.wishlist_element import (
@@ -27,6 +31,7 @@ from root.helper.wishlist import (
 from root.model.wishlist import Wishlist
 from root.contants.keyboard import (
     add_new_wishlist_keyboard,
+    add_new_wishlist_too_long_keyboard,
     create_other_wishlist_keyboard,
 )
 from telegram import Update
@@ -86,11 +91,6 @@ def view_other_wishlists(
     total_pages = get_total_wishlist_pages_for_user(user.id)
     wishlist_element: Wishlist = find_default_wishlist(user.id)
     wishlist_elements: List[Wishlist] = find_wishlist_for_user(user.id, page)
-    wishlist_ids = [str(wish.id) for wish in wishlist_elements]
-    while current_wishlist in wishlist_ids:
-        page += 1
-        wishlist_elements: List[Wishlist] = find_wishlist_for_user(user.id, page)
-        wishlist_ids = [str(wish.id) for wish in wishlist_elements]
     if page == 0:
         wishlist_elements = list(wishlist_elements)
         wishlist_elements.insert(0, wishlist_element)
@@ -105,13 +105,14 @@ def view_other_wishlists(
         if append:
             wishlist_elements = list(wishlist_elements)
             wish: WishlistElement = wishlist_elements[0]
-            message += f"{append}"
+            append = f"{append}\n\n"
+        else:
+            append = f""
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
-    message = "%s%s%s" % (
+    message = "%s%s" % (
         WISHLIST_HEADER % "",
-        "Seleziona o crea una lista:\n\n\n",
-        message,
+        f"{append}Seleziona o crea una lista:",
     )
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
@@ -119,7 +120,9 @@ def view_other_wishlists(
     logger.info(f"The user has {total_lists}")
     if update.callback_query or edit:
         if edit:
-            message_id = redis_helper.retrieve("%s_%s_new_wishlist")
+            message_id = redis_helper.retrieve(
+                "%s_%s_new_wishlist" % (user.id, user.id)
+            )
             message_id = message_id.decode()
         context.bot.edit_message_text(
             chat_id=chat.id,
@@ -134,6 +137,7 @@ def view_other_wishlists(
                 0,
                 total_lists,
                 current_wishlist,
+                user.id,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,
@@ -151,6 +155,7 @@ def view_other_wishlists(
                 last_page,
                 0,
                 total_lists,
+                user.id,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,
@@ -169,11 +174,11 @@ def add_wishlist(
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     message_id = message.message_id
-    redis_helper.save("%s_%s_new_wishlist", message_id)
+    redis_helper.save("%s_%s_new_wishlist" % (user.id, user.id), message_id)
     data = update.callback_query.data
     from_element = "from_element" in data
     try:
-        message = "Per piacere inserisci il nome della tua wishlist."
+        message = f"{WISHLIST_HEADER % ''}{ADD_WISHLIST_TITLE_PROMPT % 12}"
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
@@ -187,23 +192,46 @@ def add_wishlist(
     return INSERT_TITLE
 
 
-def handle_add_confirm(update: Update, context: CallbackContext):
+def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = False):
     message: Message = update.effective_message
     message_id: int = message.message_id
+    chat_id: int = update.effective_chat.id
     user: User = update.effective_user
     cdopohat: Chat = update.effective_chat
     delete_if_private(message)
     message = message.text
     message: str = message.split("\n")[0]
     message: str = re.sub(r"\s{2,}", " ", message)
-    if len(message) > 17:
-        # THE FUCK YOU'RE DOING
+    if len(message) > 12:
+        logger.info("TOO LONG")
+        redis_helper.save(
+            "%s_stored_wishlist" % user.id, update.effective_message.text[:12]
+        )
+        user_text = max_length_error_format(update.effective_message.text, 12, 100)
+        message = f"{WISHLIST_HEADER % ''}{user_text}\n{WISHLIST_TITLE_TOO_LONG % 12}{ADD_WISHLIST_TITLE_PROMPT % 12}"
         overload = True
-        message = "Hai superato il limite massimo di caratteri..."
+        message_id = redis_helper.retrieve(
+            "%s_%s_new_wishlist" % (user.id, user.id)
+        ).decode()
+        context.bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=message_id,
+            text=message,
+            # TODO: fix
+            reply_markup=add_new_wishlist_too_long_keyboard(False),
+            parse_mode="HTML",
+            disable_web_page_preview=False,
+        )
     else:
         create_wishlist("", message, user.id)
         overload = False
-        view_other_wishlists(update, context, "✅  <i>Lista creata!</i>", "0", True)
+        view_other_wishlists(
+            update,
+            context,
+            f"✅  <i>Lista <b>{message}</b> creata!</i>",
+            "0",
+            True,
+        )
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
@@ -216,6 +244,20 @@ def cancel_add_wishlist(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+def handle_keep_confirm(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    message = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
+    create_wishlist("", message, user.id)
+    view_other_wishlists(
+        update,
+        context,
+        f"✅  <i>Lista <b>{message}</b> creata!</i>",
+        "0",
+        True,
+    )
+    return ConversationHandler.END
+
+
 ADD_NEW_WISHLIST = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(add_wishlist, pattern="add_new_wishlist"),
@@ -223,6 +265,7 @@ ADD_NEW_WISHLIST = ConversationHandler(
     states={
         INSERT_TITLE: [
             MessageHandler(Filters.text, handle_add_confirm),
+            CallbackQueryHandler(handle_keep_confirm, pattern="keep_the_current"),
         ],
     },
     fallbacks=[

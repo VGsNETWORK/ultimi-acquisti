@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from root.contants.keyboard import ADS_KEYBOARDS
 from telegram.update import Update
 from root.contants.message_timeout import FIFTEEN_MINUTES
 from telegram.message import Message
@@ -16,7 +17,8 @@ def send_advertisement(context: CallbackContext, group_id: int = None):
         args: dict = context.job.context
         group_id: int = args["group"]
     message = random.choice(ADS_MESSAGES)
-    send_and_delete(group_id, message, timeout=FIFTEEN_MINUTES)
+    keyboard = ADS_KEYBOARDS[ADS_MESSAGES.index(message)]
+    send_and_delete(group_id, message, reply_markup=keyboard, timeout=FIFTEEN_MINUTES)
 
 
 def command_send_advertisement(update: Update, context: CallbackContext):

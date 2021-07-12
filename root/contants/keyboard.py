@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
+from os import environ
 from root.helper import wishlist_element
 from root.helper.wishlist import count_all_wishlists_for_user
 from root.model.wishlist import Wishlist
 from root.helper import keyboard
-from root.helper.wishlist_element import count_all_wishlist_elements_for_user
+from root.helper.wishlist_element import (
+    count_all_wishlist_elements_for_user,
+    count_all_wishlist_elements_photos,
+)
 from root.contants.constant import CATEGORIES
 from root.model.user import User
 from typing import List
@@ -15,6 +19,9 @@ from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
 from urllib.parse import quote
 import telegram_utils.utils.logger as logger
+
+
+BOT_NAME = environ["BOT_NAME"]
 
 
 def send_command_to_group_keyboard(
@@ -851,9 +858,10 @@ def create_other_wishlist_keyboard(
     wishlists: List[Wishlist],
     first_page: bool,
     last_page: bool,
-    inc: int = 0,
-    total_lists=0,
-    current_wishlist="",
+    inc: int,
+    total_lists: int,
+    current_wishlist: str,
+    user_id: int,
 ):
     if total_lists < 10:
         keyboard = [
@@ -877,23 +885,51 @@ def create_other_wishlist_keyboard(
     else:
         add_space = False
     for index, wishlist in enumerate(wishlists):
+        photos: int = count_all_wishlist_elements_photos(user_id, str(wishlist.id))
+        elements: int = count_all_wishlist_elements_for_user(user_id, str(wishlist.id))
         # I hate that they are not aligned
         if not str(wishlist.id) == current_wishlist:
             title = wishlist.title
         else:
-            title = "✅  %s" % wishlist.title
+            title = "✅  %s" % (wishlist.title)
+        if photos:
+            title += f"  │  {elements} 🗂  {photos} 🖼"
+        elif elements:
+            title += f"  │  {elements} 🗂"
+        else:
+            title += "  (vuota)"
         line = [
-            create_button(title, "change_current_wishlist_%s" % str(wishlist.id), None)
+            [
+                create_button(
+                    title, "change_current_wishlist_%s" % str(wishlist.id), None
+                )
+            ]
         ]
+
         if not wishlist.default_wishlist:
             line.append(
-                create_button(
-                    "🗑",
-                    "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
-                    None,
-                )
+                [
+                    create_button(
+                        "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
+                    ),
+                    create_button(
+                        "🗑",
+                        "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
+                        None,
+                    ),
+                ]
             )
-        keyboard.append(line)
+        else:
+            line.append(
+                [
+                    create_button(
+                        "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
+                    ),
+                ]
+            )
+        keyboard.append(line[0])
+        if len(line) > 1:
+            keyboard.append(line[1])
     previous_text = "🔚" if first_page else "◄"
     previous_callback = (
         "empty_button" if first_page else "view_other_wishlists_%s" % (page - 1)
@@ -921,3 +957,121 @@ def add_new_wishlist_keyboard(from_element: bool):
             ]
         ]
     )
+
+
+def edit_wishlist_name_keyboard(from_element: bool):
+    callback = "cancel_edit_wishlist"
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "❌  Annulla",
+                    callback,
+                    callback,
+                ),
+            ]
+        ]
+    )
+
+
+def add_new_wishlist_too_long_keyboard(from_element: bool):
+    # TODO: fix
+    callback = (
+        "cancel_add_to_wishlist" if not from_element else "cancel_add_to_wishlist"
+    )
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "✅  Accetta modifica", "keep_the_current", "keep_the_current"
+                ),
+            ],
+            [
+                create_button(
+                    "❌  Annulla",
+                    callback,
+                    callback,
+                ),
+            ],
+        ]
+    )
+
+
+def edit_wishlist_name_too_long_keyboard(from_element: bool):
+    # TODO: fix
+    callback = "cancel_edit_wishlist"
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button("✅  Accetta modifica", "confirm_edit", "confirm_edit"),
+            ],
+            [
+                create_button(
+                    "❌  Annulla",
+                    callback,
+                    callback,
+                ),
+            ],
+        ]
+    )
+
+
+AD_KEYBOARD_ONE = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "ℹ️  Maggiori informazioni",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=how_to",
+            )
+        ]
+    ]
+)
+
+AD_KEYBOARD_TWO = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "ℹ️  Maggiori informazioni",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=wishlist",
+            )
+        ]
+    ]
+)
+
+
+AD_KEYBOARD_THREE = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "ℹ️  Maggiori informazioni",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=command_list_3",
+            )
+        ]
+    ]
+)
+
+AD_KEYBOARD_FOUR = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "ℹ️  Maggiori informazioni",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=command_list_6",
+            )
+        ],
+    ]
+)
+
+ADS_KEYBOARDS = [
+    AD_KEYBOARD_ONE,
+    AD_KEYBOARD_TWO,
+    AD_KEYBOARD_THREE,
+    AD_KEYBOARD_FOUR,
+]
