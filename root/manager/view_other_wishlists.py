@@ -12,6 +12,7 @@ from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
+    WISHLIST_LIST_MESSAGE,
     WISHLIST_TITLE_TOO_LONG,
 )
 from root.helper import wishlist
@@ -112,7 +113,7 @@ def view_other_wishlists(
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     message = "%s%s" % (
         WISHLIST_HEADER % "",
-        f"{append}Seleziona o crea una lista:",
+        f"{append}{WISHLIST_LIST_MESSAGE}",
     )
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages

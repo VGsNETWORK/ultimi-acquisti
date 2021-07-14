@@ -297,6 +297,7 @@ def ask_delete_all_wishlist_elements(
             text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
                 "",
                 f"{wishlist.title}",
+                "\n",
                 text,
                 append,
             )
@@ -304,6 +305,7 @@ def ask_delete_all_wishlist_elements(
             text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
                 "",
                 f"{wishlist.title}",
+                "  ",
                 text,
                 append,
             )

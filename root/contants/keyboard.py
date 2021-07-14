@@ -891,11 +891,11 @@ def create_other_wishlist_keyboard(
         if not str(wishlist.id) == current_wishlist:
             title = wishlist.title
         else:
-            title = "✅  %s" % (wishlist.title)
+            title = "✅    %s" % (wishlist.title)
         if photos:
-            title += f"  │  {elements} 🗂  {photos} 🖼"
+            title += f" │ {elements} 🗂  {photos} 🖼"
         elif elements:
-            title += f"  │  {elements} 🗂"
+            title += f" │ {elements} 🗂"
         else:
             title += "  (vuota)"
         line = [

@@ -937,7 +937,7 @@ DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE = (
 )
 
 DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE = (
-    f"{WISHLIST_HEADER}<b>%s\n%s</b>\n🚮  "
+    f"{WISHLIST_HEADER}<b>%s%s%s</b>\n🚮  "
     "<i>Stai per cancellare questa lista dei desideri%s"
     "</i>\n\n<b>Vuoi confermare?</b>"
 )
@@ -1001,7 +1001,7 @@ MALFORMED_VALID_LINK = (
 )
 
 ADD_WISHLIST_TITLE_PROMPT = (
-    "Inserisci il titolo della nuova lista dei desideri:\n"
+    "Inserisci il nome della nuova lista dei desideri:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>%s caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
@@ -1009,8 +1009,20 @@ ADD_WISHLIST_TITLE_PROMPT = (
 
 EDIT_WISHLIST_TITLE_PROMPT = (
     "<code>%s</code>\n✏️  <i>Stai rinominando questa lista</i>\n\n"
-    "Inserisci il nuovo titolo della lista dei desideri:\n"
+    "Inserisci il nuovo nome della lista dei desideri:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>%s caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
+)
+
+
+WISHLIST_LIST_MESSAGE = (
+    "Questo è il menu di <i>gestione delle liste dei desideri</i>. Puoi avere fino a "
+    "<b>10</b> liste dei desideri in contemporanea.\n"
+    "Di seguito trovi elencate quelle che possiedi "
+    "al momento, con varie azioni contestuali eseguibili per ognuna di esse.\n\n"
+    "<b>LEGENDA</b>\n"
+    "✏️  =  <b>Rinomina la tua lista</b>\n"
+    "🗑  =  <b>Cancella la tua lista</b> (previa conferma)\n\n"
+    "<i>Clicca</i> infine sul nome di una lista per <b>aprirla</b>."
 )

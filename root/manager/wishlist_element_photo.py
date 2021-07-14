@@ -383,8 +383,9 @@ def ask_for_photo(update: Update, context: CallbackContext):
             ASK_FOR_PHOTOS_PREPEND % len(wishlist_element.photos),
             text,
         )
-    if not extractor.validate_url(wishlist_element.link):
-        text += MALFORMED_VALID_LINK
+    if wishlist_element.link:
+        if not extractor.validate_url(wishlist_element.link):
+            text += MALFORMED_VALID_LINK
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
     # if messages:
