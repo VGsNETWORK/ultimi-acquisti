@@ -415,12 +415,12 @@ def create_wishlist_element_keyboard(
                     % (index, page, str(wishlist_element.id)),
                     None,
                 ),
-                create_button(
-                    "🔄",
-                    "ask_element_wishlist_change_%s_%s"
-                    % (index, str(wishlist_element.id)),
-                    None,
-                ),
+                # create_button(
+                #    "🔄",
+                #    "ask_element_wishlist_change_%s_%s"
+                #    % (index, str(wishlist_element.id)),
+                #    None,
+                # ),
                 create_button(
                     "🗑",
                     "remove_wishlist_element_%s_%s_%s"
