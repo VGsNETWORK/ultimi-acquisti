@@ -4,7 +4,8 @@ from root.handlers.handlers import extractor
 from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
     DELETE_ALL_WISHLIST_ITEMS_PHOTOS,
-    MALFORMED_VALID_LINK,
+    MALFORMED_VALID_LINK_APPEND,
+    NOT_SUPPORTED_LINK_APPEND,
     REQUEST_WISHLIST_PHOTO,
     SINGLE_WISHLIST_PHOTO_ADDED,
     VIEW_WISHLIST_PHOTO_MESSAGE,
@@ -357,6 +358,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             True,
             True,
             download_supported=extractor.is_supported(wishlist_element.link),
+            link=wishlist_element.link,
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -384,8 +386,11 @@ def ask_for_photo(update: Update, context: CallbackContext):
             text,
         )
     if wishlist_element.link:
-        if not extractor.validate_url(wishlist_element.link):
-            text += MALFORMED_VALID_LINK
+        if extractor.extractor_exists(wishlist_element.link):
+            if not extractor.validate_url(wishlist_element.link):
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
+        else:
+            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
     # if messages:
@@ -408,6 +413,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
             photos=wishlist_element.photos,
             page=page,
             download_supported=extractor.is_supported(wishlist_element.link),
+            link=wishlist_element.link,
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,

@@ -995,10 +995,12 @@ AD_MESSAGE_FOUR = (
 ADS_MESSAGES = [AD_MESSAGE_ONE, AD_MESSAGE_TWO, AD_MESSAGE_THREE, AD_MESSAGE_FOUR]
 
 
-MALFORMED_VALID_LINK = (
-    "\n\n\n⚠️  <i>Il dominio web inserito supporta il <b>download automatico delle foto</b>,"
+MALFORMED_VALID_LINK_APPEND = (
+    "\n\n\n%s\n\n⚠️  <i>Il dominio web inserito SUPPORTA il <b>download automatico delle foto</b>,"
     " ma la pagina indicata è inesistente oppure non conforme al pattern richiesto.</i>"
 )
+
+NOT_SUPPORTED_LINK_APPEND = "\n\n\n%s\n\n⚠️  <i>Il dominio web inserito NON SUPPORTA il <b>download automatico delle foto</b>.</i>"
 
 ADD_WISHLIST_TITLE_PROMPT = (
     "Inserisci il nome della nuova lista dei desideri:\n"

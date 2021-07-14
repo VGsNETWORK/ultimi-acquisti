@@ -19,16 +19,15 @@ class Extractor:
     def is_supported(self, url: str):
         if self.validate_url(url):
             if url:
-                return next(
-                    (
-                        handler.match in url
-                        for handler in self.handlers
-                        if handler.match in url
-                    ),
-                    False,
-                )
+                return self.extractor_exists(url)
             return False
         return False
+
+    def extractor_exists(self, url: str):
+        return next(
+            (handler.match in url for handler in self.handlers if handler.match in url),
+            False,
+        )
 
     def validate_url(self, url):
         if not url:

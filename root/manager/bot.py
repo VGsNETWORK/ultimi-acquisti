@@ -36,6 +36,7 @@ from root.manager.wishlist_element_photo import (
 from root.manager.edit_wishlist_element import EDIT_WISHLIST_CONVERSATION
 from root.contants.messages import (
     MONTHLY_REPORT_POPUP_MESSAGE,
+    SUPPORTED_LINKS_MESSAGE,
     YEARLY_REPORT_POPUP_MESSAGE,
 )
 from root.manager.convert_to_purchase import (
@@ -351,6 +352,16 @@ class BotManager:
         self.disp.add_handler(FEEDBACK_CONVERSATION)
         self.disp.add_handler(EDIT_WISHLIST_NAME)
         self.disp.add_handler(ADD_NEW_WISHLIST)
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="show_supported_link",
+                callback=lambda update, context: context.bot.answer_callback_query(
+                    update.callback_query.id,
+                    text=SUPPORTED_LINKS_MESSAGE,
+                    show_alert=True,
+                ),
+            )
+        )
         self.disp.add_handler(
             CommandHandler(
                 "start",

@@ -777,6 +777,7 @@ def create_cancel_wishlist_element_photo_keyboard(
     photos: bool = False,
     page: int = 0,
     download_supported: bool = False,
+    link: str = "",
 ):
     if photos:
         if sended:
@@ -806,6 +807,20 @@ def create_cancel_wishlist_element_photo_keyboard(
                 )
             ],
         )
+    else:
+        logger.info("This is the %s" % link)
+        if link:
+            if link != "" or link != "None":
+                keyboard.insert(
+                    0,
+                    [
+                        create_button(
+                            "⚠️  Domini web supportati",
+                            "show_supported_link",
+                            "show_supported_link",
+                        )
+                    ],
+                )
     return InlineKeyboardMarkup(keyboard)
 
 
