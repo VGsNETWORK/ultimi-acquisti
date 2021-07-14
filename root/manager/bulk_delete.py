@@ -54,7 +54,7 @@ def bulk_delete(update: Update, context: CallbackContext):
     if chat.type == "private":
         sender.delete_if_private(context, message)
         message = ONLY_GROUP_NO_QUOTE % command
-        message = append_timeout_message(message, True, ONE_MINUTE, True)
+        message = append_timeout_message(message, False, ONE_MINUTE, True)
         sender.send_and_edit(
             update,
             context,

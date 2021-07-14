@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.contants.constant import MAX_WISHLIST_NAME_LENGTH
 from root.util.util import max_length_error_format
 from root.helper.user_helper import get_current_wishlist_id
 from typing import List
@@ -106,14 +107,14 @@ def view_other_wishlists(
         if append:
             wishlist_elements = list(wishlist_elements)
             wish: WishlistElement = wishlist_elements[0]
-            append = f"{append}\n\n"
+            append = f"\n\n\n{append}"
         else:
             append = f""
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     message = "%s%s" % (
         WISHLIST_HEADER % "",
-        f"{append}{WISHLIST_LIST_MESSAGE}",
+        f"{WISHLIST_LIST_MESSAGE}{append}",
     )
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
@@ -179,7 +180,7 @@ def add_wishlist(
     data = update.callback_query.data
     from_element = "from_element" in data
     try:
-        message = f"{WISHLIST_HEADER % ''}{ADD_WISHLIST_TITLE_PROMPT % 12}"
+        message = f"{WISHLIST_HEADER % ''}{ADD_WISHLIST_TITLE_PROMPT % MAX_WISHLIST_NAME_LENGTH}"
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
@@ -203,13 +204,16 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
     message = message.text
     message: str = message.split("\n")[0]
     message: str = re.sub(r"\s{2,}", " ", message)
-    if len(message) > 12:
+    if len(message) > MAX_WISHLIST_NAME_LENGTH:
         logger.info("TOO LONG")
         redis_helper.save(
-            "%s_stored_wishlist" % user.id, update.effective_message.text[:12]
+            "%s_stored_wishlist" % user.id,
+            update.effective_message.text[:MAX_WISHLIST_NAME_LENGTH],
         )
-        user_text = max_length_error_format(update.effective_message.text, 12, 100)
-        message = f"{WISHLIST_HEADER % ''}{user_text}\n{WISHLIST_TITLE_TOO_LONG % 12}{ADD_WISHLIST_TITLE_PROMPT % 12}"
+        user_text = max_length_error_format(
+            update.effective_message.text, MAX_WISHLIST_NAME_LENGTH, 100
+        )
+        message = f"{WISHLIST_HEADER % ''}{user_text}\n{WISHLIST_TITLE_TOO_LONG % MAX_WISHLIST_NAME_LENGTH}{ADD_WISHLIST_TITLE_PROMPT % MAX_WISHLIST_NAME_LENGTH}"
         overload = True
         message_id = redis_helper.retrieve(
             "%s_%s_new_wishlist" % (user.id, user.id)

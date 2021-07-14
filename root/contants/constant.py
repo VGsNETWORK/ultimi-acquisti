@@ -9,3 +9,5 @@ CATEGORIES = [
     "🎞  Film",
     "🖥  Elettronica",
 ]
+
+MAX_WISHLIST_NAME_LENGTH = 15
