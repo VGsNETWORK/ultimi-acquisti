@@ -830,6 +830,8 @@ EDIT_WISHLIST_PROMPT = (
 
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
 
+WISHLIST_CHANGED = "✅  <i>Elemento <b>%s</b> spostato nella lista <b>%s</b>!</i>"
+
 
 USER_SETTINGS_HEADER = "<b><u>IMPOSTAZIONI</u></b>\n\n\n"
 
@@ -1027,4 +1029,11 @@ WISHLIST_LIST_MESSAGE = (
     "✏️  =  <b>Rinomina la tua lista</b>\n"
     "🗑  =  <b>Cancella la tua lista</b> (previa conferma)\n\n"
     "<i>Clicca</i> infine sul nome di una lista per <b>aprirla</b>."
+)
+
+CHANGE_ELEMENT_WISHLIST_MESSAGE = (
+    f"{WISHLIST_HEADER}"
+    "<b>%s</b>  <b>%s</b>\n"
+    "🔀  <i>Stai per spostare questo elemento in un'altra lista</i>\n\n"
+    "Seleziona la lista dei desideri di destinazione:"
 )

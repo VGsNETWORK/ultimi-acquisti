@@ -6,6 +6,7 @@ from datetime import date, datetime, time
 import os
 from random import random
 import random
+from root.manager.change_element_wishlist import CHANGE_WISHLIST_ELEMENT_LIST
 from root.manager.rename_wishlist import EDIT_WISHLIST_NAME
 from root.manager.view_other_wishlists import (
     ADD_NEW_WISHLIST,
@@ -349,6 +350,7 @@ class BotManager:
 
         self.disp.add_handler(PollAnswerHandler(rating.receive_poll_answer))
         self.disp.add_error_handler(handle_error)
+        self.disp.add_handler(CHANGE_WISHLIST_ELEMENT_LIST)
         self.disp.add_handler(FEEDBACK_CONVERSATION)
         self.disp.add_handler(EDIT_WISHLIST_NAME)
         self.disp.add_handler(ADD_NEW_WISHLIST)

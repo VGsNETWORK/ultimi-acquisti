@@ -83,6 +83,10 @@ def get_total_wishlist_pages_for_user(user_id: int, page_size: int = 5):
         return int(total_products)
 
 
+def find_wishlist_not_id(wishlist_id: str, user_id: int):
+    return Wishlist.objects().filter(id__ne=wishlist_id, user_id=user_id)
+
+
 def change_wishlist_title(wishlist_id: str, title: str):
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     if wishlist:

@@ -494,7 +494,11 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
 
 
 def view_wishlist(
-    update: Update, context: CallbackContext, append: str = None, page: int = None
+    update: Update,
+    context: CallbackContext,
+    append: str = None,
+    page: int = None,
+    under_first: bool = True,
 ):
     message: Message = update.effective_message
     message_id = message.message_id
@@ -540,7 +544,7 @@ def view_wishlist(
         [logger.info(wish.link) for wish in wishlist_elements]
         [logger.info(1 if wish.link else 0) for wish in wishlist_elements]
         message = ""
-        if append:
+        if append and under_first:
             inc = 1
             wishlist_elements = list(wishlist_elements)
             wish: WishlistElement = wishlist_elements[0]
@@ -591,6 +595,8 @@ def view_wishlist(
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     total_wishlists = count_all_wishlists_for_user(user.id)
+    if not under_first and append:
+        message += f"\n\n\n{append}"
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
