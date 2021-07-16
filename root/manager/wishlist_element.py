@@ -597,7 +597,10 @@ def view_wishlist(
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     total_wishlists = count_all_wishlists_for_user(user.id)
     if not under_first and append:
-        message += f"\n\n\n{append}"
+        if len(wishlist_elements) > 0:
+            message += f"\n\n{append}"
+        else:
+            message += f"\n\n\n{append}"
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
