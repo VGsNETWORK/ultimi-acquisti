@@ -350,6 +350,12 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=m)
     except BadRequest:
         pass
+    if wishlist_element.link:
+        if extractor.extractor_exists(wishlist_element.link):
+            if not extractor.validate_url(wishlist_element.link):
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
+        else:
+            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
     message: Message = context.bot.edit_message_text(
         chat_id=update.effective_chat.id,
         text=text,

@@ -856,7 +856,7 @@ def create_cancel_wishlist_element_photo_keyboard(
                     0,
                     [
                         create_button(
-                            "⚠️  Domini web supportati",
+                            "ℹ️  Domini web supportati",
                             "show_supported_link",
                             "show_supported_link",
                         )
