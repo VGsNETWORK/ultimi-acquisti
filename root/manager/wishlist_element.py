@@ -2,6 +2,8 @@
 # region
 import operator
 import re
+
+from telegram import message
 from root.model.wishlist import Wishlist
 from root.manager.view_other_wishlists import view_other_wishlists
 from root.helper.user_helper import get_current_wishlist_id, retrieve_user
@@ -339,6 +341,7 @@ def ask_delete_all_wishlist_elements(
 def confirm_delete_all_wishlist_elements(
     update: Update, context: CallbackContext, from_wishlist=False
 ):
+    user = update.effective_user
     data = update.callback_query.data
     wishlist_id = data.split("_")[-1]
     delete_all_wishlist_element_for_user(
@@ -348,7 +351,10 @@ def confirm_delete_all_wishlist_elements(
     if not from_wishlist:
         view_wishlist(update, context)
     else:
-        redis_helper.save("%s_%s_new_wishlist", update.effective_message.message_id)
+        redis_helper.save(
+            "%s_%s_new_wishlist" % (user.id, user.id),
+            update.effective_message.message_id,
+        )
         view_other_wishlists(update, context, edit=True)
 
 

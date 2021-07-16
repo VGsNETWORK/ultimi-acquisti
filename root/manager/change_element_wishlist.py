@@ -61,7 +61,6 @@ def change_wishlist(update: Update, context: CallbackContext):
     wishlist_id: str = data.split("_")[-2]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
-    logger.info(f"THIS IS THE TITLE: {wishlist.title}")
     old_wishlist: str = wishlist_element.wishlist_id
     wishlist_element.wishlist_id = str(wishlist.id)
     wishlist_element.save()

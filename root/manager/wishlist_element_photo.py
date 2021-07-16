@@ -135,6 +135,7 @@ def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     message_id = update.callback_query.data.split("_")[-1]
+    logger.info("DELETING MESSAGE WITH MESSAGE_ID [%s]" % message_id)
     context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)

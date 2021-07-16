@@ -830,7 +830,7 @@ EDIT_WISHLIST_PROMPT = (
 
 ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
 
-WISHLIST_CHANGED = "✅  <i>Elemento <b>%s</b> spostato nella lista <b>%s</b>!</i>"
+WISHLIST_CHANGED = "✅  <i><b>%s</b> spostato nella lista <b>%s</b>!</i>"
 
 
 USER_SETTINGS_HEADER = "<b><u>IMPOSTAZIONI</u></b>\n\n\n"
