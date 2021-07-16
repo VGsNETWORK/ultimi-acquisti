@@ -36,6 +36,7 @@ from root.contants.messages import (
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
+    WISHLIST_LEGEND_APPEND,
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
@@ -608,6 +609,8 @@ def view_wishlist(
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     total_wishlists = count_all_wishlists_for_user(user.id)
+    if len(wishlist_elements) > 0:
+        message += WISHLIST_LEGEND_APPEND
     if not under_first and append:
         if len(wishlist_elements) > 0:
             message += f"\n\n{append}"

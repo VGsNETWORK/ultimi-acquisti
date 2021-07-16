@@ -1026,9 +1026,18 @@ WISHLIST_LIST_MESSAGE = (
     "Di seguito trovi elencate quelle che possiedi "
     "al momento, con varie azioni contestuali eseguibili per ognuna di esse.\n\n"
     "<b>LEGENDA</b>\n"
-    "✏️  =  <b>Rinomina la tua lista</b>\n"
-    "🗑  =  <b>Cancella la tua lista</b> (previa conferma)\n\n"
+    "✏️  =  <b>Rinomina la lista</b>\n"
+    "🗑  =  <b>Elimina la lista</b> (previa conferma)\n\n"
     "<i>Clicca</i> infine sul nome di una lista per <b>aprirla</b>."
+)
+
+WISHLIST_LEGEND_APPEND = (
+    "\n\n<b>LEGENDA</b>\n"
+    "🖼  =  <b>Gestisci le foto per l'elemento</b>\n"
+    "🤍  🔄  🛍  =  <b>Converti l'elemento in un acquisto</b> (previa conferma)\n"
+    "✏️  =  <b>Modifica l'elemento</b>\n"
+    "🔀  =  <b>Sposta l'elemento in un'altra lista</b>\n"
+    "🗑  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
 )
 
 CHANGE_ELEMENT_WISHLIST_MESSAGE = (
