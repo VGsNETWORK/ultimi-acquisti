@@ -924,7 +924,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
 
 
 def reset_redis_wishlist_keyboard(user_id: int, total_elements: int):
-    for index in range(0, total_elements):
+    for index in range(0, total_elements + 1):
         logger.info("resetting %s" % ("%s_second_element_page_%s." % (user_id, index)))
         redis_helper.save("%s_second_element_page_%s." % (user_id, index), "False")
 
