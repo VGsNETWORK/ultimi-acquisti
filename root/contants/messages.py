@@ -808,7 +808,8 @@ ADD_TO_WISHLIST_START_PROMPT = (
     "   •  se hai delle foto da aggiungere, assicurati di inserirle tutte prima del testo;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
-    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
+    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>\n\n"
+    "💡 <i>Attiva l'<b>inserimento ciclico</b> per inserire più elementi in sequenza!</i>"
 )
 
 ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT = (
@@ -817,7 +818,8 @@ ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT = (
     "   •  sono supportati sia del testo <s>che un massimo di 10 foto</s>;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
-    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
+    "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>\n\n"
+    "💡 <i>Attiva l'<b>inserimento ciclico</b> per inserire più elementi in sequenza!</i>"
 )
 
 EDIT_WISHLIST_PROMPT = (
