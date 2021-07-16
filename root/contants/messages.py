@@ -1033,7 +1033,7 @@ WISHLIST_LIST_MESSAGE = (
 
 CHANGE_ELEMENT_WISHLIST_MESSAGE = (
     f"{WISHLIST_HEADER}"
-    "<b>%s</b>  <b>%s</b>\n"
+    "<b>%s</b>  <b>%s</b>     %s\n"
     "🔀  <i>Stai per spostare questo elemento in un'altra lista</i>\n\n"
     "Seleziona la lista dei desideri di destinazione:"
 )

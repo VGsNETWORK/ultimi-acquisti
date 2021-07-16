@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.model.user import User
 from root.contants.messages import CHANGE_ELEMENT_WISHLIST_MESSAGE, WISHLIST_CHANGED
 from root.helper import wishlist
 from root.model.wishlist_element import WishlistElement
@@ -38,11 +39,17 @@ def ask_wishlist_change(update: Update, context: CallbackContext):
     wishlists: List[Wishlist] = find_wishlist_not_id(wishlist_id, user_id)
     keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id)
     title = f"{wishlist.title.upper()}  –  "
-    message = CHANGE_ELEMENT_WISHLIST_MESSAGE % (
-        title,
-        index,
-        wishlist_element.description,
-    )
+    description = wishlist_element.description
+    if wishlist_element.link:
+        description = f'<a href="{wishlist_element.link}">{description}</a>'
+    if len(wishlist_element.photos) > 0:
+        info = "(<i>%s</i>  •  <i>%s foto</i>)" % (
+            wishlist_element.category,
+            len(wishlist_element.photos),
+        )
+    else:
+        info = "(<i>%s</i>)" % (wishlist_element.category)
+    message = CHANGE_ELEMENT_WISHLIST_MESSAGE % (title, index, description, info)
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat_id,
