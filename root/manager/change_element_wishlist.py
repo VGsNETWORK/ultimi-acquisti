@@ -5,15 +5,22 @@ from root.helper import wishlist
 from root.model.wishlist_element import WishlistElement
 from root.manager.wishlist_element import view_wishlist
 from root.contants.keyboard import choose_new_wishlist_keyboard
-from root.helper.wishlist import find_wishlist_by_id, find_wishlist_not_id
+from root.helper.wishlist import (
+    find_wishlist_by_id,
+    find_wishlist_not_id,
+)
 from typing import List
 from root.model.wishlist import Wishlist
-from root.helper.wishlist_element import find_wishlist_element_by_id
+from root.helper.wishlist_element import (
+    count_all_wishlist_elements_for_wishlist_id,
+    find_wishlist_element_by_id,
+)
 from telegram.ext import ConversationHandler
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.update import Update
 import telegram_utils.utils.logger as logger
+from time import sleep
 
 CHANGE_ELEMENT_WISHLIST = range(1)
 
@@ -48,12 +55,15 @@ def ask_wishlist_change(update: Update, context: CallbackContext):
 
 
 def change_wishlist(update: Update, context: CallbackContext):
+    user: User = update.effective_user
     data: str = update.callback_query.data
     wishlist_element_id: str = data.split("_")[-1]
     wishlist_id: str = data.split("_")[-2]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
-    wishlist_element.wishlist_id = wishlist_id
+    logger.info(f"THIS IS THE TITLE: {wishlist.title}")
+    old_wishlist: str = wishlist_element.wishlist_id
+    wishlist_element.wishlist_id = str(wishlist.id)
     wishlist_element.save()
     update.callback_query.data += "_0"
     append = WISHLIST_CHANGED % (wishlist_element.description, wishlist.title)

@@ -342,6 +342,7 @@ def create_wishlist_element_keyboard(
     inc: int = 0,
     total_wishlists: int = 0,
 ):
+    logger.info("Number of elements %s" % len(wishlist_elements))
     keyboard = [
         [
             create_button(
@@ -415,12 +416,12 @@ def create_wishlist_element_keyboard(
                     % (index, page, str(wishlist_element.id)),
                     None,
                 ),
-                # create_button(
-                #    "🔄",
-                #    "ask_element_wishlist_change_%s_%s"
-                #    % (index, str(wishlist_element.id)),
-                #    None,
-                # ),
+                create_button(
+                    "🔀",
+                    "ask_element_wishlist_change_%s_%s"
+                    % (index, str(wishlist_element.id)),
+                    None,
+                ),
                 create_button(
                     "🗑",
                     "remove_wishlist_element_%s_%s_%s"

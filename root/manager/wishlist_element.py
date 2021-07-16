@@ -45,6 +45,7 @@ from root.util.util import (
 )
 from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_user,
+    count_all_wishlist_elements_for_wishlist_id,
     count_all_wishlist_elements_photos,
     delete_all_wishlist_element_for_user,
     find_wishlist_element_by_id,
@@ -583,7 +584,7 @@ def view_wishlist(
                 )
             msgs.append(m)
         message += "\n".join(msgs)
-        if append:
+        if append and under_first:
             wishlist_elements.insert(0, wish)
     else:
         inc = 0

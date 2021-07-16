@@ -56,6 +56,12 @@ def delete_wishlist_element_photos(wish_id: str):
         wish.save()
 
 
+def count_all_wishlist_elements_for_wishlist_id(wishlist_id: str, user_id: int):
+    return len(
+        WishlistElement.objects().filter(wishlist_id=wishlist_id, user_id=user_id)
+    )
+
+
 def get_total_wishlist_element_pages_for_user(
     user_id: int, page_size: int = 5, wishlist_id=""
 ):
