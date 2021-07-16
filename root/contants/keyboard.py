@@ -999,11 +999,15 @@ def create_other_wishlist_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def add_new_wishlist_keyboard(from_element: bool):
+def add_new_wishlist_keyboard(
+    from_element: bool, from_move: bool, wish_id: str = "", index: str = ""
+):
     # TODO: fix
     callback = (
         "cancel_add_to_wishlist" if not from_element else "cancel_add_to_wishlist"
     )
+    if from_move:
+        callback += "from_move_%s_%s" % (wish_id, index)
     return InlineKeyboardMarkup(
         [
             [
@@ -1135,8 +1139,19 @@ ADS_KEYBOARDS = [
 ]
 
 
-def choose_new_wishlist_keyboard(wishlists: List[Wishlist], wishlist_element_id: str):
+def choose_new_wishlist_keyboard(
+    wishlists: List[Wishlist], wishlist_element_id: str, index: str
+):
     keyboard = []
+    keyboard.append(
+        [
+            create_button(
+                "➕  Crea nuova lista",
+                "add_new_wishlist_from_move_%s_%s" % (index, wishlist_element_id),
+                None,
+            ),
+        ],
+    )
     for wishlist in wishlists:
         # ChangeWishlistElementList
         callback = "cwel_%s_%s" % (wishlist.id, wishlist_element_id)
@@ -1148,6 +1163,6 @@ def choose_new_wishlist_keyboard(wishlists: List[Wishlist], wishlist_element_id:
                 "cancel_wishlist_change",
                 "cancel_wishlist_change",
             ),
-        ]
+        ],
     )
     return InlineKeyboardMarkup(keyboard)

@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.manager import change_element_wishlist
 from root.contants.constant import MAX_WISHLIST_NAME_LENGTH
 from root.util.util import max_length_error_format
 from root.helper.user_helper import get_current_wishlist_id
@@ -179,13 +180,22 @@ def add_wishlist(
     redis_helper.save("%s_%s_new_wishlist" % (user.id, user.id), message_id)
     data = update.callback_query.data
     from_element = "from_element" in data
+    from_move = "from_move" in data
+    redis_helper.save("%s_%s_from_move" % (user.id, user.id), str(from_move))
+    wish_id = data.split("_")[-1]
+    index = data.split("_")[-2]
+    redis_helper.save(
+        "%s_%s_from_move_info" % (user.id, user.id), "%s_%s" % (index, wish_id)
+    )
     try:
         message = f"{WISHLIST_HEADER % ''}{ADD_WISHLIST_TITLE_PROMPT % MAX_WISHLIST_NAME_LENGTH}"
         context.bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
             text=message,
-            reply_markup=add_new_wishlist_keyboard(from_element),
+            reply_markup=add_new_wishlist_keyboard(
+                from_element, from_move, index, wish_id
+            ),
             disable_web_page_preview=True,
             parse_mode="HTML",
         )
@@ -197,6 +207,7 @@ def add_wishlist(
 def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = False):
     message: Message = update.effective_message
     message_id: int = message.message_id
+    logger.info("REAL_MESSAGE_ID: %s" % message_id)
     chat_id: int = update.effective_chat.id
     user: User = update.effective_user
     cdopohat: Chat = update.effective_chat
@@ -229,23 +240,47 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
         )
     else:
         create_wishlist("", message, user.id)
+        logger.info("THE FUXK")
         overload = False
-        view_other_wishlists(
-            update,
-            context,
-            f"✅  <i>Lista <b>{message}</b> creata!</i>",
-            "0",
-            True,
-        )
+        from_move = redis_helper.retrieve(
+            "%s_%s_from_move" % (user.id, user.id)
+        ).decode()
+        if from_move:
+            message_id = redis_helper.retrieve(
+                "%s_%s_new_wishlist" % (user.id, user.id)
+            ).decode()
+            from_move: bool = eval(from_move)
+            if from_move:
+                data = redis_helper.retrieve(
+                    "%s_%s_from_move_info" % (user.id, user.id)
+                ).decode()
+                index = data.split("_")[-2]
+                wish_id = data.split("_")[-1]
+                change_element_wishlist.ask_wishlist_change(
+                    update, context, index, wish_id, message_id
+                )
+        else:
+            logger.info("AGGIUNTA")
+            view_other_wishlists(
+                update,
+                context,
+                f"✅  <i>Lista <b>{message}</b> creata!</i>",
+                "0",
+                True,
+            )
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
 def cancel_add_wishlist(update: Update, context: CallbackContext):
+    logger.info("CANCEL")
     data = update.callback_query.data
     if not "NO_DELETE" in data:
         user: User = update.effective_user
-    update.callback_query.data += "_0"
-    view_other_wishlists(update, context)
+    if not "from_move" in update.callback_query.data:
+        update.callback_query.data += "_0"
+        view_other_wishlists(update, context)
+    else:
+        change_element_wishlist.ask_wishlist_change(update, context)
     return ConversationHandler.END
 
 

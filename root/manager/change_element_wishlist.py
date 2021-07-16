@@ -26,18 +26,28 @@ from time import sleep
 CHANGE_ELEMENT_WISHLIST = range(1)
 
 
-def ask_wishlist_change(update: Update, context: CallbackContext):
-    message_id: int = update.effective_message.message_id
+def ask_wishlist_change(
+    update: Update,
+    context: CallbackContext,
+    index: str = None,
+    wishlist_element_id: str = None,
+    message_id: str = None,
+):
+    logger.info("MESSAGE_ID: %s" % message_id)
+    if not message_id:
+        message_id: int = update.effective_message.message_id
+    logger.info("MESSAGE_ID: %s" % message_id)
     chat_id: int = update.effective_chat.id
     user_id = update.effective_user.id
-    data: str = update.callback_query.data
-    wishlist_element_id: str = data.split("_")[-1]
-    index: str = data.split("_")[-2]
+    if update.callback_query:
+        data: str = update.callback_query.data
+        wishlist_element_id: str = data.split("_")[-1]
+        index: str = data.split("_")[-2]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
     wishlist_id: str = wishlist_element.wishlist_id
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     wishlists: List[Wishlist] = find_wishlist_not_id(wishlist_id, user_id)
-    keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id)
+    keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id, index)
     title = f"{wishlist.title.upper()}  –  "
     description = wishlist_element.description
     if wishlist_element.link:
