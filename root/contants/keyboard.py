@@ -19,6 +19,7 @@ from telegram import InlineKeyboardMarkup
 from root.util.util import create_button
 from urllib.parse import quote
 import telegram_utils.utils.logger as logger
+import telegram_utils.helper.redis as redis_helper
 
 
 BOT_NAME = environ["BOT_NAME"]
@@ -341,6 +342,7 @@ def create_wishlist_element_keyboard(
     last_page: bool,
     inc: int = 0,
     total_wishlists: int = 0,
+    user_id: int = 0,
 ):
     logger.info("Number of elements %s" % len(wishlist_elements))
     keyboard = [
@@ -396,40 +398,71 @@ def create_wishlist_element_keyboard(
             icon = len(wishlist_element.photos) - 1
             icon = btns[icon]
             photos = " 0️⃣  " if not wishlist_element.photos else " %s  " % icon
-        keyboard.append(
-            [
-                create_button(f"{space}{index}", "empty_button", None),
-                create_button(
-                    "%s🖼" % photos,
-                    photo_callback,
-                    None,
-                ),
-                create_button(
-                    "✏️",
-                    "edit_wishlist_element_item_%s_%s_%s"
-                    % (index, page, str(wishlist_element.id)),
-                    None,
-                ),
-                create_button(
-                    "🤍  🔄  🛍",
-                    "convert_to_purchase_%s_%s_%s"
-                    % (index, page, str(wishlist_element.id)),
-                    None,
-                ),
-                create_button(
-                    "🔀",
-                    "ask_element_wishlist_change_%s_%s"
-                    % (index, str(wishlist_element.id)),
-                    None,
-                ),
-                create_button(
-                    "🗑",
-                    "remove_wishlist_element_%s_%s_%s"
-                    % (index, page, wishlist_element.id),
-                    None,
-                ),
-            ]
+        second_page = redis_helper.retrieve(
+            "%s_second_element_page_%s" % (user_id, index)
         )
+        logger.info(second_page)
+        if second_page:
+            second_page: second_page.decode()
+            if second_page:
+                second_page: bool = eval(second_page)
+            else:
+                second_page: False
+        else:
+            second_page = False
+        if not second_page:
+            keyboard.append(
+                [
+                    create_button(f"{space}{index}", "empty_button", None),
+                    create_button(
+                        "%s🖼" % photos,
+                        photo_callback,
+                        None,
+                    ),
+                    create_button(
+                        "🤍  🔄  🛍",
+                        "convert_to_purchase_%s_%s_%s"
+                        % (index, page, str(wishlist_element.id)),
+                        None,
+                    ),
+                    create_button(
+                        "»",
+                        "toggle_element_action_page_%s_%s_%s"
+                        % (index, str(wishlist_element.id), page),
+                        None,
+                    ),
+                ]
+            )
+        else:
+            keyboard.append(
+                [
+                    create_button(f"{space}{index}", "empty_button", None),
+                    create_button(
+                        "«",
+                        "toggle_element_action_page_%s_%s_%s"
+                        % (index, str(wishlist_element.id), page),
+                        None,
+                    ),
+                    create_button(
+                        "✏️",
+                        "edit_wishlist_element_item_%s_%s_%s"
+                        % (index, page, str(wishlist_element.id)),
+                        None,
+                    ),
+                    create_button(
+                        "🔀",
+                        "ask_element_wishlist_change_%s_%s"
+                        % (index, str(wishlist_element.id)),
+                        None,
+                    ),
+                    create_button(
+                        "🗑",
+                        "remove_wishlist_element_%s_%s_%s"
+                        % (index, page, wishlist_element.id),
+                        None,
+                    ),
+                ]
+            )
     previous_text = "🔚" if first_page else "◄"
     previous_callback = (
         "empty_button" if first_page else "view_wishlist_element_%s" % (page - 1)

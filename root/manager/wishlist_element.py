@@ -506,6 +506,7 @@ def view_wishlist(
     append: str = None,
     page: int = None,
     under_first: bool = True,
+    reset_keyboard: bool = True,
 ):
     message: Message = update.effective_message
     message_id = message.message_id
@@ -513,6 +514,11 @@ def view_wishlist(
     user: User = update.effective_user
     create_wishlist_if_empty(user.id)
     wishlist_id = get_current_wishlist_id(user.id)
+    if reset_keyboard:
+        reset_redis_wishlist_keyboard(
+            user.id,
+            count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id),
+        )
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
         data = update.callback_query.data
@@ -620,6 +626,7 @@ def view_wishlist(
                 last_page,
                 inc,
                 total_wishlists,
+                user.id,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,
@@ -636,6 +643,7 @@ def view_wishlist(
                 last_page,
                 inc,
                 total_wishlists,
+                user.id,
             ),
             parse_mode="HTML",
             disable_web_page_preview=True,
@@ -905,6 +913,30 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         disable_web_page_preview=True,
     )
     return ADD_CATEGORY
+
+
+def reset_redis_wishlist_keyboard(user_id: int, total_elements: int):
+    for index in range(0, total_elements):
+        logger.info("resetting %s" % ("%s_second_element_page_%s." % (user_id, index)))
+        redis_helper.save("%s_second_element_page_%s." % (user_id, index), "False")
+
+
+def toggle_element_action_page(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    index = update.callback_query.data.split("_")[-3]
+    second_page = redis_helper.retrieve("%s_second_element_page_%s" % (user.id, index))
+    if second_page:
+        second_page: second_page.decode()
+        if second_page:
+            second_page: bool = eval(second_page)
+        else:
+            second_page: False
+    else:
+        second_page = False
+    second_page = not second_page
+    redis_helper.save("%s_second_element_page_%s" % (user.id, index), str(second_page))
+
+    view_wishlist(update, context, reset_keyboard=False)
 
 
 def extract_photo_from_message(update: Update, context: CallbackContext):

@@ -54,6 +54,7 @@ from root.manager.wishlist_element import (
     confirm_delete_all_wishlist_elements,
     confirm_wishlist_element_deletion,
     remove_wishlist_element_item,
+    toggle_element_action_page,
     view_wishlist,
 )
 from root.manager.bulk_delete import bulk_delete, cancel_bulk_delete
@@ -269,6 +270,12 @@ class BotManager:
             CallbackQueryHandler(
                 ask_delete_wishlist_list,
                 pattern="ask_delete_wishlist_and_elements",
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                toggle_element_action_page, pattern="toggle_element_action_page"
             )
         )
 
