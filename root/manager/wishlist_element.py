@@ -609,6 +609,11 @@ def view_wishlist(
     last_page = page + 1 == total_pages
     logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     total_wishlists = count_all_wishlists_for_user(user.id)
+    if total_pages > 1:
+        message += (
+            f"\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>\n"
+            % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
+        )
     if len(wishlist_elements) > 0:
         message += WISHLIST_LEGEND_APPEND
     if not under_first and append:
