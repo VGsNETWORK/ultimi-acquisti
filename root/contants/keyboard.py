@@ -965,6 +965,7 @@ def create_other_wishlist_keyboard(
         if not wishlist.default_wishlist:
             line.append(
                 [
+                    create_button("➥", "empty_button", None),
                     create_button(
                         "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
                     ),
@@ -978,6 +979,7 @@ def create_other_wishlist_keyboard(
         else:
             line.append(
                 [
+                    create_button("➥", "empty_button", None),
                     create_button(
                         "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
                     ),
