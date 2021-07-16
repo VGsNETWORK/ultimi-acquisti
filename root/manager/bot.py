@@ -3,6 +3,7 @@
 """ File that contains the class to start the bot with the bot api """
 
 from datetime import date, datetime, time
+from operator import index
 import os
 from random import random
 import random
@@ -205,29 +206,36 @@ class BotManager:
             whens = [time(hour=h, minute=0) for h in hours]
             groups = retrieve_key("AD_GROUPS")
             if not groups:
-                logger.error("empty ad groups")
+                logger.error("EMPTY AD GROUPS")
                 groups = []
             else:
                 groups = eval(groups)
             days = [1, 4, 8, 12, 17, 23, 26, 30]
-
-            for i in range(0, len(groups)):
+            logger.info("TOTAL NUMBER OF GROUPS FOR ADS %s" % len(groups))
+            message = []
+            for index in range(0, len(groups)):
                 # fmt: off
-                group = random.choice(groups); groups.remove(group)
-                when = random.choice(whens); whens.remove(when)
+                group = groups[0]; groups.remove(group)
+                when = whens[0]; whens.remove(when)
+                chat = self.disp.bot.get_chat(chat_id=group)
+                group_name = chat.title.split(" | ")[0]
+                message.append(f"\n<b>{group_name}</b>")
                 # fmt: on
                 for i in range(0, 2):
-                    day = random.choice(days)
+                    day = days[0]
                     days.remove(day)
-                    log(
-                        f"👷  Aggiunto scheduler <code>ads</code> nel gruppo {group} nel giorno {day} alle ore {when}"
+                    message.append(
+                        f"    👷🏻‍♂️ Aggiunto scheduler di advertising per il giorno <b>{day}</b> di ogni mese alle ore <b>{when.hour}:00</b>",
                     )
+                    logger.info(message)
                     self.disp.job_queue.run_monthly(
                         callback=send_advertisement,
                         context={"group": group},
                         day=day,
                         when=when,
                     )
+            message = "\n".join(message)
+            log(0, message)
         except Exception as e:
             logger.error(e)
         logger.info("adding ad test command")
