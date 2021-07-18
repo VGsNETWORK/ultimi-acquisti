@@ -1036,16 +1036,23 @@ def edit_wishlist_name_keyboard(from_element: bool):
     )
 
 
-def add_new_wishlist_too_long_keyboard(from_element: bool):
+def add_new_wishlist_too_long_keyboard(
+    from_element: bool, from_move: bool, index, wish_id
+):
     # TODO: fix
     callback = (
         "cancel_add_to_wishlist" if not from_element else "cancel_add_to_wishlist"
     )
+    keep_callback = "keep_the_current"
+    if from_move:
+        keep_callback += "_from_move_%s_%s" % (index, wish_id)
     return InlineKeyboardMarkup(
         [
             [
                 create_button(
-                    "✅  Accetta modifica", "keep_the_current", "keep_the_current"
+                    "✅  Accetta modifica",
+                    keep_callback,
+                    "keep_the_current",
                 ),
             ],
             [

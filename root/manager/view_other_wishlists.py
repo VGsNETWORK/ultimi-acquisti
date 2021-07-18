@@ -187,6 +187,7 @@ def add_wishlist(
     redis_helper.save(
         "%s_%s_from_move_info" % (user.id, user.id), "%s_%s" % (index, wish_id)
     )
+    logger.info("FROM MOVE %s" % from_move)
     try:
         message = f"{WISHLIST_HEADER % ''}{ADD_WISHLIST_TITLE_PROMPT % MAX_WISHLIST_NAME_LENGTH}"
         context.bot.edit_message_text(
@@ -229,12 +230,24 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
         message_id = redis_helper.retrieve(
             "%s_%s_new_wishlist" % (user.id, user.id)
         ).decode()
+        data = redis_helper.retrieve(
+            "%s_%s_from_move_info" % (user.id, user.id)
+        ).decode()
+        index = data.split("_")[-2]
+        wish_id = data.split("_")[-1]
+        from_move = redis_helper.retrieve(
+            "%s_%s_from_move" % (user.id, user.id)
+        ).decode()
+        logger.info("TOO LONG FROM MOVE %s" % from_move)
+        from_move = eval(from_move)
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=message_id,
             text=message,
             # TODO: fix
-            reply_markup=add_new_wishlist_too_long_keyboard(False),
+            reply_markup=add_new_wishlist_too_long_keyboard(
+                False, from_move, index, wish_id
+            ),
             parse_mode="HTML",
             disable_web_page_preview=False,
         )
@@ -245,20 +258,20 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
         from_move = redis_helper.retrieve(
             "%s_%s_from_move" % (user.id, user.id)
         ).decode()
+        logger.info("FROM MOVE %s" % from_move)
+        from_move = eval(from_move)
         if from_move:
             message_id = redis_helper.retrieve(
                 "%s_%s_new_wishlist" % (user.id, user.id)
             ).decode()
-            from_move: bool = eval(from_move)
-            if from_move:
-                data = redis_helper.retrieve(
-                    "%s_%s_from_move_info" % (user.id, user.id)
-                ).decode()
-                index = data.split("_")[-2]
-                wish_id = data.split("_")[-1]
-                change_element_wishlist.ask_wishlist_change(
-                    update, context, index, wish_id, message_id
-                )
+            data = redis_helper.retrieve(
+                "%s_%s_from_move_info" % (user.id, user.id)
+            ).decode()
+            index = data.split("_")[-2]
+            wish_id = data.split("_")[-1]
+            change_element_wishlist.ask_wishlist_change(
+                update, context, index, wish_id, message_id
+            )
         else:
             logger.info("AGGIUNTA")
             view_other_wishlists(
@@ -288,13 +301,17 @@ def handle_keep_confirm(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()
     create_wishlist("", message, user.id)
-    view_other_wishlists(
-        update,
-        context,
-        f"✅  <i>Lista <b>{message}</b> creata!</i>",
-        "0",
-        True,
-    )
+    logger.info(update.callback_query.data)
+    if not "from_move" in update.callback_query.data:
+        view_other_wishlists(
+            update,
+            context,
+            f"✅  <i>Lista <b>{message}</b> creata!</i>",
+            "0",
+            True,
+        )
+    else:
+        change_element_wishlist.ask_wishlist_change(update, context)
     return ConversationHandler.END
 
 
