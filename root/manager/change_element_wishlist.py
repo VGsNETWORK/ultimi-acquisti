@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from telegram import user
 from root.model.user import User
 from root.contants.messages import CHANGE_ELEMENT_WISHLIST_MESSAGE, WISHLIST_CHANGED
 from root.helper import wishlist
@@ -7,6 +8,7 @@ from root.model.wishlist_element import WishlistElement
 from root.manager.wishlist_element import view_wishlist
 from root.contants.keyboard import choose_new_wishlist_keyboard
 from root.helper.wishlist import (
+    find_default_wishlist,
     find_wishlist_by_id,
     find_wishlist_not_id,
 )
@@ -47,6 +49,13 @@ def ask_wishlist_change(
     wishlist_id: str = wishlist_element.wishlist_id
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     wishlists: List[Wishlist] = find_wishlist_not_id(wishlist_id, user_id)
+    wishlists = list(wishlists)
+    default: Wishlist = wishlists[-1]
+    if default.default_wishlist:
+        wishlists = wishlists[:-1]
+        default.title += "  (default)"
+        logger.info(default.title)
+        wishlists.insert(0, default)
     keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id, index)
     title = f"{wishlist.title.upper()}  –  "
     description = wishlist_element.description
