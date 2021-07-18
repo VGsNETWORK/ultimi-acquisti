@@ -195,7 +195,8 @@ def check_message_length(
                     ]
                 )
             if wishlist_elements:
-                message += "\n"
+                if len(wishlist_elements) > 1:
+                    message += "\n"
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
             message += f"\n{WISHLIST_STEP_TWO}{append}"
             context.bot.edit_message_text(
@@ -583,17 +584,19 @@ def view_wishlist(
             index = ((index) + (5 * page + 1)) + inc
             if index == int(last):
                 space = ""
+                new_line = ""
             else:
                 space = "  " if add_space else ""
+                new_line = "\n"
             if wish.link:
                 m = (
                     f'<b>{space}{index}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 )
             else:
                 m = (
                     f"<b>{space}{index}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 )
             msgs.append(m)
         message += "\n".join(msgs)
@@ -611,7 +614,7 @@ def view_wishlist(
     total_wishlists = count_all_wishlists_for_user(user.id)
     if total_pages > 1:
         message += (
-            f"\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>\n"
+            f"\n\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>"
             % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
         )
     if len(wishlist_elements) > 0:

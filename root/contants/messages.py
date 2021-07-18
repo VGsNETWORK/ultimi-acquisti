@@ -1025,12 +1025,12 @@ EDIT_WISHLIST_TITLE_PROMPT = (
 WISHLIST_LIST_MESSAGE = (
     "Questo è il menu di <i>gestione delle liste dei desideri</i>. Puoi avere fino a "
     "<b>10</b> liste dei desideri in contemporanea.\n"
-    "Di seguito trovi elencate quelle che possiedi "
-    "al momento, con varie azioni contestuali eseguibili per ognuna di esse.\n\n"
+    "Di seguito trovi elencate quelle che possiedi al momento: <i>clicca</i> "
+    "sul nome di una lista per <b>aprirla</b>, oppure premi i pulsanti sottostanti "
+    "per eseguire varie azioni contestuali.\n\n\n"
     "<b>LEGENDA</b>\n"
     "✏️  =  <b>Rinomina la lista</b>\n"
-    "🗑  =  <b>Elimina la lista</b> (previa conferma)\n\n"
-    "<i>Clicca</i> infine sul nome di una lista per <b>aprirla</b>."
+    "🗑  =  <b>Elimina la lista</b> (previa conferma)"
 )
 
 WISHLIST_LEGEND_APPEND = (
