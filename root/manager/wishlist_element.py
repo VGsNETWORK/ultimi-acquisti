@@ -564,10 +564,16 @@ def view_wishlist(
             wishlist_elements = list(wishlist_elements)
             wish: WishlistElement = wishlist_elements[0]
             wishlist_elements.remove(wish)
-            if wish.link:
-                message += f'<b>1.</b>  <a href="{wish.link}">{wish.description}</a>\n{append}\n\n'
+            if len(wishlist_elements) == 0:
+                logger.info("ADDING NONE NEW LINES")
+                new_line = ""
             else:
-                message += f"<b>1.</b>  {wish.description}\n{append}\n\n"
+                logger.info("ADDING TWO NEW LINES")
+                new_line = "\n\n"
+            if wish.link:
+                message += f'<b>1.</b>  <a href="{wish.link}">{wish.description}</a>{append}{new_line}'
+            else:
+                message += f"<b>1.</b>  {wish.description}{append}{new_line}"
         else:
             inc = 0
         msgs = []

@@ -830,7 +830,7 @@ EDIT_WISHLIST_PROMPT = (
     "<b>Se il nuovo elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
 
-ADDED_TO_WISHLIST = "✅  <i>Elemento aggiunto con successo!</i>"
+ADDED_TO_WISHLIST = "\n✅  <i>Elemento aggiunto con successo!</i>"
 
 WISHLIST_CHANGED = "✅  <i><b>%s</b> spostato nella lista <b>%s</b>!</i>"
 
