@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from root.helper.user_helper import get_current_wishlist_id
+from root.helper.wishlist import find_wishlist_by_id, find_wishlist_for_user
 from root.handlers.handlers import extractor
 from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
@@ -10,6 +12,7 @@ from root.contants.messages import (
     SINGLE_WISHLIST_PHOTO_ADDED,
     VIEW_WISHLIST_PHOTO_MESSAGE,
     VIEW_NO_WISHLIST_PHOTO_MESSAGE,
+    WISHLIST_HEADER,
     WISHLIST_PHOTO_LIMIT_REACHED,
 )
 from telegram.error import BadRequest
@@ -356,6 +359,10 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
                 text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
         else:
             text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
+    wishlist_id = get_current_wishlist_id(user.id)
+    wishlist = find_wishlist_by_id(wishlist_id)
+    title = f"{wishlist.title.upper()}  –  "
+    text: str = f"{WISHLIST_HEADER % title}{text}"
     message: Message = context.bot.edit_message_text(
         chat_id=update.effective_chat.id,
         text=text,
@@ -392,6 +399,11 @@ def ask_for_photo(update: Update, context: CallbackContext):
             ASK_FOR_PHOTOS_PREPEND % len(wishlist_element.photos),
             text,
         )
+    else:
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        text: str = f"{WISHLIST_HEADER % title}{text}"
     if wishlist_element.link:
         if extractor.extractor_exists(wishlist_element.link):
             if not extractor.validate_url(wishlist_element.link):
