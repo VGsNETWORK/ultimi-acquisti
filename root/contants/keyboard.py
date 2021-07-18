@@ -415,14 +415,14 @@ def create_wishlist_element_keyboard(
                 [
                     create_button(f"{space}{index}", "empty_button", None),
                     create_button(
-                        "%s🖼" % photos,
-                        photo_callback,
-                        None,
-                    ),
-                    create_button(
                         "🤍  🔄  🛍",
                         "convert_to_purchase_%s_%s_%s"
                         % (index, page, str(wishlist_element.id)),
+                        None,
+                    ),
+                    create_button(
+                        "%s🖼" % photos,
+                        photo_callback,
                         None,
                     ),
                     create_button(
