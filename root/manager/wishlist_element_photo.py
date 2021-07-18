@@ -112,6 +112,10 @@ def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackCo
     photos: List[str] = wishlist_element.photos
     if not photos:
         text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        text = f"{WISHLIST_HEADER % title}{text}"
         keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
@@ -159,6 +163,10 @@ def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     redis_helper.save("%s_photos_message" % user.id, str(messages))
     if not photos:
         text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        text = f"{WISHLIST_HEADER % title}{text}"
         keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         text = VIEW_WISHLIST_PHOTO_MESSAGE % (
@@ -231,6 +239,10 @@ def view_wishlist_element_photos(
     photos: List[str] = wishlist_element.photos
     if not photos:
         text: str = VIEW_NO_WISHLIST_PHOTO_MESSAGE % (wishlist_element.description)
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        text = f"{WISHLIST_HEADER % title}{text}"
         keyboard = build_view_wishlist_element_photos_keyboard(wishlist_element, [])
     else:
         logger.info(message_id)
