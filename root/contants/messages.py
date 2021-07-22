@@ -1034,13 +1034,24 @@ WISHLIST_LIST_MESSAGE = (
     "🗑  =  <b>Elimina la lista</b> (previa conferma)"
 )
 
-WISHLIST_LEGEND_APPEND = (
-    "\n\n\n<b>LEGENDA</b>\n"
+WISHLIST_LEGEND_APPEND_LEGEND = "\n\n\n<b>LEGENDA</b>\n"
+
+WISHLIST_LEGEND_APPEND_FIRST_PAGE = (
     "<code>🤍 🔄 🛍</code>  =  <b>Converti l'elemento in un acquisto</b> (previa conferma)\n"
     "<code>   🖼   </code>  =  <b>Gestisci le foto per l'elemento</b>\n"
+)
+
+
+WISHLIST_LEGEND_APPEND_SECOND_PAGE = (
     "<code>   ✏️   </code>  =  <b>Modifica l'elemento</b>\n"
     "<code>   🔀   </code>  =  <b>Sposta l'elemento in un'altra lista</b>\n"
     "<code>   🗑   </code>  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
+)
+
+WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY = (
+    "✏️  =  <b>Modifica l'elemento</b>\n"
+    "🔀  =  <b>Sposta l'elemento in un'altra lista</b>\n"
+    "🗑  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
 )
 
 CHANGE_ELEMENT_WISHLIST_MESSAGE = (

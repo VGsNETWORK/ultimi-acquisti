@@ -426,7 +426,7 @@ def create_wishlist_element_keyboard(
                         None,
                     ),
                     create_button(
-                        "»",
+                        ">",
                         "toggle_element_action_page_%s_%s_%s"
                         % (index, str(wishlist_element.id), page),
                         None,
@@ -438,7 +438,7 @@ def create_wishlist_element_keyboard(
                 [
                     create_button(f"{space}{index}", "empty_button", None),
                     create_button(
-                        "«",
+                        "<",
                         "toggle_element_action_page_%s_%s_%s"
                         % (index, str(wishlist_element.id), page),
                         None,

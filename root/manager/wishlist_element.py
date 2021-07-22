@@ -41,7 +41,10 @@ from root.contants.messages import (
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
-    WISHLIST_LEGEND_APPEND,
+    WISHLIST_LEGEND_APPEND_FIRST_PAGE,
+    WISHLIST_LEGEND_APPEND_LEGEND,
+    WISHLIST_LEGEND_APPEND_SECOND_PAGE,
+    WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY,
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
@@ -630,15 +633,18 @@ def view_wishlist(
             f"\n\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>"
             % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
         )
-    if len(wishlist_elements) > 0:
-        message += WISHLIST_LEGEND_APPEND
+    message += WISHLIST_LEGEND_APPEND_LEGEND
     if not under_first and append:
         if len(wishlist_elements) > 0:
             message += f"\n\n{append}"
         else:
             message += f"\n\n\n{append}"
     if not reset_keyboard:
-        for index in range(0, len(wishlist_elements) + 1):
+        first_page_added = False
+        second_page_added = False
+        append_legend = []
+        extra_spaces = ""
+        for index in range(1, len(wishlist_elements) + 1):
             element = redis_helper.retrieve(
                 "%s_second_element_page_%s." % (user.id, index + (5 * page))
             ).decode()
@@ -646,7 +652,28 @@ def view_wishlist(
                 element = eval(element)
                 if element:
                     logger.info("ADDING &#8203; FOR %s" % (index + (5 * page)))
-                    message += "&#8203;"
+                    if not second_page_added:
+                        append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
+                        second_page_added = True
+                    extra_spaces += "&#8203;"
+                else:
+                    logger.info("NOT ADDING &#8203; FOR %s" % (index + (5 * page)))
+                    if not first_page_added:
+                        append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
+                        first_page_added = True
+        if len(append_legend) == 1:
+            if append_legend[0] == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
+                logger.info("ADDING WITHOUT SPACES")
+                message += WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY
+            else:
+                append_legend = "".join(append_legend)
+                message += append_legend
+        else:
+            append_legend = "".join(append_legend)
+            message += append_legend
+        message += extra_spaces
+    else:
+        message += WISHLIST_LEGEND_APPEND_FIRST_PAGE
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
