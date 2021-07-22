@@ -637,6 +637,16 @@ def view_wishlist(
             message += f"\n\n{append}"
         else:
             message += f"\n\n\n{append}"
+    if not reset_keyboard:
+        for index in range(0, len(wishlist_elements) + 1):
+            element = redis_helper.retrieve(
+                "%s_second_element_page_%s." % (user.id, index + (5 * page))
+            ).decode()
+            if element:
+                element = eval(element)
+                if element:
+                    logger.info("ADDING &#8203; FOR %s" % (index + (5 * page)))
+                    message += "&#8203;"
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
