@@ -1150,15 +1150,17 @@ def choose_new_wishlist_keyboard(
     wishlists: List[Wishlist], wishlist_element_id: str, index: str
 ):
     keyboard = []
-    keyboard.append(
-        [
-            create_button(
-                "➕  Crea nuova lista",
-                "add_new_wishlist_from_move_%s_%s" % (index, wishlist_element_id),
-                None,
-            ),
-        ],
-    )
+    logger.info(f"LEN {len(wishlists)}")
+    if len(wishlists) < 9:
+        keyboard.append(
+            [
+                create_button(
+                    "➕  Crea nuova lista",
+                    "add_new_wishlist_from_move_%s_%s" % (index, wishlist_element_id),
+                    None,
+                ),
+            ],
+        )
     for wishlist in wishlists:
         # ChangeWishlistElementList
         callback = "cwel_%s_%s" % (wishlist.id, wishlist_element_id)

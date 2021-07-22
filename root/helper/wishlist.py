@@ -50,9 +50,7 @@ def assign_all_wishlist_elements(user_id: int, wishlist_id: str):
     elements: List[WishlistElement] = WishlistElement.objects().filter(user_id=user_id)
     logger.info("CHANGING %s with [%s] for %s" % (len(elements), wishlist_id, user_id))
     for element in elements:
-        logger.info("OLD [%s] - NEW [%s]" % (wishlist_id, element.wishlist_id))
         element.wishlist_id = wishlist_id
-        logger.info("OLD [%s] - NEW [%s]" % (wishlist_id, element.wishlist_id))
         element.save()
 
 
