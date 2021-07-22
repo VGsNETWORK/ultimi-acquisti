@@ -38,8 +38,11 @@ def create_wishlist_if_empty(user_id: int):
             change_wishlist(user_id, str(wish.id))
             assign_all_wishlist_elements(user_id, str(wish.id))
             return True
+        else:
+            logger.info("WISHLIST BIGGER THAN 0")
         return False
     except Exception as e:
+        logger.error(e)
         return False
 
 

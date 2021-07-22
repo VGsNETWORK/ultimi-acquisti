@@ -6,7 +6,12 @@ import re
 from telegram import message
 from root.model.wishlist import Wishlist
 from root.manager.view_other_wishlists import view_other_wishlists
-from root.helper.user_helper import get_current_wishlist_id, retrieve_user
+from root.helper.user_helper import (
+    create_user,
+    get_current_wishlist_id,
+    retrieve_user,
+    user_exists,
+)
 from root.helper.wishlist import (
     count_all_wishlists_for_user,
     create_wishlist_if_empty,
@@ -514,6 +519,8 @@ def view_wishlist(
     message_id = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    if not user_exists(user.id):
+        create_user(user)
     create_wishlist_if_empty(user.id)
     wishlist_id = get_current_wishlist_id(user.id)
     if reset_keyboard:
