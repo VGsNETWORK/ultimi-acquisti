@@ -970,40 +970,45 @@ def create_other_wishlist_keyboard(
         ]
 
         if not wishlist.default_wishlist:
-            line.append(
-                [
-                    create_button("➥", "empty_button", None),
-                    create_button(
-                        "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
-                    ),
+            bline = []
+            bline.append(create_button("➥", "empty_button", None))
+            bline.append(
+                create_button("✏️", "edit_wishlist_name_%s" % str(wishlist.id), None)
+            )
+            bline.append(
+                create_button(
+                    "🗑",
+                    "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
+                    None,
+                ),
+            )
+            if elements:
+                bline.insert(
+                    2,
                     create_button(
                         "🌬",
                         "ask_delete_all_wishlist_elements_fw_%s_%s"
                         % (wishlist.id, page),
                         None,
                     ),
-                    create_button(
-                        "🗑",
-                        "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
-                        None,
-                    ),
-                ]
-            )
+                )
+            line.append(bline)
         else:
-            line.append(
-                [
-                    create_button("➥", "empty_button", None),
-                    create_button(
-                        "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
-                    ),
+            bline = []
+            bline.append(create_button("➥", "empty_button", None))
+            bline.append(
+                create_button("✏️", "edit_wishlist_name_%s" % str(wishlist.id), None)
+            )
+            if elements:
+                bline.append(
                     create_button(
                         "🌬",
                         "ask_delete_all_wishlist_elements_fw_%s_%s"
                         % (wishlist.id, page),
                         None,
-                    ),
-                ]
-            )
+                    )
+                )
+            line.append(bline)
         keyboard.append(line[0])
         if len(line) > 1:
             keyboard.append(line[1])
