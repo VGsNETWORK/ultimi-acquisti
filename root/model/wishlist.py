@@ -9,3 +9,4 @@ class Wishlist(BaseModel):
     title = StringField()
     description = StringField()
     default_wishlist = BooleanField(default=False)
+    index = IntField()

@@ -1189,6 +1189,9 @@ def choose_new_wishlist_keyboard(
         # ChangeWishlistElementList
         callback = "cwel_%s_%s" % (wishlist.id, wishlist_element_id)
         keyboard.append([create_button(wishlist.title, callback, None)])
+    if isinstance(page, str):
+        if not page.isdigit:
+            page = "0"
     keyboard.append(
         [
             create_button("❌  Annulla", "cancel_wishlist_change_%s" % page, None),

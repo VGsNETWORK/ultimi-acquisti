@@ -46,6 +46,8 @@ def ask_wishlist_change(
         wishlist_element_id: str = data.split("_")[-1]
         index: str = data.split("_")[-2]
         page: str = data.split("_")[-3]
+    else:
+        page = 0
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
     wishlist_id: str = wishlist_element.wishlist_id
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
