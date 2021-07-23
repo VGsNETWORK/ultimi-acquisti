@@ -45,6 +45,7 @@ def ask_wishlist_change(
         data: str = update.callback_query.data
         wishlist_element_id: str = data.split("_")[-1]
         index: str = data.split("_")[-2]
+        page: str = data.split("_")[-3]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
     wishlist_id: str = wishlist_element.wishlist_id
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
@@ -56,7 +57,7 @@ def ask_wishlist_change(
         default.title += "  (default)"
         logger.info(default.title)
         wishlists.insert(0, default)
-    keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id, index)
+    keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id, index, page)
     title = f"{wishlist.title.upper()}  –  "
     description = wishlist_element.description
     if wishlist_element.link:
@@ -97,7 +98,6 @@ def change_wishlist(update: Update, context: CallbackContext):
 
 
 def cancel_wishlist_change(update: Update, context: CallbackContext):
-    update.callback_query.data += "_0"
     view_wishlist(update, context)
     return ConversationHandler.END
 

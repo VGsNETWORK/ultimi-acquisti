@@ -453,8 +453,8 @@ def create_wishlist_element_keyboard(
                     ),
                     create_button(
                         "🔀",
-                        "ask_element_wishlist_change_%s_%s"
-                        % (index, str(wishlist_element.id)),
+                        "ask_element_wishlist_change_%s_%s_%s"
+                        % (page, index, str(wishlist_element.id)),
                         None,
                     ),
                     create_button(
@@ -1150,7 +1150,7 @@ ADS_KEYBOARDS = [
 
 
 def choose_new_wishlist_keyboard(
-    wishlists: List[Wishlist], wishlist_element_id: str, index: str
+    wishlists: List[Wishlist], wishlist_element_id: str, index: str, page: str
 ):
     keyboard = []
     logger.info(f"LEN {len(wishlists)}")
@@ -1170,11 +1170,7 @@ def choose_new_wishlist_keyboard(
         keyboard.append([create_button(wishlist.title, callback, None)])
     keyboard.append(
         [
-            create_button(
-                "❌  Annulla",
-                "cancel_wishlist_change",
-                "cancel_wishlist_change",
-            ),
+            create_button("❌  Annulla", "cancel_wishlist_change_%s" % page, None),
         ],
     )
     return InlineKeyboardMarkup(keyboard)
