@@ -1031,7 +1031,12 @@ WISHLIST_LIST_MESSAGE = (
     "per eseguire varie azioni contestuali.\n\n\n"
     "<b>LEGENDA</b>\n"
     "✏️  =  <b>Rinomina la lista</b>\n"
+    "%s"
     "🗑  =  <b>Elimina la lista</b> (previa conferma)"
+)
+
+WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS = (
+    "🌬  =  <b>Svuota la lista</b> (previa conferma)\n"
 )
 
 WISHLIST_LEGEND_APPEND_LEGEND = "\n\n\n<b>LEGENDA</b>\n"

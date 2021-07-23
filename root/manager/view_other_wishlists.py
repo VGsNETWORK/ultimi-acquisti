@@ -14,11 +14,13 @@ from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
+    WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS,
     WISHLIST_LIST_MESSAGE,
     WISHLIST_TITLE_TOO_LONG,
 )
 from root.helper import wishlist
 from root.helper.wishlist_element import (
+    count_all_wishlist_elements_for_wishlist_id,
     find_wishlist_element_for_user,
 )
 from root.model.wishlist_element import WishlistElement
@@ -113,9 +115,22 @@ def view_other_wishlists(
             append = f""
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    has_elements = False
+    for wishlist_element in wishlist_elements:
+        if (
+            count_all_wishlist_elements_for_wishlist_id(
+                str(wishlist_element.id), user.id
+            )
+            > 0
+        ):
+            has_elements = True
+    if has_elements:
+        empty_list_legend = WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS
+    else:
+        empty_list_legend = ""
     message = "%s%s" % (
         WISHLIST_HEADER % "",
-        f"{WISHLIST_LIST_MESSAGE}{append}",
+        f"{WISHLIST_LIST_MESSAGE % empty_list_legend}{append}",
     )
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
