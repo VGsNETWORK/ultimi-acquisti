@@ -142,6 +142,9 @@ def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     message_id = update.callback_query.data.split("_")[-1]
+    logger.info(
+        "GETTING MESSAGE_ID FROM CALLBACKQUERY [%s]" % update.callback_query.data
+    )
     logger.info("DELETING MESSAGE WITH MESSAGE_ID [%s]" % message_id)
     context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     wish_id = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
@@ -223,6 +226,7 @@ def view_wishlist_element_photos(
     message_id = message_id if append else message.message_id
     if update.callback_query:
         data: str = update.callback_query.data
+        logger.info("CALLBACK %s" % data)
         wish_id: str = data.split("_")[-1]
         page: str = data.split("_")[-2]
         if not page.isnumeric():
@@ -261,7 +265,7 @@ def view_wishlist_element_photos(
                     chat_id=chat.id, media=photos
                 )
                 message = [m.message_id for m in message]
-                redis_helper.save("%s_photos_message" % user.id, str(message))
+
             keyboard = build_view_wishlist_element_photos_keyboard(
                 wishlist_element, message
             )
@@ -272,6 +276,11 @@ def view_wishlist_element_photos(
                 )
                 message = [message.message_id]
                 redis_helper.save("%s_photos_message" % user.id, str(message))
+            else:
+                message = redis_helper.retrieve("%s_photos_message" % user.id).decode()
+                if message:
+                    message = eval(message)
+
             keyboard = build_view_wishlist_element_photos_keyboard(
                 wishlist_element, message
             )
@@ -456,6 +465,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
 
 def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
+    logger.info("CALLBACK DATA %s" % update.callback_query.data)
     if not "go_back" in update.callback_query.data:
         if not "sended" in update.callback_query.data:
             view_wishlist_element_photos(update, context, send_photo=False)

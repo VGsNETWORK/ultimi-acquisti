@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from os import environ
+
+from telegram.message import Message
 from root.helper import wishlist_element
 from root.helper.wishlist import count_all_wishlists_for_user
 from root.model.wishlist import Wishlist
@@ -732,6 +734,7 @@ def build_edit_wishlist_element_category_keyboard(
 def build_view_wishlist_element_photos_keyboard(
     wishlist_element: WishlistElement, message_ids: List[int]
 ):
+    logger.info("THIS ARE THE MESSAGES %s" % message_ids)
     photos = wishlist_element.photos
     if len(photos) < 10:
         keyboard = [
