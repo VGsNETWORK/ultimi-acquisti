@@ -19,6 +19,14 @@ def find_wishlist_by_id(_id: str):
         return
 
 
+def find_wishlist_by_for_index(index: int, user_id: int):
+    try:
+        wish: Wishlist = Wishlist.objects().get(index=index, user_id=user_id)
+        return wish
+    except DoesNotExist:
+        return
+
+
 def create_wishlist(description: str, title: str, user_id: int):
     Wishlist(description=description, title=title, user_id=user_id).save()
 
@@ -34,11 +42,16 @@ def create_wishlist_if_empty(user_id: int):
                 user_id=user_id,
                 description="",
                 default_wishlist=True,
+                index=0,
             ).save()
             change_wishlist(user_id, str(wish.id))
             assign_all_wishlist_elements(user_id, str(wish.id))
             return True
         else:
+            for index, wishlist in enumerate(list(wishlists)):
+                if not wishlist.index:
+                    wishlist.index = index
+                    wishlist.save()
             logger.info("WISHLIST BIGGER THAN 0")
         return False
     except Exception as e:
@@ -88,7 +101,7 @@ def find_wishlist_not_id(wishlist_id: str, user_id: int):
     return (
         Wishlist.objects()
         .filter(id__ne=wishlist_id, user_id=user_id)
-        .order_by("-creation_date")
+        .order_by("-index")
     )
 
 
@@ -106,7 +119,7 @@ def find_wishlist_for_user(
     wish: Wishlist = (
         Wishlist.objects()
         .filter(user_id=user_id, default_wishlist=default_wishlist)
-        .order_by("-creation_date")
+        .order_by("-index")
         .skip(page * page_size)
         .limit(page_size)
     )

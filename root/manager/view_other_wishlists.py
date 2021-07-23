@@ -29,6 +29,7 @@ from root.helper.wishlist import (
     count_all_wishlists_for_user,
     create_wishlist,
     find_default_wishlist,
+    find_wishlist_by_for_index,
     find_wishlist_by_id,
     find_wishlist_for_user,
     get_total_wishlist_pages_for_user,
@@ -56,6 +57,52 @@ from root.handlers.handlers import extractor
 # endregion
 
 INSERT_TITLE = range(1)
+
+
+def reorder_wishlist(update: Update, context: CallbackContext):
+    context.bot.answer_callback_query(update.callback_query.id)
+    message: Message = update.effective_message
+    chat: Chat = update.effective_chat
+    user: User = update.effective_user
+    user_id: int = user.id
+    chat_id: int = chat.id
+    message_id: message.message_id
+    data = update.callback_query.data
+    wishlist_id: str = data.split("_")[-1]
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    if wishlist:
+        if "down" in data:
+            if wishlist.index < 9:
+                logger.info("SEARCHING WISHLIST WITH INDEX %s" % (wishlist.index - 1))
+                other_wishlist: Wishlist = find_wishlist_by_for_index(
+                    wishlist.index - 1, user_id
+                )
+                if other_wishlist:
+                    wishlist.index, other_wishlist.index = (
+                        other_wishlist.index,
+                        wishlist.index,
+                    )
+                    other_wishlist.save()
+                    wishlist.save()
+        elif "up" in data:
+            if wishlist.index > 0:
+                logger.info("SEARCHING WISHLIST WITH INDEX %s" % (wishlist.index + 1))
+                other_wishlist: Wishlist = find_wishlist_by_for_index(
+                    wishlist.index + 1, user_id
+                )
+                if other_wishlist:
+                    wishlist.index, other_wishlist.index = (
+                        other_wishlist.index,
+                        wishlist.index,
+                    )
+                    other_wishlist.save()
+                    wishlist.save()
+
+    try:
+        update.callback_query.data += "_0"
+        view_other_wishlists(update, context)
+    except BadRequest as e:
+        logger.error(e)
 
 
 def view_other_wishlists(

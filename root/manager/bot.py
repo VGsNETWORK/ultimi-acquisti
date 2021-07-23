@@ -12,6 +12,7 @@ from root.manager.rename_wishlist import EDIT_WISHLIST_NAME
 from root.manager.view_other_wishlists import (
     ADD_NEW_WISHLIST,
     view_other_wishlists,
+    reorder_wishlist,
 )
 from root.manager.wishlist_elements_middleware import (
     ask_delete_wishlist_list,
@@ -267,7 +268,9 @@ class BotManager:
                 lambda update, context: delete_if_private(update.effective_message),
             )
         )
-
+        self.disp.add_handler(
+            CallbackQueryHandler(reorder_wishlist, pattern="reorder_wishlist")
+        )
         self.disp.add_handler(
             CallbackQueryHandler(
                 change_current_wishlist, pattern="change_current_wishlist"
