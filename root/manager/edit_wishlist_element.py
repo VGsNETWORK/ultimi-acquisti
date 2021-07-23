@@ -73,7 +73,7 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
     append = "✏️  <i>Stai modificando questo elemento</i>"
     if not wish:
         update.callback_query.data += "_%s" % page
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
         return
     if wish.link:
         message += f'<b>{index}</b>  <b><a href="{wish.link}"><code>{wish.description}</code></a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
@@ -295,9 +295,9 @@ def cancel_edit_wishlist_element(update: Update, context: CallbackContext):
     if update.callback_query:
         page = update.callback_query.data.split("_")[-2]
         update.callback_query.data += "_%s" % page
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
     else:
-        view_wishlist(update, context, None, "0")
+        view_wishlist(update, context, None, "0", reset_keyboard=False)
     return ConversationHandler.END
 
 

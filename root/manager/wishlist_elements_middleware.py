@@ -12,7 +12,7 @@ from root.manager.wishlist_element import (
 
 
 def view_wishlist_conv_end(update: Update, context: CallbackContext):
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
 
@@ -21,7 +21,7 @@ def change_current_wishlist(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     change_wishlist(user_id, wishlist_id)
     update.callback_query.data += "_0"
-    view_wishlist(update, context, page=0)
+    view_wishlist(update, context, page=0, reset_keyboard=False)
 
 
 def ask_delete_wishlist_list(update: Update, context: CallbackContext):

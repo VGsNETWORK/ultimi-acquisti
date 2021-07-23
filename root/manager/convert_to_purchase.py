@@ -52,7 +52,7 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         text = WISHLIST_HEADER % title
     if not wish:
         update.callback_query.data += "_%s" % page
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
         return
     if wish.link:
         text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
@@ -77,8 +77,8 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
             [
                 create_button(
                     "❌  Annulla",
-                    f"view_wishlist_element_convert_{page}",
-                    f"view_wishlist_element_convert_{page}",
+                    f"view_wishlist_element_noreset_convert_{page}",
+                    f"view_wishlist_element_noreset_convert_{page}",
                 ),
             ],
         ]

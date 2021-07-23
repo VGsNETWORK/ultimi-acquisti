@@ -93,12 +93,14 @@ def change_wishlist(update: Update, context: CallbackContext):
     wishlist_element.save()
     update.callback_query.data += "_0"
     append = WISHLIST_CHANGED % (wishlist_element.description, wishlist.title)
-    view_wishlist(update, context, append=append, under_first=False)
+    view_wishlist(
+        update, context, append=append, under_first=False, reset_keyboard=False
+    )
     return ConversationHandler.END
 
 
 def cancel_wishlist_change(update: Update, context: CallbackContext):
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
 

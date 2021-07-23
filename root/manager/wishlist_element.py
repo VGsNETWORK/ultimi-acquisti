@@ -359,7 +359,7 @@ def confirm_delete_all_wishlist_elements(
     )
     update.callback_query.data += "_0"
     if not from_wishlist:
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
     else:
         redis_helper.save(
             "%s_%s_new_wishlist" % (user.id, user.id),
@@ -370,7 +370,7 @@ def confirm_delete_all_wishlist_elements(
 
 def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     page: str = update.callback_query.data.split("_")[-1]
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
 
 
 def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
@@ -402,7 +402,7 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         except BadRequest:
             pass
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
 
 
 def remove_wishlist_element_item(update: Update, context: CallbackContext):
@@ -445,7 +445,7 @@ def remove_wishlist_element_item(update: Update, context: CallbackContext):
                 append += "<i> e <b>%s</b> foto</i>" % len(wish.photos)
         if not wish:
             update.callback_query.data += "_%s" % page
-            view_wishlist(update, context)
+            view_wishlist(update, context, reset_keyboard=False)
             return
         if wish.link:
             text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
@@ -507,7 +507,7 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
             context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         except BadRequest:
             pass
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
 
 
 def view_wishlist(
@@ -526,6 +526,9 @@ def view_wishlist(
         create_user(user)
     create_wishlist_if_empty(user.id)
     wishlist_id = get_current_wishlist_id(user.id)
+    if update.callback_query:
+        if "noreset" in update.callback_query.data:
+            reset_keyboard = False
     if reset_keyboard:
         reset_redis_wishlist_keyboard(
             user.id,
@@ -856,7 +859,7 @@ def add_category(update: Update, context: CallbackContext):
                 if cycle_insert:
                     add_in_wishlist_element(update, context, cycle_insert, cycle_insert)
                     return INSERT_ITEM_IN_WISHLIST
-        view_wishlist(update, context, ADDED_TO_WISHLIST, "0")
+        view_wishlist(update, context, ADDED_TO_WISHLIST, "0", reset_keyboard=False)
         return ConversationHandler.END
 
 
@@ -873,7 +876,7 @@ def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
             wish = wish[0]
             wish.delete()
     update.callback_query.data += "_0"
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
 

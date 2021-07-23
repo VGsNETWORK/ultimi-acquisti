@@ -90,7 +90,7 @@ def confirm_delete_all_wishlist_element_photos(
     update.callback_query.data += "_%s" % wish_id
     page = redis_helper.retrieve("%s_current_page" % user.id).decode()
     update.callback_query.data += "_%s" % page
-    view_wishlist(update, context)
+    view_wishlist(update, context, reset_keyboard=False)
 
 
 def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
@@ -210,7 +210,7 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
     if not page:
         page: str = data.split("_")[-1]
     logger.info("%s this is the page" % page)
-    view_wishlist(update, context, page=int(page))
+    view_wishlist(update, context, page=int(page), reset_keyboard=False)
 
 
 def view_wishlist_element_photos(
@@ -238,7 +238,7 @@ def view_wishlist_element_photos(
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
     if not wishlist_element:
         update.callback_query.data += "_%s" % page
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
         return
     photos: List[str] = wishlist_element.photos
     if not photos:
@@ -475,7 +475,7 @@ def cancel_add_photo(update: Update, context: CallbackContext):
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
         logger.info(f"THIS IS THE {page}")
         update.callback_query.data += "_%s" % page
-        view_wishlist(update, context)
+        view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
 
