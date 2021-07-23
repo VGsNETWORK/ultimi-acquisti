@@ -691,14 +691,16 @@ def view_wishlist(
                 if element:
                     logger.info("ADDING &#8203; FOR %s" % (index + (5 * page)))
                     if not second_page_added:
-                        append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
-                        second_page_added = True
+                        if len(list(wishlist_elements)) > 0:
+                            append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
+                            second_page_added = True
                     extra_spaces += "&#8203;"
                 else:
                     logger.info("NOT ADDING &#8203; FOR %s" % (index + (5 * page)))
                     if not first_page_added:
-                        append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
-                        first_page_added = True
+                        if len(list(wishlist_elements)) > 0:
+                            append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
+                            first_page_added = True
         if len(append_legend) == 1:
             if append_legend[0] == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
                 logger.info("ADDING WITHOUT SPACES")
@@ -711,7 +713,8 @@ def view_wishlist(
             message += append_legend
         message += extra_spaces
     else:
-        message += WISHLIST_LEGEND_APPEND_FIRST_PAGE
+        if len(list(wishlist_elements)) > 0:
+            message += WISHLIST_LEGEND_APPEND_FIRST_PAGE
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,
