@@ -961,6 +961,8 @@ def create_other_wishlist_keyboard(
             title += f" │ {elements} 🗂"
         else:
             title += "  (vuota)"
+        if wishlist.default_wishlist:
+            title = f"📌    {title}"
         line = [
             [
                 create_button(
