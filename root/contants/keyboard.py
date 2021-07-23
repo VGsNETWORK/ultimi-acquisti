@@ -869,14 +869,18 @@ def create_cancel_wishlist_element_photo_keyboard(
 
 
 def create_delete_all_wishlist_element_items_keyboard(
-    page: int = 0, from_wishlist=False, wishlist_id=""
+    page: int = 0, from_wishlist=False, wishlist_id="", only_elements=None
 ):
-    if from_wishlist:
+    if from_wishlist and not only_elements:
         yes_callback = "confirm_delete_wishlist_list_%s" % wishlist_id
         no_callback = "view_other_wishlists_%s" % page
     else:
-        yes_callback = "confirm_delete_all_wishlist_element_%s" % wishlist_id
-        no_callback = "abort_delete_all_wishlist_element_%s" % page
+        if only_elements:
+            yes_callback = "confirm_delete_all_wishlist_element_fw_%s" % wishlist_id
+            no_callback = "abort_delete_all_wishlist_element_fw_%s" % page
+        else:
+            yes_callback = "confirm_delete_all_wishlist_element_%s" % wishlist_id
+            no_callback = "abort_delete_all_wishlist_element_%s" % page
 
     return InlineKeyboardMarkup(
         [
@@ -973,6 +977,12 @@ def create_other_wishlist_keyboard(
                         "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
                     ),
                     create_button(
+                        "🌬",
+                        "ask_delete_all_wishlist_elements_fw_%s_%s"
+                        % (wishlist.id, page),
+                        None,
+                    ),
+                    create_button(
                         "🗑",
                         "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
                         None,
@@ -985,6 +995,12 @@ def create_other_wishlist_keyboard(
                     create_button("➥", "empty_button", None),
                     create_button(
                         "✏️", "edit_wishlist_name_%s" % str(wishlist.id), None
+                    ),
+                    create_button(
+                        "🌬",
+                        "ask_delete_all_wishlist_elements_fw_%s_%s"
+                        % (wishlist.id, page),
+                        None,
                     ),
                 ]
             )

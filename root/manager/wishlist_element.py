@@ -289,6 +289,13 @@ def ask_delete_all_wishlist_elements(
     wishlist = find_wishlist_by_id(wishlist_id)
     wishlist_elements = count_all_wishlist_elements_for_user(user.id, wishlist_id)
     photos = count_all_wishlist_elements_photos(user.id, wishlist_id)
+    only_elements = False
+    if update.callback_query.data:
+        logger.info(update.callback_query.data)
+        if not from_wishlist:
+            from_wishlist = "fw" in update.callback_query.data
+        only_elements = "fw" in update.callback_query.data
+        logger.info("ONLY %s" % only_elements)
     if from_wishlist:
         if photos:
             text = "(%s element%s, %s foto)" % (
@@ -307,21 +314,39 @@ def ask_delete_all_wishlist_elements(
             text = "(lista vuota)"
             append = ""
         if photos > 0:
-            text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
-                "",
-                f"{wishlist.title}",
-                "\n",
-                text,
-                append,
-            )
+            logger.info("Ho delle foto")
+            if not only_elements:
+                logger.info("Cancello anche la lista")
+                text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
+                    "",
+                    f"{wishlist.title}",
+                    "\n",
+                    text,
+                    append,
+                )
+            else:
+                logger.info("Non cancello la lista")
+                text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
+                    f"{wishlist.title.upper()}  –  ",
+                    wishlist_elements,
+                    "o" if wishlist_elements == 1 else "i",
+                    photos,
+                )
         else:
-            text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
-                "",
-                f"{wishlist.title}",
-                "  ",
-                text,
-                append,
-            )
+            if not only_elements:
+                text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
+                    "",
+                    f"{wishlist.title}",
+                    "  ",
+                    text,
+                    append,
+                )
+            else:
+                text = DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE % (
+                    f"{wishlist.title.upper()}  –  ",
+                    wishlist_elements,
+                    "o" if wishlist_elements == 1 else "i",
+                )
     else:
         if photos > 0:
             text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
@@ -341,7 +366,7 @@ def ask_delete_all_wishlist_elements(
         message_id=message.message_id,
         text=text,
         reply_markup=create_delete_all_wishlist_element_items_keyboard(
-            page, from_wishlist, wishlist_id
+            page, from_wishlist, wishlist_id, only_elements
         ),
         disable_web_page_preview=True,
         parse_mode="HTML",
@@ -359,6 +384,9 @@ def confirm_delete_all_wishlist_elements(
     )
     update.callback_query.data += "_0"
     if not from_wishlist:
+        if update.callback_query:
+            from_wishlist = "fw" in update.callback_query.data
+    if not from_wishlist:
         view_wishlist(update, context, reset_keyboard=False)
     else:
         redis_helper.save(
@@ -369,8 +397,14 @@ def confirm_delete_all_wishlist_elements(
 
 
 def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
-    page: str = update.callback_query.data.split("_")[-1]
-    view_wishlist(update, context, reset_keyboard=False)
+    from_wishlist = False
+    if update.callback_query:
+        from_wishlist = "fw" in update.callback_query.data
+    if not from_wishlist:
+        page: str = update.callback_query.data.split("_")[-1]
+        view_wishlist(update, context, reset_keyboard=False)
+    else:
+        view_other_wishlists(update, context, edit=True)
 
 
 def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
@@ -636,7 +670,8 @@ def view_wishlist(
             f"\n\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>"
             % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
         )
-    message += WISHLIST_LEGEND_APPEND_LEGEND
+    if len(list(wishlist_elements)) > 0:
+        message += WISHLIST_LEGEND_APPEND_LEGEND
     if not under_first and append:
         if len(wishlist_elements) > 0:
             message += f"\n\n{append}"
