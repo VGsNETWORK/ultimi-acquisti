@@ -30,7 +30,10 @@ def find_wishlist_by_for_index(index: int, user_id: int):
 def get_last_wishlist_index(user_id: int):
     wishlists: List[Wishlist] = find_wishlist_for_user(user_id)
     wishlists = list(wishlists)
-    return max([wishlist.index for wishlist in wishlists])
+    if wishlists:
+        return max([wishlist.index for wishlist in wishlists])
+    else:
+        return 0
 
 
 def create_wishlist(description: str, title: str, user_id: int):
