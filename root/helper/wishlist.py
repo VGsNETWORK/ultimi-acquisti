@@ -27,8 +27,17 @@ def find_wishlist_by_for_index(index: int, user_id: int):
         return
 
 
+def get_last_wishlist_index(user_id: int):
+    wishlists: List[Wishlist] = find_wishlist_for_user(user_id)
+    wishlists = list(wishlists)
+    return max([wishlist.index for wishlist in wishlists])
+
+
 def create_wishlist(description: str, title: str, user_id: int):
-    Wishlist(description=description, title=title, user_id=user_id).save()
+    index = get_last_wishlist_index(user_id)
+    Wishlist(
+        description=description, title=title, user_id=user_id, index=index + 1
+    ).save()
 
 
 def create_wishlist_if_empty(user_id: int):
