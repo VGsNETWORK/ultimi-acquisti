@@ -1029,14 +1029,29 @@ WISHLIST_LIST_MESSAGE = (
     "Di seguito trovi elencate quelle che possiedi al momento: <i>clicca</i> "
     "sul nome di una lista per <b>aprirla</b>, oppure premi i pulsanti sottostanti "
     "per eseguire varie azioni contestuali.\n\n\n"
-    "<b>LEGENDA</b>\n"
-    "✏️  =  <b>Rinomina la lista</b>\n"
+    "<b>LEGENDA</b>"
     "%s"
-    "🗑  =  <b>Elimina la lista</b> (previa conferma)"
+    "\n✏️  =  <b>Rinomina la lista</b>"
+    "%s"
+    "\n\n"
+    "<i>ALTRO</i>\n"
+    "📌  =  Lista predefinita\n"
+    "✅  =  Lista selezionata"
+    "%s"
 )
 
+WISHLIST_LIST_LEGEND_REMOVE_ALL = "\n🗑  =  <b>Elimina la lista</b> (previa conferma)"
+
+WISHLIST_LIST_LEGEND_HAS_ELEMENTS = "\n🗂  =  Elementi nella lista"
+
+WISHLIST_LIST_LEGEND_HAS_PHOTOS = "\n🖼  =  Foto nella lista"
+
+WISHLIST_LIST_LEGEND_REORDER_UP = "\n🔺  =  <b>Sposta su la lista</b>"
+
+WISHLIST_LIST_LEGEND_REORDER_DOWN = "\n🔻  =  <b>Sposta giù la lista</b>"
+
 WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS = (
-    "🌬  =  <b>Svuota la lista</b> (previa conferma)\n"
+    "\n🌬  =  <b>Svuota la lista</b> (previa conferma)"
 )
 
 WISHLIST_LEGEND_APPEND_LEGEND = "\n\n\n<b>LEGENDA</b>\n"

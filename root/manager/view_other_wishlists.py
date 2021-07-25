@@ -2,6 +2,8 @@
 # region
 import operator
 import re
+
+from bs4 import element
 from root.helper.redis_message import is_develop
 from root.manager import change_element_wishlist
 from root.contants.constant import MAX_WISHLIST_NAME_LENGTH
@@ -16,13 +18,19 @@ from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
+    WISHLIST_LIST_LEGEND_HAS_ELEMENTS,
+    WISHLIST_LIST_LEGEND_HAS_PHOTOS,
+    WISHLIST_LIST_LEGEND_REMOVE_ALL,
     WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS,
+    WISHLIST_LIST_LEGEND_REORDER_DOWN,
+    WISHLIST_LIST_LEGEND_REORDER_UP,
     WISHLIST_LIST_MESSAGE,
     WISHLIST_TITLE_TOO_LONG,
 )
 from root.helper import wishlist
 from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_wishlist_id,
+    count_all_wishlist_elements_photos,
     find_wishlist_element_for_user,
 )
 from root.model.wishlist_element import WishlistElement
@@ -177,6 +185,7 @@ def view_other_wishlists(
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     has_elements = False
+    has_photo = False
     for wishlist_element in wishlist_elements:
         if (
             count_all_wishlist_elements_for_wishlist_id(
@@ -185,13 +194,24 @@ def view_other_wishlists(
             > 0
         ):
             has_elements = True
+        if (count_all_wishlist_elements_photos(user.id, str(wishlist_element.id))) > 0:
+            has_photo = True
+    before_pencil = ""
+    empty_list_legend = ""
+    other_list_legend = ""
+    if len(wishlist_elements) > 2:
+        before_pencil += WISHLIST_LIST_LEGEND_REORDER_UP
+        before_pencil += WISHLIST_LIST_LEGEND_REORDER_DOWN
     if has_elements:
-        empty_list_legend = WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS
-    else:
-        empty_list_legend = ""
+        empty_list_legend += WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS
+        other_list_legend += WISHLIST_LIST_LEGEND_HAS_ELEMENTS
+    if has_photo:
+        other_list_legend += WISHLIST_LIST_LEGEND_HAS_PHOTOS
+    if len(wishlist_elements) > 1:
+        empty_list_legend += WISHLIST_LIST_LEGEND_REMOVE_ALL
     message = "%s%s" % (
         WISHLIST_HEADER % "",
-        f"{WISHLIST_LIST_MESSAGE % empty_list_legend}{append}",
+        f"{WISHLIST_LIST_MESSAGE % (before_pencil, empty_list_legend, other_list_legend)}{append}",
     )
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages

@@ -1004,16 +1004,8 @@ def create_other_wishlist_keyboard(
             bline.append(
                 create_button("✏️", "edit_wishlist_name_%s" % str(wishlist.id), None)
             )
-            bline.append(
-                create_button(
-                    "🗑",
-                    "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
-                    None,
-                ),
-            )
             if elements:
-                bline.insert(
-                    4,
+                bline.append(
                     create_button(
                         "🌬",
                         "ask_delete_all_wishlist_elements_fw_%s_%s"
@@ -1021,6 +1013,13 @@ def create_other_wishlist_keyboard(
                         None,
                     ),
                 )
+            bline.append(
+                create_button(
+                    "🗑",
+                    "ask_delete_wishlist_and_elements_%s_%s" % (wishlist.id, page),
+                    None,
+                ),
+            )
             line.append(bline)
         else:
             bline = []
