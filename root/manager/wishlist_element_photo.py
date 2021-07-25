@@ -196,13 +196,14 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
     if messages:
         messages = messages.decode()
         messages = eval(messages)
+        logger.info(messages)
         try:
             for message_id in messages:
                 context.bot.delete_message(
                     chat_id=message.chat_id, message_id=message_id
                 )
-        except BadRequest:
-            pass
+        except BadRequest as e:
+            logger.error(e)
     data = update.callback_query.data
     page = redis_helper.retrieve("%s_current_page" % user.id).decode()
     redis_helper.save(user.id, message.message_id)
@@ -265,7 +266,7 @@ def view_wishlist_element_photos(
                     chat_id=chat.id, media=photos
                 )
                 message = [m.message_id for m in message]
-
+                redis_helper.save("%s_photos_message" % user.id, str(message))
             keyboard = build_view_wishlist_element_photos_keyboard(
                 wishlist_element, message
             )
@@ -276,6 +277,7 @@ def view_wishlist_element_photos(
                 )
                 message = [message.message_id]
                 redis_helper.save("%s_photos_message" % user.id, str(message))
+                logger.info(message)
             else:
                 message = redis_helper.retrieve("%s_photos_message" % user.id).decode()
                 if message:
