@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from root.helper.redis_message import is_develop
 from typing import List
 
 import telegram_utils.utils.logger as logger
 from mongoengine.errors import DoesNotExist
 from pymongo.command_cursor import CommandCursor
+from telegram_utils.utils.tutils import log
 from root.helper.user_helper import change_wishlist
 from root.model import user, wishlist
 from root.model.wishlist import Wishlist
@@ -107,6 +109,18 @@ def remove_wishlist_for_user(_id: str, user_id: int):
                 wishlist.index -= 1
                 wishlist.save()
             wish.delete()
+            if is_develop():
+                message = f"USER_ID: {user_id}\n"
+                wishlists = find_wishlist_for_user(user_id)
+                wishlists = list(wishlists)
+                wishlists.sort(key=lambda x: x.index, reverse=True)
+                message += "\n".join(
+                    [
+                        f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
+                        for wishlist in wishlists
+                    ]
+                )
+                log(0, message)
     except DoesNotExist as e:
         logger.error(e)
         return

@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.helper.redis_message import is_develop
 from root.manager import change_element_wishlist
 from root.contants.constant import MAX_WISHLIST_NAME_LENGTH
 from root.util.util import max_length_error_format
@@ -9,7 +10,7 @@ from root.helper.user_helper import get_current_wishlist_id
 from typing import List
 from telegram.files.inputmedia import InputMediaPhoto
 
-from telegram_utils.utils.tutils import delete_if_private
+from telegram_utils.utils.tutils import delete_if_private, log
 from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -97,6 +98,18 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     other_wishlist.save()
                     wishlist.save()
+        if is_develop():
+            message = f"USER_ID: {user_id}\n"
+            wishlists = find_wishlist_for_user(user_id)
+            wishlists = list(wishlists)
+            wishlists.sort(key=lambda x: x.index, reverse=True)
+            message += "\n".join(
+                [
+                    f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
+                    for wishlist in wishlists
+                ]
+            )
+            log(0, message)
 
     try:
         update.callback_query.data += "_0"
@@ -346,6 +359,19 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
                 "0",
                 True,
             )
+    if not overload:
+        if is_develop():
+            message = f"USER_ID: {user.id}\n"
+            wishlists = find_wishlist_for_user(user.id)
+            wishlists = list(wishlists)
+            wishlists.sort(key=lambda x: x.index, reverse=True)
+            message += "\n".join(
+                [
+                    f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
+                    for wishlist in wishlists
+                ]
+            )
+            log(0, message)
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
@@ -377,6 +403,18 @@ def handle_keep_confirm(update: Update, context: CallbackContext):
         )
     else:
         change_element_wishlist.ask_wishlist_change(update, context)
+    if is_develop():
+        message = f"USER_ID: {user.id}\n"
+        wishlists = find_wishlist_for_user(user.id)
+        wishlists = list(wishlists)
+        wishlists.sort(key=lambda x: x.index, reverse=True)
+        message += "\n".join(
+            [
+                f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
+                for wishlist in wishlists
+            ]
+        )
+        log(0, message)
     return ConversationHandler.END
 
 
