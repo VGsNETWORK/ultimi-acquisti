@@ -9,6 +9,7 @@ from root.util.util import max_length_error_format
 from root.helper.user_helper import get_current_wishlist_id
 from typing import List
 from telegram.files.inputmedia import InputMediaPhoto
+from random import randint
 
 from telegram_utils.utils.tutils import delete_if_private, log
 from root.contants.messages import (
@@ -205,6 +206,7 @@ def view_other_wishlists(
                 message_id = message_id.decode()
             else:
                 message_id = update.effective_message.message_id
+        message += "&#8203;" * randint(1, 10)
         context.bot.edit_message_text(
             chat_id=chat.id,
             message_id=message_id,

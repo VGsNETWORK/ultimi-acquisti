@@ -951,18 +951,24 @@ def create_other_wishlist_keyboard(
         photos: int = count_all_wishlist_elements_photos(user_id, str(wishlist.id))
         elements: int = count_all_wishlist_elements_for_user(user_id, str(wishlist.id))
         # I hate that they are not aligned
+        title = ""
         if not str(wishlist.id) == current_wishlist:
             title = wishlist.title
+            if wishlist.default_wishlist:
+                title = f"    📌  {title}"
         else:
-            title = "✅    %s" % (wishlist.title)
+            title = wishlist.title
+            if wishlist.default_wishlist:
+                title = f"    📌  {title}"
+            else:
+                title = f"    {title}"
+            title = "✅%s" % (title)
         if photos:
             title += f" │ {elements} 🗂  {photos} 🖼"
         elif elements:
             title += f" │ {elements} 🗂"
         else:
             title += "  (vuota)"
-        if wishlist.default_wishlist:
-            title = f"📌    {title}"
         line = [
             [
                 create_button(
