@@ -86,12 +86,29 @@ def find_default_wishlist(user_id: int):
         return None
 
 
+def find_wishlist_with_index_bigger_than(index: int, user_id: int):
+    wishlists: List[Wishlist] = Wishlist.objects().filter(
+        user_id=user_id, index__gte=index
+    )
+    wishlists = list(wishlists)
+    wishlists.sort(key=lambda x: x.index, reverse=False)
+    return wishlists
+
+
 def remove_wishlist_for_user(_id: str, user_id: int):
     try:
         wish: Wishlist = Wishlist.objects().get(id=_id)
         if not wish.default_wishlist:
+            index = wish.index
+            wishlists: List[Wishlist] = find_wishlist_with_index_bigger_than(
+                index, user_id
+            )
+            for wishlist in wishlists:
+                wishlist.index -= 1
+                wishlist.save()
             wish.delete()
-    except DoesNotExist:
+    except DoesNotExist as e:
+        logger.error(e)
         return
 
 

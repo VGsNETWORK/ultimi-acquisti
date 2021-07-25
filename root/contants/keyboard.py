@@ -978,22 +978,23 @@ def create_other_wishlist_keyboard(
                 "WISHLIST: %s INDEX: %s, LEN: %s"
                 % (wishlist.title, wishlist.index, len(wishlists))
             )
-            if not wishlist.index == len(wishlists) - 1:
-                bline.append(
-                    create_button(
-                        "🔺", "reorder_wishlist_up_%s" % str(wishlist.id), None
+            if len(wishlists) > 2:
+                if not wishlist.index == len(wishlists) - 1:
+                    bline.append(
+                        create_button(
+                            "🔺", "reorder_wishlist_up_%s" % str(wishlist.id), None
+                        )
                     )
-                )
-            else:
-                bline.append(create_button("🔝", "empty_button", None))
-            if not wishlist.index == 1:
-                bline.append(
-                    create_button(
-                        "🔻", "reorder_wishlist_down_%s" % str(wishlist.id), None
+                else:
+                    bline.append(create_button("🔝", "empty_button", None))
+                if not wishlist.index == 1:
+                    bline.append(
+                        create_button(
+                            "🔻", "reorder_wishlist_down_%s" % str(wishlist.id), None
+                        )
                     )
-                )
-            else:
-                bline.append(create_button("🔚", "empty_button", None))
+                else:
+                    bline.append(create_button("🔚", "empty_button", None))
             bline.append(
                 create_button("✏️", "edit_wishlist_name_%s" % str(wishlist.id), None)
             )

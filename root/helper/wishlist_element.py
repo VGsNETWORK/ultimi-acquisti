@@ -39,7 +39,8 @@ def delete_all_wishlist_element_for_user(
                 wishlist: Wishlist = find_default_wishlist(user_id)
                 if wishlist:
                     change_wishlist(user_id, str(wishlist.id))
-    except Exception:
+    except Exception as e:
+        logger.info(e)
         return
 
 
