@@ -103,7 +103,9 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
     message: str = re.sub(r"\s{2,}", " ", message)
     if len(message) > MAX_WISHLIST_NAME_LENGTH:
         logger.info("TOO LONG")
-        redis_helper.save("%s_stored_wishlist" % user.id, message[:MAX_WISHLIST_NAME_LENGTH])
+        redis_helper.save(
+            "%s_stored_wishlist" % user.id, message[:MAX_WISHLIST_NAME_LENGTH]
+        )
         user_text = max_length_error_format(message, MAX_WISHLIST_NAME_LENGTH, 100)
         message = f"{WISHLIST_HEADER % ''}\"{user_text}\"\n{WISHLIST_TITLE_TOO_LONG % MAX_WISHLIST_NAME_LENGTH}{ADD_WISHLIST_TITLE_PROMPT % MAX_WISHLIST_NAME_LENGTH}"
         overload = True
@@ -122,12 +124,14 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
         wishlist_id: str = redis_helper.retrieve(
             "%s_%s_edit_wishlist_id" % (user.id, user.id)
         ).decode()
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        old_name = wishlist.title
         change_wishlist_title(wishlist_id, message)
         overload = False
         view_other_wishlists(
             update,
             context,
-            f"✅  <i>Lista <b>{message}</b> rinominata!</i>",
+            f"✅  <i>Lista {old_name} rinominata in <b>{message}</b>!</i>",
             "0",
             True,
         )
