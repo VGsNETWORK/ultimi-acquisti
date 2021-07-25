@@ -379,6 +379,7 @@ def confirm_delete_all_wishlist_elements(
     user = update.effective_user
     data = update.callback_query.data
     wishlist_id = data.split("_")[-1]
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     delete_all_wishlist_element_for_user(
         update.effective_user.id, wishlist_id, from_wishlist
     )
@@ -393,7 +394,13 @@ def confirm_delete_all_wishlist_elements(
             "%s_%s_new_wishlist" % (user.id, user.id),
             update.effective_message.message_id,
         )
-        view_other_wishlists(update, context, edit=True)
+        title = wishlist.title
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        if not wishlist:
+            append = f"✅  <i>Lista <b>{title}</b> eliminata!</i>"
+        else:
+            append = f"✅  <i>Lista <b>{title}</b> svuotata!</i>"
+        view_other_wishlists(update, context, edit=True, append=append)
 
 
 def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
