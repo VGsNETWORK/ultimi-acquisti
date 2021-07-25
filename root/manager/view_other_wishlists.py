@@ -185,10 +185,13 @@ def view_other_wishlists(
     logger.info(f"The user has {total_lists}")
     if update.callback_query or edit:
         if edit:
-            message_id = redis_helper.retrieve(
-                "%s_%s_new_wishlist" % (user.id, user.id)
-            )
-            message_id = message_id.decode()
+            if not update.callback_query:
+                message_id = redis_helper.retrieve(
+                    "%s_%s_new_wishlist" % (user.id, user.id)
+                )
+                message_id = message_id.decode()
+            else:
+                message_id = update.effective_message.message_id
         context.bot.edit_message_text(
             chat_id=chat.id,
             message_id=message_id,
