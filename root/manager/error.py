@@ -8,7 +8,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from root.util.util import format_error, retrieve_key
 import root.util.logger as logger
-from root.contants.messages import TELEGRAM_ERROR, USER_ERROR
+from root.contants.messages import MESSAGE_TOO_OLD, TELEGRAM_ERROR, USER_ERROR
 from root.util.telegram import TelegramSender
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT
 
@@ -24,9 +24,14 @@ def handle_error(update: Update, context: CallbackContext):
     """
     if update:
         error_channel = retrieve_key("ERROR_CHANNEL")
+        text = format_error(context.error)
+        if "Message can't be deleted for everyone" in text:
+            if update.callback_query:
+                context.bot.answer_callback_query(
+                    update.callback_query.id, text=MESSAGE_TOO_OLD, show_alert=True
+                )
         if update.effective_message:
             if update.effective_chat.id != error_channel:
                 update.effective_message.reply_text(USER_ERROR)
-        text = format_error(context.error)
         logger.error(text)
         context.bot.send_message(error_channel, text, parse_mode="HTML")

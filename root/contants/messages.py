@@ -428,6 +428,11 @@ SESSION_ENDED = (
     '\n\nPer continuare, digita "/" nella chat e seleziona un comando dalla lista.'
 )
 
+MESSAGE_TOO_OLD = (
+    "❗️ SESSIONE DEL MESSAGGIO SCADUTA\n\nPer continuare, digita "
+    '"/" nella chat e seleziona un comando dalla lista.'
+)
+
 HOW_TO_DEEP_LINK = (
     '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot...'
     ' <a href="t.me/%s?start=how_to">clicca qui</a>!'
