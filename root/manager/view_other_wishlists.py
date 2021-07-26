@@ -118,7 +118,7 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     for wishlist in wishlists
                 ]
             )
-            log(0, message)
+            log(0, message, disable_notification=True)
 
     try:
         update.callback_query.data += "_0"
@@ -393,7 +393,7 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
                     for wishlist in wishlists
                 ]
             )
-            log(0, message)
+            log(0, message, disable_notification=True)
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
@@ -436,7 +436,7 @@ def handle_keep_confirm(update: Update, context: CallbackContext):
                 for wishlist in wishlists
             ]
         )
-        log(0, message)
+        log(0, message, disable_notification=True)
     return ConversationHandler.END
 
 

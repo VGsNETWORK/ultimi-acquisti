@@ -120,7 +120,7 @@ def remove_wishlist_for_user(_id: str, user_id: int):
                         for wishlist in wishlists
                     ]
                 )
-                log(0, message)
+                log(0, message, disable_notification=True)
     except DoesNotExist as e:
         logger.error(e)
         return
