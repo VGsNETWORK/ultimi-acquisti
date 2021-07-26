@@ -7,10 +7,11 @@ from operator import index
 import os
 from random import random
 import random
+
+from telegram.ext.conversationhandler import ConversationHandler
 from root.manager.change_element_wishlist import CHANGE_WISHLIST_ELEMENT_LIST
 from root.manager.rename_wishlist import EDIT_WISHLIST_NAME
 from root.manager.view_other_wishlists import (
-    ADD_NEW_WISHLIST,
     view_other_wishlists,
     reorder_wishlist,
 )
@@ -18,6 +19,7 @@ from root.manager.wishlist_elements_middleware import (
     ask_delete_wishlist_list,
     change_current_wishlist,
     confirm_delete_wishlist_list,
+    view_wishlist_conv_end,
 )
 from root.manager.advertisement_handler import (
     command_send_advertisement,
@@ -103,6 +105,33 @@ from root.manager.start import (
 )
 from root.manager.feedback import FEEDBACK_CONVERSATION
 from telegram_utils.utils.tutils import log
+import root.manager.view_other_wishlists as view_other_wishlists
+
+
+ADD_NEW_WISHLIST = ConversationHandler(
+    entry_points=[
+        CallbackQueryHandler(
+            view_other_wishlists.add_wishlist, pattern="add_new_wishlist"
+        ),
+    ],
+    states={
+        view_other_wishlists.INSERT_TITLE: [
+            MessageHandler(Filters.text, view_other_wishlists.handle_add_confirm),
+            CallbackQueryHandler(
+                view_other_wishlists.handle_keep_confirm, pattern="keep_the_current"
+            ),
+        ],
+    },
+    fallbacks=[
+        CallbackQueryHandler(
+            view_other_wishlists.cancel_add_wishlist, pattern="cancel_add_to_wishlist"
+        ),
+        CallbackQueryHandler(
+            view_wishlist_conv_end,
+            pattern="cancel_from_element_add_to_wishlist",
+        ),
+    ],
+)
 
 
 class BotManager:
@@ -255,7 +284,8 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="view_other_wishlists", callback=view_other_wishlists
+                pattern="view_other_wishlists",
+                callback=view_other_wishlists.view_other_wishlists,
             )
         )
 

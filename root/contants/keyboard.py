@@ -1056,7 +1056,9 @@ def add_new_wishlist_keyboard(
 ):
     # TODO: fix
     callback = (
-        "cancel_add_to_wishlist" if not from_element else "cancel_add_to_wishlist"
+        "cancel_add_to_wishlist"
+        if not from_element
+        else "cancel_from_element_add_to_wishlist"
     )
     if from_move:
         callback += "from_move_%s_%s" % (wish_id, index)

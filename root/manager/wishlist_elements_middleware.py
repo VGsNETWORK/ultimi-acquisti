@@ -12,6 +12,7 @@ from root.manager.wishlist_element import (
 
 
 def view_wishlist_conv_end(update: Update, context: CallbackContext):
+    update.callback_query.data += "_0"
     view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
