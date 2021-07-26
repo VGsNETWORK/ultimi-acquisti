@@ -21,7 +21,7 @@ def change_current_wishlist(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     change_wishlist(user_id, wishlist_id)
     update.callback_query.data += "_0"
-    view_wishlist(update, context, page=0, reset_keyboard=False)
+    view_wishlist(update, context, page=0, reset_keyboard=True)
 
 
 def ask_delete_wishlist_list(update: Update, context: CallbackContext):
