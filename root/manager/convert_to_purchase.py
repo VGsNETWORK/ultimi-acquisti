@@ -54,8 +54,8 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context, reset_keyboard=False)
         return
-    if wish.link:
-        text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
+    if wish.links:
+        text += f'<b>{index}</b>  <a href="{wish.links[0]}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
     else:
         text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
     if not wish.photos:
@@ -133,9 +133,9 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
     )
-    if wish.link:
+    if wish.links:
         wish_description = '<a href="%s">%s</a>' % (wish.link, wish_description)
-        url += f"%0A%0A{quote(wish.link)}"
+        url += f"%0A%0A{quote(wish.links)}"
     url += "%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
     wish.delete()
     keyboard = InlineKeyboardMarkup(

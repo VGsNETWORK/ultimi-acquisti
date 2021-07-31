@@ -9,6 +9,6 @@ class WishlistElement(BaseModel):
     wishlist_id = StringField()
     description = StringField()
     quantity = IntField()
-    link = StringField()
+    links = ListField(StringField())
     category = StringField()
     photos = ListField(StringField())

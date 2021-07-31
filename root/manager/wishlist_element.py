@@ -67,6 +67,7 @@ from root.helper.wishlist_element import (
 from root.model.wishlist_element import WishlistElement
 from root.contants.keyboard import (
     ADD_LINK_TO_WISHLIST_ITEM,
+    ADD_LINK_TO_WISHLIST_ITEM_NO_LINK,
     ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
@@ -74,6 +75,7 @@ from root.contants.keyboard import (
     create_delete_all_wishlist_element_items_keyboard,
     create_wishlist_element_keyboard,
 )
+
 from telegram import Update
 from telegram.chat import Chat
 from telegram.error import BadRequest
@@ -87,19 +89,30 @@ from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.handlers.handlers import extractor
+from difflib import SequenceMatcher
 
 # endregion
 
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 
-def retrieve_photos_append(user: User):
+def retrieve_photos_append(user: User, links: List[str] = None):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else []
+    logger.info(links)
     if len(rphotos) > 0:
-        append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
+        if not links:
+            append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
+        else:
+            append = "   (<code>%s</code> / 10  foto  •  %s link)" % (
+                len(rphotos),
+                len(links),
+            )
     else:
-        append = ""
+        if not links:
+            append = ""
+        else:
+            append = "   (%s link)" % len(links)
     return append
 
 
@@ -112,6 +125,7 @@ def check_message_length(
     user: User,
     wishlist_elements: List[WishlistElement],
     is_photo: bool = False,
+    wishlist_element: WishlistElement = None,
 ):
     if len(message) > 128:
         rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
@@ -134,7 +148,7 @@ def check_message_length(
             message += "\n".join(
                 [
                     (
-                        f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
+                        f'<b>{index + 2}.</b>  <a href="{wish.links[0]}">{wish.description}</a>\n'
                         f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
@@ -178,25 +192,54 @@ def check_message_length(
             logger.info("PAGED QUERY %s" % len(wishlist_elements))
             logger.info("SAVING IT PLEASE")
             wishlist_id = get_current_wishlist_id(user.id)
-            WishlistElement(
-                user_id=user.id, description=message, wishlist_id=wishlist_id
-            ).save()
+            if not wishlist_element:
+                wishlist_element = WishlistElement(
+                    user_id=user.id, description=message, wishlist_id=wishlist_id
+                ).save()
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
             title = f"{wishlist.title.upper()}  –  "
             text = WISHLIST_HEADER % title
+            links_append = ""
+            wishlist_element.links.reverse()
+            for index, wishlist_link in enumerate(wishlist_element.links):
+                if len(wishlist_link) > 40:
+                    wishlist_link = "%s... " % wishlist_link[:40]
+                if index == 0:
+                    if len(wishlist_element.links) > 1:
+                        links_append += f"      ├─  {wishlist_link}"
+                    else:
+                        links_append += f"      └─  {wishlist_link}"
+                elif index == len(wishlist_element.links) - 1:
+                    links_append += f"\n      └─  {wishlist_link}"
+                else:
+                    links_append += f"\n      ├─  {wishlist_link}"
+            if wishlist_element.links:
+                links_append += "\n\n"
             message = (
-                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user)}\n"
+                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user)}\n{links_append}"
                 "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
             )
             if wishlist_elements:
+                logger.info(f"{len(wishlist_elements)}")
+                logger.info(
+                    "THESE ARE THE ELEMENTS IDS {%s} {%s}"
+                    % (str(wishlist_elements[0].id), str(wishlist_element.id))
+                )
+                logger.info(
+                    "THESE ARE THE ELEMENTS DESC {%s} {%s}"
+                    % (
+                        str(wishlist_elements[0].description),
+                        str(wishlist_element.description),
+                    )
+                )
+                wishlist_elements = list(wishlist_elements)
+                if wishlist_element.links:
+                    del wishlist_elements[0]
                 message += "\n".join(
                     [
                         (
-                            f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                            if wish.link
-                            else f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<b>{index + 2}.</b>  {wish.description}\n"
                             f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         )
                         for index, wish in enumerate(wishlist_elements)
@@ -206,15 +249,21 @@ def check_message_length(
                 if len(wishlist_elements) > 1:
                     message += "\n"
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
+            logger.info(f"THIS IS {len(wishlist_element.links) > 0}")
             message += f"\n{WISHLIST_STEP_TWO}{append}"
-            context.bot.edit_message_text(
-                message_id=message_id,
-                chat_id=chat.id,
-                text=message,
-                reply_markup=ADD_LINK_TO_WISHLIST_ITEM,
-                parse_mode="HTML",
-                disable_web_page_preview=True,
-            )
+            try:
+                context.bot.edit_message_text(
+                    message_id=message_id,
+                    chat_id=chat.id,
+                    text=message,
+                    reply_markup=ADD_LINK_TO_WISHLIST_ITEM
+                    if len(wishlist_element.links) > 0
+                    else ADD_LINK_TO_WISHLIST_ITEM_NO_LINK,
+                    parse_mode="HTML",
+                    disable_web_page_preview=True,
+                )
+            except BadRequest:
+                pass
         else:
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist_elements = find_wishlist_element_for_user(
@@ -239,10 +288,7 @@ def check_message_length(
                 message += "\n".join(
                     [
                         (
-                            f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                            if wish.link
-                            else f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<b>{index + 2}.</b>  {wish.description}\n"
                             f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         )
                         for index, wish in enumerate(wishlist_elements)
@@ -488,10 +534,7 @@ def remove_wishlist_element_item(update: Update, context: CallbackContext):
             update.callback_query.data += "_%s" % page
             view_wishlist(update, context, reset_keyboard=False)
             return
-        if wish.link:
-            text += f'<b>{index}</b>  <a href="{wish.link}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>)\n{append}\n\n'
-        else:
-            text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
+        text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>)\n{append}\n\n"
         text += "<b>Vuoi confermare?</b>"
         keyboard = InlineKeyboardMarkup(keyboard)
         photos: List = wish.photos
@@ -610,8 +653,8 @@ def view_wishlist(
         # ignore all requests coming outside a private chat
         return ConversationHandler.END
     if wishlist_elements:
-        [logger.info(wish.link) for wish in wishlist_elements]
-        [logger.info(1 if wish.link else 0) for wish in wishlist_elements]
+        [logger.info(wish.links) for wish in wishlist_elements]
+        [logger.info(1 if wish.links else 0) for wish in wishlist_elements]
         message = ""
         if append and under_first:
             inc = 1
@@ -624,10 +667,7 @@ def view_wishlist(
             else:
                 logger.info("ADDING TWO NEW LINES")
                 new_line = "\n\n"
-            if wish.link:
-                message += f'<b>1.</b>  <a href="{wish.link}">{wish.description}</a>{append}{new_line}'
-            else:
-                message += f"<b>1.</b>  {wish.description}{append}{new_line}"
+            message += f"<b>1.</b>  {wish.description}{append}{new_line}"
         else:
             inc = 0
         msgs = []
@@ -648,17 +688,10 @@ def view_wishlist(
             else:
                 space = "  " if add_space else ""
                 new_line = "\n"
-            if wish.link:
-                m = (
-                    f'<b>{space}{index}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
-                )
-            else:
-                m = (
-                    f"<b>{space}{index}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
-                )
-            msgs.append(m)
+            msgs.append(
+                f"<b>{space}{index}.</b>  {wish.description}\n"
+                f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+            )
         message += "\n".join(msgs)
         if append and under_first:
             wishlist_elements.insert(0, wish)
@@ -801,10 +834,7 @@ def add_in_wishlist_element(
         message += "\n".join(
             [
                 (
-                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                    if wish.link
-                    else f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<b>{index + 2}.</b>  {wish.description}\n"
                     f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlist_elements)
@@ -894,7 +924,6 @@ def add_category(update: Update, context: CallbackContext):
         user = retrieve_user(user.id)
         logger.info(user.current_wishlist)
         if user:
-            logger.info("ADDING ID TO WISHLIST")
             wish.wishlist_id = user.current_wishlist
         wish.save()
         cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
@@ -938,8 +967,8 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         )
         if wishlist_element:
             wishlist_element = wishlist_element[0]
-            wishlist_element.link = message.text if message.text else message.caption
-            pictures = extractor.load_url(wishlist_element.link)
+            wishlist_link = message.text if message.text else message.caption
+            pictures = extractor.load_url(wishlist_link)
             pictures = pictures[:10]
             rphotos: List[str] = redis_helper.retrieve(
                 "%s_%s_photos" % (user.id, user.id)
@@ -955,18 +984,21 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 rphotos = rphotos[-1] if len(rphotos) > 10 else rphotos
                 redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
             logger.info("THESE ARE THE PICTURES %s" % pictures)
-            wishlist_element.link = extract_first_link_from_message(
-                update.effective_message
-            )
-            logger.info(wishlist_element.link)
-            if "/" in wishlist_element.link:
-                link = wishlist_element.link
+            wishlist_link = extract_first_link_from_message(update.effective_message)
+            logger.info(wishlist_link)
+            if "/" in wishlist_link:
+                link = wishlist_link
                 link = re.sub(r".*//", "", link)
                 link = link.split("/")
                 link[0] = link[0].lower()
-                wishlist_element.link = "/".join(link)
-            else:
-                wishlist_element.link = wishlist_element.link.lower()
+                wishlist_link = "/".join(link)
+                # wishlist_element.links = "/".join(link)
+            is_present = False
+            logger.info(wishlist_element.links)
+            for link in wishlist_element.links:
+                is_present = SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+            if not is_present:
+                wishlist_element.links.append(wishlist_link.lower())
             wishlist_element.wishlist_id = wishlist_id
             wishlist_element.save()
     message_id = redis_helper.retrieve(user.id).decode()
@@ -975,30 +1007,19 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     )
     wishlist_element = wishlist_elements[0]
     wishlist_elements = wishlist_elements[1:5]
-    if not wishlist_element.link:
-        wishlist_id = get_current_wishlist_id(user.id)
-        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
-        title = f"{wishlist.title.upper()}  –  "
-        message = (
-            f"{WISHLIST_HEADER % title}<b>1.  {wishlist_element.description}</b>{retrieve_photos_append(user)}\n"
-            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
-        )
-    else:
-        wishlist_id = get_current_wishlist_id(user.id)
-        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
-        title = f"{wishlist.title.upper()}  –  "
-        message = (
-            f'{WISHLIST_HEADER % title}<b>1.  <a href="{wishlist_element.link}">{wishlist_element.description}</a></b>{retrieve_photos_append(user)}\n'
-            "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
-        )
+    wishlist_id = get_current_wishlist_id(user.id)
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    title = f"{wishlist.title.upper()}  –  "
+    links = wishlist_element.links
+    message = (
+        f"{WISHLIST_HEADER % title}<b>1.  {wishlist_element.description}</b>{retrieve_photos_append(user, links)}\n"
+        "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
+    )
     if wishlist_elements:
         message += "\n".join(
             [
                 (
-                    f'<b>{index + 2}.</b>  <a href="{wish.link}">{wish.description}</a>\n'
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                    if wish.link
-                    else f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<b>{index + 2}.</b>  {wish.description}\n"
                     f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlist_elements)
@@ -1013,6 +1034,19 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             WISHLIST_STEP_THREE,
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
         )
+    if not update.callback_query:
+        message = check_message_length(
+            message_id,
+            chat,
+            wishlist_element.description,
+            context,
+            update,
+            user,
+            wishlist_elements,
+            False,
+            wishlist_element,
+        )
+        return INSERT_ZELDA
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
@@ -1139,6 +1173,8 @@ def go_back(update: Update, context: CallbackContext):
         wish.delete()
     if update.callback_query:
         if "from_link" in update.callback_query.data:
+            wish.links = []
+            wish.save()
             cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
             if cycle_insert:
                 if len(cycle_insert) > 0:

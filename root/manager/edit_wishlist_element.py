@@ -75,8 +75,8 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context, reset_keyboard=False)
         return
-    if wish.link:
-        message += f'<b>{index}</b>  <b><a href="{wish.link}"><code>{wish.description}</code></a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
+    if wish.links:
+        message += f'<b>{index}</b>  <b><a href="{wish.links[0]}"><code>{wish.description}</code></a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
     message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
@@ -154,12 +154,12 @@ def edit_wishlist_element_description(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         message = WISHLIST_HEADER % title
         append = "✏️  <i>Stai modificando questo elemento</i>"
-        if wish.link:
-            message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
+        if wish.links:
+            message += f'<b>{index}</b>  {ask}<b><a href="{wish.links[0]}">{wish.description}</a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
         else:
             message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
 
-        if not wish.link:
+        if not wish.links:
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE
         else:
             append = EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE
@@ -228,7 +228,7 @@ def edit_wishlist_element_link(update: Update, context: CallbackContext):
     else:
         removed = "0"
         redis_helper.save("%s_removed_link" % user.id, removed)
-        wish.link = link
+        wish.links = link
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
     ask = "*" if not wish.description == text else ""
     ask = "*" if removed == "1" else ask
@@ -242,7 +242,7 @@ def edit_wishlist_element_link(update: Update, context: CallbackContext):
     append = "✏️  <i>Stai modificando questo elemento</i>"
 
     if removed == "0":
-        message += f'<b>{index}</b>  {ask}<b><a href="{wish.link}">{wish.description}</a></b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n'
+        message += f'<b>{index}</b>  {ask}<b><a href="{wish.links[0]}">{wish.description}</a></b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n'
     else:
         message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n"
     message += "\n%s%s" % (
@@ -276,8 +276,8 @@ def edit_category(update: Update, context: CallbackContext):
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
     removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()
     if removed == "1":
-        logger.info("removing old url %s" % wish.link)
-        wish.link = ""
+        logger.info("removing old url %s" % wish.links)
+        wish.links = ""
     wish.description = text
     wish.category = CATEGORIES[category]
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
@@ -285,7 +285,7 @@ def edit_category(update: Update, context: CallbackContext):
     wish.photos = rphotos if rphotos else wish.photos
     link = redis_helper.retrieve("%s_%s_user_link" % (user.id, user.id))
     if link:
-        wish.link = link.decode()
+        wish.links = link.decode()
     wish.save()
     cancel_edit_wishlist_element(update, context)
     return ConversationHandler.END

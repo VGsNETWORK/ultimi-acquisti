@@ -376,9 +376,9 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=m)
     except BadRequest:
         pass
-    if wishlist_element.link:
-        if extractor.extractor_exists(wishlist_element.link):
-            if not extractor.validate_url(wishlist_element.link):
+    if wishlist_element.links:
+        if extractor.extractor_exists(wishlist_element.links):
+            if not extractor.validate_url(wishlist_element.links):
                 text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
         else:
             text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
@@ -394,7 +394,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             wish_id,
             True,
             True,
-            download_supported=extractor.is_supported(wishlist_element.link),
+            download_supported=extractor.is_supported(wishlist_element.links),
             link=wishlist_element.link,
         ),
         parse_mode="HTML",
@@ -427,9 +427,9 @@ def ask_for_photo(update: Update, context: CallbackContext):
         wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
         text: str = f"{WISHLIST_HEADER % title}{text}"
-    if wishlist_element.link:
-        if extractor.extractor_exists(wishlist_element.link):
-            if not extractor.validate_url(wishlist_element.link):
+    if wishlist_element.links:
+        if extractor.extractor_exists(wishlist_element.links):
+            if not extractor.validate_url(wishlist_element.links):
                 text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
         else:
             text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
@@ -454,7 +454,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
             wish_id,
             photos=wishlist_element.photos,
             page=page,
-            download_supported=extractor.is_supported(wishlist_element.link),
+            download_supported=extractor.is_supported(wishlist_element.links),
             link=wishlist_element.link,
         ),
         parse_mode="HTML",
@@ -487,7 +487,7 @@ def download_photo_automatically(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     data = data.split("_")[-1]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(data)
-    pictures = extractor.load_url(wishlist_element.link)
+    pictures = extractor.load_url(wishlist_element.links)
     if wishlist_element.photos:
         for photo in wishlist_element.photos:
             if photo in pictures:

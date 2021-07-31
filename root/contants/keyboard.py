@@ -375,8 +375,8 @@ def create_wishlist_element_keyboard(
             "https://t.me/share/url?url=%23ultimiacquisti%20%3C"
             f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wishlist_element.description)}%25"
         )
-        if wishlist_element.link:
-            url += f"%0A%0A{quote(wishlist_element.link)}"
+        if wishlist_element.links:
+            url += f"%0A%0A{quote(wishlist_element.links[0])}"
         photos = (
             " ➕ "
             if not wishlist_element.photos
@@ -527,13 +527,27 @@ def create_user_settings_keyboard(user: User):
     return InlineKeyboardMarkup(keyboard)
 
 
-ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
+ADD_LINK_TO_WISHLIST_ITEM_NO_LINK = InlineKeyboardMarkup(
     [
         [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
         [
             create_button("↩️  Torna indietro", "go_back_from_link", None),
             create_button(
                 "⏩  Salta passaggio", "skip_add_link_to_wishlist_element", None
+            ),
+        ],
+        [create_button("❌  Annulla", "cancel_add_to_wishlist_element", None)],
+    ],
+)
+
+
+ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
+    [
+        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+        [
+            create_button("↩️  Torna indietro", "go_back_from_link", None),
+            create_button(
+                "✅  Concludi inserimento", "skip_add_link_to_wishlist_element", None
             ),
         ],
         [create_button("❌  Annulla", "cancel_add_to_wishlist_element", None)],
