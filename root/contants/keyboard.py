@@ -680,6 +680,10 @@ def build_add_wishlist_element_category_keyboard():
 def build_edit_wishlist_element_category_keyboard(
     _id: str, page: int, index: int, has_category: bool = True
 ):
+    logger.info(
+        "ID: %s\n PAGE:%s\n INDEX:%s\nHAS_CATEGORY:%s\n"
+        % (_id, page, index, has_category)
+    )
     assigned = False
     categories = CATEGORIES
     categories = categories[1:]

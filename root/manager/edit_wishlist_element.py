@@ -41,7 +41,7 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 import telegram_utils.utils.logger as logger
 
-EDIT_WISHLIST_TEXT, EDIT_ZELDA, EDIT_CATEGORY = range(3)
+EDIT_WISHLIST_TEXT, EDIT_CATEGORY = range(2)
 
 
 def show_photo(wishlist_element: WishlistElement):
@@ -75,10 +75,7 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context, reset_keyboard=False)
         return
-    if wish.links:
-        message += f'<b>{index}</b>  <b><a href="{wish.links[0]}"><code>{wish.description}</code></a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
-    else:
-        message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
+    message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
     message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
     keyboard = build_edit_wishlist_element_desc_keyboard(_id, page, index)
     context.bot.edit_message_text(
@@ -154,23 +151,14 @@ def edit_wishlist_element_description(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         message = WISHLIST_HEADER % title
         append = "✏️  <i>Stai modificando questo elemento</i>"
-        if wish.links:
-            message += f'<b>{index}</b>  {ask}<b><a href="{wish.links[0]}">{wish.description}</a></b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
-        else:
-            message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
+        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
 
-        if not wish.links:
-            append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE
-        else:
-            append = EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE
-        if wish.photos:
-            append = append % EDIT_WISHLIST_LINK_EXISTING_PHOTOS
-        else:
-            append = append % EDIT_WISHLIST_LINK_NO_PHOTOS
-        message += f"\n{WISHLIST_EDIT_STEP_TWO}{append}"
-        keyboard = build_edit_wishlist_element_link_keyboard(
-            _id, page, index, wish.link
+        append = EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE
+        message += f"\n{WISHLIST_EDIT_STEP_THREE}{append}"
+        keyboard = build_edit_wishlist_element_category_keyboard(
+            _id, page, index, wish.category
         )
+
     context.bot.edit_message_text(
         chat_id=chat.id,
         text=message,
@@ -179,7 +167,7 @@ def edit_wishlist_element_description(update: Update, context: CallbackContext):
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
-    return EDIT_ZELDA if len(text) <= 128 else EDIT_WISHLIST_TEXT
+    return EDIT_CATEGORY if len(text) <= 128 else EDIT_WISHLIST_TEXT
 
 
 def edit_wishlist_element_link(update: Update, context: CallbackContext):
@@ -240,11 +228,7 @@ def edit_wishlist_element_link(update: Update, context: CallbackContext):
     title = f"{wishlist.title.upper()}  –  "
     message = WISHLIST_HEADER % title
     append = "✏️  <i>Stai modificando questo elemento</i>"
-
-    if removed == "0":
-        message += f'<b>{index}</b>  {ask}<b><a href="{wish.links[0]}">{wish.description}</a></b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n'
-    else:
-        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n"
+    message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n"
     message += "\n%s%s" % (
         WISHLIST_EDIT_STEP_THREE,
         EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
@@ -275,17 +259,11 @@ def edit_category(update: Update, context: CallbackContext):
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
     removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()
-    if removed == "1":
-        logger.info("removing old url %s" % wish.links)
-        wish.links = ""
     wish.description = text
     wish.category = CATEGORIES[category]
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else None
     wish.photos = rphotos if rphotos else wish.photos
-    link = redis_helper.retrieve("%s_%s_user_link" % (user.id, user.id))
-    if link:
-        wish.links = link.decode()
     wish.save()
     cancel_edit_wishlist_element(update, context)
     return ConversationHandler.END
@@ -301,21 +279,11 @@ def cancel_edit_wishlist_element(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
-def show_step_two_toast(update: Update, context: CallbackContext):
-    context.bot.answer_callback_query(
-        update.callback_query.id, text=SUPPORTED_LINKS_MESSAGE, show_alert=True
-    )
-    return EDIT_ZELDA
-
-
 def go_back(update: Update, context: CallbackContext):
     if update.callback_query:
-        if "from_link" in update.callback_query.data:
+        if "from_category" in update.callback_query.data:
             edit_wishlist_element_item(update, context)
             return EDIT_WISHLIST_TEXT
-        elif "from_category" in update.callback_query.data:
-            edit_wishlist_element_description(update, context)
-            return EDIT_ZELDA
 
 
 EDIT_WISHLIST_CONVERSATION = ConversationHandler(
@@ -339,20 +307,6 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
                 callback=edit_wishlist_element_description,
                 pattern="confirm_description_mod",
             ),
-        ],
-        EDIT_ZELDA: [
-            CallbackQueryHandler(
-                callback=show_step_two_toast, pattern="show_step_2_advance"
-            ),
-            MessageHandler(Filters.entity("url"), edit_wishlist_element_link),
-            CallbackQueryHandler(
-                callback=edit_wishlist_element_link, pattern="keep_current_link"
-            ),
-            CallbackQueryHandler(
-                callback=edit_wishlist_element_link,
-                pattern="remove_link",
-            ),
-            CallbackQueryHandler(callback=go_back, pattern="go_back_from_link"),
         ],
         EDIT_CATEGORY: [
             CallbackQueryHandler(
