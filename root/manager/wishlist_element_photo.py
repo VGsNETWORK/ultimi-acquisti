@@ -379,9 +379,9 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     if wishlist_element.links:
         if extractor.extractor_exists(wishlist_element.links[0]):
             if not extractor.validate_url(wishlist_element.links[0]):
-                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.links[0]
         else:
-            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
+            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.links[0]
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
@@ -395,7 +395,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             True,
             True,
             download_supported=extractor.is_supported(wishlist_element.links[0]),
-            link=wishlist_element.link,
+            link=wishlist_element.links[0],
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
