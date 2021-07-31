@@ -7,6 +7,7 @@ from operator import index
 import os
 from random import random
 import random
+from root.manager.wishlist_element_link import view_wishlist_element_links
 
 from telegram.ext.conversationhandler import ConversationHandler
 from root.manager.change_element_wishlist import CHANGE_WISHLIST_ELEMENT_LIST
@@ -275,6 +276,12 @@ class BotManager:
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="ask_for_wishlist_element_link",
+                callback=view_wishlist_element_links,
+            )
         )
         self.disp.add_handler(
             CallbackQueryHandler(

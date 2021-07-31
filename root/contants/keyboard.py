@@ -399,6 +399,16 @@ def create_wishlist_element_keyboard(
                 page,
                 wishlist_element.id,
             )
+        if wishlist_element.photos:
+            link_callback: str = "view_wishlist_element_link_%s_%s" % (
+                page,
+                wishlist_element.id,
+            )
+        else:
+            link_callback: str = "ask_for_wishlist_element_link_%s_%s" % (
+                page,
+                wishlist_element.id,
+            )
         # I hate that they are not aligned
         if wishlist_element.user_id == 84872221:
             btns = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
@@ -455,8 +465,7 @@ def create_wishlist_element_keyboard(
                     ),
                     create_button(
                         "%s🔗" % links,
-                        "edit_wishlist_element_link_%s_%s_%s"
-                        % (index, page, str(wishlist_element.id)),
+                        link_callback,
                         None,
                     ),
                     create_button(
@@ -1258,5 +1267,33 @@ def choose_new_wishlist_keyboard(
         [
             create_button("❌  Annulla", "cancel_wishlist_change_%s" % page, None),
         ],
+    )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def view_wishlist_element_links_keyboard(
+    wishlist_element_id: str, page: int, links: List[str]
+):
+    keyboard = []
+    # ask for wishlist element link
+    keyboard.append(
+        [create_button("➕  Aggiungi link", "afwel_link_%s" % wishlist_element_id, None)]
+    )
+    for index, _ in enumerate(links):
+        index += 1
+        line = []
+        line.append(create_button(f"{index}.", "empty_button", None))
+        line.append(
+            create_button("🗑", "remove_link_%s_%s" % (index, wishlist_element_id), None)
+        )
+        keyboard.append(line)
+    keyboard.append(
+        [
+            create_button(
+                "↩️  Torna Indietro",
+                "go_back_from_wishlist_element_photos_%s" % page,
+                None,
+            )
+        ]
     )
     return InlineKeyboardMarkup(keyboard)
