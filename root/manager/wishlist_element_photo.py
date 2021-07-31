@@ -377,8 +377,8 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     except BadRequest:
         pass
     if wishlist_element.links:
-        if extractor.extractor_exists(wishlist_element.links):
-            if not extractor.validate_url(wishlist_element.links):
+        if extractor.extractor_exists(wishlist_element.links[0]):
+            if not extractor.validate_url(wishlist_element.links[0]):
                 text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
         else:
             text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
@@ -394,7 +394,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             wish_id,
             True,
             True,
-            download_supported=extractor.is_supported(wishlist_element.links),
+            download_supported=extractor.is_supported(wishlist_element.links[0]),
             link=wishlist_element.link,
         ),
         parse_mode="HTML",
@@ -428,11 +428,11 @@ def ask_for_photo(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         text: str = f"{WISHLIST_HEADER % title}{text}"
     if wishlist_element.links:
-        if extractor.extractor_exists(wishlist_element.links):
-            if not extractor.validate_url(wishlist_element.links):
-                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.link
+        if extractor.extractor_exists(wishlist_element.links[0]):
+            if not extractor.validate_url(wishlist_element.links[0]):
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.links[0]
         else:
-            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.link
+            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.links[0]
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
     # if messages:
@@ -454,8 +454,8 @@ def ask_for_photo(update: Update, context: CallbackContext):
             wish_id,
             photos=wishlist_element.photos,
             page=page,
-            download_supported=extractor.is_supported(wishlist_element.links),
-            link=wishlist_element.link,
+            download_supported=extractor.is_supported(wishlist_element.links[0]),
+            link=wishlist_element.links[0],
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -467,7 +467,6 @@ def ask_for_photo(update: Update, context: CallbackContext):
 
 def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
-    logger.info("CALLBACK DATA %s" % update.callback_query.data)
     if not "go_back" in update.callback_query.data:
         if not "sended" in update.callback_query.data:
             view_wishlist_element_photos(update, context, send_photo=False)
@@ -487,7 +486,7 @@ def download_photo_automatically(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     data = data.split("_")[-1]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(data)
-    pictures = extractor.load_url(wishlist_element.links)
+    pictures = extractor.load_url(wishlist_element.links[0])
     if wishlist_element.photos:
         for photo in wishlist_element.photos:
             if photo in pictures:
