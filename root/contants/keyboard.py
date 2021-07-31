@@ -399,8 +399,8 @@ def create_wishlist_element_keyboard(
                 page,
                 wishlist_element.id,
             )
-        if wishlist_element.photos:
-            link_callback: str = "view_wishlist_element_link_%s_%s" % (
+        if wishlist_element.links:
+            link_callback: str = "view_wishlist_link_element_%s_%s" % (
                 page,
                 wishlist_element.id,
             )
@@ -1283,14 +1283,17 @@ def view_wishlist_element_links_keyboard(
         index += 1
         line = []
         line.append(create_button(f"{index}.", "empty_button", None))
+        # remove wishlist element link
         line.append(
-            create_button("🗑", "remove_link_%s_%s" % (index, wishlist_element_id), None)
+            create_button(
+                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+            )
         )
         keyboard.append(line)
     keyboard.append(
         [
             create_button(
-                "↩️  Torna Indietro",
+                "↩️  Torna indietro",
                 "go_back_from_wishlist_element_photos_%s" % page,
                 None,
             )

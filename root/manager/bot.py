@@ -7,7 +7,10 @@ from operator import index
 import os
 from random import random
 import random
-from root.manager.wishlist_element_link import view_wishlist_element_links
+from root.manager.wishlist_element_link import (
+    delete_wishlist_element_link,
+    view_wishlist_element_links,
+)
 
 from telegram.ext.conversationhandler import ConversationHandler
 from root.manager.change_element_wishlist import CHANGE_WISHLIST_ELEMENT_LIST
@@ -278,8 +281,11 @@ class BotManager:
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )
         self.disp.add_handler(
+            CallbackQueryHandler(pattern="rwel", callback=delete_wishlist_element_link)
+        )
+        self.disp.add_handler(
             CallbackQueryHandler(
-                pattern="ask_for_wishlist_element_link",
+                pattern="view_wishlist_link_element",
                 callback=view_wishlist_element_links,
             )
         )

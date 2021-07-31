@@ -16,6 +16,27 @@ from telegram.chat import Chat
 from telegram.message import Message
 
 
+def delete_wishlist_element_link(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    message_id: int = message.message_id
+    chat: Chat = update.effective_chat
+    user: User = update.effective_user
+    if update.callback_query:
+        data = update.callback_query.data
+        wishlist_element_id = data.split("_")[-1]
+        page = data.split("_")[-2]
+        index = int(data.split("_")[-3])
+        wishlist_element: WishlistElement = find_wishlist_element_by_id(
+            wishlist_element_id
+        )
+        links = wishlist_element.links
+        links.pop(index)
+        wishlist_element.links = links
+        wishlist_element.save()
+        view_wishlist_element_links(update, context)
+    return
+
+
 def view_wishlist_element_links(
     update: Update,
     context: CallbackContext,
@@ -36,13 +57,25 @@ def view_wishlist_element_links(
         links = wishlist_element.links
         title = f"{wishlist.title.upper()}  –  "
         message = WISHLIST_HEADER % title
-        message += f"<b>{wishlist_element.description}</b>"
-        for index, link in enumerate(links):
-            index += 1
-            if len(link) > 40:
-                message += f'\n{index}.  <a href="{link}">{link[:40]}</a>'
-            else:
-                message += f"\n{index}.  {link}"
+        if links:
+            message += f"Hai aggiunto  <code>{len(links)}</code>  link per <b>{wishlist_element.description}</b>.\n"
+            for index, wishlist_link in enumerate(links):
+                if len(wishlist_link) > 27:
+                    wishlist_link = '<a href="%s">%s...</a>' % (
+                        wishlist_link,
+                        wishlist_link[:27],
+                    )
+                if index == 0:
+                    if len(wishlist_element.links) > 1:
+                        message += f"  │\n  ├─    <b>{index+1}.</b>  {wishlist_link}"
+                    else:
+                        message += f"  │\n  └─    <b>{index+1}.</b>  {wishlist_link}"
+                elif index == len(wishlist_element.links) - 1:
+                    message += f"\n  │\n  └─    <b>{index+1}.</b>  {wishlist_link}"
+                else:
+                    message += f"\n  │\n  ├─    <b>{index+1}.</b>  {wishlist_link}"
+        else:
+            message += f"Qui puoi aggiungere delle foto per <b>{wishlist_element.description}</b>."
         keyboard: InlineKeyboardMarkup = view_wishlist_element_links_keyboard(
             wishlist_element_id, page, links
         )
