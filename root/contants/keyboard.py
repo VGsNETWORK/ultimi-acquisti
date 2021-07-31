@@ -382,6 +382,11 @@ def create_wishlist_element_keyboard(
             if not wishlist_element.photos
             else "%s  " % len(wishlist_element.photos)
         )
+        links = (
+            " ➕ "
+            if not wishlist_element.links
+            else "%s  " % len(wishlist_element.links)
+        )
         if wishlist_element.photos and len(wishlist_element.photos) < 10:
             photos = "   %s" % photos
         if wishlist_element.photos:
@@ -398,8 +403,11 @@ def create_wishlist_element_keyboard(
         if wishlist_element.user_id == 84872221:
             btns = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
             icon = len(wishlist_element.photos) - 1
+            links_icon = len(wishlist_element.links) - 1
+            links_icon = btns[links_icon]
             icon = btns[icon]
             photos = " 0️⃣  " if not wishlist_element.photos else " %s  " % icon
+            links = " 0️⃣  " if not wishlist_element.links else " %s  " % links_icon
         second_page = redis_helper.retrieve(
             "%s_second_element_page_%s" % (user_id, index)
         )
@@ -443,6 +451,12 @@ def create_wishlist_element_keyboard(
                         "<",
                         "toggle_element_action_page_%s_%s_%s"
                         % (index, str(wishlist_element.id), page),
+                        None,
+                    ),
+                    create_button(
+                        "%s🔗" % links,
+                        "edit_wishlist_element_link_%s_%s_%s"
+                        % (index, page, str(wishlist_element.id)),
                         None,
                     ),
                     create_button(
