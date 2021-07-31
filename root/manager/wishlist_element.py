@@ -204,7 +204,10 @@ def check_message_length(
             wishlist_element.links.reverse()
             for index, wishlist_link in enumerate(wishlist_element.links):
                 if len(wishlist_link) > 40:
-                    wishlist_link = "%s... " % wishlist_link[:40]
+                    wishlist_link = '<a href="%s">%s...</a>' % (
+                        wishlist_link,
+                        wishlist_link[:40],
+                    )
                 if index == 0:
                     if len(wishlist_element.links) > 1:
                         links_append += f"      ├─  {wishlist_link}"
