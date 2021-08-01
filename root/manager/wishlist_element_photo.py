@@ -446,6 +446,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
     #         context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     # except BadRequest:
     #     pass
+    if wishlist_element.links:
+        wishlist_link = wishlist_element.links[0]
+    else:
+        wishlist_link = None
     message: Message = context.bot.edit_message_text(
         chat_id=message.chat_id,
         text=text,
@@ -454,8 +458,8 @@ def ask_for_photo(update: Update, context: CallbackContext):
             wish_id,
             photos=wishlist_element.photos,
             page=page,
-            download_supported=extractor.is_supported(wishlist_element.links[0]),
-            link=wishlist_element.links[0],
+            download_supported=extractor.is_supported(wishlist_link),
+            link=wishlist_link,
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,

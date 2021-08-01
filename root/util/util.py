@@ -314,7 +314,6 @@ def create_button(
     Returns:
         InlineKeyboardButton: The Telegram Inline Button to use
     """
-    logger.info("MESSAGE: %s\nCALLBACK_DATA: %s\nURL:%s\n" % (message, callback, url))
     return InlineKeyboardButton(message, callback_data=callback, url=url)
 
 

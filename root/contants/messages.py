@@ -1085,3 +1085,13 @@ CHANGE_ELEMENT_WISHLIST_MESSAGE = (
     "🔀  <i>Stai per spostare questo elemento in un'altra lista</i>\n\n"
     "Seleziona la lista dei desideri di destinazione:"
 )
+
+
+ADD_NEW_LINK_MESSAGE = (
+    f"{WISHLIST_HEADER}%sInvia adesso i link che vuoi aggiungere per <b>%s</b>:"
+)
+
+
+ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK = (
+    "<i>Link inviati finora:</i>  <code>%s</code>\n"
+)

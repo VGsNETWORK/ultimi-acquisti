@@ -584,7 +584,6 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
         message_id = int(message_id)
         update.effective_message.message_id = message_id
     messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
-    logger.info(messages)
     if messages:
         messages = eval(messages)
     else:

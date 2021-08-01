@@ -8,6 +8,7 @@ import os
 from random import random
 import random
 from root.manager.wishlist_element_link import (
+    ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
     view_wishlist_element_links,
 )
@@ -283,6 +284,7 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rwel", callback=delete_wishlist_element_link)
         )
+        self.disp.add_handler(ADD_NEW_LINK_TO_ELEMENT_CONVERSATION)
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="view_wishlist_link_element",

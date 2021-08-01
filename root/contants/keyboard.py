@@ -1277,7 +1277,13 @@ def view_wishlist_element_links_keyboard(
     keyboard = []
     # ask for wishlist element link
     keyboard.append(
-        [create_button("➕  Aggiungi link", "afwel_link_%s" % wishlist_element_id, None)]
+        [
+            create_button(
+                "➕  Aggiungi link",
+                "afwel_link_%s_%s" % (page, wishlist_element_id),
+                None,
+            )
+        ]
     )
     for index, _ in enumerate(links):
         index += 1
@@ -1299,4 +1305,30 @@ def view_wishlist_element_links_keyboard(
             )
         ]
     )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_new_link_keyboard(page: int, wishlist_element_id: str):
+    cancel_callback = "cancel_new_wishlist_element_link_%s_%s" % (
+        page,
+        wishlist_element_id,
+    )
+    keyboard = []
+    keyboard.append(
+        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+    )
+    keyboard.append([create_button("❌  Annulla", cancel_callback, None)])
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_new_link_keyboard_added(page: int, wishlist_element_id: str):
+    link_insert = "finish_new_link_insert_%s_%s" % (
+        page,
+        wishlist_element_id,
+    )
+    keyboard = []
+    keyboard.append(
+        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+    )
+    keyboard.append([create_button("✅  Concludi inserimento", link_insert, None)])
     return InlineKeyboardMarkup(keyboard)
