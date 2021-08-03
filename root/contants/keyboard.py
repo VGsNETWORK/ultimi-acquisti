@@ -568,12 +568,16 @@ ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
     [
         [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
         [
-            create_button("↩️  Torna indietro", "go_back_from_link", None),
             create_button(
                 "✅  Concludi inserimento", "skip_add_link_to_wishlist_element", None
-            ),
+            )
         ],
-        [create_button("❌  Annulla", "cancel_add_to_wishlist_element", None)],
+        [
+            create_button("↩️  Torna indietro", "go_back_from_link", None),
+        ],
+        [
+            create_button("❌  Annulla", "cancel_add_to_wishlist_element", None),
+        ],
     ],
 )
 
