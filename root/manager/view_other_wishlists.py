@@ -226,7 +226,16 @@ def view_other_wishlists(
                 message_id = message_id.decode()
             else:
                 message_id = update.effective_message.message_id
-        message += "&#8203;" * randint(1, 10)
+        previous = redis_helper.retrieve("%s_%s_previous_value").decode()
+        if previous:
+            previous = int(previous)
+        else:
+            previous = 0
+        n = randint(1, 10)
+        while n == previous:
+            n = randint(1, 10)
+        redis_helper.save("%s_%s_previous_value", str(n))
+        message += "&#8203;" * n
         context.bot.edit_message_text(
             chat_id=chat.id,
             message_id=message_id,
