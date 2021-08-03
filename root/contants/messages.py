@@ -924,7 +924,7 @@ VIEW_WISHLIST_PHOTO_MESSAGE = "Hai aggiunto  <code>%s</code>  foto per <b>%s</b>
 
 VIEW_NO_WISHLIST_PHOTO_MESSAGE = "Qui puoi aggiungere delle foto per <b>%s</b>."
 
-REQUEST_WISHLIST_PHOTO = "Invia adesso <b>come foto</b> (non come <i>file</i>) le immagini che vuoi aggiungere per <b>%s</b>:"
+REQUEST_WISHLIST_PHOTO = "Invia adesso <u><b>come foto</b></u> (non come <i>file</i>) le immagini che vuoi aggiungere per <b>%s</b>:"
 
 WISHLIST_PHOTO_LIMIT_REACHED = "\n\n<i><b>Limite massimo di foto raggiunto!</b>\nSe vuoi aggiungerne di nuove, devi prima eliminarne qualcuna.</i>"
 

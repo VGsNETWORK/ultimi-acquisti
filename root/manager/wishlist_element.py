@@ -149,10 +149,10 @@ def check_message_length(
                 [
                     (
                         f'<b>{index + 2}.</b>  <a href="{wish.links[0]}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         if wish.link
                         else f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlist_elements)
                 ]
@@ -252,7 +252,7 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         )
                         for index, wish in enumerate(wishlist_elements)
                     ]
@@ -301,7 +301,7 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         )
                         for index, wish in enumerate(wishlist_elements)
                     ]
@@ -334,6 +334,12 @@ def has_photo(wishlist_element: WishlistElement):
     if wishlist_element.user_id == 84872221:
         return ""
     return "  •  🖼" if wishlist_element.photos else ""
+
+
+def has_link(wishlist_element: WishlistElement):
+    if wishlist_element.user_id == 84872221:
+        return ""
+    return "  •  🔗" if wishlist_element.links else ""
 
 
 def ask_delete_all_wishlist_elements(
@@ -701,7 +707,7 @@ def view_wishlist(
                 new_line = "\n"
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
-                f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
             )
         message += "\n".join(msgs)
         if append and under_first:
@@ -847,7 +853,7 @@ def add_in_wishlist_element(
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlist_elements)
             ]
@@ -1051,7 +1057,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                 )
                 for index, wish in enumerate(wishlist_elements)
             ]

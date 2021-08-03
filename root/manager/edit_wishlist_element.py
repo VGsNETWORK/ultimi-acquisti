@@ -151,7 +151,7 @@ def edit_wishlist_element_description(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         message = WISHLIST_HEADER % title
         append = "✏️  <i>Stai modificando questo elemento</i>"
-        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
+        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n"
 
         append = EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE
         message += f"\n{WISHLIST_EDIT_STEP_THREE}{append}"

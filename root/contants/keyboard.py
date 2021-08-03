@@ -385,7 +385,11 @@ def create_wishlist_element_keyboard(
         links = (
             " ➕ "
             if not wishlist_element.links
-            else "%s  " % len(wishlist_element.links)
+            else "%s%s  "
+            % (
+                "   " if len(wishlist_element.links) < 10 else "",
+                len(wishlist_element.links),
+            )
         )
         if wishlist_element.photos and len(wishlist_element.photos) < 10:
             photos = "   %s" % photos
