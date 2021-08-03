@@ -842,6 +842,14 @@ EDIT_WISHLIST_PROMPT = (
     "   •  testo su più righe non supportato.\n"
     "<b>Se il nuovo elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
+EDIT_WISHLIST_PROMPT = (
+    "Inserisci il nuovo testo dell'elemento:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>128 caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+    '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la NUOVA <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
+)
+
 
 ADDED_TO_WISHLIST = "\n✅  <i>Elemento aggiunto con successo!</i>"
 
@@ -1075,12 +1083,14 @@ WISHLIST_LEGEND_APPEND_FIRST_PAGE = (
 
 
 WISHLIST_LEGEND_APPEND_SECOND_PAGE = (
+    "<code>   🔗   </code>  =  <b>Gestisci i link per l'elemento</b>\n"
     "<code>   ✏️   </code>  =  <b>Modifica l'elemento</b>\n"
     "<code>   🔀   </code>  =  <b>Sposta l'elemento in un'altra lista</b>\n"
     "<code>   🗑   </code>  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
 )
 
 WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY = (
+    "🔗  =  <b>Gestisci i link per l'elemento</b>\n"
     "✏️  =  <b>Modifica l'elemento</b>\n"
     "🔀  =  <b>Sposta l'elemento in un'altra lista</b>\n"
     "🗑  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
