@@ -1276,26 +1276,52 @@ def view_wishlist_element_links_keyboard(
 ):
     keyboard = []
     # ask for wishlist element link
-    keyboard.append(
-        [
-            create_button(
-                "➕  Aggiungi link",
-                "afwel_link_%s_%s" % (page, wishlist_element_id),
-                None,
-            )
-        ]
-    )
-    for index, _ in enumerate(links):
-        index += 1
-        line = []
-        line.append(create_button(f"{index}.", "empty_button", None))
-        # remove wishlist element link
-        line.append(
-            create_button(
-                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
-            )
+    if len(links) < 10:
+        keyboard.append(
+            [
+                create_button(
+                    "➕  Aggiungi link",
+                    "afwel_link_%s_%s" % (page, wishlist_element_id),
+                    None,
+                )
+            ]
         )
-        keyboard.append(line)
+    index = 0
+    link_groups = zip(*(iter(links),) * 3)
+    for link_group in link_groups:
+        group = []
+        for _ in link_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    link_groups = zip(*(iter(links[index:]),) * 2)
+    for link_group in link_groups:
+        group = []
+        for _ in link_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    for _ in links[index:]:
+        keyboard.append(
+            [
+                create_button("%s." % (index + 1), "empty_button", None),
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                ),
+            ]
+        )
+        index += 1
+
     keyboard.append(
         [
             create_button(

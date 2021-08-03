@@ -1093,5 +1093,8 @@ ADD_NEW_LINK_MESSAGE = (
 
 
 ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK = (
-    "<i>Link inviati finora:</i>  <code>%s</code>\n"
+    "<i>Link inviati finora:</i>  <code>%s</code> / %s\n"
 )
+
+
+WISHLIST_LINK_LIMIT_REACHED = "\n\n\n<i><b>Limite massimo di link raggiunto!</b>\nSe vuoi aggiungerne di nuovi, devi prima eliminarne qualcuno.</i>"
