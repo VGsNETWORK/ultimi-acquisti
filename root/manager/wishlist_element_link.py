@@ -210,7 +210,7 @@ def append_link(update: Update, context: CallbackContext):
                 wishlist_link,
                 wishlist_link[:MAX_LINK_LENGTH],
             )
-        duplicated_link = "<s>%s</s>     🚫  <b>DUPLICATO</b>" % wishlist_link
+        duplicated_link = "<s>%s</s>     🚫 <b>DUPLICATO</b>" % wishlist_link
         duplicated_links.insert(0, duplicated_link)
         redis_helper.save(
             "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)

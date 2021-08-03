@@ -104,7 +104,7 @@ def retrieve_photos_append(user: User, links: List[str] = None):
         if not links:
             append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
         else:
-            append = "   (<code>%s</code> / 10  foto  •  %s link)" % (
+            append = "   (<code>%s</code> / 10  foto  •  <code>%s</code> / 10 link)" % (
                 len(rphotos),
                 len(links),
             )
@@ -112,7 +112,7 @@ def retrieve_photos_append(user: User, links: List[str] = None):
         if not links:
             append = ""
         else:
-            append = "   (%s link)" % len(links)
+            append = "   (<code>%s</code> / 10 link)" % len(links)
     return append
 
 
@@ -202,25 +202,34 @@ def check_message_length(
             text = WISHLIST_HEADER % title
             links_append = ""
             wishlist_element.links.reverse()
-            for index, wishlist_link in enumerate(wishlist_element.links):
+            links = wishlist_element.links
+            duplicated_links = eval(
+                redis_helper.retrieve(
+                    "%s_%s_duplicated_links" % (user.id, user.id)
+                ).decode()
+            )
+            for index, duplicated_link in enumerate(duplicated_links):
+                links.insert(index, duplicated_link)
+            for index, wishlist_link in enumerate(links):
                 if len(wishlist_link) > 40:
-                    wishlist_link = '<a href="%s">%s...</a>' % (
-                        wishlist_link,
-                        wishlist_link[:40],
-                    )
+                    if not "DUPLICATO" in wishlist_link:
+                        wishlist_link = '<a href="%s">%s...</a>' % (
+                            wishlist_link,
+                            wishlist_link[:40],
+                        )
                 if index == 0:
-                    if len(wishlist_element.links) > 1:
+                    if len(links) > 1:
                         links_append += f"      ├─  {wishlist_link}"
                     else:
                         links_append += f"      └─  {wishlist_link}"
-                elif index == len(wishlist_element.links) - 1:
+                elif index == len(links) - 1:
                     links_append += f"\n      └─  {wishlist_link}"
                 else:
                     links_append += f"\n      ├─  {wishlist_link}"
-            if wishlist_element.links:
-                links_append += "\n\n"
+            if links:
+                links_append += "\n"
             message = (
-                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user)}\n{links_append}"
+                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user, wishlist_element.links)}\n{links_append}"
                 "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
             )
             if wishlist_elements:
@@ -492,7 +501,7 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         except BadRequest:
             pass
-    view_wishlist(update, context, reset_keyboard=False)
+    view_wishlist(update, context, reset_keyboard=True)
 
 
 def remove_wishlist_element_item(update: Update, context: CallbackContext):
@@ -813,6 +822,7 @@ def add_in_wishlist_element(
     message_id = message.message_id
     clear_redis(user, toggle_cycle)
     rphotos = []
+    redis_helper.save("%s_%s_duplicated_links" % (user.id, user.id), str([]))
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
     chat: Chat = update.effective_chat
@@ -935,7 +945,7 @@ def add_category(update: Update, context: CallbackContext):
                 if cycle_insert:
                     add_in_wishlist_element(update, context, cycle_insert, cycle_insert)
                     return INSERT_ITEM_IN_WISHLIST
-        view_wishlist(update, context, ADDED_TO_WISHLIST, "0", reset_keyboard=False)
+        view_wishlist(update, context, ADDED_TO_WISHLIST, "0", reset_keyboard=True)
         return ConversationHandler.END
 
 
@@ -986,6 +996,11 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 rphotos = rphotos[-1] if len(rphotos) > 10 else rphotos
                 redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
             logger.info("THESE ARE THE PICTURES %s" % pictures)
+            duplicated_links = eval(
+                redis_helper.retrieve(
+                    "%s_%s_duplicated_links" % (user.id, user.id)
+                ).decode()
+            )
             wishlist_link = extract_first_link_from_message(update.effective_message)
             logger.info(wishlist_link)
             if "/" in wishlist_link:
@@ -998,9 +1013,23 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             is_present = False
             logger.info(wishlist_element.links)
             for link in wishlist_element.links:
-                is_present = SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+                if not is_present:
+                    is_present = (
+                        SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+                    )
+            if is_present:
+                if len(wishlist_link) > 40:
+                    wishlist_link = '<a href="%s">%s...</a>' % (
+                        wishlist_link,
+                        wishlist_link[:40],
+                    )
+                duplicated_link = "<s>%s</s>     🚫 <b>DUPLICATO</b>" % wishlist_link
+                duplicated_links.insert(0, duplicated_link)
+                redis_helper.save(
+                    "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
+                )
             if not is_present:
-                wishlist_element.links.append(wishlist_link.lower())
+                wishlist_element.links.append(wishlist_link)
             wishlist_element.wishlist_id = wishlist_id
             wishlist_element.save()
     message_id = redis_helper.retrieve(user.id).decode()
@@ -1037,18 +1066,19 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
         )
     if not update.callback_query:
-        message = check_message_length(
-            message_id,
-            chat,
-            wishlist_element.description,
-            context,
-            update,
-            user,
-            wishlist_elements,
-            False,
-            wishlist_element,
-        )
-        return INSERT_ZELDA
+        if len(wishlist_element.links) < 10:
+            message = check_message_length(
+                message_id,
+                chat,
+                wishlist_element.description,
+                context,
+                update,
+                user,
+                wishlist_elements,
+                False,
+                wishlist_element,
+            )
+            return INSERT_ZELDA
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
