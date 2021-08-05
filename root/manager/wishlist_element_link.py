@@ -89,7 +89,13 @@ def view_wishlist_element_links(
     if links:
         message += f"Hai aggiunto  <code>{len(links)}</code>  link per <b>{wishlist_element.description}</b>.\n"
         wishlist_element.links.reverse()
+        if len(wishlist_element.links) == 10:
+            spaces = "  "
+        else:
+            spaces = ""
         for index, wishlist_link in enumerate(wishlist_element.links):
+            if index == 9:
+                spaces = ""
             if len(wishlist_link) > MAX_LINK_LENGTH:
                 wishlist_link = '<a href="%s">%s...</a>' % (
                     wishlist_link,
@@ -97,13 +103,13 @@ def view_wishlist_element_links(
                 )
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n<b>{index+1}.</b>  {wishlist_link}"
+                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
                 else:
-                    message += f"\n<b>{index+1}.</b>  {wishlist_link}"
+                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n<b>{index+1}.</b>  {wishlist_link}"
+                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
             else:
-                message += f"\n\n<b>{index+1}.</b>  {wishlist_link}"
+                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."
