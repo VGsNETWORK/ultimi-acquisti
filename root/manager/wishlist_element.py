@@ -96,6 +96,8 @@ from difflib import SequenceMatcher
 
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
+MAX_LINK_LENGTH = 27
+
 
 def retrieve_photos_append(user: User, links: List[str] = None):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
@@ -226,11 +228,11 @@ def check_message_length(
             for index, duplicated_link in enumerate(duplicated_links):
                 links.insert(index, duplicated_link)
             for index, wishlist_link in enumerate(links):
-                if len(wishlist_link) > 40:
+                if len(wishlist_link) > MAX_LINK_LENGTH:
                     if not "DUPLICATO" in wishlist_link:
                         wishlist_link = '<a href="%s">%s...</a>' % (
                             wishlist_link,
-                            wishlist_link[:40],
+                            wishlist_link[:MAX_LINK_LENGTH],
                         )
                 if index == 0:
                     if len(links) > 1:
@@ -1007,12 +1009,14 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                         SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
                     )
             if is_present:
-                if len(wishlist_link) > 40:
+                if len(wishlist_link) > MAX_LINK_LENGTH:
                     wishlist_link = '<a href="%s">%s...</a>' % (
                         wishlist_link,
-                        wishlist_link[:40],
+                        wishlist_link[:MAX_LINK_LENGTH],
                     )
                 duplicated_link = "<s>%s</s>     🚫 <b>DUPLICATO</b>" % wishlist_link
+                if len(duplicated_links) == 10:
+                    duplicated_links.pop()
                 duplicated_links.insert(0, duplicated_link)
                 redis_helper.save(
                     "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
