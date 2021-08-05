@@ -864,6 +864,7 @@ def add_in_wishlist_element(
         )
         message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
     try:
+        logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
         context.bot.edit_message_text(
             chat_id=chat.id,
             message_id=message_id,
@@ -933,8 +934,10 @@ def add_category(update: Update, context: CallbackContext):
         if user:
             wish.wishlist_id = user.current_wishlist
         wish.save()
-        cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+        cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.user_id)
+        logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
         if cycle_insert:
+            logger.info("THE CYCLE INSERT IS AVAILABLE")
             if len(cycle_insert) > 0:
                 cycle_insert = eval(cycle_insert.decode())
                 if cycle_insert:
@@ -1159,6 +1162,7 @@ def toggle_cycle_insert(update: Update, context: CallbackContext):
     user: User = update.effective_user
     cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
     if cycle_insert:
+        logger.info("THE CYCLE INSERT IS AVAILABLE")
         if len(cycle_insert) > 0:
             cycle_insert = eval(cycle_insert.decode())
             cycle_insert = not cycle_insert
@@ -1167,7 +1171,8 @@ def toggle_cycle_insert(update: Update, context: CallbackContext):
     else:
         cycle_insert = True
     redis_helper.save("%s_cycle_insert" % user.id, str(cycle_insert))
-    add_in_wishlist_element(update, context, cycle_insert, True)
+    logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
+    add_in_wishlist_element(update, context, cycle_insert, toggle_cycle=True)
 
 
 def show_step_two_toast(update: Update, context: CallbackContext):
