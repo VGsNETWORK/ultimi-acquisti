@@ -99,6 +99,8 @@ INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 def retrieve_photos_append(user: User, links: List[str] = None):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    if links:
+        links = [link for link in links if not "🚫" in link]
     rphotos = eval(rphotos.decode()) if rphotos else []
     if len(rphotos) > 0:
         if not links:
