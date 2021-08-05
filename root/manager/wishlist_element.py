@@ -4,6 +4,7 @@ import operator
 import re
 
 from telegram import message
+from root.helper import wishlist_element
 from root.model.wishlist import Wishlist
 from root.manager.view_other_wishlists import view_other_wishlists
 from root.helper.user_helper import (
@@ -99,7 +100,6 @@ INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 def retrieve_photos_append(user: User, links: List[str] = None):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else []
-    logger.info(links)
     if len(rphotos) > 0:
         if not links:
             append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
@@ -126,12 +126,16 @@ def check_message_length(
     wishlist_elements: List[WishlistElement],
     is_photo: bool = False,
     wishlist_element: WishlistElement = None,
+    links: List[str] = None,
 ):
     if len(message) > 128:
+        logger.info("MESSAGE EXCEED 128 CHARACTERS")
         rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
         if rphotos:
+            logger.info("PHOTOS HAS BEEN FOUND")
             rphotos = eval(rphotos.decode())
         else:
+            logger.info("NO PHOTOS HAS BEEN FOUND")
             rphotos = []
         redis_helper.save(
             "%s_stored_wishlist_element" % user.id, update.effective_message.text[:128]
@@ -145,13 +149,11 @@ def check_message_length(
             f"{WISHLIST_DESCRIPTION_TOO_LONG}"
         )
         if wishlist_elements:
+            logger.info("ELEMENTS FOUND, CREATING MESSAGE...")
             message += "\n".join(
                 [
                     (
-                        f'<b>{index + 2}.</b>  <a href="{wish.links[0]}">{wish.description}</a>\n'
-                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
-                        if wish.link
-                        else f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f"<b>{index + 2}.</b>  {wish.description}\n"
                         f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     )
                     for index, wish in enumerate(wishlist_elements)
@@ -164,6 +166,7 @@ def check_message_length(
             )
             message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
         else:
+            logger.info("NO ELEMENTS FOUND, CREATING MESSAGE...")
             append = (
                 ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
                 if len(rphotos) < 10
@@ -187,15 +190,23 @@ def check_message_length(
             pass
         return True
     else:
+        logger.info("MESSAGE LENGTH IS OK")
         if not is_photo:
+            logger.info("NO PHOTO FROM THE USER")
             wishlist_elements = wishlist_elements[:4]
-            logger.info("PAGED QUERY %s" % len(wishlist_elements))
-            logger.info("SAVING IT PLEASE")
             wishlist_id = get_current_wishlist_id(user.id)
             if not wishlist_element:
+                logger.info("WISHLIST ELEMENT MISSING, CREATING ONE...")
                 wishlist_element = WishlistElement(
                     user_id=user.id, description=message, wishlist_id=wishlist_id
                 ).save()
+                if links:
+                    logger.info("UPDATING ELEMENT LINKS")
+                    redis_helper.save(
+                        "%s_%s_duplicated_links" % (user.id, user.id), str([])
+                    )
+                    wishlist_element.links = links
+                    wishlist_element.save()
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
             title = f"{wishlist.title.upper()}  –  "
@@ -208,6 +219,8 @@ def check_message_length(
                     "%s_%s_duplicated_links" % (user.id, user.id)
                 ).decode()
             )
+            if links:
+                logger.info("ELEMENT HAS LINKS")
             for index, duplicated_link in enumerate(duplicated_links):
                 links.insert(index, duplicated_link)
             for index, wishlist_link in enumerate(links):
@@ -233,21 +246,9 @@ def check_message_length(
                 "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
             )
             if wishlist_elements:
-                logger.info(f"{len(wishlist_elements)}")
-                logger.info(
-                    "THESE ARE THE ELEMENTS IDS {%s} {%s}"
-                    % (str(wishlist_elements[0].id), str(wishlist_element.id))
-                )
-                logger.info(
-                    "THESE ARE THE ELEMENTS DESC {%s} {%s}"
-                    % (
-                        str(wishlist_elements[0].description),
-                        str(wishlist_element.description),
-                    )
-                )
+                logger.info("WISHLIST ELEMENTS PRESENT...")
                 wishlist_elements = list(wishlist_elements)
-                if wishlist_element.links:
-                    del wishlist_elements[0]
+                wishlist_elements = wishlist_elements[1:]
                 message += "\n".join(
                     [
                         (
@@ -261,7 +262,6 @@ def check_message_length(
                 if len(wishlist_elements) > 1:
                     message += "\n"
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
-            logger.info(f"THIS IS {len(wishlist_element.links) > 0}")
             message += f"\n{WISHLIST_STEP_TWO}{append}"
             try:
                 context.bot.edit_message_text(
@@ -274,14 +274,15 @@ def check_message_length(
                     parse_mode="HTML",
                     disable_web_page_preview=True,
                 )
+                return
             except BadRequest:
                 pass
         else:
+            logger.info("PHOTO FROM THE USER")
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist_elements = find_wishlist_element_for_user(
                 user.id, page_size=4, wishlist_id=wishlist_id
             )
-            logger.info("PAGED QUERY %s " % len(wishlist_elements))
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
             title = f"{wishlist.title.upper()}  –  "
@@ -297,6 +298,7 @@ def check_message_length(
             else:
                 rphotos = []
             if wishlist_elements:
+                logger.info("ELEMENTS FOUND, CREATING MESSAGE...")
                 message += "\n".join(
                     [
                         (
@@ -313,6 +315,7 @@ def check_message_length(
                 )
                 message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
             else:
+                logger.info("NO ELEMENTS FOUND...")
                 append = (
                     ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
                     if len(rphotos) < 10
@@ -355,11 +358,9 @@ def ask_delete_all_wishlist_elements(
     photos = count_all_wishlist_elements_photos(user.id, wishlist_id)
     only_elements = False
     if update.callback_query.data:
-        logger.info(update.callback_query.data)
         if not from_wishlist:
             from_wishlist = "fw" in update.callback_query.data
         only_elements = "fw" in update.callback_query.data
-        logger.info("ONLY %s" % only_elements)
     if from_wishlist:
         if photos:
             text = "(%s element%s, %s foto)" % (
@@ -378,9 +379,7 @@ def ask_delete_all_wishlist_elements(
             text = "(lista vuota)"
             append = ""
         if photos > 0:
-            logger.info("Ho delle foto")
             if not only_elements:
-                logger.info("Cancello anche la lista")
                 text = DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE % (
                     "",
                     f"{wishlist.title}",
@@ -389,7 +388,6 @@ def ask_delete_all_wishlist_elements(
                     append,
                 )
             else:
-                logger.info("Non cancello la lista")
                 text = DELETE_ALL_WISHLIST_ITEMS_MESSAGE % (
                     f"{wishlist.title.upper()}  –  ",
                     wishlist_elements,
@@ -670,8 +668,6 @@ def view_wishlist(
         # ignore all requests coming outside a private chat
         return ConversationHandler.END
     if wishlist_elements:
-        [logger.info(wish.links) for wish in wishlist_elements]
-        [logger.info(1 if wish.links else 0) for wish in wishlist_elements]
         message = ""
         if append and under_first:
             inc = 1
@@ -679,10 +675,8 @@ def view_wishlist(
             wish: WishlistElement = wishlist_elements[0]
             wishlist_elements.remove(wish)
             if len(wishlist_elements) == 0:
-                logger.info("ADDING NONE NEW LINES")
                 new_line = ""
             else:
-                logger.info("ADDING TWO NEW LINES")
                 new_line = "\n\n"
             message += f"<b>1.</b>  {wish.description}{append}{new_line}"
         else:
@@ -720,7 +714,6 @@ def view_wishlist(
     message = "%s%s" % (WISHLIST_HEADER % title, message)
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
-    logger.info("THIS NEEDS TO BE EDITED %s " % message_id)
     total_wishlists = count_all_wishlists_for_user(user.id)
     if total_pages > 1:
         message += (
@@ -746,21 +739,18 @@ def view_wishlist(
             if element:
                 element = eval(element)
                 if element:
-                    logger.info("ADDING &#8203; FOR %s" % (index + (5 * page)))
                     if not second_page_added:
                         if len(list(wishlist_elements)) > 0:
                             append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
                             second_page_added = True
                     extra_spaces += "&#8203;"
                 else:
-                    logger.info("NOT ADDING &#8203; FOR %s" % (index + (5 * page)))
                     if not first_page_added:
                         if len(list(wishlist_elements)) > 0:
                             append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
                             first_page_added = True
         if len(append_legend) == 1:
             if append_legend[0] == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
-                logger.info("ADDING WITHOUT SPACES")
                 message += WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY
             else:
                 append_legend = "".join(append_legend)
@@ -822,7 +812,6 @@ def add_in_wishlist_element(
     cycle_insert: bool = False,
     toggle_cycle: bool = False,
 ):
-    logger.info("received add to wishlist_element")
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id
@@ -840,7 +829,6 @@ def add_in_wishlist_element(
     wishlist_elements = find_wishlist_element_for_user(
         user.id, page_size=4, wishlist_id=wishlist_id
     )
-    logger.info("PAGED QUERY %s " % len(wishlist_elements))
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
@@ -858,7 +846,6 @@ def add_in_wishlist_element(
                 for index, wish in enumerate(wishlist_elements)
             ]
         )
-        logger.info(len(rphotos))
         append = (
             ADD_TO_WISHLIST_START_PROMPT
             if len(rphotos) < 10
@@ -888,7 +875,9 @@ def add_in_wishlist_element(
     return INSERT_ITEM_IN_WISHLIST
 
 
-def handle_add_confirm(update: Update, context: CallbackContext):
+def handle_add_confirm(
+    update: Update, context: CallbackContext, links: List[str] = None
+):
     message: Message = update.effective_message
     message_id: int = message.message_id
     user: User = update.effective_user
@@ -911,13 +900,11 @@ def handle_add_confirm(update: Update, context: CallbackContext):
     overload = False
     message_id = redis_helper.retrieve(user.id).decode()
     wishlist_id = get_current_wishlist_id(user.id)
-    wishlist_elements = find_wishlist_element_for_user(
+    wishlists_element = find_wishlist_element_for_user(
         user.id, page_size=4, wishlist_id=wishlist_id
     )
-    logger.info(f"THIS IS THE {message}")
-    logger.info("PAGED QUERY %s" % len(wishlist_elements))
     overload = check_message_length(
-        message_id, chat, message, context, update, user, wishlist_elements
+        message_id, chat, message, context, update, user, wishlists_element, links=links
     )
     return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
 
@@ -933,14 +920,12 @@ def add_category(update: Update, context: CallbackContext):
     )
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else []
-    logger.info("adding [%s] photos" % rphotos)
     if wish:
         wish = wish[0]
         category = int(data.split("_")[-1])
         wish.photos = rphotos
         wish.category = CATEGORIES[category]
         user = retrieve_user(user.id)
-        logger.info(user.current_wishlist)
         if user:
             wish.wishlist_id = user.current_wishlist
         wish.save()
@@ -957,7 +942,6 @@ def add_category(update: Update, context: CallbackContext):
 
 def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
     data = update.callback_query.data
-    logger.info(data)
     if not "NO_DELETE" in data:
         user: User = update.effective_user
         wishlist_id = get_current_wishlist_id(user.id)
@@ -1001,14 +985,12 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 rphotos = rphotos + pictures
                 rphotos = rphotos[-1] if len(rphotos) > 10 else rphotos
                 redis_helper.save("%s_%s_photos" % (user.id, user.id), str(rphotos))
-            logger.info("THESE ARE THE PICTURES %s" % pictures)
             duplicated_links = eval(
                 redis_helper.retrieve(
                     "%s_%s_duplicated_links" % (user.id, user.id)
                 ).decode()
             )
             wishlist_link = extract_first_link_from_message(update.effective_message)
-            logger.info(wishlist_link)
             if "/" in wishlist_link:
                 link = wishlist_link
                 link = re.sub(r".*//", "", link)
@@ -1017,7 +999,6 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 wishlist_link = "/".join(link)
                 # wishlist_element.links = "/".join(link)
             is_present = False
-            logger.info(wishlist_element.links)
             for link in wishlist_element.links:
                 if not is_present:
                     is_present = (
@@ -1098,7 +1079,6 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
 
 def reset_redis_wishlist_keyboard(user_id: int, total_elements: int):
     for index in range(0, total_elements + 1):
-        logger.info("resetting %s" % ("%s_second_element_page_%s." % (user_id, index)))
         redis_helper.save("%s_second_element_page_%s." % (user_id, index), "False")
 
 
@@ -1121,19 +1101,16 @@ def toggle_element_action_page(update: Update, context: CallbackContext):
 
 
 def extract_photo_from_message(update: Update, context: CallbackContext):
-    logger.info("RECEIVED PHOTO")
     message: Message = update.effective_message
     delete_if_private(message)
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     photo: List[PhotoSize] = message.photo
     if photo:
-        logger.info("Received compressed photo")
         photo: PhotoSize = max(photo, key=operator.attrgetter("file_size"))
         photo: str = photo.file_id
     if not photo:
         if message.document:
-            print("Received not compressed photo")
             photo: str = message.document.file_id
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     if rphotos:
@@ -1153,7 +1130,6 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     else:
         caption = redis_helper.retrieve("%s_stored_wishlist_element" % user.id)
         caption = caption.decode()
-    logger.info("this is the [%s] caption" % caption)
     message_id = redis_helper.retrieve(user.id).decode()
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist_elements = find_wishlist_element_for_user(
@@ -1170,25 +1146,20 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
         wishlist_elements,
         is_photo,
     )
-    logger.info(not caption or overload)
     return INSERT_ITEM_IN_WISHLIST if is_photo or overload else INSERT_ZELDA
 
 
 def toggle_cycle_insert(update: Update, context: CallbackContext):
     user: User = update.effective_user
     cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
-    logger.info(cycle_insert)
     if cycle_insert:
         if len(cycle_insert) > 0:
             cycle_insert = eval(cycle_insert.decode())
             cycle_insert = not cycle_insert
         else:
-            logger.info("not long enough")
             cycle_insert = True
     else:
-        logger.info("not found")
         cycle_insert = True
-    logger.info(cycle_insert)
     redis_helper.save("%s_cycle_insert" % user.id, str(cycle_insert))
     add_in_wishlist_element(update, context, cycle_insert, True)
 
@@ -1218,18 +1189,15 @@ def go_back(update: Update, context: CallbackContext):
                 if len(cycle_insert) > 0:
                     cycle_insert = eval(cycle_insert.decode())
                 else:
-                    logger.info("not long enough")
                     cycle_insert = False
             else:
-                logger.info("not found")
                 cycle_insert = False
-            logger.info(cycle_insert)
             add_in_wishlist_element(
                 update, context, toggle_cycle=cycle_insert, cycle_insert=cycle_insert
             )
             return INSERT_ITEM_IN_WISHLIST
         elif "from_category" in update.callback_query.data:
-            handle_add_confirm(update, context)
+            handle_add_confirm(update, context, list(wish.links))
             return INSERT_ZELDA
 
 
