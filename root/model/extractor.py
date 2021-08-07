@@ -29,12 +29,17 @@ class Extractor:
             False,
         )
 
+    def domain_duplicated(self, url: str, links: List[str]):
+        domain = re.sub(r"^.*//:|www.|\..*", "", url)
+        domains = [re.sub(r"^.*//:|www.|\..*", "", link) for link in links]
+        return domain in domains
+
     def validate_url(self, url):
         if not url:
             return False
-        logger.info(re.findall("/\w+/?", url))
-        url = re.sub("^.*//:", "", url)
-        if not re.findall("/\w+/?", url):
+        logger.info(re.findall(r"/\w+/?", url))
+        url = re.sub(r"^.*//:", "", url)
+        if not re.findall(r"/\w+/?", url):
             return False
         if not url.startswith("http"):
             url = "https://%s" % url

@@ -4,6 +4,7 @@ from difflib import SequenceMatcher
 
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
+from root.handlers.handlers import extractor
 from root.contants.keyboard import (
     build_new_link_keyboard,
     build_new_link_keyboard_added,
@@ -210,13 +211,17 @@ def append_link(update: Update, context: CallbackContext):
     for link in wishlist_element.links:
         if not is_present:
             is_present = SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+            duplicated_type = "DUPLICATO"
+    if not is_present:
+        is_present = extractor.domain_duplicated(wishlist_link, wishlist_element.links)
+        duplicated_type = "DOMINIO WEB DUPLICATO"
     if is_present:
         if len(wishlist_link) > MAX_LINK_LENGTH:
             wishlist_link = '<a href="%s">%s...</a>' % (
                 wishlist_link,
                 wishlist_link[:MAX_LINK_LENGTH],
             )
-        duplicated_link = "<s>%s</s>     🚫 <b>DUPLICATO</b>" % wishlist_link
+        duplicated_link = "<s>%s</s>     🚫 <b>%s</b>" % (wishlist_link, duplicated_type)
         if len(duplicated_links) == 10:
             duplicated_links.pop()
         duplicated_links.insert(0, duplicated_link)

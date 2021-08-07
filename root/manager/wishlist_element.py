@@ -32,6 +32,7 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
+    CYCLE_INSERT_ENABLED_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE,
     DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
@@ -97,6 +98,17 @@ from difflib import SequenceMatcher
 INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
 
 MAX_LINK_LENGTH = 27
+
+
+def cycle_enabled(user: User):
+    cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
+    if cycle_insert:
+        logger.info("THE CYCLE INSERT IS AVAILABLE")
+        if len(cycle_insert) > 0:
+            cycle_insert = eval(cycle_insert.decode())
+            return cycle_insert
+        return False
+    return False
 
 
 def retrieve_photos_append(user: User, links: List[str] = None):
@@ -265,8 +277,9 @@ def check_message_length(
             if wishlist_elements:
                 if len(wishlist_elements) > 1:
                     message += "\n"
+            cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
-            message += f"\n{WISHLIST_STEP_TWO}{append}"
+            message += f"\n\n{WISHLIST_STEP_TWO}{append}{cycle_message}"
             try:
                 context.bot.edit_message_text(
                     message_id=message_id,
@@ -1011,13 +1024,22 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                     is_present = (
                         SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
                     )
+                    duplicated_type = "DUPLICATO"
+            if not is_present:
+                is_present = extractor.domain_duplicated(
+                    wishlist_link, wishlist_element.links
+                )
+                duplicated_type = "DOMINIO WEB DUPLICATO"
             if is_present:
                 if len(wishlist_link) > MAX_LINK_LENGTH:
                     wishlist_link = '<a href="%s">%s...</a>' % (
                         wishlist_link,
                         wishlist_link[:MAX_LINK_LENGTH],
                     )
-                duplicated_link = "<s>%s</s>     🚫 <b>DUPLICATO</b>" % wishlist_link
+                duplicated_link = "<s>%s</s>     🚫 <b>%s</b>" % (
+                    wishlist_link,
+                    duplicated_type,
+                )
                 if len(duplicated_links) == 10:
                     duplicated_links.pop()
                 duplicated_links.insert(0, duplicated_link)
@@ -1042,6 +1064,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         f"{WISHLIST_HEADER % title}<b>1.  {wishlist_element.description}</b>{retrieve_photos_append(user, links)}\n"
         "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
     )
+    cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
     if wishlist_elements:
         message += "\n".join(
             [
@@ -1052,14 +1075,16 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 for index, wish in enumerate(wishlist_elements)
             ]
         )
-        message += "\n\n%s%s" % (
+        message += "\n\n%s%s%s" % (
             WISHLIST_STEP_THREE,
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
+            cycle_message,
         )
     else:
-        message += "\n%s%s" % (
+        message += "\n%s%s%s" % (
             WISHLIST_STEP_THREE,
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
+            cycle_message,
         )
     if not update.callback_query:
         if len(wishlist_element.links) < 10:

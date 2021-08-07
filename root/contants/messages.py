@@ -850,6 +850,8 @@ EDIT_WISHLIST_PROMPT = (
     '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la NUOVA <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
 )
 
+CYCLE_INSERT_ENABLED_APPEND = "\n\n🔄  <i><b>Inserimento ciclico</b> attivato!</i>"
+
 
 ADDED_TO_WISHLIST = "\n✅  <i>Elemento aggiunto con successo!</i>"
 
