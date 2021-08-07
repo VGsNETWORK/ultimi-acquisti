@@ -13,6 +13,7 @@ from root.contants.keyboard import (
 from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK,
+    ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_HEADER,
     WISHLIST_LINK_LIMIT_REACHED,
@@ -229,6 +230,12 @@ def append_link(update: Update, context: CallbackContext):
             "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
         )
     else:
+        pictures = extractor.load_url(wishlist_link)
+        number_of_photos = len(wishlist_element.photos)
+        if not number_of_photos == 10:
+            photos_left = 10 - number_of_photos
+            pictures = pictures[:photos_left]
+            [wishlist_element.photos.append(pic) for pic in pictures]
         duplicated_link = None
         wishlist_element.links.append(wishlist_link)
         wishlist_element.save()
@@ -268,6 +275,8 @@ def append_link(update: Update, context: CallbackContext):
         append += "\n\n"
     message = ADD_NEW_LINK_MESSAGE % (title, append, wishlist_element.description)
     keyboard = build_new_link_keyboard_added(page, wishlist_element_id)
+    if pictures:
+        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % len(pictures)
     try:
         context.bot.edit_message_text(
             message_id=message_id,
