@@ -29,6 +29,7 @@ from root.contants.messages import (
     ADDED_TO_WISHLIST,
     ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
+    ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
@@ -143,6 +144,7 @@ def check_message_length(
     is_photo: bool = False,
     wishlist_element: WishlistElement = None,
     links: List[str] = None,
+    pictures: List[str] = None,
 ):
     if len(message) > 128:
         logger.info("MESSAGE EXCEED 128 CHARACTERS")
@@ -209,7 +211,7 @@ def check_message_length(
         logger.info("MESSAGE LENGTH IS OK")
         if not is_photo:
             logger.info("NO PHOTO FROM THE USER")
-            wishlist_elements = wishlist_elements[:4]
+            wishlist_elements = wishlist_elements[:5]
             wishlist_id = get_current_wishlist_id(user.id)
             if not wishlist_element:
                 logger.info("WISHLIST ELEMENT MISSING, CREATING ONE...")
@@ -277,9 +279,20 @@ def check_message_length(
             if wishlist_elements:
                 if len(wishlist_elements) > 1:
                     message += "\n"
+                if len(wishlist_elements) == 1:
+                    message += "\n"
             cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
-            message += f"\n\n{WISHLIST_STEP_TWO}{append}{cycle_message}"
+            message += f"\n{WISHLIST_STEP_TWO}{append}{cycle_message}"
+            if pictures:
+                try:
+                    if len(pictures) > 0:
+                        logger.info("SUPPORTED LINKS")
+                        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % len(
+                            pictures
+                        )
+                except Exception:
+                    pass
             try:
                 context.bot.edit_message_text(
                     message_id=message_id,
@@ -1098,6 +1111,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 wishlist_elements,
                 False,
                 wishlist_element,
+                pictures=pictures,
             )
             return INSERT_ZELDA
     context.bot.edit_message_text(
