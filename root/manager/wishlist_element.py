@@ -703,6 +703,7 @@ def view_wishlist(
             inc = 1
             wishlist_elements = list(wishlist_elements)
             wish: WishlistElement = wishlist_elements[0]
+            logger.info(wishlist_elements[0].photos)
             wishlist_elements.remove(wish)
             if len(wishlist_elements) == 0:
                 new_line = ""
@@ -792,6 +793,10 @@ def view_wishlist(
     else:
         if len(list(wishlist_elements)) > 0:
             message += WISHLIST_LEGEND_APPEND_FIRST_PAGE
+    wishlist_elements = find_wishlist_element_for_user(
+        user.id, page, wishlist_id=wishlist_id
+    )
+    wishlist_elements = list(wishlist_elements)
     if update.callback_query:
         context.bot.edit_message_text(
             chat_id=chat.id,

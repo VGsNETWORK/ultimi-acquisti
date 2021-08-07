@@ -377,6 +377,7 @@ def create_wishlist_element_keyboard(
         )
         if wishlist_element.links:
             url += f"%0A%0A{quote(wishlist_element.links[0])}"
+        logger.info("THESE ARE THE PHOTOS %s" % wishlist_element.photos)
         photos = (
             " ➕ "
             if not wishlist_element.photos
