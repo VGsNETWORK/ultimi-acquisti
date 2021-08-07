@@ -23,12 +23,21 @@ from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
 
 
-def show_photo(wishlist_element: WishlistElement):
-    return (
-        f"  •  <i>{len(wishlist_element.photos)} foto</i>"
-        if wishlist_element.photos
-        else ""
-    )
+MAX_LINK_LENGTH = 27
+
+
+def show_photos_and_links(wishlist_element: WishlistElement):
+    if not wishlist_element.links:
+        return (
+            f"  •  <i>{len(wishlist_element.photos)} foto</i>"
+            if wishlist_element.photos
+            else ""
+        )
+    else:
+        if wishlist_element.photos:
+            return f"  •  <i>{len(wishlist_element.photos)} foto</i>  •  <i>{len(wishlist_element.links)} link</i>"
+        else:
+            return f"  •  <i>{len(wishlist_element.links)} link</i>"
 
 
 def ask_confirm_deletion(update: Update, context: CallbackContext):
@@ -54,10 +63,7 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
         update.callback_query.data += "_%s" % page
         view_wishlist(update, context, reset_keyboard=False)
         return
-    if wish.links:
-        text += f'<b>{index}</b>  <a href="{wish.links[0]}"><b>{wish.description}</b></a>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n'
-    else:
-        text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
+    text += f"<b>{index}</b>  <b>{wish.description}</b>     (<i>{wish.category}</i>{show_photos_and_links(wish)})\n{append}\n\n"
     if not wish.photos:
         text += (
             "<b>Vuoi continuare?</b>\n<i>Questa azione è irreversibile"
@@ -134,9 +140,17 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
     )
     if wish.links:
-        wish_description = '<a href="%s">%s</a>' % (wish.link, wish_description)
-        url += f"%0A%0A{quote(wish.links)}"
-    url += "%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
+        if len(wish.links) == 1:
+            wish_description = '<a href="%s">%s</a>' % (wish.links[0], wish_description)
+        url += "%0A"
+        for link in wish.links:
+            if len(link) > MAX_LINK_LENGTH:
+                link = '<a href="%s">%s...</a>' % (
+                    link,
+                    link[:MAX_LINK_LENGTH],
+                )
+            url += f"%0A➜%20%20{quote(link)}"
+    url += "%0A%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
     wish.delete()
     keyboard = InlineKeyboardMarkup(
         [
