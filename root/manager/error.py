@@ -30,6 +30,7 @@ def handle_error(update: Update, context: CallbackContext):
                 context.bot.answer_callback_query(
                     update.callback_query.id, text=MESSAGE_TOO_OLD, show_alert=True
                 )
+                return
         if update.effective_message:
             if update.effective_chat.id != error_channel:
                 update.effective_message.reply_text(USER_ERROR)
