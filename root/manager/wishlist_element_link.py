@@ -231,6 +231,11 @@ def append_link(update: Update, context: CallbackContext):
         )
     else:
         pictures = extractor.load_url(wishlist_link)
+        try:
+            product = extractor.parse_url(wishlist_link)
+            extractor.add_subscriber(wishlist_link, product, user.user)
+        except ValueError:
+            pass
         number_of_photos = len(wishlist_element.photos)
         if not number_of_photos == 10:
             photos_left = 10 - number_of_photos

@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 
+import re
+from typing import List
+from root.model.rule import Rule
 from bs4 import BeautifulSoup as bs4
 from root.model.extractor_handler import ExtractorHandler
+from root.handlers.generic import extract_data
 
 
-MATCH: str = "multiplayer.com"
+BASE_URL = "https://multiplayer.com/"
+MATCH = "multiplayer.com"
+RULE = {
+    "title": Rule("h1", {"class": "titolo-prodotto"}),
+    "price": "price",
+    "platform": Rule("span", {"class": "label-categoria"}),
+    "store": "Multiplayer",
+    "base_url": BASE_URL,
+}
 
 
 def load_picture(data: bs4):
@@ -21,4 +33,31 @@ def validate(data: bs4):
     return False if data else True
 
 
-multiplayer_handler: ExtractorHandler = ExtractorHandler(MATCH, load_picture, validate)
+def extract_code(url: str) -> str:
+    # https://multiplayer.com/videogiochi/playstation-4/nier-replicant-ver122474487139_453068.html
+    url: str = re.sub("\?.*", "", url)
+    code: List[str] = re.sub(r"https://multiplayer.com/", "", url)
+    if code:
+        return code
+
+
+def extract_missing_data(product: dict, data: bs4):
+    price = data.findAll("script", {"type": "application/ld+json"})
+    if len(price) > 1:
+        price: str = str(price[1])
+        price: str = re.sub("<.*?>", "", price)
+        price: str = next(
+            (line for line in price.split("\n") if '"price"' in line), None
+        )
+        price: str = re.sub(r'.*:|"|,|\s', "", price)
+        if price:
+            product["price"] = float(price)
+        else:
+            product["price"] = 0
+    return product
+
+
+# fmt: off
+multiplayer_handler: ExtractorHandler = \
+    ExtractorHandler(BASE_URL, MATCH, extract_code, extract_data, RULE, extract_missing_data)
+# fmt: on
