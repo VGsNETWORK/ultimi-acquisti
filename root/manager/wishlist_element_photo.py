@@ -7,6 +7,7 @@ from root.contants.messages import (
     ASK_FOR_PHOTOS_PREPEND,
     DELETE_ALL_WISHLIST_ITEMS_PHOTOS,
     MALFORMED_VALID_LINK_APPEND,
+    NOT_SUPPORTED_LINKS_APPEND,
     NOT_SUPPORTED_LINK_APPEND,
     REQUEST_WISHLIST_PHOTO,
     SINGLE_WISHLIST_PHOTO_ADDED,
@@ -48,6 +49,18 @@ from telegram_utils.utils.tutils import delete_if_private
 
 
 ADD_PHOTO = range(1)
+
+
+def extract_wishlist_link(links: List[str]):
+    wishlist_link = None
+    if links:
+        for link in links:
+            if extractor.is_supported(link):
+                wishlist_link = link
+                break
+        if not wishlist_link:
+            wishlist_link = links[0]
+    return wishlist_link
 
 
 def ask_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
@@ -376,12 +389,16 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=m)
     except BadRequest:
         pass
+    wishlist_link = extract_wishlist_link(wishlist_element.links)
     if wishlist_element.links:
-        if extractor.extractor_exists(wishlist_element.links[0]):
-            if not extractor.validate_url(wishlist_element.links[0]):
-                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.links[0]
+        if extractor.extractor_exists(wishlist_link):
+            if not extractor.validate_url(wishlist_link):
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_link
         else:
-            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.links[0]
+            if len(wishlist_element.links) == 1:
+                text += NOT_SUPPORTED_LINK_APPEND % wishlist_link
+            else:
+                text += NOT_SUPPORTED_LINKS_APPEND
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
@@ -394,8 +411,8 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
             wish_id,
             True,
             True,
-            download_supported=extractor.is_supported(wishlist_element.links[0]),
-            link=wishlist_element.links[0],
+            download_supported=extractor.is_supported(wishlist_link),
+            link=wishlist_link,
         ),
         parse_mode="HTML",
         disable_web_page_preview=True,
@@ -427,12 +444,16 @@ def ask_for_photo(update: Update, context: CallbackContext):
         wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
         text: str = f"{WISHLIST_HEADER % title}{text}"
+    wishlist_link = extract_wishlist_link(wishlist_element.links)
     if wishlist_element.links:
-        if extractor.extractor_exists(wishlist_element.links[0]):
-            if not extractor.validate_url(wishlist_element.links[0]):
-                text += MALFORMED_VALID_LINK_APPEND % wishlist_element.links[0]
+        if extractor.extractor_exists(wishlist_link):
+            if not extractor.validate_url(wishlist_link):
+                text += MALFORMED_VALID_LINK_APPEND % wishlist_link
         else:
-            text += NOT_SUPPORTED_LINK_APPEND % wishlist_element.links[0]
+            if len(wishlist_element.links) == 1:
+                text += NOT_SUPPORTED_LINK_APPEND % wishlist_link
+            else:
+                text += NOT_SUPPORTED_LINKS_APPEND
     # messages = redis_helper.retrieve("%s_photos_message" % user.id)
     # logger.info("extracted wish_id and mesasges")
     # if messages:
@@ -446,10 +467,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
     #         context.bot.delete_message(chat_id=message.chat_id, message_id=message_id)
     # except BadRequest:
     #     pass
-    if wishlist_element.links:
-        wishlist_link = wishlist_element.links[0]
-    else:
-        wishlist_link = None
+    wishlist_link = extract_wishlist_link(wishlist_element.links)
     message: Message = context.bot.edit_message_text(
         chat_id=message.chat_id,
         text=text,
@@ -490,7 +508,8 @@ def download_photo_automatically(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     data = data.split("_")[-1]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(data)
-    pictures = extractor.load_url(wishlist_element.links[0])
+    wishlist_link = extract_wishlist_link(wishlist_element.links)
+    pictures = extractor.load_url(wishlist_link)
     if wishlist_element.photos:
         for photo in wishlist_element.photos:
             if photo in pictures:

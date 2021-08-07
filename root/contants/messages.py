@@ -1030,6 +1030,8 @@ MALFORMED_VALID_LINK_APPEND = (
 
 NOT_SUPPORTED_LINK_APPEND = "\n\n\n%s\n\n⚠️  <i>Il dominio web inserito NON SUPPORTA il <b>download automatico delle foto</b>.</i>"
 
+NOT_SUPPORTED_LINKS_APPEND = "\n\n\n⚠️  <i>NESSUNO dei domini web inseriti supporta il <b>download automatico delle foto</b>.</i>"
+
 ADD_WISHLIST_TITLE_PROMPT = (
     "Inserisci il nome della nuova lista dei desideri:\n"
     "   •  solo testo;\n"
