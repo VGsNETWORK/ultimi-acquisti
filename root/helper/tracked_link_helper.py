@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.helper.subscriber_helper import remove_subscriber
 from mongoengine.errors import DoesNotExist
 from root.model.tracked_link import TrackedLink
 
@@ -41,5 +42,18 @@ def add_subscriber_to_link(code: str, user_id=int):
             tracked.subscribers.append(user_id)
             # update_subscriber(user_id, code, tracked.price)
             tracked.save()
+    except DoesNotExist:
+        return
+
+
+def remove_tracked_subscriber(code: str, user_id: int):
+    try:
+        tracked_link: TrackedLink = TrackedLink.objects().get(code=code)
+        if user_id in tracked_link.subscribers:
+            tracked_link.subscribers.remove(user_id)
+            remove_subscriber(user_id, tracked_link.code)
+            tracked_link.save()
+            if len(tracked_link.subscribers) == 0:
+                tracked_link.delete()
     except DoesNotExist:
         return

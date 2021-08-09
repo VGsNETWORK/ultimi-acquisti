@@ -1009,6 +1009,11 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             wishlist_element = wishlist_element[0]
             wishlist_link = message.text if message.text else message.caption
             pictures = extractor.load_url(wishlist_link)
+            try:
+                product = extractor.parse_url(wishlist_link)
+                extractor.add_subscriber(wishlist_link, user.id, product)
+            except ValueError as e:
+                logger.error(e)
             pictures = pictures[:10]
             rphotos: List[str] = redis_helper.retrieve(
                 "%s_%s_photos" % (user.id, user.id)

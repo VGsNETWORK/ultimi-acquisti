@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from difflib import SequenceMatcher
+from root.helper.tracked_link_helper import remove_tracked_subscriber
 
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
@@ -57,6 +58,13 @@ def delete_wishlist_element_link(update: Update, context: CallbackContext):
         )
         links = wishlist_element.links
         links.reverse()
+        link = links[index + 1]
+        if extractor.is_supported(link):
+            logger.info("LINK IS SUPPORTED")
+            logger.info(link)
+            remove_tracked_subscriber(extractor.extract_code(link), user.id)
+        else:
+            logger.info("LINK IS NOT SUPPORTED")
         links.pop(index + 1)
         links.reverse()
         wishlist_element.links = links
@@ -230,12 +238,14 @@ def append_link(update: Update, context: CallbackContext):
             "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
         )
     else:
+        logger.info(wishlist_link)
         pictures = extractor.load_url(wishlist_link)
         try:
+            logger.info(wishlist_link)
             product = extractor.parse_url(wishlist_link)
-            extractor.add_subscriber(wishlist_link, product, user.user)
-        except ValueError:
-            pass
+            extractor.add_subscriber(wishlist_link, user.id, product)
+        except ValueError as e:
+            logger.error(e)
         number_of_photos = len(wishlist_element.photos)
         if not number_of_photos == 10:
             photos_left = 10 - number_of_photos

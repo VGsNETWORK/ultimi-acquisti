@@ -6,7 +6,7 @@ from root.model.rule import Rule
 from bs4 import BeautifulSoup as bs4
 from root.model.extractor_handler import ExtractorHandler
 from root.handlers.generic import extract_data
-
+import telegram_utils.utils.logger as logger
 
 BASE_URL = "https://multiplayer.com/"
 MATCH = "multiplayer.com"
@@ -20,6 +20,7 @@ RULE = {
 
 
 def load_picture(data: bs4):
+    logger.info("loading pictures for multiplayer")
     pictures = data.find("div", {"id": "row-image-gallery"})
     if pictures:
         pictures = pictures.findAll("a", {"data-gallery": "#gallery"})
@@ -59,5 +60,5 @@ def extract_missing_data(product: dict, data: bs4):
 
 # fmt: off
 multiplayer_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, extract_code, extract_data, RULE, extract_missing_data)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, RULE)
 # fmt: on

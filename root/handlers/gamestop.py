@@ -63,5 +63,5 @@ def extract_missing_data(product: dict, data: bs4):
 
 # fmt: off
 gamestop_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, extract_code, extract_data, RULE, extract_missing_data)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, RULE)
 # fmt: on

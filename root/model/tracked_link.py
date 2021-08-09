@@ -12,6 +12,7 @@ from root.model.base_model import BaseModel
 
 
 class TrackedLink(BaseModel):
+    title = StringField()
     link = StringField(required=True)
     price = FloatField(reqquired=True)
     platform = StringField(required=True)
