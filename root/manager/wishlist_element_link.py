@@ -352,6 +352,8 @@ def append_link(update: Update, context: CallbackContext):
         logger.info(wishlist_link)
         pictures = extractor.load_url(wishlist_link)
         try:
+            logger.info("parsing URL")
+            wishlist_link = re.sub(r".*//", "", wishlist_link)
             product = extractor.parse_url(wishlist_link)
             extractor.add_subscriber(wishlist_link, user.id, product)
         except ValueError as e:

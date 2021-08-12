@@ -8,7 +8,7 @@ from root.model.extractor_handler import ExtractorHandler
 from root.handlers.generic import extract_data
 import telegram_utils.utils.logger as logger
 
-BASE_URL = "https://multiplayer.com/"
+BASE_URL = "multiplayer.com/"
 MATCH = "multiplayer.com"
 RULE = {
     "title": Rule("h1", {"class": "titolo-prodotto"}),
@@ -37,7 +37,8 @@ def validate(data: bs4):
 def extract_code(url: str) -> str:
     # https://multiplayer.com/videogiochi/playstation-4/nier-replicant-ver122474487139_453068.html
     url: str = re.sub("\?.*", "", url)
-    code: List[str] = re.sub(r"multiplayer.com/", "", url)
+    url = re.sub("https://|http://", "", url)
+    code: List[str] = re.sub(r"(www.)?multiplayer.com(/)?", "", url)
     if code:
         return code
 

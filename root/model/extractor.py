@@ -35,8 +35,6 @@ class Extractor:
             (handler for handler in self.handlers if handler.match in url), None
         )
         if handler:
-            if not url.startswith("http"):
-                url = "https://%s" % url
             return handler.extract_code(url)
         return None
 

@@ -8,7 +8,7 @@ import telegram_utils.utils.logger as logger
 import re
 from typing import List
 
-BASE_URL = "https://www.gamestop.it/"
+BASE_URL = "www.gamestop.it/"
 MATCH = "gamestop.it"
 RULE = {
     "title": Rule("div", {"class": "prodTitle"}),
@@ -31,7 +31,9 @@ def load_picture(data: bs4):
 def extract_code(url: str) -> str:
     # https://www.gamestop.it/Switch/Games/103268/mario-kart-8-deluxe
     url: str = re.sub("\?.*", "", url)
-    code: List[str] = re.sub(r"www.gamestop.it/", "", url)
+    url = re.sub("https://|http://", "", url)
+    code: List[str] = re.sub(r"(www.)?gamestop.it(/)?", "", url)
+    logger.info("THIS IS THE CODE [%s]" % code)
     if code:
         return code
 
