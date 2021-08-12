@@ -288,8 +288,9 @@ def check_message_length(
                 try:
                     if len(pictures) > 0:
                         logger.info("SUPPORTED LINKS")
-                        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % len(
-                            pictures
+                        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % (
+                            len(pictures),
+                            "e" if len(pictures) > 1 else "a",
                         )
                 except Exception:
                     pass
@@ -663,6 +664,11 @@ def view_wishlist(
             user.id,
             count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id),
         )
+    try:
+        if not update.callback_query:
+            delete_if_private(message)
+    except Exception:
+        pass
     if update.callback_query:
         context.bot.answer_callback_query(update.callback_query.id)
         data = update.callback_query.data
@@ -798,23 +804,42 @@ def view_wishlist(
     )
     wishlist_elements = list(wishlist_elements)
     if update.callback_query:
-        context.bot.edit_message_text(
-            chat_id=chat.id,
-            message_id=message_id,
-            text=message,
-            reply_markup=create_wishlist_element_keyboard(
-                page,
-                total_pages,
-                wishlist_elements,
-                first_page,
-                last_page,
-                inc,
-                total_wishlists,
-                user.id,
-            ),
-            parse_mode="HTML",
-            disable_web_page_preview=True,
-        )
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=message,
+                reply_markup=create_wishlist_element_keyboard(
+                    page,
+                    total_pages,
+                    wishlist_elements,
+                    first_page,
+                    last_page,
+                    inc,
+                    total_wishlists,
+                    user.id,
+                ),
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            )
+        except BadRequest:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=update.effective_message.message_id,
+                text=message,
+                reply_markup=create_wishlist_element_keyboard(
+                    page,
+                    total_pages,
+                    wishlist_elements,
+                    first_page,
+                    last_page,
+                    inc,
+                    total_wishlists,
+                    user.id,
+                ),
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+            )
     else:
         context.bot.send_message(
             chat_id=chat.id,

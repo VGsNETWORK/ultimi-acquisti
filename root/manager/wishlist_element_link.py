@@ -404,8 +404,11 @@ def append_link(update: Update, context: CallbackContext):
         append += "\n\n"
     message = ADD_NEW_LINK_MESSAGE % (title, append, wishlist_element.description)
     keyboard = build_new_link_keyboard_added(page, wishlist_element_id)
-    if pictures:
-        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % len(pictures)
+    if pictures and number_of_photos < 10:
+        message += ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS % (
+            len(pictures),
+            "e" if len(pictures) > 1 else "a",
+        )
     try:
         context.bot.edit_message_text(
             message_id=message_id,

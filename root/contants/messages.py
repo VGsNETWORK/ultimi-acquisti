@@ -1118,7 +1118,7 @@ ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK = (
     "<i>Link inviati finora:</i>  <code>%s</code> / %s\n"
 )
 
-ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS = "\n\n\n✅  <i><b>%s</b> foto scaricate!</i>"
+ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS = "\n\n\n✅  <i><b>%s</b> foto scaricat%s!</i>"
 
 
 WISHLIST_LINK_LIMIT_REACHED = "\n\n\n<i><b>Limite massimo di link raggiunto!</b>\nSe vuoi aggiungerne di nuovi, devi prima eliminarne qualcuno.</i>"
