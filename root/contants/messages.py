@@ -1071,9 +1071,9 @@ WISHLIST_LIST_LEGEND_HAS_ELEMENTS = "\n🗂  =  Elementi nella lista"
 
 WISHLIST_LIST_LEGEND_HAS_PHOTOS = "\n🖼  =  Foto nella lista"
 
-WISHLIST_LIST_LEGEND_REORDER_UP = "\n🔺  =  <b>Sposta su la lista</b>"
+WISHLIST_LIST_LEGEND_REORDER_UP = "\n🔺  =  <b>Sposta su</b> la lista"
 
-WISHLIST_LIST_LEGEND_REORDER_DOWN = "\n🔻  =  <b>Sposta giù la lista</b>"
+WISHLIST_LIST_LEGEND_REORDER_DOWN = "\n🔻  =  <b>Sposta giù</b> la lista"
 
 WISHLIST_LIST_LEGEND_REMOVE_ONLY_ITEMS = (
     "\n🌬  =  <b>Svuota la lista</b> (previa conferma)"
@@ -1083,22 +1083,22 @@ WISHLIST_LEGEND_APPEND_LEGEND = "\n\n\n<b>LEGENDA</b>\n"
 
 WISHLIST_LEGEND_APPEND_FIRST_PAGE = (
     "<code>🤍 🔄 🛍</code>  =  <b>Converti l'elemento in un acquisto</b> (previa conferma)\n"
-    "<code>   🖼   </code>  =  <b>Gestisci le foto per l'elemento</b>\n"
+    "<code>   🖼   </code>  =  <b>Gestisci le foto</b> per l'elemento\n"
 )
 
 
 WISHLIST_LEGEND_APPEND_SECOND_PAGE = (
-    "<code>   🔗   </code>  =  <b>Gestisci i link per l'elemento</b>\n"
+    "<code>   🔗   </code>  =  <b>Gestisci i link</b> per l'elemento\n"
     "<code>   ✏️   </code>  =  <b>Modifica l'elemento</b>\n"
-    "<code>   🔀   </code>  =  <b>Sposta l'elemento in un'altra lista</b>\n"
-    "<code>   🗑   </code>  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
+    "<code>   🔀   </code>  =  <b>Sposta l'elemento</b> in un'altra lista\n"
+    "<code>   🗑   </code>  =  <b>Elimina l'elemento</b> da questa lista (previa conferma)"
 )
 
 WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY = (
-    "🔗  =  <b>Gestisci i link per l'elemento</b>\n"
+    "🔗  =  <b>Gestisci i link</b> per l'elemento\n"
     "✏️  =  <b>Modifica l'elemento</b>\n"
-    "🔀  =  <b>Sposta l'elemento in un'altra lista</b>\n"
-    "🗑  =  <b>Elimina l'elemento da questa lista</b> (previa conferma)"
+    "🔀  =  <b>Sposta l'elemento</b> in un'altra lista\n"
+    "🗑  =  <b>Elimina l'elemento</b> da questa lista (previa conferma)"
 )
 
 CHANGE_ELEMENT_WISHLIST_MESSAGE = (
