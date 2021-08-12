@@ -3,11 +3,16 @@
 from difflib import SequenceMatcher
 from operator import add
 from re import S, sub
+from root.util.util import format_price
 from typing import List
 from root.model.tracked_link import TrackedLink
 from root.helper.subscriber_helper import find_subscriber
 from root.model.subscriber import Subscriber
-from root.helper.tracked_link_helper import find_link_by_code, remove_tracked_subscriber
+from root.helper.tracked_link_helper import (
+    find_link_by_code,
+    find_link_by_id,
+    remove_tracked_subscriber,
+)
 
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
@@ -21,6 +26,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
+    PRICE_MESSAGE_POPUP,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_HEADER,
     WISHLIST_LINK_LEGEND_APPEND,
@@ -47,6 +53,34 @@ from telegram.update import Update
 APPEND_LINK = range(1)
 MAX_LINK_LENGTH = 27
 MAX_LINKS_NUMBER = 10
+
+
+def show_price_popup(update: Update, context: CallbackContext):
+    logger.info("SHOW PRICE")
+    user: User = update.effective_user
+    tracked_list_id: str = update.callback_query.data.split("_")[-2]
+    wishlist_element_id: str = update.callback_query.data.split("_")[-1]
+    tracked_link: TrackedLink = find_link_by_id(tracked_list_id)
+    subscriber: Subscriber = find_subscriber(user.id, tracked_link.code)
+    wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
+    try:
+        if tracked_link.price < subscriber.lowest_price:
+            sign = "📉"
+        elif tracked_link.price > subscriber.lowest_price:
+            sign = "📈"
+        else:
+            sign = "➖"
+    except ValueError:
+        sign = "➖"
+    message = PRICE_MESSAGE_POPUP % (
+        wishlist_element.description.upper()[:100],
+        format_price(tracked_link.price),
+        sign,
+        format_price(subscriber.lowest_price),
+    )
+    context.bot.answer_callback_query(
+        update.callback_query.id, show_alert=True, text=message
+    )
 
 
 def delete_wishlist_element_link(update: Update, context: CallbackContext):
@@ -200,7 +234,7 @@ def view_wishlist_element_links(
     for index, subscriber in enumerate(subscribers):
         if deals[index] == "📉":
             subscriber.lowest_price = new_prices[index]
-            subscriber.save()
+            # subscriber.save()
     if show_legend:
         message += WISHLIST_LINK_LEGEND_APPEND
     context.bot.edit_message_text(

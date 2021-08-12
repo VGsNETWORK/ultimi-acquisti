@@ -1312,15 +1312,9 @@ def view_wishlist_element_links_keyboard(
                     create_button(
                         "%s  %s €"
                         % (deals[index], format_price(tracked_links[index].price)),
-                        "empty_button",
-                        "empty_button",
-                    )
-                )
-                row.append(
-                    create_button(
-                        "%s €" % format_price(subscribers[index].lowest_price),
-                        "empty_button",
-                        "empty_button",
+                        "spp_%s_%s"
+                        % (str(tracked_links[index].id), wishlist_element_id),
+                        "spp",
                     )
                 )
         row.append(

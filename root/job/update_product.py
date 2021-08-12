@@ -44,7 +44,7 @@ def send_deal(product: TrackedLink, previous_price: float, context: CallbackCont
                 logger.info("creating price diff to %s" % user_id)
                 price_diff = subscriber.lowest_price - product.price
                 logger.info("updating deal for %s" % user_id)
-                update_subscriber(subscriber.user_id, product.code, product.price)
+                update_subscriber(subscriber.user_id, product.code, previous_price)
                 # split the title if it's too long
                 url = "%s/%s" % (product.base_url, product.code)
                 perc = (math.ceil((price_diff) * subscriber.lowest_price / 100),)
@@ -106,6 +106,13 @@ def update_products(context: CallbackContext):
                         logger.warn(
                             "product %s price is raised, resetting" % product.code
                         )
+                        for subscriber in product.subscribers:
+                            subscriber: Subscriber = find_subscriber(
+                                subscriber, product.code
+                            )
+                            update_subscriber(
+                                subscriber.user_id, product.code, previous_price
+                            )
                         # ! Please look into this
                         # product.price = previous_price
                         product.save()

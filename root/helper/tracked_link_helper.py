@@ -11,6 +11,12 @@ def find_link_by_code(code: str):
     except DoesNotExist:
         return None
 
+def find_link_by_id(id: str):
+    try:
+        return TrackedLink.objects().get(id=id)
+    except DoesNotExist:
+        return None
+
 def get_total_pages(page_size: int = 5):
     total_products = TrackedLink.objects().count() / page_size
     if int(total_products) == 0:

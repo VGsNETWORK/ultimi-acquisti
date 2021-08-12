@@ -12,6 +12,7 @@ from root.job.update_product import update_products
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
+    show_price_popup,
     view_wishlist_element_links,
 )
 
@@ -289,6 +290,10 @@ class BotManager:
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
 
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
+
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="spp", callback=show_price_popup)
+        )
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )
