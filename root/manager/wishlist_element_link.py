@@ -73,8 +73,13 @@ def show_price_popup(update: Update, context: CallbackContext):
             sign = "➖"
     except ValueError:
         sign = "➖"
+    title = wishlist_element.description
+    if len(title) > 77:
+        title = "%s..." % title[:77]
+    else:
+        title = title
     message = PRICE_MESSAGE_POPUP % (
-        wishlist_element.description.upper()[:100],
+        title.upper(),
         format_price(tracked_link.price),
         sign,
         format_price(subscriber.lowest_price),
