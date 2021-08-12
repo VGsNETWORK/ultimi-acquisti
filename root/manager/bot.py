@@ -509,6 +509,8 @@ class BotManager:
             )
         )
 
+        self.disp.add_handler(CommandHandler("wishlist", view_wishlist))
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=remove_wishlist_element_item, pattern="remove_wishlist_element"

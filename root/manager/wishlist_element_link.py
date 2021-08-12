@@ -193,26 +193,22 @@ def view_wishlist_element_links(
                     if new_price < subscriber.lowest_price:
                         deals.append("📉")
                         new_prices.append(new_price)
-                        deals.append(True)
                     elif new_price > subscriber.lowest_price:
                         deals.append("📈")
-                        deals.append(False)
                     else:
                         deals.append("➖")
-                        deals.append(False)
                 except ValueError:
                     new_prices.append(0.00)
-                    deals.append(False)
                     pass
                 subscribers.append(subscriber)
                 tracked_links.append(tracked_link)
             else:
-                deals.append("-")
+                deals.append("➖")
                 new_prices.append(0.00)
                 subscribers.append("do_not_show")
                 tracked_links.append("do_not_show")
         else:
-            deals.append("-")
+            deals.append("➖")
             new_prices.append(0.00)
             subscribers.append("do_not_show")
             tracked_links.append("do_not_show")
@@ -348,6 +344,7 @@ def append_link(update: Update, context: CallbackContext):
         redis_helper.save(
             "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
         )
+        pictures = extractor.load_url(wishlist_link)
     else:
         logger.info(wishlist_link)
         pictures = extractor.load_url(wishlist_link)
