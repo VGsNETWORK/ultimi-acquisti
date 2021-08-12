@@ -84,6 +84,7 @@ class Extractor:
             return []
         if not url.startswith("http"):
             url = "https://%s" % url
+            logger.info(url)
         handler: ExtractorHandler = next(
             (handler for handler in self.handlers if handler.match in url), None
         )
@@ -123,7 +124,9 @@ class Extractor:
             code: str = handler.extract_code(url)
             if code.startswith("/"):
                 code = code[1:]
+            logger.info(url)
             url: str = "%s/%s" % (handler.base_url, code)
+            logger.info(url)
             data, product = handler.extract_data(url, handler.rule)
             handler.extract_missing_data(product, data)
             product["code"] = code

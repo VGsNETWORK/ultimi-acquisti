@@ -31,7 +31,7 @@ def load_picture(data: bs4):
 def extract_code(url: str) -> str:
     # https://www.gamestop.it/Switch/Games/103268/mario-kart-8-deluxe
     url: str = re.sub("\?.*", "", url)
-    code: List[str] = re.sub(r"https://www.gamestop.it/", "", url)
+    code: List[str] = re.sub(r"www.gamestop.it/", "", url)
     if code:
         return code
 

@@ -37,7 +37,7 @@ def validate(data: bs4):
 def extract_code(url: str) -> str:
     # https://multiplayer.com/videogiochi/playstation-4/nier-replicant-ver122474487139_453068.html
     url: str = re.sub("\?.*", "", url)
-    code: List[str] = re.sub(r"https://multiplayer.com/", "", url)
+    code: List[str] = re.sub(r"multiplayer.com/", "", url)
     if code:
         return code
 

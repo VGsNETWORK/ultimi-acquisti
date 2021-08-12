@@ -3,6 +3,7 @@
 from difflib import SequenceMatcher
 from operator import add
 from re import S, sub
+import re
 from root.util.util import format_price
 from typing import List
 from root.model.tracked_link import TrackedLink
@@ -314,6 +315,8 @@ def append_link(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     user: User = update.effective_user
     wishlist_link: str = message.text
+    wishlist_link = re.sub(r".*//", "", wishlist_link)
+    logger.info(wishlist_link)
     context.bot.delete_message(message_id=message_id, chat_id=chat.id)
     info = redis_helper.retrieve("%s_%s_new_link_message" % (user.id, user.id)).decode()
     duplicated_links = eval(
@@ -349,7 +352,6 @@ def append_link(update: Update, context: CallbackContext):
         logger.info(wishlist_link)
         pictures = extractor.load_url(wishlist_link)
         try:
-            logger.info(wishlist_link)
             product = extractor.parse_url(wishlist_link)
             extractor.add_subscriber(wishlist_link, user.id, product)
         except ValueError as e:
