@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from os import environ
+from root.model.tracked_link import TrackedLink
+from root.model.subscriber import Subscriber
 
 from telegram.message import Message
 from root.helper import wishlist_element
@@ -18,7 +20,7 @@ from root.model.wishlist_element import WishlistElement
 from root.model.user_rating import UserRating
 from root.contants.messages import BOT_NAME
 from telegram import InlineKeyboardMarkup
-from root.util.util import create_button
+from root.util.util import create_button, format_price
 from urllib.parse import quote
 import telegram_utils.utils.logger as logger
 import telegram_utils.helper.redis as redis_helper
@@ -1281,7 +1283,12 @@ def choose_new_wishlist_keyboard(
 
 
 def view_wishlist_element_links_keyboard(
-    wishlist_element_id: str, page: int, links: List[str]
+    wishlist_element_id: str,
+    page: int,
+    links: List[str],
+    subscribers: List[Subscriber],
+    tracked_links: List[TrackedLink],
+    deals: List[str],
 ):
     keyboard = []
     # ask for wishlist element link
@@ -1295,41 +1302,68 @@ def view_wishlist_element_links_keyboard(
                 )
             ]
         )
-    index = 0
-    link_groups = zip(*(iter(links),) * 3)
-    for link_group in link_groups:
-        group = []
-        for _ in link_group:
-            group.append(create_button("%s." % (index + 1), "empty_button", None))
-            group.append(
-                create_button(
-                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+    for index, link in enumerate(links):
+        row = [
+            create_button("%s." % (index + 1), "empty_button", None),
+        ]
+        if tracked_links[index]:
+            if tracked_links[index] != "do_not_show":
+                row.append(
+                    create_button(
+                        "%s  %s €"
+                        % (deals[index], format_price(tracked_links[index].price)),
+                        "empty_button",
+                        "empty_button",
+                    )
                 )
-            )
-            index += 1
-        keyboard.append(group)
-    link_groups = zip(*(iter(links[index:]),) * 2)
-    for link_group in link_groups:
-        group = []
-        for _ in link_group:
-            group.append(create_button("%s." % (index + 1), "empty_button", None))
-            group.append(
-                create_button(
-                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                row.append(
+                    create_button(
+                        "%s €" % format_price(subscribers[index].lowest_price),
+                        "empty_button",
+                        "empty_button",
+                    )
                 )
+        row.append(
+            create_button(
+                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
             )
-            index += 1
-        keyboard.append(group)
-    for _ in links[index:]:
-        keyboard.append(
-            [
-                create_button("%s." % (index + 1), "empty_button", None),
-                create_button(
-                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
-                ),
-            ]
         )
-        index += 1
+        keyboard.append(row)
+    # index = 0
+    # link_groups = zip(*(iter(links),) * 3)
+    # for link_group in link_groups:
+    #    group = []
+    #    for _ in link_group:
+    #        group.append(create_button("%s." % (index + 1), "empty_button", None))
+    #        group.append(
+    #            create_button(
+    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+    #            )
+    #        )
+    #        index += 1
+    #    keyboard.append(group)
+    # link_groups = zip(*(iter(links[index:]),) * 2)
+    # for link_group in link_groups:
+    #    group = []
+    #    for _ in link_group:
+    #        group.append(create_button("%s." % (index + 1), "empty_button", None))
+    #        group.append(
+    #            create_button(
+    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+    #            )
+    #        )
+    #        index += 1
+    #    keyboard.append(group)
+    # for _ in links[index:]:
+    #    keyboard.append(
+    #        [
+    #            create_button("%s." % (index + 1), "empty_button", None),
+    #            create_button(
+    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+    #            ),
+    #        ]
+    #    )
+    #    index += 1
 
     keyboard.append(
         [

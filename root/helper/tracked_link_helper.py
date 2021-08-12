@@ -11,6 +11,20 @@ def find_link_by_code(code: str):
     except DoesNotExist:
         return None
 
+def get_total_pages(page_size: int = 5):
+    total_products = TrackedLink.objects().count() / page_size
+    if int(total_products) == 0:
+        return 1
+    elif int(total_products) < total_products:
+        return int(total_products) + 1
+    else:
+        return int(total_products)
+
+def get_paged_link(page: int = 0, page_size: int = 5):
+    return TrackedLink.objects().skip(page * page_size).limit(page_size)
+
+def get_paged_link_for_user(user_id: int, page: int = 0, page_size: int = 5):
+    return TrackedLink.objects().filter(subscribers__contains=user_id).skip(page * page_size).limit(page_size)
 
 def update_or_create_scraped_link(product: dict):
     """Create a new product from string"""

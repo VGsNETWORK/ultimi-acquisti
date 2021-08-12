@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 
 from difflib import SequenceMatcher
-from root.helper.tracked_link_helper import remove_tracked_subscriber
+from operator import add
+from re import S, sub
+from typing import List
+from root.model.tracked_link import TrackedLink
+from root.helper.subscriber_helper import find_subscriber
+from root.model.subscriber import Subscriber
+from root.helper.tracked_link_helper import find_link_by_code, remove_tracked_subscriber
 
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
@@ -17,6 +23,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_HEADER,
+    WISHLIST_LINK_LEGEND_APPEND,
     WISHLIST_LINK_LIMIT_REACHED,
 )
 from root.helper import wishlist_element
@@ -104,6 +111,10 @@ def view_wishlist_element_links(
         else:
             spaces = ""
         for index, wishlist_link in enumerate(wishlist_element.links):
+            if extractor.is_supported(wishlist_link):
+                tracked = "  (💹)"
+            else:
+                tracked = ""
             if index == 9:
                 spaces = ""
             if len(wishlist_link) > MAX_LINK_LENGTH:
@@ -113,22 +124,85 @@ def view_wishlist_element_links(
                 )
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
+                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
                 else:
-                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
+                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
+                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
             else:
-                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}"
+                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."
         )
     if len(links) == MAX_LINKS_NUMBER:
         message += WISHLIST_LINK_LIMIT_REACHED
-    keyboard: InlineKeyboardMarkup = view_wishlist_element_links_keyboard(
-        wishlist_element_id, page, wishlist_element.links
+    subscribers: List[Subscriber] = []
+    tracked_links: List[TrackedLink] = []
+    deals: List[str] = []
+    new_prices = []
+    show_legend = False
+    for link in wishlist_element.links:
+        if extractor.is_supported(link):
+            show_legend = True
+            subscriber: Subscriber = find_subscriber(
+                user.id, extractor.extract_code(link)
+            )
+            tracked_link: TrackedLink = find_link_by_code(extractor.extract_code(link))
+            if subscriber and tracked_link:
+                try:
+                    product = extractor.parse_url(link)
+                    new_price = float(product["price"])
+                    tracked_link.price = new_price
+                    tracked_link.save()
+                    if new_price < subscriber.lowest_price:
+                        deals.append("📉")
+                        new_prices.append(new_price)
+                        deals.append(True)
+                    elif new_price > subscriber.lowest_price:
+                        deals.append("📈")
+                        deals.append(False)
+                    else:
+                        deals.append("➖")
+                        deals.append(False)
+                except ValueError:
+                    new_prices.append(0.00)
+                    deals.append(False)
+                    pass
+                subscribers.append(subscriber)
+                tracked_links.append(tracked_link)
+            else:
+                deals.append("-")
+                new_prices.append(0.00)
+                subscribers.append("do_not_show")
+                tracked_links.append("do_not_show")
+        else:
+            deals.append("-")
+            new_prices.append(0.00)
+            subscribers.append("do_not_show")
+            tracked_links.append("do_not_show")
+    logger.info(
+        "%s - %s - %s"
+        % (
+            len(wishlist_element.links),
+            len(subscribers),
+            len(tracked_links),
+        )
     )
+    keyboard: InlineKeyboardMarkup = view_wishlist_element_links_keyboard(
+        wishlist_element_id,
+        page,
+        wishlist_element.links,
+        subscribers,
+        tracked_links,
+        deals,
+    )
+    for index, subscriber in enumerate(subscribers):
+        if deals[index] == "📉":
+            subscriber.lowest_price = new_prices[index]
+            subscriber.save()
+    if show_legend:
+        message += WISHLIST_LINK_LEGEND_APPEND
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,

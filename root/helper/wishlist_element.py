@@ -24,6 +24,10 @@ def remove_wishlist_element_item_for_user(_id: str):
         return
 
 
+def find_containing_link(user_id: int, link: str):
+    return list(WishlistElement.objects.filter(links__contains=link))[0]
+
+
 def delete_all_wishlist_element_for_user(
     user_id: int, wishlist_id: str, delete_wishlist=False
 ):

@@ -1122,3 +1122,37 @@ ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS = "\n\n\n✅  <i><b>%s</b> foto scaric
 
 
 WISHLIST_LINK_LIMIT_REACHED = "\n\n\n<i><b>Limite massimo di link raggiunto!</b>\nSe vuoi aggiungerne di nuovi, devi prima eliminarne qualcuno.</i>"
+
+WISHLIST_LINK_LEGEND_APPEND = (
+    "\n\n\n<b>LEGENDA</b>\n"
+    "💹  =  <b>Tracking del prezzo abilitato</b>\n"
+    "📈  =  <b>Prezzo salito</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n"
+    "➖  =  <b>Prezzo invariato</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n"
+    "📉  =  <b>Prezzo sceso</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n\n"
+    "<b>*</b> <i>il prezzo più basso raggiunto dal prodotto da quando hai iniziato a tracciarlo</i>"
+)
+
+
+DEAL_MESSAGE_FORMAT = (
+    '💥  <b><a href="%s">%s</a></b> è appena sceso di <code>%s €</code>,'
+    " e adesso puoi trovarlo a <code>%s €</code>."
+)
+
+DEAL_MESSAGE_FORMAT = (
+    '💥  <b><a href="%s">%s</a></b> '
+    "è stato appena scontato a  <code>%s €</code>  (<b>–%s €</b>)!"
+)
+
+DEAL_MESSAGE_FORMAT = (
+    '💥  <b><a href="%s">%s</a></b> '
+    "è stato appena scontato del %s% e puoi trovarlo a %s  €"
+)
+
+DEAL_MESSAGE_FORMAT = (
+    '💥  <b><a href="%s">%s</a></b> è stato '
+    "appena scontato del <b>%s%%</b> (<i>–%s €</i>), "
+    "e ora puoi trovarlo a  <code>%s €</code>!%s"
+)
+
+
+DEAL_MESSAGE_FORMAT_APPEND = " <b>Non fartelo scappare!</b>"

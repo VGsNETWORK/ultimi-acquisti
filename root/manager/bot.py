@@ -7,6 +7,8 @@ from operator import index
 import os
 from random import random
 import random
+from root.manager.deal_test_handler import command_send_deal
+from root.job.update_product import update_products
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
@@ -235,6 +237,12 @@ class BotManager:
         """Add handlers for the various operations"""
         rating = Rating()
 
+        if environment("PROFILE") != "develop":
+            # update all products every 30 minutes
+            self.disp.job_queue.run_repeating(
+                interval=900, first=0, callback=update_products
+            )
+
         self.disp.job_queue.stop()
         try:
             hours = [10, 12, 15, 17]
@@ -273,10 +281,13 @@ class BotManager:
             log(0, message)
         except Exception as e:
             logger.error(e)
-        logger.info("adding ad test command")
+        logger.info("adding test commands")
+
         if is_develop():
-            logger.info("adding ad test command")
+            logger.info("adding test commands")
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
+            self.disp.add_handler(CommandHandler("deal", command_send_deal))
+
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
