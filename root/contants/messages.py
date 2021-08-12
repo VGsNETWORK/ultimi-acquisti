@@ -882,7 +882,8 @@ EDIT_WISHLIST_LINK_EXISTING_PHOTOS = (
 
 EDIT_WISHLIST_LINK_NO_PHOTOS = (
     ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
-    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album"
+    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album.\n\n"
+    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>\n   •  gamestop.it;\n   •  multiplayer.com"
 )
 
 SUPPORTED_LINKS_MESSAGE = (
@@ -1110,7 +1111,8 @@ CHANGE_ELEMENT_WISHLIST_MESSAGE = (
 
 
 ADD_NEW_LINK_MESSAGE = (
-    f"{WISHLIST_HEADER}%sInvia adesso i link che vuoi aggiungere per <b>%s</b>:"
+    f"{WISHLIST_HEADER}%sInvia adesso i link che vuoi aggiungere per <b>%s</b>:\n\n"
+    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>\n   •  gamestop.it;\n   •  multiplayer.com."
 )
 
 
