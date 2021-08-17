@@ -143,6 +143,13 @@ def retrieve_photos_append(user: User, links: List[str] = None):
     return append
 
 
+def show_new_line(price: str, has_media: bool):
+    if has_media and price:
+        return "\n"
+    else:
+        return "  •  "
+
+
 def check_message_length(
     message_id: int,
     chat: Chat,
@@ -182,7 +189,7 @@ def check_message_length(
                 [
                     (
                         f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         % (get_article(wish.creation_date))
                     )
                     for index, wish in enumerate(wishlist_elements)
@@ -282,7 +289,7 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                             % (get_article(wish.creation_date))
                         )
                         for index, wish in enumerate(wishlist_elements)
@@ -346,7 +353,7 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                             % (get_article(wish.creation_date))
                         )
                         for index, wish in enumerate(wishlist_elements)
@@ -388,7 +395,7 @@ def has_media(wishlist_element: WishlistElement):
         return ""
     if wishlist_element.links:
         if wishlist_element.photos:
-            return "  •  🖼🔗"
+            return "  •  🖼 🔗"
         else:
             return "  •  🔗"
     elif wishlist_element.photos:
@@ -773,14 +780,13 @@ def view_wishlist(
             price = ""
             if wish.links:
                 link = wish.links[0]
-                if extractor.is_supported(link):
-                    tracked_link: TrackedLink = find_link_by_link(link)
-                    if tracked_link:
-                        price = "<b>%s €</b>  •  " % format_price(tracked_link.price)
+                tracked_link: TrackedLink = find_link_by_link(link)
+                if tracked_link:
+                    price = "<b>%s €</b>  •  " % format_price(tracked_link.price)
 
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
-                f"{price}<i>{wish.category}</i>{has_media(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                f"{price}<i>{wish.category}</i>{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 % (get_article(wish.creation_date))
             )
         message += "\n".join(msgs)
@@ -944,7 +950,7 @@ def add_in_wishlist_element(
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     % (get_article(wish.creation_date))
                 )
                 for index, wish in enumerate(wishlist_elements)
@@ -1185,7 +1191,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     % (get_article(wish.creation_date))
                 )
                 for index, wish in enumerate(wishlist_elements)
