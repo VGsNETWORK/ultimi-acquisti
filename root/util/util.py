@@ -317,6 +317,16 @@ def create_button(
     return InlineKeyboardButton(message, callback_data=callback, url=url)
 
 
+def get_article(current_date: datetime):
+    if current_date.day == 1:
+        return "l'"
+    if current_date == 8:
+        return "l'"
+    if current_date == 11:
+        return "l'"
+    return "il "
+
+
 def format_price(price: float, accept_zero: bool = True) -> str:
     """Convert a float value into a well formatted str price
 

@@ -63,6 +63,7 @@ from root.util.util import (
     create_button,
     extract_first_link_from_message,
     format_price,
+    get_article,
     max_length_error_format,
 )
 from root.helper.wishlist_element import (
@@ -181,7 +182,8 @@ def check_message_length(
                 [
                     (
                         f"<b>{index + 2}.</b>  {wish.description}\n"
-                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                        % (get_article(wish.creation_date))
                     )
                     for index, wish in enumerate(wishlist_elements)
                 ]
@@ -280,7 +282,8 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            % (get_article(wish.creation_date))
                         )
                         for index, wish in enumerate(wishlist_elements)
                     ]
@@ -343,7 +346,8 @@ def check_message_length(
                     [
                         (
                             f"<b>{index + 2}.</b>  {wish.description}\n"
-                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                            % (get_article(wish.creation_date))
                         )
                         for index, wish in enumerate(wishlist_elements)
                     ]
@@ -776,7 +780,8 @@ def view_wishlist(
 
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
-                f"{price}<i>{wish.category}</i>{has_media(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                f"{price}<i>{wish.category}</i>{has_media(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                % (get_article(wish.creation_date))
             )
         message += "\n".join(msgs)
         if append and under_first:
@@ -939,7 +944,8 @@ def add_in_wishlist_element(
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    % (get_article(wish.creation_date))
                 )
                 for index, wish in enumerate(wishlist_elements)
             ]
@@ -1174,11 +1180,13 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
     )
     cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
     if wishlist_elements:
+        article = "il"
         message += "\n".join(
             [
                 (
                     f"<b>{index + 2}.</b>  {wish.description}\n"
-                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
+                    % (get_article(wish.creation_date))
                 )
                 for index, wish in enumerate(wishlist_elements)
             ]
