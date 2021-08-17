@@ -139,7 +139,22 @@ def view_wishlist_element_links(
         message_id = info.split("_")[-4]
         wishlist_element_id = info.split("_")[-3]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
+    links = []
+    tracked_links = []
+    for link in wishlist_element.links:
+        if extractor.is_supported(link):
+            code = extractor.extract_code(link)
+            tracked_link: TrackedLink = find_link_by_code(code)
+            tracked_links.append(tracked_link)
+        else:
+            links.insert(0, link)
+    tracked_links.sort(key=lambda link: link.price, reverse=True)
+    [links.insert(0, link.link) for link in tracked_links]
+    links.reverse()
+    wishlist_element.links = links
+    wishlist_element.save()
     wishlist: Wishlist = find_wishlist_by_id(wishlist_element.wishlist_id)
+    ####
     links = wishlist_element.links
     title = f"{wishlist.title.upper()}  –  "
     message = WISHLIST_HEADER % title
@@ -323,7 +338,7 @@ def append_link(update: Update, context: CallbackContext):
     duplicated_links = eval(
         redis_helper.retrieve("%s_%s_duplicated_links" % (user.id, user.id)).decode()
     )
-    # number of links
+    # number ofhttps://www.gamestop.it/PS5/Games/131445/demons-soulsview links
     wishlist_element_id = info.split("_")[-3]
     message_id = info.split("_")[-4]
     page = info.split("_")[-2]
