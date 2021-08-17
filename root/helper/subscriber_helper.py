@@ -19,6 +19,7 @@ def update_subscriber(user_id: str, product_code: str, price: float):
 
 def find_subscriber(user_id: int, product_code: str):
     try:
+        logger.info("finding for %s - %s" % (user_id, product_code))
         return Subscriber.objects.get(user_id=user_id, product_code=product_code)
     except DoesNotExist:
         return None

@@ -2,6 +2,8 @@
 # region
 import operator
 import re
+from root.helper.tracked_link_helper import find_link_by_code
+from root.model.tracked_link import TrackedLink
 from root.helper.subscriber_helper import find_subscriber
 
 from telegram import message
@@ -1083,8 +1085,10 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 )
                 duplicated_type = "DOMINIO WEB DUPLICATO"
             if not is_present:
-                is_present = find_subscriber(
-                    user.id, extractor.extract_code(wishlist_link)
+                is_present = (
+                    False
+                    if find_subscriber(user.id, extractor.extract_code(wishlist_link))
+                    else True
                 )
                 duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
             if is_present:
