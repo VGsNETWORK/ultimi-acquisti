@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
+from root.model import tracked_link
 from root.model.tracked_link import TrackedLink
 from root.model.subscriber import Subscriber
 
@@ -1302,12 +1303,14 @@ def view_wishlist_element_links_keyboard(
                 )
             ]
         )
+    supported = False
     for index, link in enumerate(links):
         row = [
             create_button("%s." % (index + 1), "empty_button", None),
         ]
         if tracked_links[index]:
             if tracked_links[index] != "do_not_show":
+                supported = True
                 row.append(
                     create_button(
                         "%s  %s €"
@@ -1361,7 +1364,16 @@ def view_wishlist_element_links_keyboard(
     #        ]
     #    )
     #    index += 1
-
+    if supported:
+        keyboard.append(
+            [
+                create_button(
+                    "🔄  Aggiorna",
+                    "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                    "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                )
+            ]
+        )
     keyboard.append(
         [
             create_button(

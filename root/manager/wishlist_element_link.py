@@ -28,6 +28,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     PRICE_MESSAGE_POPUP,
+    PRICE_MESSAGE_POPUP_NO_VARIATION,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_HEADER,
     WISHLIST_LINK_LEGEND_APPEND,
@@ -254,14 +255,17 @@ def view_wishlist_element_links(
             # subscriber.save()
     if show_legend:
         message += WISHLIST_LINK_LEGEND_APPEND
-    context.bot.edit_message_text(
-        message_id=message_id,
-        chat_id=chat.id,
-        text=message,
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-        parse_mode="HTML",
-    )
+    try:
+        context.bot.edit_message_text(
+            message_id=message_id,
+            chat_id=chat.id,
+            text=message,
+            reply_markup=keyboard,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+        )
+    except BadRequest:
+        pass
 
 
 def ask_for_new_link(update: Update, context: CallbackContext):

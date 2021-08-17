@@ -1164,3 +1164,7 @@ PRICE_MESSAGE_POPUP = (
     "PREZZO ATTUALE:\n    %s €   (%s)\n"
     "Offerta migliore di sempre precedente:\n    %s €"
 )
+
+PRICE_MESSAGE_POPUP_NO_VARIATION = (
+    ": :   %s   : :\n\n" "PREZZO ATTUALE:\n    %s €   (%s)\n"
+)
