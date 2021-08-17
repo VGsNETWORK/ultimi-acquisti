@@ -2,7 +2,11 @@
 # region
 import operator
 import re
-from root.helper.tracked_link_helper import find_link_by_code, remove_tracked_subscriber
+from root.helper.tracked_link_helper import (
+    find_link_by_code,
+    find_link_by_link,
+    remove_tracked_subscriber,
+)
 from root.model.tracked_link import TrackedLink
 from root.helper.subscriber_helper import find_subscriber
 
@@ -58,6 +62,7 @@ from root.contants.messages import (
 from root.util.util import (
     create_button,
     extract_first_link_from_message,
+    format_price,
     max_length_error_format,
 )
 from root.helper.wishlist_element import (
@@ -65,6 +70,7 @@ from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_wishlist_id,
     count_all_wishlist_elements_photos,
     delete_all_wishlist_element_for_user,
+    find_containing_link,
     find_wishlist_element_by_id,
     find_wishlist_element_for_user,
     get_total_wishlist_element_pages_for_user,
@@ -371,6 +377,20 @@ def has_photo(wishlist_element: WishlistElement):
     if wishlist_element.user_id == 84872221:
         return ""
     return "  •  🖼" if wishlist_element.photos else ""
+
+
+def has_media(wishlist_element: WishlistElement):
+    if wishlist_element.user_id == 84872221:
+        return ""
+    if wishlist_element.links:
+        if wishlist_element.photos:
+            return "  •  🖼🔗"
+        else:
+            return "  •  🔗"
+    elif wishlist_element.photos:
+        return "  •  🖼"
+    else:
+        return ""
 
 
 def has_link(wishlist_element: WishlistElement):
@@ -746,9 +766,17 @@ def view_wishlist(
             else:
                 space = "  " if add_space else ""
                 new_line = "\n"
+            price = ""
+            if wish.links:
+                link = wish.links[0]
+                if extractor.is_supported(link):
+                    tracked_link: TrackedLink = find_link_by_link(link)
+                    if tracked_link:
+                        price = "<b>%s €</b>  •  " % format_price(tracked_link.price)
+
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
-                f"<i>{wish.category}</i>{has_photo(wish)}{has_link(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                f"{price}<i>{wish.category}</i>{has_media(wish)}  •  <i>Aggiunto il {wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
             )
         message += "\n".join(msgs)
         if append and under_first:

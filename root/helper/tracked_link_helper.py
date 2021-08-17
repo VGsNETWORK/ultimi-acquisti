@@ -11,6 +11,12 @@ def find_link_by_code(code: str):
     except DoesNotExist:
         return None
 
+def find_link_by_link(link: str):
+    try:
+        return TrackedLink.objects().get(link=link)
+    except DoesNotExist:
+        return None
+
 def find_link_by_id(id: str):
     try:
         return TrackedLink.objects().get(id=id)
