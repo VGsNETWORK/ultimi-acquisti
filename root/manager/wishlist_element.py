@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.helper.subscriber_helper import find_subscriber
 
 from telegram import message
 from root.helper import wishlist_element
@@ -565,7 +566,10 @@ def remove_wishlist_element_item(update: Update, context: CallbackContext):
         ]
         wish: WishlistElement = find_wishlist_element_by_id(_id)
         if wish.photos:
-            context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+            try:
+                context.bot.delete_message(chat_id=chat.id, message_id=message_id)
+            except BadRequest:
+                logger.info("Unable to delete the message")
         if not wish.photos:
             wishlist_id = get_current_wishlist_id(user.id)
             wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
@@ -1078,6 +1082,11 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                     wishlist_link, wishlist_element.links
                 )
                 duplicated_type = "DOMINIO WEB DUPLICATO"
+            if not is_present:
+                is_present = find_subscriber(
+                    user.id, extractor.extract_code(wishlist_link)
+                )
+                duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
             if is_present:
                 if len(wishlist_link) > MAX_LINK_LENGTH:
                     wishlist_link = '<a href="%s">%s...</a>' % (

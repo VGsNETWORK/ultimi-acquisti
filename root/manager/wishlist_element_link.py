@@ -336,6 +336,9 @@ def append_link(update: Update, context: CallbackContext):
     if not is_present:
         is_present = extractor.domain_duplicated(wishlist_link, wishlist_element.links)
         duplicated_type = "DOMINIO WEB DUPLICATO"
+    if not is_present:
+        is_present = find_subscriber(user.id, extractor.extract_code(wishlist_link))
+        duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
     if is_present:
         if len(wishlist_link) > MAX_LINK_LENGTH:
             wishlist_link = '<a href="%s">%s...</a>' % (
