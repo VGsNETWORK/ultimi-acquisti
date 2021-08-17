@@ -3,7 +3,7 @@
 from root.helper.subscriber_helper import remove_subscriber
 from mongoengine.errors import DoesNotExist
 from root.model.tracked_link import TrackedLink
-
+import telegram_utils.utils.logger as logger
 
 def find_link_by_code(code: str):
     try:
@@ -74,6 +74,8 @@ def remove_tracked_subscriber(code: str, user_id: int):
             remove_subscriber(user_id, tracked_link.code)
             tracked_link.save()
             if len(tracked_link.subscribers) == 0:
+                logger.info("removed tracked link for link [%s]" % code)
                 tracked_link.delete()
+            logger.info("removed subscriber for link [%s]" % code)
     except DoesNotExist:
         return

@@ -108,6 +108,8 @@ class Extractor:
         if not user_id in tlink.subscribers:
             add_subscriber_to_link(product["code"], user_id)
             update_subscriber(user_id, product["code"], product["price"])
+        else:
+            logger.info("user is still in subscribers")
 
     def parse_url(self, url: str):
         if not self.is_supported(url):

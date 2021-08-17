@@ -2,7 +2,7 @@
 # region
 import operator
 import re
-from root.helper.tracked_link_helper import find_link_by_code
+from root.helper.tracked_link_helper import find_link_by_code, remove_tracked_subscriber
 from root.model.tracked_link import TrackedLink
 from root.helper.subscriber_helper import find_subscriber
 
@@ -517,7 +517,11 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
         _id = update.callback_query.data.split("_")[-1]
         page = int(update.callback_query.data.split("_")[-2])
+        wishlist_element = find_wishlist_element_by_id(_id)
         remove_wishlist_element_item_for_user(_id)
+        for link in wishlist_element.links:
+            logger.info("removing %s" % link)
+            remove_tracked_subscriber(extractor.extract_code(link), user.id)
         wishlist_id = get_current_wishlist_id(user.id)
         total_pages = get_total_wishlist_element_pages_for_user(
             user.id, wishlist_id=wishlist_id
@@ -995,6 +999,26 @@ def add_category(update: Update, context: CallbackContext):
         user = retrieve_user(user.id)
         if user:
             wish.wishlist_id = user.current_wishlist
+        for link in wish.links:
+            try:
+                product = extractor.parse_url(link)
+                logger.info(product)
+                extractor.add_subscriber(link, user.user_id, product)
+            except ValueError as e:
+                logger.error(e)
+        links = []
+        tracked_links = []
+        for link in wish.links:
+            if extractor.is_supported(link):
+                code = extractor.extract_code(link)
+                tracked_link: TrackedLink = find_link_by_code(code)
+                tracked_links.append(tracked_link)
+            else:
+                links.insert(0, link)
+        tracked_links.sort(key=lambda link: link.price, reverse=True)
+        [links.insert(0, link.link) for link in tracked_links]
+        links.reverse()
+        wish.links = links
         wish.save()
         cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.user_id)
         logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
@@ -1040,11 +1064,6 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             wishlist_element = wishlist_element[0]
             wishlist_link = message.text if message.text else message.caption
             pictures = extractor.load_url(wishlist_link)
-            try:
-                product = extractor.parse_url(wishlist_link)
-                extractor.add_subscriber(wishlist_link, user.id, product)
-            except ValueError as e:
-                logger.error(e)
             pictures = pictures[:10]
             rphotos: List[str] = redis_helper.retrieve(
                 "%s_%s_photos" % (user.id, user.id)
@@ -1086,9 +1105,9 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 duplicated_type = "DOMINIO WEB DUPLICATO"
             if not is_present:
                 is_present = (
-                    False
+                    True
                     if find_subscriber(user.id, extractor.extract_code(wishlist_link))
-                    else True
+                    else False
                 )
                 duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
             if is_present:

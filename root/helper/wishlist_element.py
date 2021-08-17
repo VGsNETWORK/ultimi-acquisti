@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from root.helper.tracked_link_helper import remove_tracked_subscriber
+from root.handlers.handlers import extractor
 from root.helper.user_helper import change_wishlist, get_current_wishlist_id
 from root.model.wishlist import Wishlist
 from root.helper.wishlist import find_default_wishlist, remove_wishlist_for_user
@@ -35,6 +37,8 @@ def delete_all_wishlist_element_for_user(
         for element in WishlistElement.objects().filter(
             user_id=user_id, wishlist_id=wishlist_id
         ):
+            for link in element.links:
+                remove_tracked_subscriber(extractor.extract_code(link), user_id)
             element.delete()
         if delete_wishlist:
             remove_wishlist_for_user(wishlist_id, user_id)
