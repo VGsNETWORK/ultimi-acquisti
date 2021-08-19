@@ -779,7 +779,10 @@ def view_wishlist(
                 new_line = "\n"
             price = ""
             if wish.links:
-                link = wish.links[0]
+                link = ""
+                for l in wish.links:
+                    if extractor.is_supported(l):
+                        link = l
                 tracked_link: TrackedLink = find_link_by_link(link)
                 if tracked_link:
                     price = "<b>%s €</b>  •  " % format_price(tracked_link.price)
