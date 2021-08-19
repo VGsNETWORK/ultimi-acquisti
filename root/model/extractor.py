@@ -30,6 +30,16 @@ class Extractor:
             return False
         return False
 
+    def show_extra_info(self, tracked_link: TrackedLink):
+        url: str = tracked_link.link
+        handler: ExtractorHandler = next(
+            (handler for handler in self.handlers if handler.match in url), None
+        )
+        if handler:
+            return handler.get_extra_info(tracked_link)
+        else:
+            return ""
+
     def extract_code(self, url: str):
         handler: ExtractorHandler = next(
             (handler for handler in self.handlers if handler.match in url), None

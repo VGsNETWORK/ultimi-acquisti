@@ -13,6 +13,7 @@ from root.helper.tracked_link_helper import (
     find_link_by_code,
     find_link_by_id,
     remove_tracked_subscriber,
+    update_or_create_scraped_link,
 )
 
 import telegram_utils.helper.redis as redis_helper
@@ -79,14 +80,12 @@ def show_price_popup(update: Update, context: CallbackContext):
         title = "%s..." % title[:57]
     else:
         title = title
-    collect_available = "✅" if tracked_link.collect_available else "❌"
-    delivery_available = "✅" if tracked_link.delivery_available else "❌"
+    extra = extractor.show_extra_info(tracked_link)
     message = PRICE_MESSAGE_POPUP % (
         title.upper(),
         format_price(tracked_link.price),
         sign,
-        delivery_available,
-        collect_available,
+        extra,
         format_price(subscriber.lowest_price),
     )
     context.bot.answer_callback_query(
@@ -213,8 +212,9 @@ def view_wishlist_element_links(
                 try:
                     product = extractor.parse_url(link)
                     new_price = float(product["price"])
-                    tracked_link.price = new_price
-                    tracked_link.save()
+                    update_or_create_scraped_link(product)
+                    tracked_link: TrackedLink = find_link_by_code(product["code"])
+
                     if new_price < subscriber.lowest_price:
                         deals.append("📉")
                         new_prices.append(new_price)

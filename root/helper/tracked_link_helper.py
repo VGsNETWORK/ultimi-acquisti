@@ -56,6 +56,8 @@ def update_or_create_scraped_link(product: dict):
                                               set__store=product["store"],
                                               set__base_url=product["base_url"],
                                               set__link=product["link"],
+                                              set__collect_available=product["collect_available"],
+                                              set__delivery_available=product["delivery_available"],
                                               upsert=True)
         return True
         # fmt: on

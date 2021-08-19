@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.model.tracked_link import TrackedLink
 from root.handlers.generic import extract_data
 from root.model.rule import Rule
 from bs4 import BeautifulSoup as bs4
@@ -51,14 +52,14 @@ def extract_missing_data(product: dict, data: bs4):
     title = re.sub(r"\r|\n|\s\s", "", title)
     product["title"] = title
     availability = data.find_all("img", {"class": "availabilityImg"})
+    availability = availability[:2]
     for av in availability:
         src = av["src"]
-        alt = av["src"]
-        if "Delivery" in av:
-            product["delivery_available"] = "Unavailable" in src
-
+        logger.info(src)
+        if "Delivery" in str(av):
+            product["delivery_available"] = "Available" in src
         else:
-            product["collect_available"] = "Unavailable" in src
+            product["collect_available"] = "Available" in src
     price = product["price"]
     if price:
         price = re.sub("€", "", price)
@@ -68,10 +69,20 @@ def extract_missing_data(product: dict, data: bs4):
         product["price"] = 0
 
     product["platform"] = product["platform"].strip()
+    logger.info(product)
     return product
+
+
+def get_extra_info(tracked_link: TrackedLink):
+    collect_available = "✅" if tracked_link.collect_available else "❌"
+    delivery_available = "✅" if tracked_link.delivery_available else "❌"
+    return "%s  Spedizione\n%s  Ritiro in negozio\n\n" % (
+        delivery_available,
+        collect_available,
+    )
 
 
 # fmt: off
 gamestop_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, RULE)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, get_extra_info, RULE)
 # fmt: on

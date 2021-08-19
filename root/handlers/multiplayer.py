@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import re
+from root.model.tracked_link import TrackedLink
 from typing import List
 from root.model.rule import Rule
 from bs4 import BeautifulSoup as bs4
 from root.model.extractor_handler import ExtractorHandler
 from root.handlers.generic import extract_data
+from root.util.util import de_html
 import telegram_utils.utils.logger as logger
 
 BASE_URL = "multiplayer.com/"
@@ -47,6 +49,8 @@ def extract_code(url: str) -> str:
 
 def extract_missing_data(product: dict, data: bs4):
     price = data.findAll("script", {"type": "application/ld+json"})
+    availability = data.find("div", {"class": "dyn-product-status"})
+    product["delivery_available"] = True if availability else False
     if len(price) > 1:
         price: str = str(price[1])
         price: str = re.sub("<.*?>", "", price)
@@ -58,10 +62,16 @@ def extract_missing_data(product: dict, data: bs4):
             product["price"] = float(price)
         else:
             product["price"] = 0
+    logger.info(product)
     return product
+
+
+def get_extra_info(tracked_link: TrackedLink):
+    delivery_available = "✅" if tracked_link.delivery_available else "❌"
+    return "%s  Spedizione\n\n" % (delivery_available,)
 
 
 # fmt: off
 multiplayer_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, RULE)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, get_extra_info, RULE)
 # fmt: on

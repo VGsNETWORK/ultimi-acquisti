@@ -13,4 +13,5 @@ class ExtractorHandler:
     extract_code: callable
     extract_data: callable
     extract_missing_data: callable
+    get_extra_info: callable
     rule: Dict = field(default_factory=dict)
