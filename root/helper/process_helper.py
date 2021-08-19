@@ -21,6 +21,8 @@ def find_process(name_prefix: str) -> Process:
     """
     for process in active_children():
         title = PROCESS_NAME % name_prefix
+        logger.info("process title %s" % title)
+        logger.info("process name %s" % process.name)
         if title == process.name:
             return process
     return None
@@ -79,6 +81,8 @@ def create_process(name_prefix: str, target: callable, args: tuple) -> None:
         target (callable): The target to execute by the process
         args (tuple): The arguments to pass to the target
     """
+    logger.info("PROCESS_NAME: %s" % PROCESS_NAME)
+    logger.info("PROCESS_PREFIX: %s" % name_prefix)
     name: str = PROCESS_NAME % name_prefix
     process: Process = Process(group=None, target=target, args=args, name=name)
     process.daemon = True

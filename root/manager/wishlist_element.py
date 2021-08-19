@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.helper.process_helper import find_process
 from root.helper.tracked_link_helper import (
     find_link_by_code,
     find_link_by_link,
@@ -693,6 +694,7 @@ def view_wishlist(
     message_id = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    redis_helper.save("%s_%s_on_list" % (user.id, user.id), "0")
     if not user_exists(user.id):
         create_user(user)
     create_wishlist_if_empty(user.id)

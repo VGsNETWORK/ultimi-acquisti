@@ -1291,6 +1291,7 @@ def view_wishlist_element_links_keyboard(
     subscribers: List[Subscriber],
     tracked_links: List[TrackedLink],
     deals: List[str],
+    show_update: bool,
 ):
     keyboard = []
     # ask for wishlist element link
@@ -1369,16 +1370,17 @@ def view_wishlist_element_links_keyboard(
     #        ]
     #    )
     #    index += 1
-    # if supported:
-    #    keyboard.append(
-    #        [
-    #            create_button(
-    #                "🔄  Aggiorna",
-    #                "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-    #                "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-    #            )
-    #        ]
-    #    )
+    logger.info("show_update: %s - supported: %s" % (show_update, supported))
+    if supported and show_update:
+        keyboard.append(
+            [
+                create_button(
+                    "🔄  Aggiorna",
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                )
+            ]
+        )
     keyboard.append(
         [
             create_button(
@@ -1388,6 +1390,8 @@ def view_wishlist_element_links_keyboard(
             )
         ]
     )
+    logger.info("returning the keyboard")
+    logger.info(len(keyboard))
     return InlineKeyboardMarkup(keyboard)
 
 

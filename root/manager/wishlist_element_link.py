@@ -2,8 +2,13 @@
 
 from difflib import SequenceMatcher
 from operator import add
+from os import environ
 from re import S, sub
 import re
+
+from telegram.bot import Bot
+from root.helper.process_helper import find_process, stop_process, create_process
+from time import sleep
 from root.util.util import format_price
 from typing import List
 from root.model.tracked_link import TrackedLink
@@ -128,13 +133,55 @@ def delete_wishlist_element_link(update: Update, context: CallbackContext):
     return
 
 
+def update_list(update: Update, context: CallbackContext, show_update: bool = False):
+    user: User = update.effective_user
+    if not show_update:
+        logger.info("HIDING THE SHOW_UPDATE")
+        redis_helper.save("%s_%s_on_list" % (user.id, user.id), "1")
+        logger.info("SHOWING THE LINKS")
+        view_wishlist_element_links(update, context, show_update=show_update)
+        create_process(
+            "update_link_list_%s" % (user.id),
+            update_list,
+            (
+                update,
+                context,
+                True,
+            ),
+        )
+    else:
+        logger.info("SHOWING THE SHOW_UPDATE")
+        on_list = redis_helper.retrieve("%s_%s_on_list" % (user.id, user.id))
+        if on_list:
+            on_list = on_list.decode()
+            if on_list == "1":
+                sleep(1800)
+                redis_helper.save("%s_%s_on_list" % (user.id, user.id), "1")
+                logger.info("SHOWING THE LINKS")
+                view_wishlist_element_links(
+                    update, context, show_update=show_update, scrape=False
+                )
+            else:
+                logger.info("skipping for not in link message...")
+                return
+
+
 def view_wishlist_element_links(
-    update: Update, context: CallbackContext, append: str = None
+    update: Update,
+    context: CallbackContext,
+    append: str = None,
+    show_update: bool = False,
+    scrape: bool = True,
 ):
+    logger.info("show_update: %s" % show_update)
     message: Message = update.effective_message
     message_id: int = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    if find_process("update_link_list_%s" % (user.id)):
+        show_update = False
+        scrape = False
+    redis_helper.save("%s_%s_on_list" % (user.id, user.id), "1")
     if update.callback_query:
         data = update.callback_query.data
         wishlist_element_id = data.split("_")[-1]
@@ -207,6 +254,7 @@ def view_wishlist_element_links(
     show_legend = False
     for link in wishlist_element.links:
         if extractor.is_supported(link):
+            logger.info("SUPPORTED LINK")
             show_legend = True
             subscriber: Subscriber = find_subscriber(
                 user.id, extractor.extract_code(link)
@@ -214,16 +262,25 @@ def view_wishlist_element_links(
             tracked_link: TrackedLink = find_link_by_code(extractor.extract_code(link))
             if subscriber and tracked_link:
                 try:
-                    product = extractor.parse_url(link)
-                    new_price = float(product["price"])
-                    update_or_create_scraped_link(product)
-                    tracked_link: TrackedLink = find_link_by_code(product["code"])
+                    if scrape:
+                        logger.info("SCRAPING IT")
+                        product = extractor.parse_url(link)
+                        new_price = float(product["price"])
+                        update_or_create_scraped_link(product)
+                        logger.info("FINDING TRACKED_LINK")
+                        tracked_link: TrackedLink = find_link_by_code(product["code"])
+                    else:
+                        logger.info("DOING NOTHING")
+                        new_price = tracked_link.price
+                    logger.info("ADDING (IF NEEDED) SHIPPING")
                     if "multiplayer.com" in tracked_link.link:
+                        logger.info("ADDING SHIPPING")
                         if tracked_link.price < 49:
                             tracked_link.price += 4.90
                             new_price += 4.90
                         if subscriber.lowest_price < 49:
                             subscriber.lowest_price += 4.90
+                    logger.info("CHECKING PRICES")
                     if new_price < subscriber.lowest_price:
                         deals.append("📉")
                         new_prices.append(new_price)
@@ -232,9 +289,12 @@ def view_wishlist_element_links(
                     else:
                         deals.append("➖")
                 except ValueError:
+                    logger.info("VALUE ERROR")
                     new_prices.append(0.00)
                     pass
+                logger.info("REMOVING (IF NEEDED) SHIPPING")
                 if "multiplayer.com" in tracked_link.link:
+                    logger.info("REMOVING SHIPPING")
                     if tracked_link.price < 49:
                         tracked_link.price -= 4.90
                         new_price -= 4.90
@@ -260,6 +320,7 @@ def view_wishlist_element_links(
             len(tracked_links),
         )
     )
+    logger.info("getting keyboard")
     keyboard: InlineKeyboardMarkup = view_wishlist_element_links_keyboard(
         wishlist_element_id,
         page,
@@ -267,15 +328,20 @@ def view_wishlist_element_links(
         subscribers,
         tracked_links,
         deals,
+        show_update,
     )
+    logger.info("got the keyboard")
     for index, subscriber in enumerate(subscribers):
+        logger.info("index %s" % index)
         if deals[index] == "📉":
             subscriber.lowest_price = new_prices[index]
             # subscriber.save()
     if show_legend:
         message += WISHLIST_LINK_LEGEND_APPEND
     try:
-        context.bot.edit_message_text(
+        logger.info("editing message")
+        bot = Bot(environ["TOKEN"])
+        bot.edit_message_text(
             message_id=message_id,
             chat_id=chat.id,
             text=message,
@@ -283,16 +349,23 @@ def view_wishlist_element_links(
             disable_web_page_preview=True,
             parse_mode="HTML",
         )
-    except BadRequest:
+        if scrape:
+            update_list(update, context, False)
+    except BadRequest as e:
+        logger.error("UNABLE TO EDIT MESSAGE")
+        logger.error(e)
         pass
 
 
 def ask_for_new_link(update: Update, context: CallbackContext):
+    logger.info("ASKING FOR NEW LINK")
     message: Message = update.effective_message
     message_id: int = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    redis_helper.save("%s_%s_on_list" % (user.id, user.id), "0")
     if update.callback_query:
+        logger.info("FROM BUTTON")
         data = update.callback_query.data
         wishlist_element_id = data.split("_")[-1]
         page = data.split("_")[-2]

@@ -13,6 +13,7 @@ from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
     show_price_popup,
+    update_list,
     view_wishlist_element_links,
 )
 
@@ -305,6 +306,11 @@ class BotManager:
             CallbackQueryHandler(
                 pattern="view_wishlist_link_element",
                 callback=view_wishlist_element_links,
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="update_wishlist_link_element", callback=update_list
             )
         )
         self.disp.add_handler(
