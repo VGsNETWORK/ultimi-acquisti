@@ -1364,16 +1364,16 @@ def view_wishlist_element_links_keyboard(
     #        ]
     #    )
     #    index += 1
-    if supported:
-        keyboard.append(
-            [
-                create_button(
-                    "🔄  Aggiorna",
-                    "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                    "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                )
-            ]
-        )
+    # if supported:
+    #    keyboard.append(
+    #        [
+    #            create_button(
+    #                "🔄  Aggiorna",
+    #                "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+    #                "view_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+    #            )
+    #        ]
+    #    )
     keyboard.append(
         [
             create_button(
