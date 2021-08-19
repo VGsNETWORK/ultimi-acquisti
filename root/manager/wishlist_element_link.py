@@ -76,13 +76,17 @@ def show_price_popup(update: Update, context: CallbackContext):
         sign = "➖"
     title = wishlist_element.description
     if len(title) > 77:
-        title = "%s..." % title[:77]
+        title = "%s..." % title[:57]
     else:
         title = title
+    collect_available = "✅" if tracked_link.collect_available else "❌"
+    delivery_available = "✅" if tracked_link.delivery_available else "❌"
     message = PRICE_MESSAGE_POPUP % (
         title.upper(),
         format_price(tracked_link.price),
         sign,
+        delivery_available,
+        collect_available,
         format_price(subscriber.lowest_price),
     )
     context.bot.answer_callback_query(

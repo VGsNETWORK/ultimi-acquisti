@@ -1161,8 +1161,9 @@ DEAL_MESSAGE_FORMAT_APPEND = " <b>Non fartelo scappare!</b>"
 
 PRICE_MESSAGE_POPUP = (
     ": :   %s   : :\n\n"
-    "PREZZO ATTUALE:\n    %s €   (%s)\n"
-    "Offerta migliore di sempre precedente:\n    %s €"
+    "PREZZO ATTUALE:\n    %s €   (%s)*\n"
+    "%s  Spedizione\n%s  Ritiro in negozio\n\n"
+    "* Offerta migliore di sempre precedente:\n    %s €"
 )
 
 PRICE_MESSAGE_POPUP_NO_VARIATION = (
