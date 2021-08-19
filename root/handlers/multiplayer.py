@@ -68,7 +68,7 @@ def extract_missing_data(product: dict, data: bs4):
 
 def get_extra_info(tracked_link: TrackedLink):
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
-    return "%s  Spedizione\n\n" % (delivery_available,)
+    return "%s  Disponibile\n\n" % (delivery_available)
 
 
 # fmt: off

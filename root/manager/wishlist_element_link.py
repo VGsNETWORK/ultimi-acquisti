@@ -80,10 +80,14 @@ def show_price_popup(update: Update, context: CallbackContext):
         title = "%s..." % title[:57]
     else:
         title = title
+    extra_price = ""
+    if "multiplayer.com" in tracked_link.link:
+        if tracked_link.price < 49:
+            extra_price = " + 4,90"
     extra = extractor.show_extra_info(tracked_link)
     message = PRICE_MESSAGE_POPUP % (
         title.upper(),
-        format_price(tracked_link.price),
+        "%s%s" % (format_price(tracked_link.price), extra_price),
         sign,
         extra,
         format_price(subscriber.lowest_price),
@@ -214,7 +218,12 @@ def view_wishlist_element_links(
                     new_price = float(product["price"])
                     update_or_create_scraped_link(product)
                     tracked_link: TrackedLink = find_link_by_code(product["code"])
-
+                    if "multiplayer.com" in tracked_link.link:
+                        if tracked_link.price < 49:
+                            tracked_link.price += 4.90
+                            new_price += 4.90
+                        if subscriber.lowest_price < 49:
+                            subscriber.lowest_price += 4.90
                     if new_price < subscriber.lowest_price:
                         deals.append("📉")
                         new_prices.append(new_price)
@@ -225,6 +234,12 @@ def view_wishlist_element_links(
                 except ValueError:
                     new_prices.append(0.00)
                     pass
+                if "multiplayer.com" in tracked_link.link:
+                    if tracked_link.price < 49:
+                        tracked_link.price -= 4.90
+                        new_price -= 4.90
+                    if subscriber.lowest_price < 49:
+                        subscriber.lowest_price -= 4.90
                 subscribers.append(subscriber)
                 tracked_links.append(tracked_link)
             else:
