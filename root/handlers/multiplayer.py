@@ -16,6 +16,8 @@ RULE = {
     "platform": Rule("span", {"class": "label-categoria"}),
     "store": "Multiplayer",
     "base_url": BASE_URL,
+    "delivery_available": True,
+    "collect_available": False,
 }
 
 

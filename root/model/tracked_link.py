@@ -20,3 +20,5 @@ class TrackedLink(BaseModel):
     base_url = StringField(required=True)
     code = StringField(required=True, unique=True)
     subscribers = ListField(IntField())
+    collect_available = BooleanField()
+    delivery_available = BooleanField()

@@ -50,7 +50,15 @@ def extract_missing_data(product: dict, data: bs4):
     title = title.strip().split("\n")[0]
     title = re.sub(r"\r|\n|\s\s", "", title)
     product["title"] = title
+    availability = data.find_all("img", {"class": "availabilityImg"})
+    for av in availability:
+        src = av["src"]
+        alt = av["src"]
+        if "Delivery" in av:
+            product["delivery_available"] = "Unavailable" in src
 
+        else:
+            product["collect_available"] = "Unavailable" in src
     price = product["price"]
     if price:
         price = re.sub("€", "", price)
