@@ -19,6 +19,7 @@ from root.helper.tracked_link_helper import (
     find_link_by_id,
     remove_tracked_subscriber,
     update_or_create_scraped_link,
+    update_scraped_link_information,
 )
 
 import telegram_utils.helper.redis as redis_helper
@@ -266,7 +267,10 @@ def view_wishlist_element_links(
                         logger.info("SCRAPING IT")
                         product = extractor.parse_url(link)
                         new_price = float(product["price"])
-                        update_or_create_scraped_link(product)
+                        if find_link_by_code(product["code"]):
+                            update_scraped_link_information(product)
+                        else:
+                            update_or_create_scraped_link(product)
                         logger.info("FINDING TRACKED_LINK")
                         tracked_link: TrackedLink = find_link_by_code(product["code"])
                     else:

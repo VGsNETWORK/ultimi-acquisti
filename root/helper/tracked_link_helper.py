@@ -63,6 +63,23 @@ def update_or_create_scraped_link(product: dict):
         # fmt: on
     return False
 
+def update_link_information(code: str, collect_available: bool, delivery_available: bool, price: float):
+    tracked_link: TrackedLink = find_link_by_code(code)
+    if tracked_link:
+        tracked_link.collect_available = collect_available
+        tracked_link.delivery_available = delivery_available
+        tracked_link.price = price
+        tracked_link.save()
+
+def update_scraped_link_information(product: dict):
+    tracked_link: TrackedLink = find_link_by_code(product["code"])
+    if tracked_link:
+        tracked_link.collect_available = product["collect_available"]
+        tracked_link.delivery_available = product["delivery_available"]
+        tracked_link.price = product["price"]
+        tracked_link.save() 
+
+
 def add_subscriber_to_link(code: str, user_id=int):
     try:
         tracked: TrackedLink = TrackedLink.objects().get(code=code)

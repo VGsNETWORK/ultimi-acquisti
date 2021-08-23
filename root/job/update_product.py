@@ -17,6 +17,7 @@ from root.helper.tracked_link_helper import (
     get_paged_link,
     get_total_pages,
     update_or_create_scraped_link,
+    update_scraped_link_information,
 )
 from telegram.ext import CallbackContext
 import telegram_utils.utils.logger as logger
@@ -94,7 +95,7 @@ def update_products(context: CallbackContext):
                 )
                 if product["code"].startswith("/"):
                     product["code"] = product["code"][1:]
-                updated: bool = update_or_create_scraped_link(product)
+                updated: bool = update_scraped_link_information(product)
                 if updated:
                     product: TrackedLink = find_link_by_code(product["code"])
                     if int(product.price) == 0:
