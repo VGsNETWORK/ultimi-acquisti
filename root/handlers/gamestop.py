@@ -20,6 +20,13 @@ RULE = {
 }
 
 
+def get_shipment_cost(price: float, string: bool = False):
+    if price < 40:
+        return "5,00" if string else 5.00
+    else:
+        return "" if string else 0.00
+
+
 def load_picture(data: bs4):
     pictures = data.find("div", {"class": "mainInfo"})
     main_picture = pictures.find("a", {"class": "prodImg"})
@@ -84,5 +91,6 @@ def get_extra_info(tracked_link: TrackedLink):
 
 # fmt: off
 gamestop_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, get_extra_info, RULE)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, \
+        extract_code, extract_data, extract_missing_data, get_extra_info, get_shipment_cost, RULE)
 # fmt: on

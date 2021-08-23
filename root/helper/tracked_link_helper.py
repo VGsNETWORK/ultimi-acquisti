@@ -76,7 +76,7 @@ def update_scraped_link_information(product: dict):
     if tracked_link:
         tracked_link.collect_available = product["collect_available"]
         tracked_link.delivery_available = product["delivery_available"]
-        tracked_link.price = product["price"]
+        tracked_link.price = float(product["price"])
         tracked_link.save() 
 
 

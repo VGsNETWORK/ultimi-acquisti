@@ -23,6 +23,13 @@ RULE = {
 }
 
 
+def get_shipment_cost(price: float, string: bool = False):
+    if price < 49:
+        return "4,90" if string else 4.90
+    else:
+        return "" if string else 0.00
+
+
 def load_picture(data: bs4):
     logger.info("loading pictures for multiplayer")
     pictures = data.find("div", {"id": "row-image-gallery"})
@@ -73,5 +80,6 @@ def get_extra_info(tracked_link: TrackedLink):
 
 # fmt: off
 multiplayer_handler: ExtractorHandler = \
-    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, extract_code, extract_data, extract_missing_data, get_extra_info, RULE)
+    ExtractorHandler(BASE_URL, MATCH, load_picture, validate, \
+        extract_code, extract_data, extract_missing_data, get_extra_info, get_shipment_cost, RULE)
 # fmt: on

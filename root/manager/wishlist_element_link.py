@@ -86,17 +86,23 @@ def show_price_popup(update: Update, context: CallbackContext):
         title = "%s..." % title[:57]
     else:
         title = title
-    extra_price = ""
-    if "multiplayer.com" in tracked_link.link:
-        if tracked_link.price < 49:
-            extra_price = " + 4,90"
+    extra_price = extractor.get_shipment_cost(
+        tracked_link.price, tracked_link.link, True
+    )
+    if extra_price:
+        extra_price = " + %s" % extra_price
+    extra_lowest = extractor.get_shipment_cost(
+        subscriber.lowest_price, tracked_link.link, True
+    )
+    if extra_lowest:
+        extra_lowest = " + %s" % extra_lowest
     extra = extractor.show_extra_info(tracked_link)
     message = PRICE_MESSAGE_POPUP % (
         title.upper(),
         "%s%s" % (format_price(tracked_link.price), extra_price),
         sign,
         extra,
-        format_price(subscriber.lowest_price),
+        "%s%s" % (format_price(subscriber.lowest_price), extra_lowest),
     )
     context.bot.answer_callback_query(
         update.callback_query.id, show_alert=True, text=message
@@ -277,14 +283,17 @@ def view_wishlist_element_links(
                         logger.info("DOING NOTHING")
                         new_price = tracked_link.price
                     logger.info("ADDING (IF NEEDED) SHIPPING")
-                    if "multiplayer.com" in tracked_link.link:
-                        logger.info("ADDING SHIPPING")
-                        if tracked_link.price < 49:
-                            tracked_link.price += 4.90
-                            new_price += 4.90
-                        if subscriber.lowest_price < 49:
-                            subscriber.lowest_price += 4.90
+                    tracked_link.price += extractor.get_shipment_cost(
+                        tracked_link.price, tracked_link.link
+                    )
+                    new_price += extractor.get_shipment_cost(
+                        tracked_link.price, tracked_link.link
+                    )
+                    subscriber.lowest_price += extractor.get_shipment_cost(
+                        tracked_link.price, tracked_link.link
+                    )
                     logger.info("CHECKING PRICES")
+                    logger.info("%s - %s" % (new_price, subscriber.lowest_price))
                     if new_price < subscriber.lowest_price:
                         deals.append("📉")
                         new_prices.append(new_price)
@@ -297,13 +306,15 @@ def view_wishlist_element_links(
                     new_prices.append(0.00)
                     pass
                 logger.info("REMOVING (IF NEEDED) SHIPPING")
-                if "multiplayer.com" in tracked_link.link:
-                    logger.info("REMOVING SHIPPING")
-                    if tracked_link.price < 49:
-                        tracked_link.price -= 4.90
-                        new_price -= 4.90
-                    if subscriber.lowest_price < 49:
-                        subscriber.lowest_price -= 4.90
+                tracked_link.price -= extractor.get_shipment_cost(
+                    tracked_link.price, tracked_link.link
+                )
+                new_price -= extractor.get_shipment_cost(
+                    tracked_link.price, tracked_link.link
+                )
+                subscriber.lowest_price -= extractor.get_shipment_cost(
+                    tracked_link.price, tracked_link.link
+                )
                 subscribers.append(subscriber)
                 tracked_links.append(tracked_link)
             else:

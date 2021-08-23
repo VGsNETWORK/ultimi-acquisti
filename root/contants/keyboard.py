@@ -2,7 +2,7 @@
 
 from os import environ
 from root.handlers.generic import extract_data
-from root.model import tracked_link
+from root.handlers.handlers import extractor
 from root.model.tracked_link import TrackedLink
 from root.model.subscriber import Subscriber
 
@@ -1313,10 +1313,12 @@ def view_wishlist_element_links_keyboard(
         if tracked_links[index]:
             if tracked_links[index] != "do_not_show":
                 supported = True
-                extra_cash = 0.0
-                if "multiplayer" in tracked_links[index].link:
-                    if tracked_links[index].price < 49:
-                        extra_cash = 4.90
+                extra_cash = extractor.get_shipment_cost(
+                    tracked_links[index].price, tracked_links[index].link, True
+                )
+                logger.info(extra_cash)
+                if not extra_cash:
+                    extra_cash = 0.00
                 row.append(
                     create_button(
                         "%s  %s €"
