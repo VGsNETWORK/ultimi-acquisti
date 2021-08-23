@@ -51,6 +51,7 @@ from root.contants.messages import (
     NO_ELEMENT_IN_WISHLIST,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
+    WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING,
     WISHLIST_HEADER,
     WISHLIST_LEGEND_APPEND_FIRST_PAGE,
     WISHLIST_LEGEND_APPEND_LEGEND,
@@ -690,6 +691,7 @@ def view_wishlist(
     under_first: bool = True,
     reset_keyboard: bool = True,
 ):
+    has_tracked_links = False
     message: Message = update.effective_message
     message_id = message.message_id
     chat: Chat = update.effective_chat
@@ -787,7 +789,8 @@ def view_wishlist(
                         link = l
                 tracked_link: TrackedLink = find_link_by_link(link)
                 if tracked_link:
-                    price = "<b>%s €</b>  •  " % format_price(tracked_link.price)
+                    has_tracked_links = True
+                    price = "<b>%s € ⁽*⁾</b>  •  " % format_price(tracked_link.price)
 
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
@@ -806,6 +809,8 @@ def view_wishlist(
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     total_wishlists = count_all_wishlists_for_user(user.id)
+    if has_tracked_links:
+        message += WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING
     if total_pages > 1:
         message += (
             f"\n\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>"
