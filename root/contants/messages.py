@@ -901,7 +901,7 @@ ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
     "   •  sono ammessi solamente link;\n"
     "   •  sono supportati un massimo di <b>10</b> link;\n"
-    "   •  in caso di link multipli immessi nella stesso messaggio, prenderò in considerazione soltanto il primo%s."
+    "   •  in caso di link multipli immessi nello stesso messaggio, prenderò in considerazione soltanto il primo%s."
 )
 
 ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una categoria per il tuo elemento:"
