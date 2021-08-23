@@ -270,7 +270,7 @@ class BotManager:
                     day = days[0]
                     days.remove(day)
                     message.append(
-                        f"    👷🏻‍♂️ Aggiunto scheduler di advertising per il giorno <b>{day}</b> di ogni mese alle ore <b>{when.hour}:00</b>",
+                        f"    👷🏻‍♂️ Aggiunto scheduler di advertising per il giorno <b>{day}</b> di ogni mese alle ore <b>{when.hour + 2}:00</b>",
                     )
                     logger.info(message)
                     self.disp.job_queue.run_monthly(
