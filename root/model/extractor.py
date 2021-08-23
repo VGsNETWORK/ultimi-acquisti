@@ -87,6 +87,13 @@ class Extractor:
                 return False
         return False
 
+    def get_match(self, url: str):
+        handler: ExtractorHandler = next(
+            (handler for handler in self.handlers if handler.match in url), None
+        )
+        if handler:
+            return handler.match
+
     def get_shipment_cost(self, price: float, url: str, string: bool = False):
         handler: ExtractorHandler = next(
             (handler for handler in self.handlers if handler.match in url), None
