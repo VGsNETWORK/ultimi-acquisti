@@ -113,9 +113,13 @@ def update_products(context: CallbackContext):
                             subscriber: Subscriber = find_subscriber(
                                 subscriber, product.code
                             )
-                            update_subscriber(
-                                subscriber.user_id, product.code, previous_price, True
-                            )
+                            if previous_price < subscriber.lowest_price:
+                                update_subscriber(
+                                    subscriber.user_id,
+                                    product.code,
+                                    previous_price,
+                                    True,
+                                )
                         # ! Please look into this
                         # product.price = previous_price
                         product.save()
