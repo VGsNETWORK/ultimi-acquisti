@@ -8,13 +8,28 @@ import telegram_utils.utils.logger as logger
 # endregion
 
 
-def update_subscriber(user_id: str, product_code: str, price: float):
-    Subscriber.objects(user_id=user_id, product_code=product_code).update_one(
-        set__product_code=product_code,
-        set__user_id=user_id,
-        set__lowest_price=price,
-        upsert=True,
-    )
+def update_subscriber(
+    user_id: str, product_code: str, price: float, reset_used: bool = False
+):
+    subscriber: Subscriber = find_subscriber(user_id, product_code)
+    if subscriber:
+        logger.info("Using existing subscriber")
+        subscriber.lowest_price = price
+        if reset_used:
+            if subscriber.never_updated:
+                subscriber.never_updated = False
+    else:
+        logger.info("creating a new one")
+        create_subscriber(user_id, product_code, price)
+
+
+def create_subscriber(user_id: str, product_code: str, price: float):
+    Subscriber(
+        user_id=user_id,
+        product_code=product_code,
+        lowest_price=price,
+        never_updated=True,
+    ).save()
 
 
 def find_subscriber(user_id: int, product_code: str):

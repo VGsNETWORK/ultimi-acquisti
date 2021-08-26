@@ -1321,9 +1321,11 @@ def view_wishlist_element_links_keyboard(
                     extra_cash = 0.00
                 row.append(
                     create_button(
-                        "%s  %s €"
+                        "%s%s €"
                         % (
-                            deals[index],
+                            ""
+                            if subscribers[index].never_updated
+                            else f"{deals[index]} ",
                             format_price(tracked_links[index].price + extra_cash),
                         ),
                         "spp_%s_%s"
@@ -1392,8 +1394,6 @@ def view_wishlist_element_links_keyboard(
             )
         ]
     )
-    logger.info("returning the keyboard")
-    logger.info(len(keyboard))
     return InlineKeyboardMarkup(keyboard)
 
 

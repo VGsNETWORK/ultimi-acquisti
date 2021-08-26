@@ -1166,9 +1166,7 @@ PRICE_MESSAGE_POPUP = (
     "* Offerta migliore di sempre precedente:\n      %s €"
 )
 
-PRICE_MESSAGE_POPUP_NO_VARIATION = (
-    ": :   %s   : :\n\n" "PREZZO ATTUALE:\n    %s €   (%s)\n"
-)
+PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s €"
 
 WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
     "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo visualizzato "
