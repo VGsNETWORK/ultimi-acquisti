@@ -98,10 +98,14 @@ def show_price_popup(update: Update, context: CallbackContext):
     if extra_lowest:
         extra_lowest = " + %s" % extra_lowest
     extra = extractor.show_extra_info(tracked_link)
+    if tracked_link.price > 0:
+        price = "%s%s €" % (format_price(tracked_link.price), extra_price)
+    else:
+        price = "N/D"
     if not subscriber.never_updated:
         message = PRICE_MESSAGE_POPUP % (
             title.upper(),
-            "%s%s" % (format_price(tracked_link.price), extra_price),
+            price,
             sign,
             extra,
             "%s%s" % (format_price(subscriber.lowest_price), extra_lowest),
@@ -109,7 +113,8 @@ def show_price_popup(update: Update, context: CallbackContext):
     else:
         message = PRICE_MESSAGE_POPUP_NO_VARIATION % (
             title.upper(),
-            "%s%s" % (format_price(tracked_link.price), extra_price),
+            price,
+            "\n%s" % extra,
         )
     context.bot.answer_callback_query(
         update.callback_query.id, show_alert=True, text=message

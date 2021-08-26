@@ -1314,19 +1314,24 @@ def view_wishlist_element_links_keyboard(
             if tracked_links[index] != "do_not_show":
                 supported = True
                 extra_cash = extractor.get_shipment_cost(
-                    tracked_links[index].price, tracked_links[index].link, True
+                    tracked_links[index].price, tracked_links[index].link, False
                 )
                 logger.info(extra_cash)
                 if not extra_cash:
                     extra_cash = 0.00
+                if tracked_links[index].price > 0:
+                    real_price = format_price(tracked_links[index].price + extra_cash)
+                else:
+                    real_price = "N/D"
+                real_price += " €" if tracked_links[index].price > 0 else ""
                 row.append(
                     create_button(
-                        "%s%s €"
+                        "%s%s"
                         % (
                             ""
                             if subscribers[index].never_updated
                             else f"{deals[index]} ",
-                            format_price(tracked_links[index].price + extra_cash),
+                            real_price,
                         ),
                         "spp_%s_%s"
                         % (str(tracked_links[index].id), wishlist_element_id),

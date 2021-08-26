@@ -1161,12 +1161,12 @@ DEAL_MESSAGE_FORMAT_APPEND = " <b>Non fartelo scappare!</b>"
 
 PRICE_MESSAGE_POPUP = (
     ": :   %s   : :\n\n"
-    "PREZZO ATTUALE:\n      %s €   (%s)*\n"
+    "PREZZO ATTUALE:\n      %s   (%s)*\n"
     "%s"
-    "* Offerta migliore di sempre precedente:\n      %s €"
+    "* Offerta migliore di sempre precedente:\n      %s"
 )
 
-PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s €"
+PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s%s"
 
 WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
     "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo visualizzato "

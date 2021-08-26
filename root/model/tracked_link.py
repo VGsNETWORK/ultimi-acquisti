@@ -22,3 +22,4 @@ class TrackedLink(BaseModel):
     subscribers = ListField(IntField())
     collect_available = BooleanField()
     delivery_available = BooleanField()
+    bookable = BooleanField()

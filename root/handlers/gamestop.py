@@ -17,6 +17,9 @@ RULE = {
     "platform": Rule("span", {"class": "platLogo"}),
     "store": "GameStop",
     "base_url": BASE_URL,
+    "bookable": False,
+    "delivery_available": False,
+    "collect_available": False,
 }
 
 
@@ -74,8 +77,9 @@ def extract_missing_data(product: dict, data: bs4):
         product["price"] = float(price)
     else:
         product["price"] = 0
-
     product["platform"] = product["platform"].strip()
+    bookable = data.find("p", {"content": "PreOrder"})
+    product["bookable"] = True if bookable else False
     logger.info(product)
     return product
 
@@ -83,10 +87,24 @@ def extract_missing_data(product: dict, data: bs4):
 def get_extra_info(tracked_link: TrackedLink):
     collect_available = "✅" if tracked_link.collect_available else "❌"
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
-    return "%s  Spedizione\n%s  Ritiro in negozio\n\n" % (
-        delivery_available,
-        collect_available,
-    )
+    bookable = "✅" if tracked_link.bookable else "❌"
+    if tracked_link.bookable:
+        return "%s  Prenotazione\n%s  Spedizione\n%s  Ritiro in negozio\n\n" % (
+            bookable,
+            delivery_available,
+            collect_available,
+        )
+    else:
+        if tracked_link.price > 0:
+            return "%s  Spedizione\n%s  Ritiro in negozio\n\n" % (
+                delivery_available,
+                collect_available,
+            )
+        else:
+            return "❌  Prenotazione\n%s  Spedizione\n%s  Ritiro in negozio\n\n" % (
+                delivery_available,
+                collect_available,
+            )
 
 
 # fmt: off

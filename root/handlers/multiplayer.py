@@ -20,6 +20,7 @@ RULE = {
     "base_url": BASE_URL,
     "delivery_available": True,
     "collect_available": False,
+    "bookable": False,
 }
 
 
@@ -58,6 +59,9 @@ def extract_missing_data(product: dict, data: bs4):
     price = data.findAll("script", {"type": "application/ld+json"})
     availability = data.find("div", {"class": "dyn-product-status"})
     product["delivery_available"] = True if availability else False
+    product["collect_available"] = True if availability else False
+    add_to_cart = data.find("a", {"id": "price-garancy"})
+    product["bookable"] = True if add_to_cart else False
     if len(price) > 1:
         price: str = str(price[1])
         price: str = re.sub("<.*?>", "", price)
@@ -75,7 +79,17 @@ def extract_missing_data(product: dict, data: bs4):
 
 def get_extra_info(tracked_link: TrackedLink):
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
-    return "%s  Disponibile\n\n" % (delivery_available)
+    bookable = "✅" if tracked_link.bookable else "❌"
+    if tracked_link.bookable:
+        return "%s  Prenotazione\n%s  Disponibile\n\n" % (bookable, delivery_available)
+    else:
+        if tracked_link.price > 0:
+            return "%s  Disponibile\n\n" % (delivery_available)
+        else:
+            return "❌  Prenotazione\n%s  Disponibile\n\n" % (
+                bookable,
+                delivery_available,
+            )
 
 
 # fmt: off

@@ -45,6 +45,7 @@ def update_or_create_scraped_link(product: dict):
     code = product["code"]
     if not code or not product:
         return False
+    logger.info(product)
     # create a temporary product Object
     tracked: TrackedLink = TrackedLink(**product, subscribers=[])
     if tracked.link:
@@ -58,6 +59,7 @@ def update_or_create_scraped_link(product: dict):
                                               set__link=product["link"],
                                               set__collect_available=product["collect_available"],
                                               set__delivery_available=product["delivery_available"],
+                                              set__bookable=product["bookable"],
                                               upsert=True)
         return True
         # fmt: on
@@ -77,6 +79,7 @@ def update_scraped_link_information(product: dict):
         tracked_link.collect_available = product["collect_available"]
         tracked_link.delivery_available = product["delivery_available"]
         tracked_link.price = float(product["price"])
+        tracked_link.bookable = product["bookable"]
         tracked_link.save() 
 
 

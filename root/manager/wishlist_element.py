@@ -790,7 +790,12 @@ def view_wishlist(
                 tracked_link: TrackedLink = find_link_by_link(link)
                 if tracked_link:
                     has_tracked_links = True
-                    price = "<b>%s € ⁽*⁾</b>  •  " % format_price(tracked_link.price)
+                    if tracked_link.price > 0:
+                        price = "<b>%s € ⁽*⁾</b>  •  " % format_price(
+                            tracked_link.price
+                        )
+                    else:
+                        price = "<b>N/D ⁽*⁾</b>  •  "
 
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
