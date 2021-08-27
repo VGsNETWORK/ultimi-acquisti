@@ -81,18 +81,21 @@ def extract_missing_data(product: dict, data: bs4):
     product["platform"] = product["platform"].strip()
     bookable = data.find("p", {"content": "PreOrder"})
     product["bookable"] = True if bookable else False
-    sold_out = data.find("a", {"class": "buyDisabled"})
-    logger.info("This is the sold out: [%s]" % sold_out)
-    if sold_out:
-        sold_out = de_html(sold_out)
-        sold_out = "esaurito" in sold_out.lower()
-    else:
+    if product["collect_available"] or product["delivery_available"]:
         sold_out = False
-    product["sold_out"] = sold_out
-    if sold_out:
-        product["delivery_available"] = False
-        product["collect_available"] = False
-        product["bookable"] = False
+    else:
+        sold_out = data.find("a", {"class": "buyDisabled"})
+        logger.info("This is the sold out: [%s]" % sold_out)
+        if sold_out:
+            sold_out = de_html(sold_out)
+            sold_out = "esaurito" in sold_out.lower()
+        else:
+            sold_out = False
+        product["sold_out"] = sold_out
+        if sold_out:
+            product["delivery_available"] = False
+            product["collect_available"] = False
+            product["bookable"] = False
     logger.info(product)
     return product
 
