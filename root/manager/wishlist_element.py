@@ -146,10 +146,11 @@ def retrieve_photos_append(user: User, links: List[str] = None):
 
 
 def show_new_line(price: str, has_media: bool):
-    if has_media and price:
-        return "\n"
-    else:
-        return "  •  "
+    return "  •  "
+    # if has_media and price:
+    #    return "\n"
+    # else:
+    #    return "  •  "
 
 
 def check_message_length(
@@ -791,11 +792,9 @@ def view_wishlist(
                 if tracked_link:
                     has_tracked_links = True
                     if tracked_link.price > 0:
-                        price = "<b>%s € ⁽*⁾</b>  •  " % format_price(
-                            tracked_link.price
-                        )
+                        price = "<b>%s € ⁽*⁾</b>\n" % format_price(tracked_link.price)
                     else:
-                        price = "<b>N/D ⁽*⁾</b>  •  "
+                        price = "<b>N/D ⁽*⁾</b>\n"
 
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
