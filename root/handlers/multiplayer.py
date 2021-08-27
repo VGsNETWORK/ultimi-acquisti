@@ -9,6 +9,8 @@ from root.model.extractor_handler import ExtractorHandler
 from root.handlers.generic import extract_data
 from root.util.util import de_html
 import telegram_utils.utils.logger as logger
+import requests
+import json
 
 BASE_URL = "multiplayer.com/"
 MATCH = "multiplayer.com"
@@ -21,6 +23,7 @@ RULE = {
     "delivery_available": True,
     "collect_available": False,
     "bookable": False,
+    "sold_out": False,
 }
 
 
@@ -29,6 +32,24 @@ def get_shipment_cost(price: float, string: bool = False):
         return "4,90" if string else 4.90
     else:
         return "" if string else 0.00
+
+
+def is_bookable(data: bs4):
+    path = data.find_all("script")[-6]
+    if path:
+        path = de_html(path).split("'")
+        path = [line for line in path if "url" in line]
+        if path:
+            path = path[0].strip()
+            path = re.sub('^.*url:|,.*|"', "", path)
+            path = path.strip()
+            headers = {"X-Requested-With": "XMLHttpRequest"}
+            url = "https://%s%s" % (MATCH, path)
+            print(url)
+            data = requests.get(url, headers=headers)
+            if data.status_code == 200:
+                data = json.loads(data.content)
+                return data["status"]["code"] == 6
 
 
 def load_picture(data: bs4):
@@ -65,8 +86,7 @@ def extract_missing_data(product: dict, data: bs4):
     logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
     logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
     logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
-    # TODO: DOES NOT WORK
-    product["bookable"] = "Prezzo Minimo Garantito" == de_html(add_to_cart)
+    product["bookable"] = is_bookable(data)
     if len(price) > 1:
         price: str = str(price[1])
         price: str = re.sub("<.*?>", "", price)
@@ -85,17 +105,16 @@ def extract_missing_data(product: dict, data: bs4):
 def get_extra_info(tracked_link: TrackedLink):
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
     bookable = "✅" if tracked_link.bookable else "❌"
-    return "%s  Disponibile\n\n" % (delivery_available)
-    # if tracked_link.bookable:
-    #    return "%s  Prenotazione\n%s  Disponibile\n\n" % (bookable, delivery_available)
-    # else:
-    #    if tracked_link.price > 0:
-    #        return "%s  Disponibile\n\n" % (delivery_available)
-    #    else:
-    #        return "❌  Prenotazione\n%s  Disponibile\n\n" % (
-    #            bookable,
-    #            delivery_available,
-    #        )
+    if tracked_link.bookable:
+        return "%s  Prenotazione\n%s  Disponibile\n\n" % (bookable, delivery_available)
+    else:
+        if tracked_link.price > 0:
+            return "%s  Disponibile\n\n" % (delivery_available)
+        else:
+            return "❌  Prenotazione\n%s  Disponibile\n\n" % (
+                bookable,
+                delivery_available,
+            )
 
 
 # fmt: off

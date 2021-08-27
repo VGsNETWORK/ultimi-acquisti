@@ -60,17 +60,19 @@ def update_or_create_scraped_link(product: dict):
                                               set__collect_available=product["collect_available"],
                                               set__delivery_available=product["delivery_available"],
                                               set__bookable=product["bookable"],
+                                              set__sold_out=product["sold_out"],
                                               upsert=True)
         return True
         # fmt: on
     return False
 
-def update_link_information(code: str, collect_available: bool, delivery_available: bool, price: float):
+def update_link_information(code: str, collect_available: bool, delivery_available: bool, price: float, sold_out: bool):
     tracked_link: TrackedLink = find_link_by_code(code)
     if tracked_link:
         tracked_link.collect_available = collect_available
         tracked_link.delivery_available = delivery_available
         tracked_link.price = price
+        tracked_link.sold_out = sold_out
         tracked_link.save()
 
 def update_scraped_link_information(product: dict):
@@ -80,6 +82,7 @@ def update_scraped_link_information(product: dict):
         tracked_link.delivery_available = product["delivery_available"]
         tracked_link.price = float(product["price"])
         tracked_link.bookable = product["bookable"]
+        tracked_link.sold_out = product["sold_out"]
         tracked_link.save() 
 
 

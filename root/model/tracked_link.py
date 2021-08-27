@@ -23,3 +23,4 @@ class TrackedLink(BaseModel):
     collect_available = BooleanField()
     delivery_available = BooleanField()
     bookable = BooleanField()
+    sold_out = BooleanField()

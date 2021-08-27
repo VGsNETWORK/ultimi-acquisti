@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+from root.util.util import de_html
 from root.model.tracked_link import TrackedLink
 from root.handlers.generic import extract_data
 from root.model.rule import Rule
@@ -20,6 +20,7 @@ RULE = {
     "bookable": False,
     "delivery_available": False,
     "collect_available": False,
+    "sold_out": False,
 }
 
 
@@ -80,6 +81,18 @@ def extract_missing_data(product: dict, data: bs4):
     product["platform"] = product["platform"].strip()
     bookable = data.find("p", {"content": "PreOrder"})
     product["bookable"] = True if bookable else False
+    sold_out = data.find("a", {"class": "buyDisabled"})
+    logger.info("This is the sold out: [%s]" % sold_out)
+    if sold_out:
+        sold_out = de_html(sold_out)
+        sold_out = "esaurito" in sold_out.lower()
+    else:
+        sold_out = False
+    product["sold_out"] = sold_out
+    if sold_out:
+        product["delivery_available"] = False
+        product["collect_available"] = False
+        product["bookable"] = False
     logger.info(product)
     return product
 
