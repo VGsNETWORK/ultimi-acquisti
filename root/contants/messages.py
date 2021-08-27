@@ -1172,3 +1172,10 @@ WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
     "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo visualizzato "
     "per il prodotto potrebbe non essere aggiornato.</i>"
 )
+
+
+TRACKED_LINK_EXPLANATION = (
+    "Dato che hai dei <i>link tracciati</i> per questo elemento, "
+    "in calce al messaggio trovi allegate le <b>offerte migliori del momento</b>!\n"
+    "In più, cliccando sul prezzo potrai avere delle utili informazioni aggiuntive sul prodotto in oggetto!\n"
+)

@@ -37,6 +37,7 @@ from root.contants.messages import (
     PRICE_MESSAGE_POPUP,
     PRICE_MESSAGE_POPUP_NO_VARIATION,
     SUPPORTED_LINKS_MESSAGE,
+    TRACKED_LINK_EXPLANATION,
     WISHLIST_HEADER,
     WISHLIST_LINK_LEGEND_APPEND,
     WISHLIST_LINK_LIMIT_REACHED,
@@ -244,6 +245,11 @@ def view_wishlist_element_links(
     message = WISHLIST_HEADER % title
     if links:
         message += f"Hai aggiunto  <code>{len(links)}</code>  link per <b>{wishlist_element.description}</b>.\n"
+        is_tracked = next(
+            (True for link in links if extractor.is_supported(link)), False
+        )
+        if is_tracked:
+            message += TRACKED_LINK_EXPLANATION
         wishlist_element.links.reverse()
         if len(wishlist_element.links) == 10:
             spaces = "  "
@@ -263,21 +269,23 @@ def view_wishlist_element_links(
                     wishlist_link[:MAX_LINK_LENGTH],
                 )
             if not tracked:
-                i = "<b>%s.</b>" % (index + 1)
+                if is_tracked:
+                    i = " <b>%s.</b> " % (index + 1)
             else:
                 if index > 2:
-                    i = "<b>%s.</b>" % (index + 1)
+                    if is_tracked:
+                        i = " <b>%s.</b> " % (index + 1)
                 else:
-                    i = medals[index]
+                    i = "%s " % medals[index]
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n{spaces}{i}  {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i} {wishlist_link}{tracked}"
                 else:
-                    message += f"\n{spaces}{i}  {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i} {wishlist_link}{tracked}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n{spaces}{i}  {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i} {wishlist_link}{tracked}"
             else:
-                message += f"\n\n{spaces}{i}  {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i} {wishlist_link}{tracked}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."
