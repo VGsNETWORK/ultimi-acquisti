@@ -3,7 +3,7 @@
 from difflib import SequenceMatcher
 from operator import add
 from os import environ
-from re import S, sub
+from re import I, S, sub
 import re
 
 from telegram.bot import Bot
@@ -249,6 +249,7 @@ def view_wishlist_element_links(
             spaces = "  "
         else:
             spaces = ""
+        medals = ["🥇", "🥈", "🥉"]
         for index, wishlist_link in enumerate(wishlist_element.links):
             if extractor.is_supported(wishlist_link):
                 tracked = "  (💹)"
@@ -261,15 +262,22 @@ def view_wishlist_element_links(
                     wishlist_link,
                     wishlist_link[:MAX_LINK_LENGTH],
                 )
+            if not tracked:
+                i = "<b>%s.</b>" % (index + 1)
+            else:
+                if index > 2:
+                    i = "<b>%s.</b>" % (index + 1)
+                else:
+                    i = medals[index]
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i}  {wishlist_link}{tracked}"
                 else:
-                    message += f"\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i}  {wishlist_link}{tracked}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i}  {wishlist_link}{tracked}"
             else:
-                message += f"\n\n{spaces}<b>{index+1}.</b>  {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i}  {wishlist_link}{tracked}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."

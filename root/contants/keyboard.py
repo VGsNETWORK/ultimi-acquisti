@@ -1306,10 +1306,21 @@ def view_wishlist_element_links_keyboard(
             ]
         )
     supported = False
+    medals = ["🥇", "🥈", "🥉"]
     for index, link in enumerate(links):
-        row = [
-            create_button("%s." % (index + 1), "empty_button", None),
-        ]
+        if tracked_links[index] == "do_not_show":
+            row = [
+                create_button("%s." % (index + 1), "empty_button", None),
+            ]
+        else:
+            if index > 2:
+                row = [
+                    create_button("%s." % (index + 1), "empty_button", None),
+                ]
+            else:
+                row = [
+                    create_button("%s" % (medals[index]), "empty_button", None),
+                ]
         if tracked_links[index]:
             if tracked_links[index] != "do_not_show":
                 supported = True
