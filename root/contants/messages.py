@@ -1170,8 +1170,9 @@ PRICE_MESSAGE_POPUP = (
 PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s%s"
 
 WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
-    "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo visualizzato "
-    "per il prodotto potrebbe non essere aggiornato.</i>"
+    "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo o le info visualizzati "
+    'per il prodotto potrebbero non essere aggiornati. Apri la <b>sezione link</b>  ("🔗")  '
+    "del relativo elemento per aggiornarli.</i>"
 )
 
 
