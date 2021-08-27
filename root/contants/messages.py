@@ -1126,8 +1126,9 @@ ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS = "\n\n\n✅  <i><b>%s</b> foto scaric
 WISHLIST_LINK_LIMIT_REACHED = "\n\n\n<i><b>Limite massimo di link raggiunto!</b>\nSe vuoi aggiungerne di nuovi, devi prima eliminarne qualcuno.</i>"
 
 WISHLIST_LINK_LEGEND_APPEND = (
-    "\n\n\n<b>LEGENDA</b>\n"
-    "💹  =  <b>Tracking del prezzo abilitato</b>\n"
+    "\n\n\n<b>LEGENDA</b>\n" "💹  =  <b>Tracking del prezzo abilitato</b>\n"
+)
+WISHLIST_LINK_LEGEND_APPEND_VARIATION = (
     "📈  =  <b>Prezzo salito</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n"
     "➖  =  <b>Prezzo invariato</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n"
     "📉  =  <b>Prezzo sceso</b> rispetto all'<i>offerta migliore di sempre</i><b>*</b>\n\n"

@@ -40,6 +40,7 @@ from root.contants.messages import (
     TRACKED_LINK_EXPLANATION,
     WISHLIST_HEADER,
     WISHLIST_LINK_LEGEND_APPEND,
+    WISHLIST_LINK_LEGEND_APPEND_VARIATION,
     WISHLIST_LINK_LIMIT_REACHED,
 )
 from root.helper import wishlist_element
@@ -297,6 +298,7 @@ def view_wishlist_element_links(
     deals: List[str] = []
     new_prices = []
     show_legend = False
+    never_updated = False
     for link in wishlist_element.links:
         if extractor.is_supported(link):
             logger.info("SUPPORTED LINK")
@@ -304,6 +306,8 @@ def view_wishlist_element_links(
             subscriber: Subscriber = find_subscriber(
                 user.id, extractor.extract_code(link)
             )
+            if not subscriber.never_updated:
+                never_updated = True
             tracked_link: TrackedLink = find_link_by_code(extractor.extract_code(link))
             if subscriber and tracked_link:
                 try:
@@ -391,6 +395,8 @@ def view_wishlist_element_links(
             # subscriber.save()
     if show_legend:
         message += WISHLIST_LINK_LEGEND_APPEND
+        if never_updated:
+            message += WISHLIST_LINK_LEGEND_APPEND_VARIATION
     try:
         logger.info("editing message")
         bot = Bot(environ["TOKEN"])
