@@ -100,21 +100,33 @@ def extract_missing_data(product: dict, data: bs4):
 def get_extra_info(tracked_link: TrackedLink):
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
     bookable = "✅" if tracked_link.bookable else "❌"
+    if (
+        tracked_link.collect_available
+        or tracked_link.delivery_available
+        or tracked_link.bookable
+    ):
+        available = "✅"
+    else:
+        available = "❌"
     if tracked_link.price < 49:
         extra_price = " a %s €" % get_shipment_cost(tracked_link.price, True)
     else:
         extra_price = " gratuita"
     if tracked_link.bookable:
-        return "%s  Prenotazione\n%s  Spedizione%s\n\n" % (
+        return "%s  Preordine\n%s  Spediz.%s\n\n" % (
             bookable,
             delivery_available,
             extra_price,
         )
     else:
         if tracked_link.price > 0:
-            return "%s  Spedizione%s\n\n" % (delivery_available, extra_price)
+            return "%s  Disponib.\n%s  Spediz.%s\n\n" % (
+                available,
+                delivery_available,
+                extra_price,
+            )
         else:
-            return "❌  Prenotazione\n%s  Spedizione%s\n\n" % (
+            return "❌  Preordine\n%s  Spediz.%s\n\n" % (
                 bookable,
                 delivery_available,
                 extra_price,

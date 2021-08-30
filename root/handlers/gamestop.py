@@ -104,12 +104,20 @@ def get_extra_info(tracked_link: TrackedLink):
     collect_available = "✅" if tracked_link.collect_available else "❌"
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
     bookable = "✅" if tracked_link.bookable else "❌"
+    if (
+        tracked_link.collect_available
+        or tracked_link.delivery_available
+        or tracked_link.bookable
+    ):
+        available = "✅"
+    else:
+        available = "❌"
     if tracked_link.price < 40:
         extra_price = " a %s €" % get_shipment_cost(tracked_link.price, True)
     else:
         extra_price = " gratuita"
     if tracked_link.bookable:
-        return "%s  Prenotazione\n%s  Spedizione%s\n%s  Ritiro in negozio\n\n" % (
+        return "%s  Preordine\n%s  Spediz.%s\n%s  Ritiro in negozio\n\n" % (
             bookable,
             delivery_available,
             extra_price,
@@ -117,13 +125,14 @@ def get_extra_info(tracked_link: TrackedLink):
         )
     else:
         if tracked_link.price > 0:
-            return "%s  Spedizione%s\n%s  Ritiro in negozio\n\n" % (
+            return "%s  Disponib.\n%s  Spediz.%s\n%s  Ritiro in negozio\n\n" % (
+                available,
                 delivery_available,
                 extra_price,
                 collect_available,
             )
         else:
-            return "❌  Prenotazione\n%s  Spedizione%s\n%s  Ritiro in negozio\n\n" % (
+            return "❌  Preordine\n%s  Spediz.%s\n%s  Ritiro in negozio\n\n" % (
                 delivery_available,
                 extra_price,
                 collect_available,
