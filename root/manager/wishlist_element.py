@@ -105,6 +105,9 @@ import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.handlers.handlers import extractor
 from difflib import SequenceMatcher
+from root.util.telegram import TelegramSender
+
+sender = TelegramSender()
 
 # endregion
 
@@ -712,7 +715,7 @@ def view_wishlist(
         )
     try:
         if not update.callback_query:
-            delete_if_private(message)
+            sender.delete_if_private(context, message)
     except Exception:
         pass
     if update.callback_query:
