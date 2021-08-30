@@ -795,6 +795,13 @@ def view_wishlist(
                 if tracked_link:
                     has_tracked_links = True
                     if tracked_link.price > 0:
+                        if not tracked_link.collect_available:
+                            tracked_link.price = (
+                                tracked_link.price
+                                + extractor.get_shipment_cost(
+                                    tracked_link.price, tracked_link.link
+                                )
+                            )
                         price = "<b>%s € ⁽*⁾</b>\n" % format_price(tracked_link.price)
                     else:
                         price = "<b>N/D ⁽*⁾</b>\n"

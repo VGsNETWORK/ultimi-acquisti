@@ -1324,9 +1324,12 @@ def view_wishlist_element_links_keyboard(
         if tracked_links[index]:
             if tracked_links[index] != "do_not_show":
                 supported = True
-                extra_cash = extractor.get_shipment_cost(
-                    tracked_links[index].price, tracked_links[index].link, False
-                )
+                if not tracked_links[index].collect_available:
+                    extra_cash = extractor.get_shipment_cost(
+                        tracked_links[index].price, tracked_links[index].link, False
+                    )
+                else:
+                    extra_cash = 0.00
                 logger.info(extra_cash)
                 if not extra_cash:
                     extra_cash = 0.00

@@ -93,7 +93,7 @@ def show_price_popup(update: Update, context: CallbackContext):
         tracked_link.price, tracked_link.link, True
     )
     if extra_price:
-        extra_price = " + %s" % extra_price
+        extra_price = "%s" % extra_price
     extra_lowest = extractor.get_shipment_cost(
         subscriber.lowest_price, tracked_link.link, True
     )
@@ -101,7 +101,7 @@ def show_price_popup(update: Update, context: CallbackContext):
         extra_lowest = " + %s" % extra_lowest
     extra = extractor.show_extra_info(tracked_link)
     if tracked_link.price > 0:
-        price = "%s%s €" % (format_price(tracked_link.price), extra_price)
+        price = "%s €" % format_price(tracked_link.price)
     else:
         price = "N/D"
     if not subscriber.never_updated:

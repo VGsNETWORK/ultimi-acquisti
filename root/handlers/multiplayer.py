@@ -80,12 +80,7 @@ def extract_missing_data(product: dict, data: bs4):
     price = data.findAll("script", {"type": "application/ld+json"})
     availability = data.find("div", {"class": "dyn-product-status"})
     product["delivery_available"] = True if availability else False
-    product["collect_available"] = True if availability else False
     add_to_cart = data.find("a", {"id": "price-garancy"})
-    logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
-    logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
-    logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
-    logger.info("THIS IS THE SHIT [%s]" % add_to_cart)
     product["bookable"] = is_bookable(data)
     if len(price) > 1:
         price: str = str(price[1])
@@ -105,15 +100,24 @@ def extract_missing_data(product: dict, data: bs4):
 def get_extra_info(tracked_link: TrackedLink):
     delivery_available = "✅" if tracked_link.delivery_available else "❌"
     bookable = "✅" if tracked_link.bookable else "❌"
+    if tracked_link.price < 49:
+        extra_price = " a %s €" % get_shipment_cost(tracked_link.price, True)
+    else:
+        extra_price = " gratuita"
     if tracked_link.bookable:
-        return "%s  Prenotazione\n%s  Disponibile\n\n" % (bookable, delivery_available)
+        return "%s  Prenotazione\n%s  Spedizione%s\n\n" % (
+            bookable,
+            delivery_available,
+            extra_price,
+        )
     else:
         if tracked_link.price > 0:
-            return "%s  Disponibile\n\n" % (delivery_available)
+            return "%s  Spedizione%s\n\n" % (delivery_available, extra_price)
         else:
-            return "❌  Prenotazione\n%s  Disponibile\n\n" % (
+            return "❌  Prenotazione\n%s  Spedizione%s\n\n" % (
                 bookable,
                 delivery_available,
+                extra_price,
             )
 
 
