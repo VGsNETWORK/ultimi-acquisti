@@ -3,6 +3,7 @@
 # IMPORTS
 # region
 from re import sub
+import re
 from root.helper.wishlist_element import find_containing_link
 from root.util.util import format_price
 from telegram_utils.utils.misc import format_error
@@ -92,9 +93,10 @@ def update_products(context: CallbackContext):
             if not product.code.startswith("//"):
                 previous_price: float = product.price
                 logger.info("loading %s/%s" % (product.base_url, product.code))
-                product: dict = extractor.parse_url(
-                    "%s/%s" % (product.base_url, product.code)
-                )
+                url = "%s/%s" % (product.base_url, product.code)
+                if "www." in url:
+                    url = re.sub("www\.", "", url)
+                product: dict = extractor.parse_url(url)
                 if product["code"].startswith("/"):
                     product["code"] = product["code"][1:]
                 updated: bool = update_scraped_link_information(product)

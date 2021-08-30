@@ -1065,6 +1065,8 @@ def add_category(update: Update, context: CallbackContext):
             wish.wishlist_id = user.current_wishlist
         for link in wish.links:
             try:
+                if "www." in link:
+                    link = re.sub("www\.", "", link)
                 product = extractor.parse_url(link)
                 logger.info(product)
                 extractor.add_subscriber(link, user.user_id, product)

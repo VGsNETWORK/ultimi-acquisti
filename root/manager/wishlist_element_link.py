@@ -313,6 +313,8 @@ def view_wishlist_element_links(
                 try:
                     if scrape:
                         logger.info("SCRAPING IT")
+                        if "www." in link:
+                            link = re.sub("www\.", "", link)
                         product = extractor.parse_url(link)
                         new_price = float(product["price"])
                         if find_link_by_code(product["code"]):
@@ -529,6 +531,8 @@ def append_link(update: Update, context: CallbackContext):
         try:
             logger.info("parsing URL")
             wishlist_link = re.sub(r".*//", "", wishlist_link)
+            if "www." in wishlist_link:
+                wishlist_link = re.sub("www\.", "", wishlist_link)
             product = extractor.parse_url(wishlist_link)
             extractor.add_subscriber(wishlist_link, user.id, product)
         except ValueError as e:
