@@ -34,9 +34,9 @@ TELEGRAM_ERROR = (
 )
 
 USER_ERROR = (
-    "Hey, durante la gestione del tuo messaggio si sono verificati degli errori."
+    "<i><b>Ehi!</b>\nDurante la gestione del tuo messaggio si sono verificati degli errori."
     " I nostri sviluppatori sono stati informati:"
-    " verranno risolti il prima possibile."
+    " verranno risolti il prima possibile.</i>"
 )
 
 START_COMMAND = (
