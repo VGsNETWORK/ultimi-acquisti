@@ -1307,7 +1307,9 @@ def view_wishlist_element_links_keyboard(
         )
     supported = False
     medals = ["🥇", "🥈", "🥉"]
-    for index, link in enumerate(links):
+    supported_links = [link for link in links if extractor.is_supported(link)]
+    links = list(set(links) - set(supported_links))
+    for index, link in enumerate(supported_links):
         if tracked_links[index] == "do_not_show":
             row = [
                 create_button("%s." % (index + 1), "empty_button", None),
@@ -1358,41 +1360,41 @@ def view_wishlist_element_links_keyboard(
             )
         )
         keyboard.append(row)
-    # index = 0
-    # link_groups = zip(*(iter(links),) * 3)
-    # for link_group in link_groups:
-    #    group = []
-    #    for _ in link_group:
-    #        group.append(create_button("%s." % (index + 1), "empty_button", None))
-    #        group.append(
-    #            create_button(
-    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
-    #            )
-    #        )
-    #        index += 1
-    #    keyboard.append(group)
-    # link_groups = zip(*(iter(links[index:]),) * 2)
-    # for link_group in link_groups:
-    #    group = []
-    #    for _ in link_group:
-    #        group.append(create_button("%s." % (index + 1), "empty_button", None))
-    #        group.append(
-    #            create_button(
-    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
-    #            )
-    #        )
-    #        index += 1
-    #    keyboard.append(group)
-    # for _ in links[index:]:
-    #    keyboard.append(
-    #        [
-    #            create_button("%s." % (index + 1), "empty_button", None),
-    #            create_button(
-    #                "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
-    #            ),
-    #        ]
-    #    )
-    #    index += 1
+    index = len(supported_links)
+    link_groups = zip(*(iter(links),) * 3)
+    for link_group in link_groups:
+        group = []
+        for _ in link_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    link_groups = zip(*(iter(links[(index - len(supported_links)) :]),) * 2)
+    for link_group in link_groups:
+        group = []
+        for _ in link_group:
+            group.append(create_button("%s." % (index + 1), "empty_button", None))
+            group.append(
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                )
+            )
+            index += 1
+        keyboard.append(group)
+    for _ in links[(index - len(supported_links)) :]:
+        keyboard.append(
+            [
+                create_button("%s." % (index + 1), "empty_button", None),
+                create_button(
+                    "🗑", "rwel_%s_%s_%s" % (index - 1, page, wishlist_element_id), None
+                ),
+            ]
+        )
+        index += 1
     logger.info("show_update: %s - supported: %s" % (show_update, supported))
     if supported and show_update:
         keyboard.append(
