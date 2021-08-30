@@ -46,7 +46,11 @@ from root.contants.messages import (
 from root.helper import wishlist_element
 from root.helper.user_helper import get_current_wishlist_id
 from root.helper.wishlist import find_wishlist_by_id
-from root.helper.wishlist_element import find_wishlist_element_by_id
+from root.helper.wishlist_element import (
+    find_next_wishlist_element,
+    find_previous_wishlist_element,
+    find_wishlist_element_by_id,
+)
 from root.model.user import User
 from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
@@ -215,6 +219,12 @@ def view_wishlist_element_links(
         message_id = info.split("_")[-4]
         wishlist_element_id = info.split("_")[-3]
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wishlist_element_id)
+    previous_element: WishlistElement = find_previous_wishlist_element(
+        user.id, wishlist_element
+    )
+    next_element: WishlistElement = find_next_wishlist_element(
+        user.id, wishlist_element
+    )
     links = []
     tracked_links = []
     tc = []
@@ -388,6 +398,8 @@ def view_wishlist_element_links(
         tracked_links,
         deals,
         show_update,
+        previous_element,
+        next_element,
     )
     logger.info("got the keyboard")
     for index, subscriber in enumerate(subscribers):

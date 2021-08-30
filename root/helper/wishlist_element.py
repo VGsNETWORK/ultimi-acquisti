@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import List
 from root.helper.tracked_link_helper import remove_tracked_subscriber
 from root.handlers.handlers import extractor
 from root.helper.user_helper import change_wishlist, get_current_wishlist_id
@@ -99,6 +100,34 @@ def find_wishlist_element_for_user(
         .limit(page_size)
     )
     return wish
+
+
+def find_next_wishlist_element(user_id: int, wishlist_element: WishlistElement):
+    try:
+        wishlist_id = str(wishlist_element.id)
+        wishlist_elements: List[WishlistElement] = WishlistElement.objects().filter(
+            user_id=user_id,
+            creation_date__gte=wishlist_element.creation_date,
+            wishlist_id=wishlist_id,
+        )
+        return list(wishlist_elements)[0]
+    except Exception as e:
+        logger.error(e)
+        return None
+
+
+def find_previous_wishlist_element(user_id: int, wishlist_element: WishlistElement):
+    try:
+        wishlist_id = str(wishlist_element.id)
+        wishlist_elements: List[WishlistElement] = WishlistElement.objects().filter(
+            user_id=user_id,
+            wishlist_id=wishlist_id,
+            creation_date__lte=wishlist_element.creation_date,
+        )
+        return list(wishlist_elements)[-1]
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 def add_photo(_id: str, photo: str):

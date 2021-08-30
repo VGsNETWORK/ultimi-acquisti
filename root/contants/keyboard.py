@@ -1292,6 +1292,8 @@ def view_wishlist_element_links_keyboard(
     tracked_links: List[TrackedLink],
     deals: List[str],
     show_update: bool,
+    previous_element: WishlistElement,
+    next_element: WishlistElement,
 ):
     keyboard = []
     # ask for wishlist element link
@@ -1406,6 +1408,28 @@ def view_wishlist_element_links_keyboard(
                 )
             ]
         )
+    last_row = []
+    if previous_element:
+        last_row.append(
+            create_button(
+                "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
+                "",
+                None,
+            )
+        )
+    else:
+        last_row.append(create_button("🔚", "empty_button", None))
+    if next_element:
+        last_row.append(
+            create_button(
+                "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
+                "",
+                None,
+            )
+        )
+    else:
+        last_row.append(create_button("🔚", "empty_button", None))
+    keyboard.append(last_row)
     keyboard.append(
         [
             create_button(
