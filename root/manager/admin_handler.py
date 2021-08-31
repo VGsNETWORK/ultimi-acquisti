@@ -18,16 +18,16 @@ def handle_admin(update: Update, context: CallbackContext):
             name = "%s %s" % (result["first_name"], result["last_name"])
         else:
             name = "%s" % (result["first_name"])
-        line = '<a href="tg://user?id=%s">%s (@%s)</a>' % (
+        line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
             result["user_id"],
             name,
             result["username"],
         )
         line += "\n    🗃:  %s" % result["wishlists"]
         line += "\n    🗂:  %s" % result["wishlist_elements"]
-        line += "\n    🔗:  %s" % result["links"]
-        line += "\n    💹:  %s" % result["tracked_links"]
-        line += "\n    🖼:  %s" % result["photos"]
+        line += "\n     ├─  🖼:  %s" % result["photos"]
+        line += "\n     └─  🔗:  %s" % result["links"]
+        line += "\n              └─  💹:  %s" % result["tracked_links"]
         line += "\n\n"
         message += line
     message += USER_INFO_RECAP_LEGEND
