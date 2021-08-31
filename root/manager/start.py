@@ -4,6 +4,7 @@
 
 from os import environ
 import re
+from root.helper.user_helper import is_admin
 
 from mongoengine.errors import DoesNotExist
 from root.model.configuration import Configuration
@@ -193,6 +194,27 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         page = max_pages - 1
     elif page < 0:
         page = 0
+    if is_admin(message.from_user.id):
+        admin_button = [
+            create_button(
+                "🎖 PANNELLO ADMIN",
+                "show_admin_panel",
+                "show_admin_panel",
+            ),
+            create_button(
+                "⚙️  Impostazioni",
+                "user_settings",
+                "user_settings",
+            ),
+        ]
+    else:
+        admin_button = [
+            create_button(
+                "⚙️  Impostazioni",
+                "user_settings",
+                "user_settings",
+            )
+        ]
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -249,13 +271,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                     "view_wishlist_element_0",
                 )
             ],
-            [
-                create_button(
-                    "⚙️  Impostazioni",
-                    "user_settings",
-                    "user_settings",
-                )
-            ],
+            admin_button,
             [
                 create_button(
                     "ℹ️  Info",
@@ -329,6 +345,27 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
     poll_data = context.bot_data[poll_id]
     chat_id = poll_data["chat_id"]
     text = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
+    if is_admin(message.from_user.id):
+        admin_button = [
+            create_button(
+                "🎖 PANNELLO ADMIN",
+                "show_admin_panel",
+                "show_admin_panel",
+            ),
+            create_button(
+                "⚙️  Impostazioni",
+                "user_settings",
+                "user_settings",
+            ),
+        ]
+    else:
+        admin_button = [
+            create_button(
+                "⚙️  Impostazioni",
+                "user_settings",
+                "user_settings",
+            )
+        ]
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -363,13 +400,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "view_wishlist_element_0",
                 )
             ],
-            [
-                create_button(
-                    "⚙️  Impostazioni",
-                    "user_settings",
-                    "user_settings",
-                )
-            ],
+            admin_button,
             [
                 create_button(
                     "ℹ️  Info",
@@ -430,6 +461,27 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
     """
     bot_name = retrieve_key("BOT_NAME")
     if message.chat.type == "private":
+        if is_admin(message.from_user.id):
+            admin_button = [
+                create_button(
+                    "🎖 PANNELLO ADMIN",
+                    "show_admin_panel",
+                    "show_admin_panel",
+                ),
+                create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                ),
+            ]
+        else:
+            admin_button = [
+                create_button(
+                    "⚙️  Impostazioni",
+                    "user_settings",
+                    "user_settings",
+                )
+            ]
         return InlineKeyboardMarkup(
             [
                 [
@@ -469,13 +521,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                         "view_wishlist_element_0",
                     )
                 ],
-                [
-                    create_button(
-                        "⚙️  Impostazioni",
-                        "user_settings",
-                        "user_settings",
-                    )
-                ],
+                admin_button,
                 [
                     create_button(
                         "ℹ️  Info",

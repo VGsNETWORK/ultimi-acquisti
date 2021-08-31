@@ -1181,3 +1181,12 @@ TRACKED_LINK_EXPLANATION = (
     "in calce al messaggio trovi allegate le <b>offerte migliori del momento</b>!\n"
     "In più, cliccando sul prezzo potrai avere delle utili informazioni aggiuntive sul prodotto in oggetto!\n"
 )
+
+USER_INFO_RECAP_LEGEND = (
+    "\n<b>LEGENDA</b>\n"
+    "🗃  =  Numero di liste dei desideri\n"
+    "🗂  =  Numero di elementi\n"
+    "🔗  =  Numero di link\n"
+    "💹  =  Numero di link tracciati\n"
+    "🖼  =  Numero di foto\n"
+)

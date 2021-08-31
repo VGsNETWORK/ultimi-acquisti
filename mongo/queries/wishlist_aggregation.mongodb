@@ -1,0 +1,78 @@
+use('purchase-test');
+
+db.subscriber.aggregate([
+    {
+        $lookup: {
+            from: 'user',
+            localField: 'user_id',
+            foreignField: 'user_id',
+            as: 'user'
+        }
+    },
+    {
+        $lookup: {
+            from: 'wishlist_element',
+            localField: 'user_id',
+            foreignField: 'user_id',
+            as: 'wishlist_elements'
+        }
+    },
+    {
+        $lookup: {
+            from: 'wishlist',
+            localField: 'user_id',
+            foreignField: 'user_id',
+            as: 'wishlists'
+        }
+    },
+    {
+        $group: {
+            _id: "$user_id",
+            tracked_links: { $push: '$product_code' },
+            wishlist_elements: { $first: "$wishlist_elements" },
+            wishlists: { $first: "$wishlists" },
+            user: { $first: "$user" }
+        }
+    },
+    {
+        $project: {
+            "_id": 0,
+            user_id: "$_id",
+            tracked_links: { $size: '$tracked_links' },
+            wishlist_elements: { $size: '$wishlist_elements' },
+            links: {
+                $size: {
+                    $reduce: {
+                        "input": "$wishlist_elements.links",
+                        "initialValue": [],
+                        "in": {
+                            $concatArrays: [
+                                "$$this",
+                                "$$value"
+                            ]
+                        }
+                    }
+                }
+            },
+            photos: {
+                $size: {
+                    $reduce: {
+                        "input": "$wishlist_elements.photos",
+                        "initialValue": [],
+                        "in": {
+                            $concatArrays: [
+                                "$$this",
+                                "$$value"
+                            ]
+                        }
+                    }
+                }
+            },
+            wishlists: { $size: '$wishlists' },
+            linkedin: "$linkedin",
+            first_name:  { $arrayElemAt: ["$user.first_name", 0] },
+            last_name:  { $arrayElemAt: ["$user.last_name", 0] },
+            username:  { $arrayElemAt: ["$user.username", 0] }
+        }
+    }, 
+])

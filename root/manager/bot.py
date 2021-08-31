@@ -7,6 +7,7 @@ from operator import index
 import os
 from random import random
 import random
+from root.manager.admin_handler import handle_admin
 from root.manager.deal_test_handler import command_send_deal
 from root.job.update_product import update_products
 from root.manager.wishlist_element_link import (
@@ -294,6 +295,9 @@ class BotManager:
 
         self.disp.add_handler(
             CallbackQueryHandler(pattern="spp", callback=show_price_popup)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="show_admin_panel", callback=handle_admin)
         )
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
