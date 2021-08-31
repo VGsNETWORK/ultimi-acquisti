@@ -1409,27 +1409,30 @@ def view_wishlist_element_links_keyboard(
             ]
         )
     last_row = []
-    if previous_element:
-        last_row.append(
-            create_button(
-                "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
-                "",
-                None,
+    if previous_element or next_element:
+        if previous_element:
+            last_row.append(
+                create_button(
+                    "◄",
+                    "view_wishlist_link_element_%s_%s"
+                    % (page, str(previous_element.id)),
+                    None,
+                )
             )
-        )
-    else:
-        last_row.append(create_button("🔚", "empty_button", None))
-    if next_element:
-        last_row.append(
-            create_button(
-                "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
-                "",
-                None,
+        else:
+            last_row.append(create_button("🔚", "empty_button", None))
+        if next_element:
+            logger.info("THIS IS THE NEXT ELEMENT [%s]" % next_element)
+            last_row.append(
+                create_button(
+                    "►",
+                    "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
+                    None,
+                )
             )
-        )
-    else:
-        last_row.append(create_button("🔚", "empty_button", None))
-    keyboard.append(last_row)
+        else:
+            last_row.append(create_button("🔚", "empty_button", None))
+        keyboard.append(last_row)
     keyboard.append(
         [
             create_button(

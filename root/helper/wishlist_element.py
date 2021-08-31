@@ -10,6 +10,7 @@ from mongoengine.errors import DoesNotExist
 from root.model.wishlist_element import WishlistElement
 import telegram_utils.utils.logger as logger
 from pymongo.command_cursor import CommandCursor
+from mongoengine import Q
 
 
 def find_wishlist_element_by_id(_id: str):
@@ -104,13 +105,16 @@ def find_wishlist_element_for_user(
 
 def find_next_wishlist_element(user_id: int, wishlist_element: WishlistElement):
     try:
-        wishlist_id = str(wishlist_element.id)
+        wishlist_id = str(wishlist_element.wishlist_id)
         wishlist_elements: List[WishlistElement] = WishlistElement.objects().filter(
             user_id=user_id,
-            creation_date__gte=wishlist_element.creation_date,
             wishlist_id=wishlist_id,
         )
-        return list(wishlist_elements)[0]
+
+        wishlist_elements = wishlist_elements.filter(
+            (Q(creation_date__lt=wishlist_element.creation_date))
+        )
+        return list(wishlist_elements)[-1]
     except Exception as e:
         logger.error(e)
         return None
@@ -118,13 +122,15 @@ def find_next_wishlist_element(user_id: int, wishlist_element: WishlistElement):
 
 def find_previous_wishlist_element(user_id: int, wishlist_element: WishlistElement):
     try:
-        wishlist_id = str(wishlist_element.id)
+        wishlist_id = str(wishlist_element.wishlist_id)
         wishlist_elements: List[WishlistElement] = WishlistElement.objects().filter(
             user_id=user_id,
             wishlist_id=wishlist_id,
-            creation_date__lte=wishlist_element.creation_date,
         )
-        return list(wishlist_elements)[-1]
+        wishlist_elements = wishlist_elements.filter(
+            (Q(creation_date__gt=wishlist_element.creation_date))
+        )
+        return list(wishlist_elements)[0]
     except Exception as e:
         logger.error(e)
         return None

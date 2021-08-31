@@ -280,8 +280,7 @@ def view_wishlist_element_links(
                     wishlist_link[:MAX_LINK_LENGTH],
                 )
             if not tracked:
-                if is_tracked:
-                    i = " <b>%s.</b> " % (index + 1)
+                i = " <b>%s.</b> " % (index + 1)
             else:
                 if index > 2:
                     if is_tracked:
