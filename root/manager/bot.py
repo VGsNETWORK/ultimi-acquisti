@@ -301,6 +301,8 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(pattern="show_admin_panel", callback=handle_admin)
         )
+
+        self.disp.add_handler(CommandHandler("vota", rating.poll))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
         )

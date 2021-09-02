@@ -45,7 +45,9 @@ from root.contants.messages import (
 from uuid import uuid4
 import root.util.logger as logger
 import re
+from root.util.telegram import TelegramSender
 
+sender = TelegramSender()
 
 class Rating:
     def __init__(self):
@@ -237,7 +239,12 @@ class Rating:
         context.bot_data.update(payload)
 
     def poll(self, update: Update, context: CallbackContext) -> None:
-        data = update.callback_query.data
+        if not update.message.chat.type == "private":
+            return
+        if update.callback_query:
+            data = update.callback_query.data
+        else:
+            data = "rating_menu"
         user_id = update.effective_user.id
         chat_id = update.effective_chat.id
         message_id = update.effective_message.message_id
@@ -294,15 +301,25 @@ class Rating:
             self.previous_votes[user_id] = None
             self.previous_votes[user_id] = None
             # fmt: on
+        if update.callback_query:
+            context.bot.edit_message_text(
+                chat_id=chat_id,
+                text=message,
+                message_id=message_id,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
+            )
+        else:
+            sender.delete_if_private(context, update.effective_message)
+            context.bot.send_message(
+                chat_id=chat_id,
+                text=message,
+                parse_mode="HTML",
+                disable_web_page_preview=True,
+                reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
+            )
 
-        context.bot.edit_message_text(
-            chat_id=chat_id,
-            text=message,
-            message_id=message_id,
-            parse_mode="HTML",
-            disable_web_page_preview=True,
-            reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
-        )
 
     def show_rating(self, update: Update, context: CallbackContext):
         """ Show user rating """
