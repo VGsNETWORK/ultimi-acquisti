@@ -1186,7 +1186,7 @@ USER_INFO_RECAP_LEGEND = (
     "\n<b>LEGENDA</b>\n"
     "🗃  =  Numero di liste dei desideri\n"
     "🗂  =  Numero di elementi\n"
+    "🖼  =  Numero di foto\n"
     "🔗  =  Numero di link\n"
     "💹  =  Numero di link tracciati\n"
-    "🖼  =  Numero di foto\n"
 )

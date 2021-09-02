@@ -58,7 +58,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
-            reply_markup=build_keyboard(message),
+            reply_markup=build_keyboard(update.effective_user, message),
             parse_mode="HTML",
         )
         add_message(message.message_id, update.effective_user.id)
@@ -89,7 +89,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
         msg: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
-            reply_markup=build_keyboard(message),
+            reply_markup=build_keyboard(update.effective_user, message),
             parse_mode="HTML",
         )
         logger.info(f"FUCK OFF {msg.message_id}")
@@ -97,11 +97,11 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     else:
         sender.send_and_delete(
             message.message_id,
-            message.from_user.id,
+            update.efftive_user.id,
             context,
             chat_id,
             build_message(update.effective_user, message),
-            reply_markup=build_keyboard(message),
+            reply_markup=build_keyboard(update.effective_user, message),
             parse_mode="HTML",
             timeout=THREE_MINUTES,
         )
@@ -124,7 +124,7 @@ def help_end(update: Update, context: CallbackContext):
         chat_id=message.chat.id,
         disable_web_page_preview=True,
         message_id=message_id,
-        reply_markup=build_keyboard(message),
+        reply_markup=build_keyboard(update.effective_user, message),
         parse_mode="HTML",
     )
 
@@ -163,7 +163,7 @@ def conversation_main_menu(
             text=build_message(user, message),
             chat_id=chat_id,
             disable_web_page_preview=True,
-            reply_markup=build_keyboard(message),
+            reply_markup=build_keyboard(update.effective_user, message),
             message_id=message_id,
             parse_mode="HTML",
             timeout=10,
@@ -194,7 +194,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         page = max_pages - 1
     elif page < 0:
         page = 0
-    if is_admin(message.from_user.id):
+    if is_admin(update.efftive_user.id):
+        logger.info("User [%s] is an admin" % update.efftive_user.id)
         admin_button = [
             create_button(
                 "🎖 PANNELLO ADMIN",
@@ -208,6 +209,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ),
         ]
     else:
+        logger.info("User [%s] is NOT an admin" % update.efftive_user.id)
         admin_button = [
             create_button(
                 "⚙️  Impostazioni",
@@ -333,7 +335,7 @@ def remove_commands(update: Update, context: CallbackContext):
         chat_id=message.chat.id,
         disable_web_page_preview=True,
         message_id=message.message_id,
-        reply_markup=build_keyboard(message),
+        reply_markup=build_keyboard(update.effective_user, message),
         parse_mode="HTML",
     )
 
@@ -345,7 +347,8 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
     poll_data = context.bot_data[poll_id]
     chat_id = poll_data["chat_id"]
     text = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
-    if is_admin(message.from_user.id):
+    if is_admin(update.efftive_user.id):
+        logger.info("User [%s] is an admin" % update.efftive_user.id)
         admin_button = [
             create_button(
                 "🎖 PANNELLO ADMIN",
@@ -359,6 +362,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ),
         ]
     else:
+        logger.info("User [%s] is NOT an admin" % update.efftive_user.id)
         admin_button = [
             create_button(
                 "⚙️  Impostazioni",
@@ -450,7 +454,7 @@ def build_message(user: User, message: Message) -> str:
     return message
 
 
-def build_keyboard(message: Message) -> InlineKeyboardMarkup:
+def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
     """Create a keyboard for the main start menu
 
     Args:
@@ -461,7 +465,8 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
     """
     bot_name = retrieve_key("BOT_NAME")
     if message.chat.type == "private":
-        if is_admin(message.from_user.id):
+        if is_admin(user.id):
+            logger.info("User [%s] is an admin" % user.id)
             admin_button = [
                 create_button(
                     "🎖 PANNELLO ADMIN",
@@ -475,6 +480,7 @@ def build_keyboard(message: Message) -> InlineKeyboardMarkup:
                 ),
             ]
         else:
+            logger.info("User [%s] is NOT an admin" % user.id)
             admin_button = [
                 create_button(
                     "⚙️  Impostazioni",
