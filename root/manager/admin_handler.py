@@ -23,12 +23,16 @@ def handle_admin(update: Update, context: CallbackContext):
             name,
             result["username"],
         )
-        line += "\n    🗃:  %s" % result["wishlists"]
-        line += "\n    🗂:  %s" % result["wishlist_elements"]
-        line += "\n     ├─  🖼:  %s" % result["photos"]
-        line += "\n     └─  🔗:  %s" % result["links"]
-        line += "\n              └─  💹:  %s" % result["tracked_links"]
-        line += "\n\n"
+        line += "\n    🗃  <code>%s</code>" % result["wishlists"]
+        line += "\n     │"
+        line += "\n     └─🗂  <code>%s</code>" % result["wishlist_elements"]
+        line += "\n            │"
+        line += "\n            ├─🖼  <code>%s</code>" % result["photos"]
+        line += "\n            │"
+        line += "\n            └─🔗  <code>%s</code>" % result["links"]
+        line += "\n                   │"
+        line += "\n                   └─💹  <code>%s</code>" % result["tracked_links"]
+        line += "\n\n\n"
         message += line
     message += USER_INFO_RECAP_LEGEND
     keyboard = InlineKeyboardMarkup(
