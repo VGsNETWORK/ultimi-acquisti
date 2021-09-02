@@ -293,6 +293,8 @@ class BotManager:
 
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
 
+        self.disp.add_handler(CommandHandler("impostazioni", view_user_settings))
+
         self.disp.add_handler(
             CallbackQueryHandler(pattern="spp", callback=show_price_popup)
         )

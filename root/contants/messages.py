@@ -63,9 +63,9 @@ START_COMMANDS_LIST_HEADER = (
     "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n"
     "Questo è un riepilogo di tutti i comandi supportati dal bot.\nTieni presente che alcuni di questi"
     " funzionano <b>solo nei gruppi</b> (👥), mentre altri funzionano anche qui, <b>in chat privata</b> (👤).\n"
-    "💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
+    "<i>💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
     " <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata,"
-    " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!\n\n\n"
+    " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!</i>\n\n\n"
 )
 
 START_COMMANDS_LIST = [
@@ -90,7 +90,7 @@ START_COMMANDS_LIST = [
         f'<code>      </code><a href="https://t.me/share/url?url=%2Fcomparamese%40{BOT_NAME}%20%3Cmese%3E">/comparamese &lt;mese&gt;</a>\n'
         f'<code>      </code><a href="https://t.me/share/url?url=%2Fcomparamese%40{BOT_NAME}%20%3Cmese%3E%20%3Canno%3E">/comparamese &lt;mese&gt; &lt;anno&gt;</a>\n\n'
         "<i>Metti a confronto la tua spesa mensile per il mese corrente con quella di un altro utente.\n"
-        "Specifica opzionalmente un <b>mese</b> o un <b>mese + anno</b> diversi per effettuare l'operazione su periodi precedenti</i> (richiede di <b>quotare un utente</b>)\n\n\n"
+        "Specifica opzionalmente un <b>mese</b> o un <b>mese + anno</b> diversi per effettuare l'operazione su periodi precedenti</i>  (richiede di <b>quotare un utente</b>)\n\n\n"
     ),
     (
         f'<code>(👤)  </code>/spesaannuale      (<a href="https://t.me/share/url?url=%2Fspesaannuale%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
@@ -104,11 +104,20 @@ START_COMMANDS_LIST = [
         f'<code>(👥)  </code><a href="https://t.me/share/url?url=%2Fcomparaanno%40{BOT_NAME}">/comparaanno</a>\n'
         f'<code>      </code><a href="https://t.me/share/url?url=%2Fcomparaanno%40{BOT_NAME}%20%3Canno%3E">/comparaanno &lt;anno&gt;</a>\n\n'
         f"<i>Metti a confronto la tua spesa annuale per l'anno corrente con quella di un altro utente.\n"
-        "Specifica opzionalmente un <b>anno</b> diverso per effettuare l'operazione su anni precedenti</i> (richiede di <b>quotare un utente</b>)\n\n\n"
+        "Specifica opzionalmente un <b>anno</b> diverso per effettuare l'operazione su anni precedenti</i>  (richiede di <b>quotare un utente</b>)\n\n\n"
     ),
     (
         f'<code>(👥)  </code><a href="https://t.me/share/url?url=%2Fcancellaspesa%40{BOT_NAME}">/cancellaspesa</a>\n\n'
-        "<i>Rimuovi un acquisto dal tuo storico; cancella anche il relativo post</i> (richiede di <b>quotare un tuo acquisto</b>)"
+        "<i>Rimuovi un acquisto dal tuo storico; <b>cancella anche il relativo post nel gruppo</b></i>  (richiede di <b>quotare un tuo acquisto</b>)\n\n\n"
+    ),
+    (
+        f'<code>(👥)  </code><a href="https://t.me/share/url?url=%2Fcancellastorico%40{BOT_NAME}">/cancellastorico</a>\n\n'
+        f"<i>Cancella il tuo storico degli acquisti per un gruppo</i>\n\n\n"
+    ),
+    (f"<code>(👤)  </code>/wishlist\n\n" f"<i>Apri la tua lista dei desideri</i>\n\n\n"),
+    (
+        f"<code>(👤)  </code>/impostazioni\n\n"
+        f"<i>Apri le impostazioni utente</i>\n\n\n"
     ),
 ]
 
