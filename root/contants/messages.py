@@ -61,7 +61,7 @@ PLEASE_NOTE_APPEND = (
 
 START_COMMANDS_LIST_HEADER = (
     "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n"
-    "Questo è un riepilogo di tutti i comandi supportati dal bot.\nTieni presente che alcuni di questi"
+    "Questo è un riepilogo di tutti i comandi che supporto.\nTieni presente che alcuni di questi"
     " funzionano <b>solo nei gruppi</b> (👥), mentre altri funzionano anche qui, <b>in chat privata</b> (👤).\n"
     "<i>💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
     " <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata,"
@@ -71,7 +71,7 @@ START_COMMANDS_LIST_HEADER = (
 START_COMMANDS_LIST = [
     (
         "<code>(👤)  </code>/howto\n\n"
-        "<i>Mostra una breve guida all'utilizzo del bot</i>\n\n\n"
+        "<i>Mostra una breve guida al mio utilizzo</i>\n\n\n"
     ),
     (
         f'<code>(👤)  </code>/ultimoacquisto      (<a href="https://t.me/share/url?url=%2Fultimoacquisto%40{BOT_NAME}">Invialo in un gruppo</a> 👥)\n\n'
@@ -118,6 +118,11 @@ START_COMMANDS_LIST = [
     (
         f"<code>(👤)  </code>/impostazioni\n\n"
         f"<i>Apri le impostazioni utente</i>\n\n\n"
+    ),
+    (f"<code>(👤)  </code>/vota\n\n" f"<i>Dammi una valutazione</i>\n\n\n"),
+    (
+        f"<code>(👤)  </code>/info\n\n"
+        f"<i>Mostra delle informazioni su questo progetto</i>\n\n\n"
     ),
 ]
 
