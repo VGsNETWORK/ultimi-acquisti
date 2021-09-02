@@ -97,7 +97,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     else:
         sender.send_and_delete(
             message.message_id,
-            update.efftive_user.id,
+            update.effective_user.id,
             context,
             chat_id,
             build_message(update.effective_user, message),
@@ -194,8 +194,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         page = max_pages - 1
     elif page < 0:
         page = 0
-    if is_admin(update.efftive_user.id):
-        logger.info("User [%s] is an admin" % update.efftive_user.id)
+    if is_admin(update.effective_user.id):
+        logger.info("User [%s] is an admin" % update.effective_user.id)
         admin_button = [
             create_button(
                 "🎖 PANNELLO ADMIN",
@@ -209,7 +209,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ),
         ]
     else:
-        logger.info("User [%s] is NOT an admin" % update.efftive_user.id)
+        logger.info("User [%s] is NOT an admin" % update.effective_user.id)
         admin_button = [
             create_button(
                 "⚙️  Impostazioni",
@@ -347,8 +347,8 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
     poll_data = context.bot_data[poll_id]
     chat_id = poll_data["chat_id"]
     text = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
-    if is_admin(update.efftive_user.id):
-        logger.info("User [%s] is an admin" % update.efftive_user.id)
+    if is_admin(update.effective_user.id):
+        logger.info("User [%s] is an admin" % update.effective_user.id)
         admin_button = [
             create_button(
                 "🎖 PANNELLO ADMIN",
@@ -362,7 +362,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ),
         ]
     else:
-        logger.info("User [%s] is NOT an admin" % update.efftive_user.id)
+        logger.info("User [%s] is NOT an admin" % update.effective_user.id)
         admin_button = [
             create_button(
                 "⚙️  Impostazioni",
