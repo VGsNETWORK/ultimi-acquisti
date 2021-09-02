@@ -1402,7 +1402,7 @@ def view_wishlist_element_links_keyboard(
         if previous_element:
             last_row.append(
                 create_button(
-                    "◄",
+                    "◄   Vai ai link di %s..." % (previous_element.description[:4]),
                     "view_wishlist_link_element_%s_%s"
                     % (page, str(previous_element.id)),
                     None,
@@ -1414,7 +1414,7 @@ def view_wishlist_element_links_keyboard(
             logger.info("THIS IS THE NEXT ELEMENT [%s]" % next_element)
             last_row.append(
                 create_button(
-                    "►",
+                    "Vai ai link di %s...   ►" % (next_element.description[:4]),
                     "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
                     None,
                 )
