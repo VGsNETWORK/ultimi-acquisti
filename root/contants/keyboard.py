@@ -1397,17 +1397,6 @@ def view_wishlist_element_links_keyboard(
             ]
         )
         index += 1
-    logger.info("show_update: %s - supported: %s" % (show_update, supported))
-    if supported and show_update:
-        keyboard.append(
-            [
-                create_button(
-                    "🔄  Aggiorna",
-                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                )
-            ]
-        )
     last_row = []
     if previous_element or next_element:
         if previous_element:
@@ -1433,6 +1422,17 @@ def view_wishlist_element_links_keyboard(
         else:
             last_row.append(create_button("🔚", "empty_button", None))
         keyboard.append(last_row)
+    logger.info("show_update: %s - supported: %s" % (show_update, supported))
+    if supported and show_update:
+        keyboard.append(
+            [
+                create_button(
+                    "🔄  Aggiorna",
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                )
+            ]
+        )
     keyboard.append(
         [
             create_button(
