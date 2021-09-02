@@ -280,6 +280,10 @@ def view_wishlist_element_photos(
                 )
                 message = [m.message_id for m in message]
                 redis_helper.save("%s_photos_message" % user.id, str(message))
+            else:
+                message = redis_helper.retrieve("%s_photos_message" % user.id).decode()
+                if message:
+                    message = eval(message)
             keyboard = build_view_wishlist_element_photos_keyboard(
                 wishlist_element, message
             )
