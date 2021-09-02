@@ -610,6 +610,8 @@ class BotManager:
             CommandHandler("reportannuale", self.year_report.year_report)
         )
 
+        self.disp.add_handler(CommandHandler("info", show_info))
+
         self.disp.add_handler(
             CallbackQueryHandler(callback=show_info, pattern="show_bot_info")
         )

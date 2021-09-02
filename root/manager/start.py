@@ -590,6 +590,8 @@ def back_to_the_start(
 
 
 def show_info(update: Update, context: CallbackContext):
+    if not update.effective_message.chat.type == "private":
+        return
     spaces = 5
     ux_header = "🤹🏻 Facilità di utilizzo:"
     functionality_header = "➕ Funzionalità:"
@@ -668,15 +670,24 @@ def show_info(update: Update, context: CallbackContext):
     message += f"☕️  Sviluppatore:  {DEVELOPER}\n"
     message += f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
     message += f"<i>A cura di @VGsNETWORK</i>"
-
-    context.bot.edit_message_text(
-        chat_id=chat.id,
-        text=message,
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        message_id=message_id,
-        parse_mode="HTML",
-        disable_web_page_preview=True,
-    )
+    if callback:
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            text=message,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            message_id=message_id,
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
+    else:
+        sender.delete_if_private(context, update.effective_message)
+        context.bot.send_message(
+            chat_id=chat.id,
+            text=message,
+            reply_markup=InlineKeyboardMarkup(keyboard),
+            parse_mode="HTML",
+            disable_web_page_preview=True,
+        )
 
 
 def create_rating_moons(average):
