@@ -119,11 +119,11 @@ START_COMMANDS_LIST = [
         f"<code>(👤)  </code>/impostazioni\n\n"
         f"<i>Apri le impostazioni utente</i>\n\n\n"
     ),
-    (f"<code>(👤)  </code>/vota\n\n" f"<i>Dammi una valutazione</i>\n\n\n"),
     (
         f"<code>(👤)  </code>/info\n\n"
         f"<i>Mostra delle informazioni su questo progetto</i>\n\n\n"
     ),
+    (f"<code>(👤)  </code>/vota\n\n" f"<i>Dammi una valutazione</i>\n\n\n"),
 ]
 
 
