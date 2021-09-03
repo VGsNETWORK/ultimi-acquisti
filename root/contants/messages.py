@@ -232,23 +232,23 @@ def PURCHASE_RECAP_APPEND(
 
 
 ONLY_PRIVATE = (
-    "❌  La funzione <code>%s</code> è disponibile solo in <b>chat privata</b>!"
+    "❌  La funzione  <code>%s</code>  è disponibile solo in <b>chat privata</b>!"
 )
 
 
 ONLY_GROUP = (
-    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
     "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
     " <b>quotare prima il messaggio di un utente</b>!"
 )
 
 ONLY_GROUP_NO_QUOTE = (
-    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
     "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u>!"
 )
 
 ONLY_GROUP_QUOTE_SELF_PURCHASE = (
-    "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
+    "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
     "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
     " <b>quotare prima un tuo <u>acquisto</u></b>!"
 )
