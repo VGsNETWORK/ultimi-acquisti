@@ -1209,7 +1209,7 @@ AD_KEYBOARD_ONE = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "ℹ️  Maggiori informazioni",
+                "📚  Apri la guida completa",
                 "empty_button",
                 "empty_button",
                 url=f"t.me/{BOT_NAME}?start=how_to",
@@ -1222,12 +1222,20 @@ AD_KEYBOARD_TWO = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "ℹ️  Maggiori informazioni",
+                "♥️  Apri la lista dei desideri",
                 "empty_button",
                 "empty_button",
                 url=f"t.me/{BOT_NAME}?start=wishlist",
             )
-        ]
+        ],
+        [
+            create_button(
+                "📚  Apri la guida completa",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=how_to",
+            )
+        ],
     ]
 )
 
@@ -1236,12 +1244,20 @@ AD_KEYBOARD_THREE = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "ℹ️  Maggiori informazioni",
+                'ℹ️  Info sul comando "spesamensile"',
                 "empty_button",
                 "empty_button",
                 url=f"t.me/{BOT_NAME}?start=command_list_3",
             )
-        ]
+        ],
+        [
+            create_button(
+                "📚  Apri la guida completa",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=how_to",
+            )
+        ],
     ]
 )
 
@@ -1249,10 +1265,18 @@ AD_KEYBOARD_FOUR = InlineKeyboardMarkup(
     [
         [
             create_button(
-                "ℹ️  Maggiori informazioni",
+                'ℹ️  Info sul comando "spesaannuale"',
                 "empty_button",
                 "empty_button",
                 url=f"t.me/{BOT_NAME}?start=command_list_6",
+            )
+        ],
+        [
+            create_button(
+                "📚  Apri la guida completa",
+                "empty_button",
+                "empty_button",
+                url=f"t.me/{BOT_NAME}?start=how_to",
             )
         ],
     ]
