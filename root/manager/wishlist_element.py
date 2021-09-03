@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.manager.command_redirect import command_redirect
 from root.helper.process_helper import find_process
 from root.helper.tracked_link_helper import (
     find_link_by_code,
@@ -695,6 +696,9 @@ def view_wishlist(
     under_first: bool = True,
     reset_keyboard: bool = True,
 ):
+    if not update.effective_message.chat.type == "private":
+        command_redirect("wishlist", "wishlist", update, context)
+        return
     has_tracked_links = False
     message: Message = update.effective_message
     message_id = message.message_id

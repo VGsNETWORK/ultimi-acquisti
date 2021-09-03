@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.manager.command_redirect import command_redirect
 from telegram_utils.utils.tutils import delete_if_private
 from root.contants.keyboard import create_user_settings_keyboard
 from root.helper.user_helper import create_user, retrieve_user
@@ -21,6 +22,9 @@ def settings_toggle_purchase_tips(update: Update, context: CallbackContext):
 
 
 def view_user_settings(update: Update, context: CallbackContext):
+    if not update.effective_message.chat.type == "private":
+        command_redirect("impostazioni", "show_settings", update, context)
+        return
     message: Message = update.effective_message
     if not update.callback_query:
         sender.delete_if_private(context, message)

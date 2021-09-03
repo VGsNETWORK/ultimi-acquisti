@@ -231,6 +231,11 @@ def PURCHASE_RECAP_APPEND(
     return message
 
 
+ONLY_PRIVATE = (
+    "❌  La funzione <code>%s</code> è disponibile solo in <b>chat privata</b>!"
+)
+
+
 ONLY_GROUP = (
     "❌  La funzione <code>%s</code> è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
     "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
@@ -451,6 +456,8 @@ HOW_TO_DEEP_LINK = (
     '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot...'
     ' <a href="t.me/%s?start=how_to">clicca qui</a>!'
 )
+
+DEEP_LINK = '<a href="t.me/%s?start=%s">clicca qui</a>!'
 
 HOW_TO_INTRODUCTION = (
     "<b><u>GUIDA</u>    ➔    INTRODUZIONE</b>\n\n\n"

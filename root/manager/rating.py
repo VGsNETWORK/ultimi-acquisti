@@ -2,6 +2,7 @@
 
 
 from datetime import datetime
+from root.manager.command_redirect import command_redirect
 
 from mongoengine.errors import DoesNotExist
 from root.model.configuration import Configuration
@@ -239,7 +240,8 @@ class Rating:
         context.bot_data.update(payload)
 
     def poll(self, update: Update, context: CallbackContext) -> None:
-        if not update.message.chat.type == "private":
+        if not update.effective_message.chat.type == "private":
+            command_redirect("vota", "vote", update, context)
             return
         if update.callback_query:
             data = update.callback_query.data

@@ -460,6 +460,30 @@ class BotManager:
         self.disp.add_handler(
             CommandHandler(
                 "start",
+                view_user_settings,
+                Filters.regex("show_settings"),
+            )
+        )
+
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                rating.poll,
+                Filters.regex("vote"),
+            )
+        )
+
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
+                show_info,
+                Filters.regex("show_info"),
+            )
+        )
+
+        self.disp.add_handler(
+            CommandHandler(
+                "start",
                 bot_help,
                 Filters.regex("how_to"),
             )

@@ -4,6 +4,7 @@
 
 from os import environ
 import re
+from root.manager.command_redirect import command_redirect
 from root.helper.user_helper import is_admin
 
 from mongoengine.errors import DoesNotExist
@@ -591,6 +592,7 @@ def back_to_the_start(
 
 def show_info(update: Update, context: CallbackContext):
     if not update.effective_message.chat.type == "private":
+        command_redirect("info", "show_info", update, context)
         return
     spaces = 5
     ux_header = "🤹🏻 Facilità di utilizzo:"
