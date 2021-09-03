@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from root.model.wishlist import Wishlist
 from root.contants.messages import USER_INFO_RECAP_LEGEND
 from root.util.util import create_button
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
@@ -11,18 +12,25 @@ import telegram_utils.utils.logger as logger
 
 
 def handle_admin(update: Update, context: CallbackContext):
-    cursor = Subscriber.objects.aggregate(USER_INFO_NATIVE_QUERY)
+    cursor = Wishlist.objects.aggregate(USER_INFO_NATIVE_QUERY)
     message = ""
     for result in cursor:
+        logger.info(result)
         if "last_name" in result:
             name = "%s %s" % (result["first_name"], result["last_name"])
         else:
             name = "%s" % (result["first_name"])
-        line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
-            result["user_id"],
-            name,
-            result["username"],
-        )
+        try:
+            line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
+                result["user_id"],
+                name,
+                result["username"],
+            )
+        except KeyError:
+            line = '<a href="tg://user?id=%s">%s</a>' % (
+                result["user_id"],
+                name,
+            )
         line += "\n    🗃  <code>%s</code>" % result["wishlists"]
         line += "\n     │"
         line += "\n     └─🗂  <code>%s</code>" % result["wishlist_elements"]

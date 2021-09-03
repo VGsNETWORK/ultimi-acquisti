@@ -1,6 +1,14 @@
 use('purchase-test');
 
-db.subscriber.aggregate([
+db.wishlist.aggregate([
+   {
+        $lookup: {
+            from: 'subscriber',
+            localField: 'user_id',
+            foreignField: 'user_id',
+            as: 'subscriber'
+        }
+    },
     {
         $lookup: {
             from: 'user',
@@ -28,7 +36,7 @@ db.subscriber.aggregate([
     {
         $group: {
             _id: "$user_id",
-            tracked_links: { $push: '$product_code' },
+            tracked_links: { $push: '$subscriber.product_code' },
             wishlist_elements: { $first: "$wishlist_elements" },
             wishlists: { $first: "$wishlists" },
             user: { $first: "$user" }
@@ -38,7 +46,7 @@ db.subscriber.aggregate([
         $project: {
             "_id": 0,
             user_id: "$_id",
-            tracked_links: { $size: '$tracked_links' },
+            tracked_links:{ $size : { $arrayElemAt: [ '$tracked_links', 0 ] } },
             wishlist_elements: { $size: '$wishlist_elements' },
             links: {
                 $size: {

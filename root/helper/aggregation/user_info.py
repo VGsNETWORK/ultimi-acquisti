@@ -4,6 +4,14 @@ USER_INFO_NATIVE_QUERY = [
     # join with user collection
     {
         "$lookup": {
+            "from": "subscriber",
+            "localField": "user_id",
+            "foreignField": "user_id",
+            "as": "subscriber",
+        }
+    },
+    {
+        "$lookup": {
             "from": "user",
             "localField": "user_id",
             "foreignField": "user_id",
@@ -36,7 +44,7 @@ USER_INFO_NATIVE_QUERY = [
     {
         "$group": {
             "_id": "$user_id",
-            "tracked_links": {"$push": "$product_code"},
+            "tracked_links": {"$push": "$subscriber.product_code"},
             "wishlist_elements": {"$first": "$wishlist_elements"},
             "wishlists": {"$first": "$wishlists"},
             "user": {"$first": "$user"},
@@ -50,7 +58,7 @@ USER_INFO_NATIVE_QUERY = [
             # return user_id
             "user_id": "$_id",
             # return the number of tracked_links
-            "tracked_links": {"$size": "$tracked_links"},
+            "tracked_links": {"$size": {"$arrayElemAt": ["$tracked_links", 0]}},
             # return the number of wishlist_elements
             "wishlist_elements": {"$size": "$wishlist_elements"},
             # return the number of wishlists
