@@ -58,6 +58,8 @@ from root.contants.messages import (
     WISHLIST_LEGEND_APPEND_LEGEND,
     WISHLIST_LEGEND_APPEND_SECOND_PAGE,
     WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY,
+    WISHLIST_LEGEND_APPEND_THIRD_PAGE,
+    WISHLIST_LEGEND_APPEND_THIRD_PAGE_ONLY,
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
@@ -844,28 +846,45 @@ def view_wishlist(
     if not reset_keyboard:
         first_page_added = False
         second_page_added = False
+        third_page_added = False
         append_legend = []
         extra_spaces = ""
         for index in range(1, len(wishlist_elements) + 1):
             element = redis_helper.retrieve(
-                "%s_second_element_page_%s." % (user.id, index + (5 * page))
+                "%s_element_page_%s." % (user.id, index + (5 * page))
             ).decode()
-            if element:
-                element = eval(element)
-                if element:
-                    if not second_page_added:
-                        if len(list(wishlist_elements)) > 0:
+            logger.info("THE CURRENT VIEW PAGE IS %s" % element)
+            if element == "2":
+                if not second_page_added:
+                    if len(list(wishlist_elements)) > 0:
+                        if third_page_added:
+                            if first_page_added:
+                                append_legend.insert(
+                                    1, WISHLIST_LEGEND_APPEND_FIRST_PAGE
+                                )
+                            else:
+                                append_legend.insert(
+                                    0, WISHLIST_LEGEND_APPEND_FIRST_PAGE
+                                )
+                        else:
                             append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
-                            second_page_added = True
-                    extra_spaces += "&#8203;"
-                else:
-                    if not first_page_added:
-                        if len(list(wishlist_elements)) > 0:
-                            append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
-                            first_page_added = True
+                        second_page_added = True
+                extra_spaces += "&#8203;"
+            elif element == "1":
+                if not first_page_added:
+                    if len(list(wishlist_elements)) > 0:
+                        append_legend.insert(0, WISHLIST_LEGEND_APPEND_FIRST_PAGE)
+                        first_page_added = True
+            elif element == "3":
+                if not third_page_added:
+                    if len(list(wishlist_elements)) > 0:
+                        third_page_added = True
+                        append_legend.append(WISHLIST_LEGEND_APPEND_THIRD_PAGE)
         if len(append_legend) == 1:
             if append_legend[0] == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
                 message += WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY
+            elif append_legend[0] == WISHLIST_LEGEND_APPEND_THIRD_PAGE:
+                message += WISHLIST_LEGEND_APPEND_THIRD_PAGE_ONLY
             else:
                 append_legend = "".join(append_legend)
                 message += append_legend
@@ -1266,23 +1285,24 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
 
 def reset_redis_wishlist_keyboard(user_id: int, total_elements: int):
     for index in range(0, total_elements + 1):
-        redis_helper.save("%s_second_element_page_%s." % (user_id, index), "False")
+        redis_helper.save("%s_element_page_%s." % (user_id, index), "1")
 
 
 def toggle_element_action_page(update: Update, context: CallbackContext):
     user: User = update.effective_user
     index = update.callback_query.data.split("_")[-3]
-    second_page = redis_helper.retrieve("%s_second_element_page_%s" % (user.id, index))
-    if second_page:
-        second_page: second_page.decode()
-        if second_page:
-            second_page: bool = eval(second_page)
-        else:
-            second_page: False
+    element_page = redis_helper.retrieve("%s_element_page_%s" % (user.id, index))
+    logger.info("THE CURRENT PAGE IS %s" % element_page)
+    if element_page:
+        element_page = eval(element_page.decode())
     else:
-        second_page = False
-    second_page = not second_page
-    redis_helper.save("%s_second_element_page_%s" % (user.id, index), str(second_page))
+        element_page = 1
+    if "next" in update.callback_query.data:
+        element_page += 1
+    else:
+        element_page -= 1
+    logger.info("THE NEW PAGE IS %s" % element_page)
+    redis_helper.save("%s_element_page_%s" % (user.id, index), str(element_page))
 
     view_wishlist(update, context, reset_keyboard=False)
 

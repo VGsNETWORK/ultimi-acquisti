@@ -427,19 +427,13 @@ def create_wishlist_element_keyboard(
             icon = btns[icon]
             photos = " 0️⃣  " if not wishlist_element.photos else " %s  " % icon
             links = " 0️⃣  " if not wishlist_element.links else " %s  " % links_icon
-        second_page = redis_helper.retrieve(
-            "%s_second_element_page_%s" % (user_id, index)
-        )
-        logger.info(second_page)
-        if second_page:
-            second_page: second_page.decode()
-            if second_page:
-                second_page: bool = eval(second_page)
-            else:
-                second_page: False
+        current_page = redis_helper.retrieve("%s_element_page_%s" % (user_id, index))
+        if current_page:
+            current_page = eval(current_page.decode())
         else:
-            second_page = False
-        if not second_page:
+            current_page = 1
+        logger.info("THE CURRENT PAGE IS %s" % current_page)
+        if current_page == 1:
             keyboard.append(
                 [
                     create_button(f"{space}{index}", "empty_button", None),
@@ -450,31 +444,55 @@ def create_wishlist_element_keyboard(
                         None,
                     ),
                     create_button(
-                        "%s🖼" % photos,
-                        photo_callback,
+                        "🗑",
+                        "remove_wishlist_element_%s_%s_%s"
+                        % (index, page, wishlist_element.id),
                         None,
                     ),
                     create_button(
                         ">",
-                        "toggle_element_action_page_%s_%s_%s"
+                        "toggle_element_action_page_next_%s_%s_%s"
                         % (index, str(wishlist_element.id), page),
                         None,
                     ),
                 ]
             )
-        else:
+        elif current_page == 2:
             keyboard.append(
                 [
                     create_button(f"{space}{index}", "empty_button", None),
                     create_button(
                         "<",
-                        "toggle_element_action_page_%s_%s_%s"
+                        "toggle_element_action_page_prev_%s_%s_%s"
                         % (index, str(wishlist_element.id), page),
+                        None,
+                    ),
+                    create_button(
+                        "%s🖼" % photos,
+                        photo_callback,
                         None,
                     ),
                     create_button(
                         "%s🔗" % links,
                         link_callback,
+                        None,
+                    ),
+                    create_button(
+                        ">",
+                        "toggle_element_action_page_next_%s_%s_%s"
+                        % (index, str(wishlist_element.id), page),
+                        None,
+                    ),
+                ]
+            )
+        elif current_page == 3:
+            keyboard.append(
+                [
+                    create_button(f"{space}{index}", "empty_button", None),
+                    create_button(
+                        "<",
+                        "toggle_element_action_page_prev_%s_%s_%s"
+                        % (index, str(wishlist_element.id), page),
                         None,
                     ),
                     create_button(
@@ -487,12 +505,6 @@ def create_wishlist_element_keyboard(
                         "🔀",
                         "ask_element_wishlist_change_%s_%s_%s"
                         % (page, index, str(wishlist_element.id)),
-                        None,
-                    ),
-                    create_button(
-                        "🗑",
-                        "remove_wishlist_element_%s_%s_%s"
-                        % (index, page, wishlist_element.id),
                         None,
                     ),
                 ]
