@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # region
+import enum
 import operator
 import re
 from root.manager.command_redirect import command_redirect
@@ -860,11 +861,11 @@ def view_wishlist(
                         if third_page_added:
                             if first_page_added:
                                 append_legend.insert(
-                                    1, WISHLIST_LEGEND_APPEND_FIRST_PAGE
+                                    1, WISHLIST_LEGEND_APPEND_SECOND_PAGE
                                 )
                             else:
                                 append_legend.insert(
-                                    0, WISHLIST_LEGEND_APPEND_FIRST_PAGE
+                                    0, WISHLIST_LEGEND_APPEND_SECOND_PAGE
                                 )
                         else:
                             append_legend.append(WISHLIST_LEGEND_APPEND_SECOND_PAGE)
@@ -880,6 +881,12 @@ def view_wishlist(
                     if len(list(wishlist_elements)) > 0:
                         third_page_added = True
                         append_legend.append(WISHLIST_LEGEND_APPEND_THIRD_PAGE)
+        if not first_page_added:
+            for index, value in enumerate(append_legend):
+                if value == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
+                    append_legend[index] = WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY
+                if value == WISHLIST_LEGEND_APPEND_THIRD_PAGE:
+                    append_legend[index] = WISHLIST_LEGEND_APPEND_THIRD_PAGE_ONLY
         if len(append_legend) == 1:
             if append_legend[0] == WISHLIST_LEGEND_APPEND_SECOND_PAGE:
                 message += WISHLIST_LEGEND_APPEND_SECOND_PAGE_ONLY
