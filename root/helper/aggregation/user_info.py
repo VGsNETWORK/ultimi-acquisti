@@ -89,4 +89,5 @@ USER_INFO_NATIVE_QUERY = [
             "username": {"$arrayElemAt": ["$user.username", 0]},
         }
     },
+    {"$sort": {"first_name": 1}},
 ]
