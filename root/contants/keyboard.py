@@ -1409,31 +1409,41 @@ def view_wishlist_element_links_keyboard(
             ]
         )
         index += 1
-    last_row = []
+    first_row = []
+    second_row = []
+    # NumberOfCharacters
+    noc = 15
     if previous_element or next_element:
         if previous_element:
-            last_row.append(
+            title = previous_element.description
+            title = "%s..." % title[:noc] if len(title) >= noc + 3 else title
+            first_row.append(
                 create_button(
-                    "◄   Vai ai link di %s..." % (previous_element.description[:4]),
+                    "◄   Vai ai link di %s" % (title),
                     "view_wishlist_link_element_%s_%s"
                     % (page, str(previous_element.id)),
                     None,
                 )
             )
         else:
-            last_row.append(create_button("🔚", "empty_button", None))
+            first_row.append(create_button("🔚", "empty_button", None))
         if next_element:
             logger.info("THIS IS THE NEXT ELEMENT [%s]" % next_element)
-            last_row.append(
+            title = next_element.description
+            title = "%s..." % title[:noc] if len(title) >= noc + 3 else title
+            second_row.append(
                 create_button(
-                    "Vai ai link di %s...   ►" % (next_element.description[:4]),
+                    "Vai ai link di %s   ►" % (title),
                     "view_wishlist_link_element_%s_%s" % (page, str(next_element.id)),
                     None,
                 )
             )
         else:
-            last_row.append(create_button("🔚", "empty_button", None))
-        keyboard.append(last_row)
+            second_row.append(create_button("🔚", "empty_button", None))
+        if previous_element:
+            keyboard.append(first_row)
+        if next_element:
+            keyboard.append(second_row)
     logger.info("show_update: %s - supported: %s" % (show_update, supported))
     if supported and show_update:
         keyboard.append(
