@@ -1409,6 +1409,16 @@ def view_wishlist_element_links_keyboard(
             ]
         )
         index += 1
+    if supported and show_update:
+        keyboard.append(
+            [
+                create_button(
+                    "🔄  Aggiorna",
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
+                )
+            ]
+        )
     first_row = []
     second_row = []
     # NumberOfCharacters
@@ -1445,16 +1455,6 @@ def view_wishlist_element_links_keyboard(
         if next_element:
             keyboard.append(second_row)
     logger.info("show_update: %s - supported: %s" % (show_update, supported))
-    if supported and show_update:
-        keyboard.append(
-            [
-                create_button(
-                    "🔄  Aggiorna",
-                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                    "update_wishlist_link_element_%s_%s" % (page, wishlist_element_id),
-                )
-            ]
-        )
     keyboard.append(
         [
             create_button(
