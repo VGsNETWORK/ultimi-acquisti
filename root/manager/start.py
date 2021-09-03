@@ -636,27 +636,31 @@ def show_info(update: Update, context: CallbackContext):
 
     if callback:
         data = callback.data
-        if data == "expand_info":
-            button = [
-                create_button(
-                    "🔺     Comprimi valutazione     🔺", "show_bot_info", "show_bot_info"
-                )
-            ]
-            keyboard.insert(0, button)
-            message += f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
-            message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
-            message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
-            message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
-            message += (
-                f"<code>{' ' * hlength}</code>{' ' * spaces}<code>{'─' * 13}</code>\n"
+    else:
+        data = "do_not_expand"
+    if data == "expand_info":
+        button = [
+            create_button(
+                "🔺     Comprimi valutazione     🔺", "show_bot_info", "show_bot_info"
             )
-        else:
-            button = [
-                create_button(
-                    "🔻     Espandi valutazione     🔻", "expand_info", "expand_info"
-                )
-            ]
-            keyboard.insert(0, button)
+        ]
+        keyboard.insert(0, button)
+        message += (
+            f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
+        )
+        message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
+        message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
+        message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
+        message += (
+            f"<code>{' ' * hlength}</code>{' ' * spaces}<code>{'─' * 13}</code>\n"
+        )
+    else:
+        button = [
+            create_button(
+                "🔻     Espandi valutazione     🔻", "expand_info", "expand_info"
+            )
+        ]
+        keyboard.insert(0, button)
     average_header = "⭐️ Valutazione:"
     message += (
         f"<code>{average_header}{' ' * (hlength-(len(average_header)))}</code>{' ' * spaces}{average_message}\n"
