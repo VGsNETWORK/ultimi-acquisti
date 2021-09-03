@@ -5,6 +5,7 @@ from operator import add
 from os import environ
 from re import I, S, sub
 import re
+from root.contants.message_timeout import THIRTY_MINUTES
 
 from telegram.bot import Bot
 from root.helper.process_helper import find_process, stop_process, create_process
@@ -180,7 +181,7 @@ def update_list(update: Update, context: CallbackContext, show_update: bool = Fa
         if on_list:
             on_list = on_list.decode()
             if on_list == "1":
-                sleep(1800)
+                sleep(THIRTY_MINUTES)
                 redis_helper.save("%s_%s_on_list" % (user.id, user.id), "1")
                 logger.info("SHOWING THE LINKS")
                 view_wishlist_element_links(
