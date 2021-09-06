@@ -16,10 +16,13 @@ def handle_admin(update: Update, context: CallbackContext):
     message = ""
     for result in cursor:
         logger.info(result)
-        if "last_name" in result:
-            name = "%s %s" % (result["first_name"], result["last_name"])
-        else:
-            name = "%s" % (result["first_name"])
+        try:
+            if "last_name" in result:
+                name = "%s %s" % (result["first_name"], result["last_name"])
+            else:
+                name = "%s" % (result["first_name"])
+        except KeyError:
+            name = "Sconosciuto"
         try:
             line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
                 result["user_id"],
