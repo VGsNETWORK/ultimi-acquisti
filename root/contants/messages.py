@@ -855,7 +855,9 @@ ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT = (
 
 ADD_TO_WISHLIST_ACTIVATE_CYCLE_INSERT_APPEND = "💡 <i>Attiva l'<b>inserimento ciclico</b> per inserire più elementi in sequenza!</i>"
 
-ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND = "💡 <i>Disattiva l'<b>inserimento ciclico</b> se questo è l'ultimo elemento!</i>"
+ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND = (
+    "💡 <i>Disattiva l'<b>inserimento ciclico</b> se questo è l'ultimo elemento!</i>"
+)
 
 EDIT_WISHLIST_PROMPT = (
     "Inserisci il nuovo testo dell'elemento:\n"
@@ -1198,16 +1200,16 @@ PRICE_MESSAGE_POPUP = (
 PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s%s"
 
 WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
-    "\n\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo o le info visualizzati "
+    "\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo o le info visualizzati "
     'per il prodotto potrebbero non essere aggiornati. Apri la <b>sezione link</b>  ("🔗")  '
     "del relativo elemento per aggiornarli.</i>"
 )
 
 
 TRACKED_LINK_EXPLANATION = (
-    "Dato che hai dei <i>link tracciati</i> per questo elemento, "
+    "<i>Dato che hai dei <b>link compatibili con il <u>tracking del prezzo</u></b> per questo elemento, "
     "in calce al messaggio trovi allegate le <b>offerte migliori del momento</b>!\n"
-    "In più, cliccando sul prezzo potrai avere delle utili informazioni aggiuntive sul prodotto in oggetto!\n"
+    "In più, <b>cliccando sul prezzo</b> potrai avere le informazioni aggiornate sulla disponibilità del prodotto in oggetto!</i>\n"
 )
 
 USER_INFO_RECAP_LEGEND = (
