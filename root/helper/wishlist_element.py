@@ -113,7 +113,7 @@ def find_next_wishlist_element(user_id: int, wishlist_element: WishlistElement):
 
         wishlist_elements = wishlist_elements.filter(
             (Q(creation_date__lt=wishlist_element.creation_date))
-        )
+        ).order_by("creation_date")
         return list(wishlist_elements)[-1]
     except Exception as e:
         logger.error(e)
@@ -129,7 +129,7 @@ def find_previous_wishlist_element(user_id: int, wishlist_element: WishlistEleme
         )
         wishlist_elements = wishlist_elements.filter(
             (Q(creation_date__gt=wishlist_element.creation_date))
-        )
+        ).order_by("creation_date")
         return list(wishlist_elements)[0]
     except Exception as e:
         logger.error(e)
