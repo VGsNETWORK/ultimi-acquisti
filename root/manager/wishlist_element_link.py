@@ -562,7 +562,7 @@ def append_link(update: Update, context: CallbackContext):
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
-    if wishlist_element.links:
+    if wishlist_element.links or duplicated_links:
         append = ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK % (
             len(wishlist_element.links),
             MAX_LINKS_NUMBER,

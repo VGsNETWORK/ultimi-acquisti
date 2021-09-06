@@ -832,17 +832,20 @@ def view_wishlist(
         message = NO_ELEMENT_IN_WISHLIST
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
-    message = "%s%s" % (WISHLIST_HEADER % title, message)
+    if total_pages > 1:
+        more_pages_append = (
+            f"🧮  <i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>\n\n"
+            % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
+        )
+    else:
+        more_pages_append = ""
+    message = "%s%s%s" % (WISHLIST_HEADER % title, more_pages_append, message)
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     total_wishlists = count_all_wishlists_for_user(user.id)
     if has_tracked_links:
         message += WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING
-    if total_pages > 1:
-        message += (
-            f"\n\n<i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>"
-            % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
-        )
+    # #############################################################################
     if len(list(wishlist_elements)) > 0:
         message += WISHLIST_LEGEND_APPEND_LEGEND
     if not under_first and append:
