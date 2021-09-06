@@ -40,6 +40,8 @@ from root.contants.messages import (
     ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
+    ADD_TO_WISHLIST_ACTIVATE_CYCLE_INSERT_APPEND,
+    ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND,
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
@@ -173,6 +175,10 @@ def check_message_length(
     links: List[str] = None,
     pictures: List[str] = None,
 ):
+    if cycle_enabled(user):
+        cycle_append = ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND
+    else:
+        cycle_append = ADD_TO_WISHLIST_ACTIVATE_CYCLE_INSERT_APPEND
     if len(message) > 128:
         logger.info("MESSAGE EXCEED 128 CHARACTERS")
         rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
@@ -206,17 +212,17 @@ def check_message_length(
                 ]
             )
             append = (
-                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos), cycle_append)
                 if len(rphotos) < 10
-                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
             )
             message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
         else:
             logger.info("NO ELEMENTS FOUND, CREATING MESSAGE...")
             append = (
-                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos), cycle_append)
                 if len(rphotos) < 10
-                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
             )
             message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
         if len(message) <= 128:
@@ -370,17 +376,17 @@ def check_message_length(
                     ]
                 )
                 append = (
-                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos), cycle_append)
                     if len(rphotos) < 10
-                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
                 )
                 message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
             else:
                 logger.info("NO ELEMENTS FOUND...")
                 append = (
-                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos))
+                    ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos), cycle_append)
                     if len(rphotos) < 10
-                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+                    else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
                 )
                 message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
             context.bot.edit_message_text(
@@ -975,6 +981,10 @@ def add_in_wishlist_element(
     cycle_insert: bool = False,
     toggle_cycle: bool = False,
 ):
+    if not cycle_insert:
+        cycle_append = ADD_TO_WISHLIST_ACTIVATE_CYCLE_INSERT_APPEND
+    else:
+        cycle_append = ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND
     message: Message = update.effective_message
     user: User = update.effective_user
     message_id = message.message_id
@@ -1011,16 +1021,16 @@ def add_in_wishlist_element(
             ]
         )
         append = (
-            ADD_TO_WISHLIST_START_PROMPT
+            ADD_TO_WISHLIST_START_PROMPT % cycle_append
             if len(rphotos) < 10
-            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
         )
         message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
     else:
         append = (
-            ADD_TO_WISHLIST_START_PROMPT
+            ADD_TO_WISHLIST_START_PROMPT % cycle_append
             if len(rphotos) < 10
-            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT
+            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
         )
         message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
     try:
