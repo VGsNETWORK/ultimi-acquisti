@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
+from root.model.custom_category import CustomCategory
 from root.handlers.generic import extract_data
 from root.handlers.handlers import extractor
 from root.model.tracked_link import TrackedLink
@@ -680,7 +681,7 @@ def build_edit_wishlist_element_link_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_add_wishlist_element_category_keyboard():
+def build_add_wishlist_element_category_keyboard(categories: List(CustomCategory)):
     keyboard = [
         [
             create_button(
@@ -706,13 +707,20 @@ def build_add_wishlist_element_category_keyboard():
                 None,
             ),
         ],
+    ]
+    ## add custom categories
+    ## two per line, max 15 characters per button (including ...)
+    keyboard.append(
         [
             create_button(
                 CATEGORIES[0],
                 "add_category_%s" % (0),
                 None,
             )
-        ],
+        ]
+    )
+    ## add + button if categories are less than 6
+    keyboard.append(
         [create_button("↩️  Torna indietro", "go_back_from_category", None)],
         [
             create_button(
@@ -721,7 +729,7 @@ def build_add_wishlist_element_category_keyboard():
                 "cancel_add_to_wishlist_element",
             ),
         ],
-    ]
+    )
     return InlineKeyboardMarkup(keyboard)
 
 

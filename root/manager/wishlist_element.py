@@ -3,6 +3,8 @@
 import enum
 import operator
 import re
+from root.helper.custom_category_helper import find_categories_for_user
+from root.model.custom_category import CustomCategory
 from root.manager.command_redirect import command_redirect
 from root.helper.process_helper import find_process
 from root.helper.tracked_link_helper import (
@@ -1292,11 +1294,14 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                 pictures=pictures,
             )
             return INSERT_ZELDA
+    categories: List(CustomCategory) = find_categories_for_user(
+        user_id=update.effective_user.id
+    )
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
         text=message,
-        reply_markup=build_add_wishlist_element_category_keyboard(),
+        reply_markup=build_add_wishlist_element_category_keyboard(categories),
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
