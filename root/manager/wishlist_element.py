@@ -1493,6 +1493,7 @@ def new_category_received(update: Update, context: CallbackContext):
     category_name = category_name.lower()
     category_name = category_name.capitalize()
     category_name = category_name.split("\n")[0]
+    category_name = re.sub(r"\r|\n|\s\s", "", category_name)
     # TODO: mostra messaggio testo troppo lungo
     if len(category_name) > MAX_CATEGORY_LENGTH:
         category_name = category_name[:MAX_CATEGORY_LENGTH]
