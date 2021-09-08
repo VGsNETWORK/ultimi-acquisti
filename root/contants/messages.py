@@ -54,9 +54,9 @@ START_GROUP_GROUP_APPEND = (
 )
 
 PLEASE_NOTE_APPEND = (
-    "\n<b>N.B.:</b> Le funzioni di <b>aggiunta</b>, <b>modifica</b> e <b>rimozione</b>"
-    " degli acquisti sono fruibili <u>solo all'interno dei"
-    " gruppi di <b>VGs NETWORK</b></u> (@VGsGROUPS).\n\n"
+    "\n    <i><b><u>NOTA BENE</u>:</b>  Le funzioni di <b>aggiunta</b>, <b>modifica</b> e <b>rimozione</b>"
+    ' degli acquisti sono fruibili <a href="t.me/VGsGROUPS/1"><u>solo all\'interno dei'
+    " gruppi di <b>VGs NETWORK</b></u></a>.</i>\n\n"
 )
 
 START_COMMANDS_LIST_HEADER = (
