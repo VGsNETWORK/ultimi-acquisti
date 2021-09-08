@@ -681,7 +681,9 @@ def build_edit_wishlist_element_link_keyboard(
     return InlineKeyboardMarkup(keyboard)
 
 
-def build_add_wishlist_element_category_keyboard(categories: List(CustomCategory)):
+def build_add_wishlist_element_category_keyboard(
+    wishlist_id: str, categories: List[CustomCategory]
+):
     keyboard = [
         [
             create_button(
@@ -708,8 +710,44 @@ def build_add_wishlist_element_category_keyboard(categories: List(CustomCategory
             ),
         ],
     ]
-    ## add custom categories
-    ## two per line, max 15 characters per button (including ...)
+    categories = list(categories)
+    index = 0
+    categories_group = zip(*(iter(categories),) * 2)
+    if len(categories) > 1:
+        for group in categories_group:
+            line = []
+            for category in group:
+                select_button = create_button(
+                    category.description,
+                    "add_category_custom_%s" % str(category.id),
+                    None,
+                )
+                delete_button = create_button(
+                    "🗑", "delete_category_custom_%s" % str(category.id), None
+                )
+                index += 1
+                keyboard.append([select_button, delete_button])
+        if index < len(categories):
+            select_button = create_button(
+                categories[-1].description,
+                "add_category_custom_%s" % str(categories[-1].id),
+                None,
+            )
+            delete_button = create_button(
+                "🗑", "delete_category_custom_%s" % str(categories[-1].id), None
+            )
+            keyboard.append([select_button, delete_button])
+    else:
+        for category in categories:
+            select_button = create_button(
+                category.description,
+                "add_category_custom_%s" % str(category.id),
+                None,
+            )
+            delete_button = create_button(
+                "🗑", "delete_category_custom_%s" % str(category.id), None
+            )
+            keyboard.append([select_button, delete_button])
     keyboard.append(
         [
             create_button(
@@ -720,15 +758,29 @@ def build_add_wishlist_element_category_keyboard(categories: List(CustomCategory
         ]
     )
     ## add + button if categories are less than 6
+    if len(categories) < 6:
+        keyboard.append(
+            [
+                create_button(
+                    "➕  Aggiungi categoria personalizzata",
+                    "create_new_category_%s" % wishlist_id,
+                    None,
+                )
+            ]
+        )
     keyboard.append(
-        [create_button("↩️  Torna indietro", "go_back_from_category", None)],
+        [
+            create_button("↩️  Torna indietro", "go_back_from_category", None),
+        ]
+    )
+    keyboard.append(
         [
             create_button(
                 "❌  Annulla",
                 "cancel_add_to_wishlist_element",
                 "cancel_add_to_wishlist_element",
-            ),
-        ],
+            )
+        ]
     )
     return InlineKeyboardMarkup(keyboard)
 
@@ -1523,3 +1575,8 @@ def build_new_link_keyboard_added(page: int, wishlist_element_id: str):
     )
     keyboard.append([create_button("✅  Concludi inserimento", link_insert, None)])
     return InlineKeyboardMarkup(keyboard)
+
+
+NEW_CUSTOM_CATEGORY_KEYBOARD = InlineKeyboardMarkup(
+    [[create_button("❌  Annulla", "skip_add_link_to_wishlist_element", "")]]
+)

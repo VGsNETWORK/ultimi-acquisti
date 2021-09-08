@@ -15,5 +15,5 @@ class CustomCategory(BaseModel):
 
     objects = QuerySetManager()
 
-    user_id = IntField(required=True, unique=True)
-    dscription = StringField(required=True)
+    user_id = IntField(required=True)
+    description = StringField(required=True)

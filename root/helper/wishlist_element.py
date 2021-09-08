@@ -120,6 +120,12 @@ def find_next_wishlist_element(user_id: int, wishlist_element: WishlistElement):
         return None
 
 
+def update_category_of_elements(user_id: int, old_category: str, new_category: str):
+    WishlistElement.objects.filter(user_id=user_id, category=old_category).update(
+        set__category=new_category
+    )
+
+
 def find_previous_wishlist_element(user_id: int, wishlist_element: WishlistElement):
     try:
         wishlist_id = str(wishlist_element.wishlist_id)

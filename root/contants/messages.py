@@ -1220,3 +1220,11 @@ USER_INFO_RECAP_LEGEND = (
     "🔗  =  Link\n"
     "💹  =  Link tracciati\n"
 )
+
+
+NEW_CATEGORY_MESSAGE = (
+    "Inserisci il nome della nuova categoria personalizzata:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+)

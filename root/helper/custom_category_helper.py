@@ -11,6 +11,13 @@ def find_category_for_user_by_description(user_id: int, description: str):
         return None
 
 
+def find_category_for_user_by_id(user_id: int, _id: str):
+    try:
+        return CustomCategory.objects().get(user_id=user_id, id=_id)
+    except DoesNotExist:
+        return None
+
+
 def delete_category_for_user(user_id: int, description: str):
     category: CustomCategory = find_category_for_user_by_description(
         user_id, description

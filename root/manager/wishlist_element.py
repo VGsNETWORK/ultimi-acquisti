@@ -3,7 +3,12 @@
 import enum
 import operator
 import re
-from root.helper.custom_category_helper import find_categories_for_user
+from root.helper.custom_category_helper import (
+    create_category_for_user,
+    find_categories_for_user,
+    find_category_for_user_by_description,
+    find_category_for_user_by_id,
+)
 from root.model.custom_category import CustomCategory
 from root.manager.command_redirect import command_redirect
 from root.helper.process_helper import find_process
@@ -54,6 +59,7 @@ from root.contants.messages import (
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
     DELETE_WISHLIST_ITEMS_APPEND,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
+    NEW_CATEGORY_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
     SUPPORTED_LINKS_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -86,6 +92,7 @@ from root.helper.wishlist_element import (
     find_wishlist_element_for_user,
     get_total_wishlist_element_pages_for_user,
     remove_wishlist_element_item_for_user,
+    update_category_of_elements,
 )
 from root.model.wishlist_element import WishlistElement
 from root.contants.keyboard import (
@@ -94,6 +101,7 @@ from root.contants.keyboard import (
     ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
+    NEW_CUSTOM_CATEGORY_KEYBOARD,
     build_add_wishlist_element_category_keyboard,
     create_delete_all_wishlist_element_items_keyboard,
     create_wishlist_element_keyboard,
@@ -119,9 +127,10 @@ sender = TelegramSender()
 
 # endregion
 
-INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY = range(3)
+INSERT_ITEM_IN_WISHLIST, INSERT_ZELDA, ADD_CATEGORY, CREATE_CATEGORY = range(4)
 
 MAX_LINK_LENGTH = 27
+MAX_CATEGORY_LENGTH = 15
 
 
 def cycle_enabled(user: User):
@@ -1102,9 +1111,19 @@ def add_category(update: Update, context: CallbackContext):
     rphotos = eval(rphotos.decode()) if rphotos else []
     if wish:
         wish = wish[0]
-        category = int(data.split("_")[-1])
+        if not "custom" in data:
+            category = int(data.split("_")[-1])
+            wish.category = CATEGORIES[category]
+        else:
+            _id = data.split("_")[-1]
+            category: CustomCategory = find_category_for_user_by_id(
+                update.effective_user.id, _id
+            )
+            if category:
+                wish.category = category.description
+            else:
+                wish.category = CATEGORIES[0]
         wish.photos = rphotos
-        wish.category = CATEGORIES[category]
         user = retrieve_user(user.id)
         if user:
             wish.wishlist_id = user.current_wishlist
@@ -1160,7 +1179,9 @@ def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
-def handle_insert_for_link(update: Update, context: CallbackContext):
+def handle_insert_for_link(
+    update: Update, context: CallbackContext, from_call: bool = False
+):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user = update.effective_user
@@ -1194,53 +1215,59 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
                     "%s_%s_duplicated_links" % (user.id, user.id)
                 ).decode()
             )
-            wishlist_link = extract_first_link_from_message(update.effective_message)
-            if "/" in wishlist_link:
-                link = wishlist_link
-                link = re.sub(r".*//", "", link)
-                link = link.split("/")
-                link[0] = link[0].lower()
-                wishlist_link = "/".join(link)
-                # wishlist_element.links = "/".join(link)
-            is_present = False
-            for link in wishlist_element.links:
+            if not from_call:
+                wishlist_link = extract_first_link_from_message(
+                    update.effective_message
+                )
+                if "/" in wishlist_link:
+                    link = wishlist_link
+                    link = re.sub(r".*//", "", link)
+                    link = link.split("/")
+                    link[0] = link[0].lower()
+                    wishlist_link = "/".join(link)
+                    # wishlist_element.links = "/".join(link)
+                is_present = False
+                for link in wishlist_element.links:
+                    if not is_present:
+                        is_present = (
+                            SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+                        )
+                        duplicated_type = "DUPLICATO"
+                if not is_present:
+                    is_present = extractor.domain_duplicated(
+                        wishlist_link, wishlist_element.links
+                    )
+                    duplicated_type = "DOMINIO WEB DUPLICATO"
                 if not is_present:
                     is_present = (
-                        SequenceMatcher(None, wishlist_link, link).ratio() > 0.9
+                        True
+                        if find_subscriber(
+                            user.id, extractor.extract_code(wishlist_link)
+                        )
+                        else False
                     )
-                    duplicated_type = "DUPLICATO"
-            if not is_present:
-                is_present = extractor.domain_duplicated(
-                    wishlist_link, wishlist_element.links
-                )
-                duplicated_type = "DOMINIO WEB DUPLICATO"
-            if not is_present:
-                is_present = (
-                    True
-                    if find_subscriber(user.id, extractor.extract_code(wishlist_link))
-                    else False
-                )
-                duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
-            if is_present:
-                if len(wishlist_link) > MAX_LINK_LENGTH:
-                    wishlist_link = '<a href="%s">%s...</a>' % (
+                    duplicated_type = "DUPLICATO IN UN ALTRO ELEMENTO"
+                if is_present:
+                    if len(wishlist_link) > MAX_LINK_LENGTH:
+                        wishlist_link = '<a href="%s">%s...</a>' % (
+                            wishlist_link,
+                            wishlist_link[:MAX_LINK_LENGTH],
+                        )
+                    duplicated_link = "<s>%s</s>     🚫 <b>%s</b>" % (
                         wishlist_link,
-                        wishlist_link[:MAX_LINK_LENGTH],
+                        duplicated_type,
                     )
-                duplicated_link = "<s>%s</s>     🚫 <b>%s</b>" % (
-                    wishlist_link,
-                    duplicated_type,
-                )
-                if len(duplicated_links) == 10:
-                    duplicated_links.pop()
-                duplicated_links.insert(0, duplicated_link)
-                redis_helper.save(
-                    "%s_%s_duplicated_links" % (user.id, user.id), str(duplicated_links)
-                )
-            if not is_present:
-                wishlist_element.links.append(wishlist_link)
-            wishlist_element.wishlist_id = wishlist_id
-            wishlist_element.save()
+                    if len(duplicated_links) == 10:
+                        duplicated_links.pop()
+                    duplicated_links.insert(0, duplicated_link)
+                    redis_helper.save(
+                        "%s_%s_duplicated_links" % (user.id, user.id),
+                        str(duplicated_links),
+                    )
+                if not is_present:
+                    wishlist_element.links.append(wishlist_link)
+                wishlist_element.wishlist_id = wishlist_id
+                wishlist_element.save()
     message_id = redis_helper.retrieve(user.id).decode()
     wishlist_elements = find_wishlist_element_for_user(
         user.id, page_size=5, wishlist_id=wishlist_id
@@ -1279,7 +1306,7 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
             cycle_message,
         )
-    if not update.callback_query:
+    if not update.callback_query and not from_call:
         if len(wishlist_element.links) < 10:
             message = check_message_length(
                 message_id,
@@ -1301,7 +1328,9 @@ def handle_insert_for_link(update: Update, context: CallbackContext):
         message_id=message_id,
         chat_id=chat.id,
         text=message,
-        reply_markup=build_add_wishlist_element_category_keyboard(categories),
+        reply_markup=build_add_wishlist_element_category_keyboard(
+            wishlist_id, categories
+        ),
         parse_mode="HTML",
         disable_web_page_preview=True,
     )
@@ -1435,6 +1464,57 @@ def go_back(update: Update, context: CallbackContext):
             return INSERT_ZELDA
 
 
+def create_custom_category(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    chat: Chat = update.effective_chat
+    user: User = update.effective_user
+    wishlist_id = update.callback_query.data.split("_")[-1]
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    title = f"{wishlist.title.upper()}  –  "
+    text = WISHLIST_HEADER % title
+    text += NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH
+    keyboard = NEW_CUSTOM_CATEGORY_KEYBOARD
+    message_id: int = message.message_id
+    context.bot.edit_message_text(
+        message_id=message_id,
+        chat_id=chat.id,
+        text=text,
+        reply_markup=keyboard,
+        parse_mode="HTML",
+        disable_web_page_preview=True,
+    )
+    return CREATE_CATEGORY
+
+
+def new_category_received(update: Update, context: CallbackContext):
+    message: Message = update.effective_message
+    user: User = update.effective_user
+    category_name = message.text
+    category_name = category_name.lower()
+    category_name = category_name.capitalize()
+    category_name = category_name.split("\n")[0]
+    # TODO: mostra messaggio testo troppo lungo
+    if len(category_name) > MAX_CATEGORY_LENGTH:
+        category_name = category_name[:MAX_CATEGORY_LENGTH]
+    create_category_for_user(user.id, category_name)
+    handle_insert_for_link(update, context, True)
+    return ADD_CATEGORY
+
+
+def delete_custom_category(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    if update.callback_query:
+        data = update.callback_query.data
+        _id = data.split("_")[-1]
+        category: CustomCategory = find_category_for_user_by_id(user.id, _id)
+        if category:
+            update_category_of_elements(user.id, category.description, CATEGORIES[0])
+            category.delete()
+        update.callback_query.data = "skip_add_link_to_wishlist_element"
+        handle_insert_for_link(update, context)
+        return ADD_CATEGORY
+
+
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -1469,6 +1549,19 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
                 pattern="add_category",
             ),
             CallbackQueryHandler(callback=go_back, pattern="go_back_from_category"),
+            CallbackQueryHandler(
+                callback=create_custom_category, pattern="create_new_category"
+            ),
+            CallbackQueryHandler(
+                callback=delete_custom_category, pattern="delete_category_custom"
+            ),
+        ],
+        CREATE_CATEGORY: [
+            CallbackQueryHandler(
+                callback=handle_insert_for_link,
+                pattern="skip_add_link_to_wishlist_element",
+            ),
+            MessageHandler(Filters.text, new_category_received),
         ],
     },
     fallbacks=[
