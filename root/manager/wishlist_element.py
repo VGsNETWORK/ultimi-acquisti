@@ -210,7 +210,7 @@ def check_message_length(
         title = f"{wishlist.title.upper()}  –  "
         message = (
             f"{WISHLIST_HEADER % title}<b>1.</b>  {user_text}{retrieve_photos_append(user)}\n"
-            f"{WISHLIST_DESCRIPTION_TOO_LONG}"
+            f"{WISHLIST_DESCRIPTION_TOO_LONG}\n\n"
         )
         if wishlist_elements:
             logger.info("ELEMENTS FOUND, CREATING MESSAGE...")

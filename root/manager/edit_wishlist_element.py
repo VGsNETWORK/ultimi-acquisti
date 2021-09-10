@@ -42,6 +42,7 @@ from root.contants.messages import (
     WISHLIST_EDIT_STEP_ONE,
     WISHLIST_EDIT_STEP_THREE,
     WISHLIST_EDIT_STEP_TWO,
+    YOU_ARE_MODIFYING_THIS_ELEMENT,
 )
 from root.helper.wishlist_element import (
     find_wishlist_element_by_id,
@@ -178,7 +179,7 @@ def edit_wishlist_element_description(
         title = f"{wishlist.title.upper()}  –  "
         message = (
             f"{WISHLIST_HEADER % title}<b>1.</b>  {user_text}\n"
-            f"{WISHLIST_DESCRIPTION_TOO_LONG}"
+            f"{WISHLIST_DESCRIPTION_TOO_LONG}\n{YOU_ARE_MODIFYING_THIS_ELEMENT}\n\n"
         )
         message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
         keyboard = build_edit_wishlist_element_desc_keyboard(_id, page, index, True)

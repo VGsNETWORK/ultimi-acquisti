@@ -785,7 +785,7 @@ BULK_DELETE_NO_PURCHASE = '<a href="tg://user?id=%s">%s</a>, non hai alcun acqui
 
 BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."
 
-WISHLIST_DESCRIPTION_TOO_LONG = "🚫  <b>Limite di 128 caratteri superato!</b>\n\n"
+WISHLIST_DESCRIPTION_TOO_LONG = "🚫  <b>Limite di 128 caratteri superato!</b>"
 
 WISHLIST_TITLE_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>\n\n"
 
@@ -1231,3 +1231,5 @@ NEW_CATEGORY_MESSAGE = (
 )
 
 CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>\n\n"
+
+YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i>"
