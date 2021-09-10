@@ -63,6 +63,7 @@ from root.contants.messages import (
     NEW_CATEGORY_MESSAGE,
     NO_ELEMENT_IN_WISHLIST,
     SUPPORTED_LINKS_MESSAGE,
+    TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING,
     WISHLIST_HEADER,
@@ -75,6 +76,8 @@ from root.contants.messages import (
     WISHLIST_STEP_ONE,
     WISHLIST_STEP_THREE,
     WISHLIST_STEP_TWO,
+    YOU_ARE_CREATING_A_NEW_CATEGORY,
+    YOU_ARE_MODIFYING_THIS_ELEMENT,
 )
 from root.util.util import (
     create_button,
@@ -1507,7 +1510,8 @@ def new_category_received(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         message = (
             f"{WISHLIST_HEADER % title}{category_name}\n"
-            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}"
+            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
+            f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
         context.bot.edit_message_text(
             chat_id=chat.id,

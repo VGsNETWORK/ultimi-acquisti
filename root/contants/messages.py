@@ -1230,6 +1230,15 @@ NEW_CATEGORY_MESSAGE = (
     "   •  testo su più righe non supportato.\n"
 )
 
-CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>\n\n"
+TOO_LONG_NEW_CATEGORY_MESSAGE = (
+    "Inserisci il nome della nuova categoria personalizzata:\n"
+    "   •  solo testo;\n"
+    "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  testo su più righe non supportato.\n"
+)
+
+CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>"
+
+YOU_ARE_CREATING_A_NEW_CATEGORY = "✏️  <i>Stai inserendo una nuova categoria</i>"
 
 YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i>"

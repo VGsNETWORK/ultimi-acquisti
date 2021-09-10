@@ -37,11 +37,13 @@ from root.contants.messages import (
     EDIT_WISHLIST_PROMPT,
     NEW_CATEGORY_MESSAGE,
     SUPPORTED_LINKS_MESSAGE,
+    TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_EDIT_STEP_ONE,
     WISHLIST_EDIT_STEP_THREE,
     WISHLIST_EDIT_STEP_TWO,
+    YOU_ARE_CREATING_A_NEW_CATEGORY,
     YOU_ARE_MODIFYING_THIS_ELEMENT,
 )
 from root.helper.wishlist_element import (
@@ -163,9 +165,7 @@ def edit_wishlist_element_description(
             text = wish.description
             text = redis_helper.save("%s_stored_wishlist_element" % user.id, text)
         if "confirm_description_mod" in update.callback_query.data:
-            text = redis_helper.retrieve(
-                "%s_stored_wishlist_element" % user.id
-            ).decode()
+            text = redis_helper.retrieve("%s_stored_wishlist_elemnt" % user.id).decode()
         else:
             text = redis_helper.retrieve(
                 "%s_stored_wishlist_element" % user.id
@@ -400,7 +400,8 @@ def new_category_received(update: Update, context: CallbackContext):
         title = f"{wishlist.title.upper()}  –  "
         message = (
             f"{WISHLIST_HEADER % title}{category_name}\n"
-            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}"
+            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
+            f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
         context.bot.edit_message_text(
             chat_id=chat.id,
