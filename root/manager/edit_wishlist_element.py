@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import emoji
 from telegram_utils.utils.tutils import delete_if_private
 from root.model.custom_category import CustomCategory
 from root.helper.custom_category_helper import (
@@ -36,6 +37,7 @@ from root.contants.messages import (
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     EDIT_WISHLIST_PROMPT,
     NEW_CATEGORY_MESSAGE,
+    NO_EMOJI_FOUND,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -388,6 +390,15 @@ def new_category_received(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message_id = redis_helper.retrieve("new_category_message_%s" % user.id).decode()
     category_name = message.text.lower().capitalize().split("\n")[0]
+    emoji_found = emoji.get_emoji_regexp().findall(category_name)
+    if emoji_found:
+        first_emoji = emoji_found[0]
+        emoji_found.pop(0)
+        for no_emoji in emoji_found:
+            category_name = category_name.replace(no_emoji, "")
+        category_name = category_name.replace(first_emoji, "", 1).strip().capitalize()
+    else:
+        first_emoji = None
     category_name = re.sub(r"\r|\n|\s\s", "", category_name)
     if len(category_name) > MAX_CATEGORY_LENGTH:
         delete_if_private(message)
@@ -412,6 +423,30 @@ def new_category_received(update: Update, context: CallbackContext):
             reply_markup=TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
         )
         return CREATE_CATEGORY
+    if not emoji_found:
+        delete_if_private(message)
+        redis_helper.save("new_category_name_%s" % user.id, category_name)
+        category_name = max_length_error_format(
+            category_name, MAX_CATEGORY_LENGTH, MAX_CATEGORY_LENGTH * 2
+        )
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        message = (
+            f"{WISHLIST_HEADER % title}{category_name}\n"
+            f"{NO_EMOJI_FOUND}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
+            f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
+        )
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=message,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+            reply_markup=NEW_CUSTOM_CATEGORY_KEYBOARD,
+        )
+        return CREATE_CATEGORY
+    category_name = "%s  %s" % (first_emoji, category_name)
     create_category_for_user(user.id, category_name)
     edit_wishlist_element_description(update, context, True)
     return EDIT_CATEGORY

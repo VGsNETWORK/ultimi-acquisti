@@ -1227,6 +1227,7 @@ NEW_CATEGORY_MESSAGE = (
     "Inserisci il nome della nuova categoria personalizzata:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  è necessario inserire un'emoji in testa al nome;\n"
     "   •  testo su più righe non supportato.\n"
 )
 
@@ -1234,10 +1235,13 @@ TOO_LONG_NEW_CATEGORY_MESSAGE = (
     "Inserisci il nome della nuova categoria personalizzata:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>%s caratteri</b>;\n"
+    "   •  è necessario inserire un'emoji in testa al nome;\n"
     "   •  testo su più righe non supportato.\n"
 )
 
 CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>"
+
+NO_EMOJI_FOUND = "🚫  <b>Emoji in testa mancante!</b>"
 
 YOU_ARE_CREATING_A_NEW_CATEGORY = "✏️  <i>Stai inserendo una nuova categoria</i>"
 
