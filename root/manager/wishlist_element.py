@@ -1323,7 +1323,7 @@ def handle_insert_for_link(
                 pictures=pictures,
             )
             return INSERT_ZELDA
-    categories: List(CustomCategory) = find_categories_for_user(
+    categories: List[CustomCategory] = find_categories_for_user(
         user_id=update.effective_user.id
     )
     context.bot.edit_message_text(
@@ -1496,7 +1496,6 @@ def new_category_received(update: Update, context: CallbackContext):
     message_id = redis_helper.retrieve("new_category_message_%s" % user.id).decode()
     category_name = message.text.lower().capitalize().split("\n")[0]
     category_name = re.sub(r"\r|\n|\s\s", "", category_name)
-    # TODO: mostra messaggio testo troppo lungo
     if len(category_name) > MAX_CATEGORY_LENGTH:
         delete_if_private(message)
         redis_helper.save("new_category_name_%s" % user.id, category_name)

@@ -1223,6 +1223,7 @@ USER_INFO_RECAP_LEGEND = (
 
 
 NEW_CATEGORY_MESSAGE = (
+    "✏️  <i>Stai inserendo una nuova categoria</i>\n\n"
     "Inserisci il nome della nuova categoria personalizzata:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>%s caratteri</b>;\n"

@@ -741,18 +741,6 @@ def build_add_wishlist_element_category_keyboard(
                 ]
             )
             index += 2
-            # line = []
-            # for category in group:
-            #    select_button = create_button(
-            #        category.description,
-            #        "add_category_custom_%s" % str(category.id),
-            #        None,
-            #    )
-            #    delete_button = create_button(
-            #        "🗑", "delete_category_custom_%s" % str(category.id), None
-            #    )
-            #    index += 1
-            #    keyboard.append([select_button, delete_button])
         if index < len(categories):
             select_button = create_button(
                 categories[-1].description,
@@ -813,7 +801,11 @@ def build_add_wishlist_element_category_keyboard(
 
 
 def build_edit_wishlist_element_category_keyboard(
-    _id: str, page: int, index: int, has_category: bool = True
+    _id: str,
+    page: int,
+    index: int,
+    has_category: bool = True,
+    custom_categories: List[CustomCategory] = [],
 ):
     logger.info(
         "ID: %s\n PAGE:%s\n INDEX:%s\nHAS_CATEGORY:%s\n"
@@ -853,6 +845,83 @@ def build_edit_wishlist_element_category_keyboard(
                 ),
             ]
         )
+    custom_categories = list(custom_categories)
+    category_index = 0
+    categories_group = zip(*(iter(custom_categories),) * 2)
+    if len(custom_categories) > 1:
+        for group in categories_group:
+            first, second = group
+            if has_category == first.description:
+                assigned = True
+                first.description = "✅  %s" % first.description
+            if has_category == second.description:
+                second.description = "✅  %s" % second.description
+                assigned = True
+            keyboard.append(
+                [
+                    create_button(
+                        first.description,
+                        "edit_category_custom_%s" % str(first.id),
+                        None,
+                    ),
+                    create_button(
+                        second.description,
+                        "edit_category_custom_%s" % str(second.id),
+                        None,
+                    ),
+                ]
+            )
+            keyboard.append(
+                [
+                    create_button(
+                        "🗑", "delete_category_custom_%s" % str(first.id), None
+                    ),
+                    create_button(
+                        "🗑", "delete_category_custom_%s" % str(second.id), None
+                    ),
+                ]
+            )
+            category_index += 2
+            # line = []
+            # for category in group:
+            #    select_button = create_button(
+            #        category.description,
+            #        "edit_category_custom_%s" % str(category.id),
+            #        None,
+            #    )
+            #    delete_button = create_button(
+            #        "🗑", "delete_category_custom_%s" % str(category.id), None
+            #    )
+            #    category_index += 1
+            #    keyboard.append([select_button, delete_button])
+        if category_index < len(custom_categories):
+            if has_category == custom_categories[-1].description:
+                custom_categories[-1].description = "✅  %s" % custom_categories[-1].description
+                assigned = True
+            select_button = create_button(
+                custom_categories[-1].description,
+                "edit_category_custom_%s" % str(custom_categories[-1].id),
+                None,
+            )
+            delete_button = create_button(
+                "🗑", "delete_category_custom_%s" % str(custom_categories[-1].id), None
+            )
+            keyboard.append([select_button])
+            keyboard.append([delete_button])
+    else:
+        for category in custom_categories:
+            if has_category == category.description:
+                category.description = "✅  %s" % category.description
+                assigned = True
+            select_button = create_button(
+                category.description,
+                "edit_category_custom_%s" % str(category.id),
+                None,
+            )
+            delete_button = create_button(
+                "🗑", "delete_category_custom_%s" % str(category.id), None
+            )
+            keyboard.append([select_button, delete_button])
     others = "✅  %s" % CATEGORIES[0].split("  ")[1] if not assigned else CATEGORIES[0]
     keyboard.append(
         [
@@ -863,6 +932,16 @@ def build_edit_wishlist_element_category_keyboard(
             )
         ]
     )
+    if len(custom_categories) < 6:
+        keyboard.append(
+            [
+                create_button(
+                    "➕  Aggiungi categoria personalizzata",
+                    "create_new_category_%s" % _id,
+                    None,
+                )
+            ]
+        )
     keyboard.append(
         [
             create_button(
