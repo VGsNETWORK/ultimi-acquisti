@@ -917,9 +917,7 @@ SUPPORTED_LINKS_MESSAGE = (
     "Aggiungi ora un link al prodotto e lascia che sia io a occuparmi delle scartoffie!"
 )
 
-EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
-    "Seleziona una nuova categoria per il tuo elemento, oppure conferma quella attuale:"
-)
+EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una nuova categoria per il tuo elemento, conferma quella attuale oppure creane una personalizzata:"
 
 ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
@@ -928,7 +926,9 @@ ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "   •  in caso di link multipli immessi nello stesso messaggio, prenderò in considerazione soltanto il primo%s."
 )
 
-ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = "Seleziona una categoria per il tuo elemento:"
+ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
+    "Seleziona una categoria per il tuo elemento, oppure creane una nuova:"
+)
 
 MONTHLY_REPORT_POPUP_MESSAGE = (
     "Il report mensile ti dà un resoconto degli"
