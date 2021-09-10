@@ -1228,3 +1228,5 @@ NEW_CATEGORY_MESSAGE = (
     "   •  massimo <b>%s caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
 )
+
+CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>\n\n"

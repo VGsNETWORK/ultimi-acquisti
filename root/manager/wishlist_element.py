@@ -52,6 +52,7 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
+    CATEGORY_NAME_TOO_LONG,
     CYCLE_INSERT_ENABLED_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE,
     DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
@@ -102,6 +103,7 @@ from root.contants.keyboard import (
     ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
     ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
     NEW_CUSTOM_CATEGORY_KEYBOARD,
+    TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
     build_add_wishlist_element_category_keyboard,
     create_delete_all_wishlist_element_items_keyboard,
     create_wishlist_element_keyboard,
@@ -1475,6 +1477,7 @@ def create_custom_category(update: Update, context: CallbackContext):
     text += NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH
     keyboard = NEW_CUSTOM_CATEGORY_KEYBOARD
     message_id: int = message.message_id
+    redis_helper.save("new_category_message_%s" % user.id, str(message_id))
     context.bot.edit_message_text(
         message_id=message_id,
         chat_id=chat.id,
@@ -1487,16 +1490,35 @@ def create_custom_category(update: Update, context: CallbackContext):
 
 
 def new_category_received(update: Update, context: CallbackContext):
+    chat: Chat = update.effective_chat
     message: Message = update.effective_message
     user: User = update.effective_user
-    category_name = message.text
-    category_name = category_name.lower()
-    category_name = category_name.capitalize()
-    category_name = category_name.split("\n")[0]
+    message_id = redis_helper.retrieve("new_category_message_%s" % user.id).decode()
+    category_name = message.text.lower().capitalize().split("\n")[0]
     category_name = re.sub(r"\r|\n|\s\s", "", category_name)
     # TODO: mostra messaggio testo troppo lungo
     if len(category_name) > MAX_CATEGORY_LENGTH:
-        category_name = category_name[:MAX_CATEGORY_LENGTH]
+        delete_if_private(message)
+        redis_helper.save("new_category_name_%s" % user.id, category_name)
+        category_name = max_length_error_format(
+            category_name, MAX_CATEGORY_LENGTH, MAX_CATEGORY_LENGTH * 2
+        )
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        message = (
+            f"{WISHLIST_HEADER % title}{category_name}\n"
+            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}"
+        )
+        context.bot.edit_message_text(
+            chat_id=chat.id,
+            message_id=message_id,
+            text=message,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+            reply_markup=TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
+        )
+        return CREATE_CATEGORY
     create_category_for_user(user.id, category_name)
     handle_insert_for_link(update, context, True)
     return ADD_CATEGORY
@@ -1514,6 +1536,15 @@ def delete_custom_category(update: Update, context: CallbackContext):
         update.callback_query.data = "skip_add_link_to_wishlist_element"
         handle_insert_for_link(update, context)
         return ADD_CATEGORY
+
+
+def accept_category_modification(update: Update, context: CallbackContext):
+    user: User = update.effective_user
+    category_name = redis_helper.retrieve("new_category_name_%s" % user.id).decode()
+    category_name = category_name[:MAX_CATEGORY_LENGTH]
+    create_category_for_user(user.id, category_name)
+    handle_insert_for_link(update, context, True)
+    return ADD_CATEGORY
 
 
 ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
@@ -1561,6 +1592,10 @@ ADD_IN_WISHLIST_CONVERSATION = ConversationHandler(
             CallbackQueryHandler(
                 callback=handle_insert_for_link,
                 pattern="skip_add_link_to_wishlist_element",
+            ),
+            CallbackQueryHandler(
+                callback=accept_category_modification,
+                pattern="accept_add_link_to_wishlist_element",
             ),
             MessageHandler(Filters.text, new_category_received),
         ],

@@ -715,18 +715,44 @@ def build_add_wishlist_element_category_keyboard(
     categories_group = zip(*(iter(categories),) * 2)
     if len(categories) > 1:
         for group in categories_group:
-            line = []
-            for category in group:
-                select_button = create_button(
-                    category.description,
-                    "add_category_custom_%s" % str(category.id),
-                    None,
-                )
-                delete_button = create_button(
-                    "🗑", "delete_category_custom_%s" % str(category.id), None
-                )
-                index += 1
-                keyboard.append([select_button, delete_button])
+            first, second = group
+            keyboard.append(
+                [
+                    create_button(
+                        first.description,
+                        "add_category_custom_%s" % str(first.id),
+                        None,
+                    ),
+                    create_button(
+                        second.description,
+                        "add_category_custom_%s" % str(second.id),
+                        None,
+                    ),
+                ]
+            )
+            keyboard.append(
+                [
+                    create_button(
+                        "🗑", "delete_category_custom_%s" % str(first.id), None
+                    ),
+                    create_button(
+                        "🗑", "delete_category_custom_%s" % str(second.id), None
+                    ),
+                ]
+            )
+            index += 2
+            # line = []
+            # for category in group:
+            #    select_button = create_button(
+            #        category.description,
+            #        "add_category_custom_%s" % str(category.id),
+            #        None,
+            #    )
+            #    delete_button = create_button(
+            #        "🗑", "delete_category_custom_%s" % str(category.id), None
+            #    )
+            #    index += 1
+            #    keyboard.append([select_button, delete_button])
         if index < len(categories):
             select_button = create_button(
                 categories[-1].description,
@@ -736,7 +762,8 @@ def build_add_wishlist_element_category_keyboard(
             delete_button = create_button(
                 "🗑", "delete_category_custom_%s" % str(categories[-1].id), None
             )
-            keyboard.append([select_button, delete_button])
+            keyboard.append([select_button])
+            keyboard.append([delete_button])
     else:
         for category in categories:
             select_button = create_button(
@@ -1576,6 +1603,17 @@ def build_new_link_keyboard_added(page: int, wishlist_element_id: str):
     keyboard.append([create_button("✅  Concludi inserimento", link_insert, None)])
     return InlineKeyboardMarkup(keyboard)
 
+
+TOO_LONG_CUSTOM_CATEGORY_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "✅  Accetta modifica", "accept_add_link_to_wishlist_element", ""
+            )
+        ],
+        [create_button("❌  Annulla", "skip_add_link_to_wishlist_element", "")],
+    ]
+)
 
 NEW_CUSTOM_CATEGORY_KEYBOARD = InlineKeyboardMarkup(
     [[create_button("❌  Annulla", "skip_add_link_to_wishlist_element", "")]]
