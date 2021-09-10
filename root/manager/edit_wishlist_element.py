@@ -161,6 +161,7 @@ def edit_wishlist_element_description(
     if update.callback_query:
         if "keep_current_description" in update.callback_query.data:
             text = wish.description
+            text = redis_helper.save("%s_stored_wishlist_element" % user.id, text)
         if "confirm_description_mod" in update.callback_query.data:
             text = redis_helper.retrieve(
                 "%s_stored_wishlist_element" % user.id
