@@ -62,6 +62,7 @@ from root.contants.messages import (
     DELETE_WISHLIST_ITEMS_APPEND,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     NEW_CATEGORY_MESSAGE,
+    NO_CATEGORY_NAME_FOUND,
     NO_ELEMENT_IN_WISHLIST,
     NO_EMOJI_FOUND,
     SUPPORTED_LINKS_MESSAGE,
@@ -1503,7 +1504,8 @@ def new_category_received(update: Update, context: CallbackContext):
     emoji_found = emoji.get_emoji_regexp().findall(category_name)
     if emoji_found:
         first_emoji = emoji_found[0]
-        emoji_found.pop(0)
+        if len(emoji_found) > 1:
+            emoji_found.pop(0)
         for no_emoji in emoji_found:
             category_name = category_name.replace(no_emoji, "")
         category_name = category_name.replace(first_emoji, "", 1).strip().capitalize()
@@ -1524,14 +1526,17 @@ def new_category_received(update: Update, context: CallbackContext):
             f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
             f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
-        context.bot.edit_message_text(
-            chat_id=chat.id,
-            message_id=message_id,
-            text=message,
-            disable_web_page_preview=True,
-            parse_mode="HTML",
-            reply_markup=TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
-        )
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=message,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+                reply_markup=TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
+            )
+        except BadRequest:
+            pass
         return CREATE_CATEGORY
     if not emoji_found:
         delete_if_private(message)
@@ -1547,14 +1552,43 @@ def new_category_received(update: Update, context: CallbackContext):
             f"{NO_EMOJI_FOUND}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
             f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
-        context.bot.edit_message_text(
-            chat_id=chat.id,
-            message_id=message_id,
-            text=message,
-            disable_web_page_preview=True,
-            parse_mode="HTML",
-            reply_markup=NEW_CUSTOM_CATEGORY_KEYBOARD,
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=message,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+                reply_markup=NEW_CUSTOM_CATEGORY_KEYBOARD,
+            )
+        except BadRequest:
+            pass
+        return CREATE_CATEGORY
+    if not category_name:
+        delete_if_private(message)
+        redis_helper.save("new_category_name_%s" % user.id, category_name)
+        category_name = max_length_error_format(
+            category_name, MAX_CATEGORY_LENGTH, MAX_CATEGORY_LENGTH * 2
         )
+        wishlist_id = get_current_wishlist_id(user.id)
+        wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+        title = f"{wishlist.title.upper()}  –  "
+        message = (
+            f"{WISHLIST_HEADER % title}{category_name}\n"
+            f"{NO_CATEGORY_NAME_FOUND}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
+            f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
+        )
+        try:
+            context.bot.edit_message_text(
+                chat_id=chat.id,
+                message_id=message_id,
+                text=message,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+                reply_markup=NEW_CUSTOM_CATEGORY_KEYBOARD,
+            )
+        except BadRequest:
+            pass
         return CREATE_CATEGORY
     category_name = "%s  %s" % (first_emoji, category_name)
     create_category_for_user(user.id, category_name)

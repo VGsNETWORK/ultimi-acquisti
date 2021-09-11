@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from os import environ
+
+import emoji
 from root.model.custom_category import CustomCategory
 from root.handlers.generic import extract_data
 from root.handlers.handlers import extractor
@@ -853,9 +855,13 @@ def build_edit_wishlist_element_category_keyboard(
             first, second = group
             if has_category == first.description:
                 assigned = True
-                first.description = "✅  %s" % first.description
+                emoji_found = emoji.get_emoji_regexp().search(first.description)
+                first.description = first.description.replace(emoji_found.group(), "✅")
             if has_category == second.description:
-                second.description = "✅  %s" % second.description
+                emoji_found = emoji.get_emoji_regexp().search(second.description)
+                second.description = second.description.replace(
+                    emoji_found.group(), "✅"
+                )
                 assigned = True
             keyboard.append(
                 [
@@ -895,8 +901,13 @@ def build_edit_wishlist_element_category_keyboard(
             #    category_index += 1
             #    keyboard.append([select_button, delete_button])
         if category_index < len(custom_categories):
-            if has_category == custom_categories[-1].description:
-                custom_categories[-1].description = "✅  %s" % custom_categories[-1].description
+            if has_category == category.description:
+                emoji_found = emoji.get_emoji_regexp().search(
+                    custom_categories[-1].description
+                )
+                custom_categories[-1].description = custom_categories[
+                    -1
+                ].description.replace(emoji_found.group(), "✅")
                 assigned = True
             select_button = create_button(
                 custom_categories[-1].description,
@@ -911,7 +922,10 @@ def build_edit_wishlist_element_category_keyboard(
     else:
         for category in custom_categories:
             if has_category == category.description:
-                category.description = "✅  %s" % category.description
+                emoji_found = emoji.get_emoji_regexp().search(category.description)
+                category.description = category.description.replace(
+                    emoji_found.group(), "✅"
+                )
                 assigned = True
             select_button = create_button(
                 category.description,
