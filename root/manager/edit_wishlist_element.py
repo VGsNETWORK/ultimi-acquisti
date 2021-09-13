@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+from root.manager.wishlist_element_link import view_wishlist_element_links
 import emoji
 from telegram.error import BadRequest
 from telegram_utils.utils.tutils import delete_if_private
@@ -511,6 +512,11 @@ def delete_custom_category(update: Update, context: CallbackContext):
         return EDIT_CATEGORY
 
 
+def go_to_link_session(update: Update, context: CallbackContext):
+    view_wishlist_element_links(update, context)
+    return ConversationHandler.END
+
+
 EDIT_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -531,6 +537,9 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
             CallbackQueryHandler(
                 callback=edit_wishlist_element_description,
                 pattern="confirm_description_mod",
+            ),
+            CallbackQueryHandler(
+                callback=go_to_link_session, pattern="go_to_link_session"
             ),
         ],
         EDIT_CATEGORY: [

@@ -632,6 +632,15 @@ def build_edit_wishlist_element_desc_keyboard(
     keyboard.append(
         [
             create_button(
+                "🔗  Apri la sezione link di questo elemento",
+                "go_to_link_session_%s_%s" % (page, _id),
+                None,
+            )
+        ],
+    )
+    keyboard.append(
+        [
+            create_button(
                 "❌  Annulla",
                 "cancel_add_to_wishlist_element_%s_%s_%s" % (index, page, _id),
                 None,
