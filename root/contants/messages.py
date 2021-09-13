@@ -1223,28 +1223,36 @@ USER_INFO_RECAP_LEGEND = (
 
 
 NEW_CATEGORY_MESSAGE = (
-    "✏️  <i>Stai inserendo una nuova categoria</i>\n\n"
+    "✍🏻  <i>Stai inserendo una nuova categoria</i>\n\n"
     "Inserisci il nome della nuova categoria personalizzata:\n"
     "   •  solo testo;\n"
-    "   •  massimo <b>%s caratteri</b>;\n"
-    "   •  è necessario inserire un'emoji in testa al nome;\n"
+    "   •  minimo <b>1 carattere testuale</b> e massimo <b>%s</b>;\n"
+    "   •  è necessario inserire un'<b>emoji</b> in testa al nome;\n"
     "   •  testo su più righe non supportato.\n"
 )
 
 TOO_LONG_NEW_CATEGORY_MESSAGE = (
     "Inserisci il nome della nuova categoria personalizzata:\n"
     "   •  solo testo;\n"
-    "   •  massimo <b>%s caratteri</b>;\n"
-    "   •  è necessario inserire un'emoji in testa al nome;\n"
+    "   •  minimo <b>1 carattere testuale</b> e massimo <b>%s</b>;\n"
+    "   •  è necessario inserire un'<b>emoji</b> in testa al nome;\n"
     "   •  testo su più righe non supportato.\n"
 )
 
 CATEGORY_NAME_TOO_LONG = "🚫  <b>Limite di %s caratteri superato!</b>"
 
-NO_EMOJI_FOUND = "🚫  <b>Emoji in testa mancante!</b>"
+NO_EMOJI_FOUND = "☑️  <b>Emoji in testa</b> \n✅  Almeno 1 carattere testuale"
 
-NO_CATEGORY_NAME_FOUND = "🚫  <b>Nome della categoria mancante!</b>"
+NO_CATEGORY_NAME_FOUND = "✅  Emoji in testa \n☑️  <b>Almeno 1 carattere testuale</b>"
 
-YOU_ARE_CREATING_A_NEW_CATEGORY = "✏️  <i>Stai inserendo una nuova categoria</i>"
+CATEGORY_NAME_TOO_LONG_WITH_EMOJI = (
+    "✅  Emoji in testa \n🚫  <b>Limite di %s caratteri superato!</b>"
+)
+
+CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI = (
+    "☑️  <b>Emoji in testa</b> \n🚫  <b>Limite di %s caratteri superato!</b>"
+)
+
+YOU_ARE_CREATING_A_NEW_CATEGORY = "✍🏻  <i>Stai inserendo una nuova categoria</i>"
 
 YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i>"

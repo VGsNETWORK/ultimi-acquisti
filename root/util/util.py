@@ -257,9 +257,9 @@ def max_length_error_format(content: str, allowed: int, split: int, link: str = 
         content.insert(allowed + len(stuff), "</a>")
         content.insert(allowed + len(stuff) + 1, "<s>")
     else:
-        content.insert(allowed, "</b><s>")
+        content.insert(allowed, "</code><s>")
     content.append("</s>")
-    content.insert(0, "<b>")
+    content.insert(0, "<code>")
     logger.info("".join(content))
     return "".join(content)
 

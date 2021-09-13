@@ -32,6 +32,8 @@ from root.contants.keyboard import (
 from root.contants.messages import (
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     CATEGORY_NAME_TOO_LONG,
+    CATEGORY_NAME_TOO_LONG_WITH_EMOJI,
+    CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI,
     EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
     EDIT_WISHLIST_LINK_EXISTING_PHOTOS,
@@ -403,6 +405,10 @@ def new_category_received(update: Update, context: CallbackContext):
     else:
         first_emoji = None
     category_name = re.sub(r"\r|\n|\s\s", "", category_name)
+    category_name = re.sub(r"\\x[a-fA-F0-9]{2}|b'|'$", "", str(category_name.encode()))
+    logger.info(
+        "THIS IS THE NAME [%s] [%s]" % (category_name.encode(), len(category_name))
+    )
     if len(category_name) > MAX_CATEGORY_LENGTH:
         delete_if_private(message)
         redis_helper.save("new_category_name_%s" % user.id, category_name)
@@ -412,9 +418,13 @@ def new_category_received(update: Update, context: CallbackContext):
         wishlist_id = get_current_wishlist_id(user.id)
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
+        if emoji_found:
+            emoji_append = CATEGORY_NAME_TOO_LONG_WITH_EMOJI
+        else:
+            emoji_append = CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI
         message = (
-            f"{WISHLIST_HEADER % title}{category_name}\n"
-            f"{CATEGORY_NAME_TOO_LONG % MAX_CATEGORY_LENGTH}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
+            f'{WISHLIST_HEADER % title}"{category_name}"\n'
+            f"{emoji_append % MAX_CATEGORY_LENGTH}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
             f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
         try:
@@ -429,7 +439,7 @@ def new_category_received(update: Update, context: CallbackContext):
         except BadRequest:
             pass
         return CREATE_CATEGORY
-    if not emoji_found and not category_name:
+    if not emoji_found:
         delete_if_private(message)
         redis_helper.save("new_category_name_%s" % user.id, category_name)
         category_name = max_length_error_format(
@@ -439,7 +449,7 @@ def new_category_received(update: Update, context: CallbackContext):
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
         message = (
-            f"{WISHLIST_HEADER % title}{category_name}\n"
+            f'{WISHLIST_HEADER % title}"<code>{category_name}</code>"\n'
             f"{NO_EMOJI_FOUND}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
             f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
@@ -465,7 +475,7 @@ def new_category_received(update: Update, context: CallbackContext):
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
         message = (
-            f"{WISHLIST_HEADER % title}{category_name}\n"
+            f'{WISHLIST_HEADER % title}"<code>{first_emoji}  ...</code>"\n'
             f"{NO_CATEGORY_NAME_FOUND}\n{YOU_ARE_CREATING_A_NEW_CATEGORY}\n\n"
             f"{TOO_LONG_NEW_CATEGORY_MESSAGE % MAX_CATEGORY_LENGTH}"
         )
