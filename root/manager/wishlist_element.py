@@ -1164,6 +1164,10 @@ def add_category(update: Update, context: CallbackContext):
         logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
         if cycle_insert:
             logger.info("THE CYCLE INSERT IS AVAILABLE")
+            reset_redis_wishlist_keyboard(
+                user.user_id,
+                count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.user_id),
+            )
             if len(cycle_insert) > 0:
                 cycle_insert = eval(cycle_insert.decode())
                 if cycle_insert:
