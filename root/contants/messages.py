@@ -14,6 +14,8 @@ TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
 
 BOT_NAME = environ["BOT_NAME"]
 
+VGS_GROUPS_PRIMARY_LINK = "https://t.me/joinchat/T8CJkZHor02rIzVy"
+
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
 DB_CONNECTION_ERROR = (
@@ -55,8 +57,8 @@ START_GROUP_GROUP_APPEND = (
 
 PLEASE_NOTE_APPEND = (
     "\n    <i><b><u>NOTA BENE</u>:</b>  Le funzioni di <b>aggiunta</b>, <b>modifica</b> e <b>rimozione</b>"
-    ' degli acquisti sono fruibili <a href="t.me/VGsGROUPS/1"><u>solo all\'interno dei'
-    " gruppi di <b>VGs NETWORK</b></u></a>.</i>\n\n"
+    f' degli acquisti sono fruibili <a href="{VGS_GROUPS_PRIMARY_LINK}"><u>solo all\'interno dei'
+    " gruppi di VGs NETWORK</u></a>.</i>\n\n"
 )
 
 START_COMMANDS_LIST_HEADER = (
