@@ -373,6 +373,7 @@ def create_wishlist_element_keyboard(
     else:
         add_space = False
     for index, wishlist_element in enumerate(wishlist_elements):
+        logger.info("creating keyboard row for [%s]" % wishlist_element.description)
         index = "%s." % ((index) + (5 * page + 1))
         if index == "%s." % last:
             space = ""
@@ -508,6 +509,30 @@ def create_wishlist_element_keyboard(
                         "🔀",
                         "ask_element_wishlist_change_%s_%s_%s"
                         % (page, index, str(wishlist_element.id)),
+                        None,
+                    ),
+                ]
+            )
+        else:
+            keyboard.append(
+                [
+                    create_button(f"{space}{index}", "empty_button", None),
+                    create_button(
+                        "🤍  🔄  🛍",
+                        "convert_to_purchase_%s_%s_%s"
+                        % (index, page, str(wishlist_element.id)),
+                        None,
+                    ),
+                    create_button(
+                        "🗑",
+                        "remove_wishlist_element_%s_%s_%s"
+                        % (index, page, wishlist_element.id),
+                        None,
+                    ),
+                    create_button(
+                        ">",
+                        "toggle_element_action_page_next_%s_%s_%s"
+                        % (index, str(wishlist_element.id), page),
                         None,
                     ),
                 ]

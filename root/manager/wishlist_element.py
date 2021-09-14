@@ -1378,6 +1378,8 @@ def toggle_element_action_page(update: Update, context: CallbackContext):
     logger.info("THE CURRENT PAGE IS %s" % element_page)
     if element_page:
         element_page = eval(element_page.decode())
+        if element_page == 0:
+            element_page = 1
     else:
         element_page = 1
     if "next" in update.callback_query.data:
