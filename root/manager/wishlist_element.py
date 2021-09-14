@@ -410,11 +410,15 @@ def check_message_length(
                     else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
                 )
                 message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
+            if not cycle_enabled(update.effective_user):
+                keyboard = ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD
+            else:
+                keyboard = ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD
             context.bot.edit_message_text(
                 chat_id=chat.id,
                 message_id=message_id,
                 text=message,
-                reply_markup=ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
+                reply_markup=keyboard,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
             )
@@ -994,8 +998,8 @@ def view_wishlist(
 
 def clear_redis(user: User, toggle_cycle: bool = False):
     redis_helper.save("%s_stored_wishlist_element" % user.id, "")
-    redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
     if not toggle_cycle:
+        redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
         redis_helper.save("%s_cycle_insert" % user.id, str(False))
 
 
@@ -1029,10 +1033,22 @@ def add_in_wishlist_element(
     wishlist_id = get_current_wishlist_id(user.id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     title = f"{wishlist.title.upper()}  –  "
+    append = retrieve_photos_append(user, None)
     message = (
-        f"{WISHLIST_HEADER % title}<b>1.</b>  . . . . . .\n"
+        f"{WISHLIST_HEADER % title}<b>1.</b>  . . . . . .{append}\n"
         "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
     )
+    logger.info("STO PASSANDO DI QUI")
+    rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
+    rphotos = eval(rphotos.decode()) if rphotos else []
+    if len(rphotos) > 0:
+        if len(rphotos) < 10:
+            append = ADD_TO_WISHLIST_PROMPT % (10 - len(rphotos), cycle_append)
+        else:
+            append = ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
+    else:
+        append = ADD_TO_WISHLIST_START_PROMPT % cycle_append
+    logger.info(append)
     if wishlist_elements:
         message += "\n".join(
             [
@@ -1044,18 +1060,8 @@ def add_in_wishlist_element(
                 for index, wish in enumerate(wishlist_elements)
             ]
         )
-        append = (
-            ADD_TO_WISHLIST_START_PROMPT % cycle_append
-            if len(rphotos) < 10
-            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
-        )
         message += "\n\n%s%s" % (WISHLIST_STEP_ONE, append)
     else:
-        append = (
-            ADD_TO_WISHLIST_START_PROMPT % cycle_append
-            if len(rphotos) < 10
-            else ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT % cycle_append
-        )
         message += "\n%s%s" % (WISHLIST_STEP_ONE, append)
     try:
         logger.info("THE CYCLE INSERT VALUE IS [%s]" % cycle_insert)
@@ -1171,6 +1177,11 @@ def add_category(update: Update, context: CallbackContext):
             if len(cycle_insert) > 0:
                 cycle_insert = eval(cycle_insert.decode())
                 if cycle_insert:
+                    redis_helper.save(
+                        "%s_%s_photos"
+                        % (update.effective_user.id, update.effective_user.id),
+                        "",
+                    )
                     add_in_wishlist_element(update, context, cycle_insert, cycle_insert)
                     return INSERT_ITEM_IN_WISHLIST
         view_wishlist(update, context, ADDED_TO_WISHLIST, "0", reset_keyboard=True)
@@ -1179,8 +1190,8 @@ def add_category(update: Update, context: CallbackContext):
 
 def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
     data = update.callback_query.data
+    user: User = update.effective_user
     if not "NO_DELETE" in data:
-        user: User = update.effective_user
         wishlist_id = get_current_wishlist_id(user.id)
         wish: WishlistElement = find_wishlist_element_for_user(
             user.id, 0, 1, wishlist_id=wishlist_id
@@ -1189,6 +1200,7 @@ def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
             wish = wish[0]
             wish.delete()
     update.callback_query.data += "_0"
+    redis_helper.save("%s_%s_photos" % (user.id, user.id), "")
     view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END
 
