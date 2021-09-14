@@ -960,23 +960,26 @@ def view_wishlist(
                 disable_web_page_preview=True,
             )
         except BadRequest:
-            context.bot.edit_message_text(
-                chat_id=chat.id,
-                message_id=update.effective_message.message_id,
-                text=message,
-                reply_markup=create_wishlist_element_keyboard(
-                    page,
-                    total_pages,
-                    wishlist_elements,
-                    first_page,
-                    last_page,
-                    inc,
-                    total_wishlists,
-                    user.id,
-                ),
-                parse_mode="HTML",
-                disable_web_page_preview=True,
-            )
+            try:
+                context.bot.edit_message_text(
+                    chat_id=chat.id,
+                    message_id=update.effective_message.message_id,
+                    text=message,
+                    reply_markup=create_wishlist_element_keyboard(
+                        page,
+                        total_pages,
+                        wishlist_elements,
+                        first_page,
+                        last_page,
+                        inc,
+                        total_wishlists,
+                        user.id,
+                    ),
+                    parse_mode="HTML",
+                    disable_web_page_preview=True,
+                )
+            except BadRequest:
+                pass
     else:
         context.bot.send_message(
             chat_id=chat.id,
