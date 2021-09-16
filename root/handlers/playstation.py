@@ -77,8 +77,20 @@ def extract_code(url: str) -> str:
             return code
 
 
+def extract_platform(data: bs4):
+    platform = data.find("div", {"class": "psw-l-space-x-2 psw-l-line-left psw-m-t-4"})
+    logger.info(platform)
+    platform = platform.find_all("span", {"class": "psw-p-x-2 psw-p-y-1 psw-t-tag"})
+    logger.info(platform)
+    platform = [de_html(p) for p in platform]
+    logger.info(platform)
+    platform = [p for p in platform if not "edition" in p.lower()]
+    logger.info(platform)
+    return "  •  ".join(platform)
+
+
 def extract_missing_data(product: dict, data: bs4):
-    logger.info("EXTRACTING INFO FROM [%s]" % product)
+    product["platform"] = extract_platform(data)
     product["bookable"] = is_bookable(data)
     return product
 

@@ -271,7 +271,10 @@ def view_wishlist_element_links(
         medals = ["🥇", "🥈", "🥉"]
         for index, wishlist_link in enumerate(wishlist_element.links):
             if extractor.is_supported(wishlist_link):
-                tracked = "  (💹)"
+                tracked_link: TrackedLink = find_link_by_code(
+                    extractor.extract_code(wishlist_link)
+                )
+                tracked = f"  (💹)\n<i>{tracked_link.platform}</i>"
             else:
                 tracked = ""
             if index == 9:

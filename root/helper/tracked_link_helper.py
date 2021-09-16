@@ -83,6 +83,7 @@ def update_scraped_link_information(product: dict):
         tracked_link.price = float(product["price"])
         tracked_link.bookable = product["bookable"]
         tracked_link.sold_out = product["sold_out"]
+        tracked_link.platform = product["platform"]
         tracked_link.save() 
 
 
