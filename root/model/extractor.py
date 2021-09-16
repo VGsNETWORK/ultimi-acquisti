@@ -65,6 +65,35 @@ class Extractor:
         domains = [re.sub(r"^.*//:|www.|\..*", "", link) for link in links]
         return domain in domains
 
+    def standard_platform(self, product: dict, handler: ExtractorHandler):
+        platform: str = product["platform"]
+        platform = platform.lower()
+        # PLAYSTATION
+        if "playstation" in platform:
+            platform = re.sub(r"playstation(\s)?", "PS", platform)
+        elif "vita" in platform:
+            platform = "PSVITA"
+        elif "psp" in platform:
+            platform = "PSP"
+        # NINTENDO
+        elif "switch" in platform:
+            platform = "SWC"
+        elif "3ds" in platform:
+            platform = "3DS"
+        elif "ds" in platform:
+            platform = "DS"
+        # XBOX
+        elif "one" in platform:
+            platform = "XBONE"
+        elif "series" in platform:
+            platform = "XBSERIESX"
+        elif "360" in platform:
+            platform = "XB360"
+        elif "xbox" in platform:
+            platform = "XBOX"
+        product["platform"] = platform
+        return product
+
     def validate_url(self, url):
         if not url:
             return False
@@ -158,6 +187,7 @@ class Extractor:
             handler.extract_missing_data(product, data)
             product["code"] = code
             product["price"] = self.format_price(product["price"])
+            product = self.standard_platform(product, handler)
             return product
         else:
             # if no handler has been found, raise an error
