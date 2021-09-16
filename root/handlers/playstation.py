@@ -12,8 +12,8 @@ import telegram_utils.utils.logger as logger
 import requests
 import json
 
-BASE_URL = "https://store.playstation.com/it-it/product/"
-MATCH = "store.playstation.com/it-it"
+BASE_URL = "store.playstation.com/it-it/"
+MATCH = "store.playstation.com"
 RULE = {
     "title": Rule("h1", {"class": "psw-t-title-l"}),
     "price": Rule("span", {"class": "psw-t-title-m"}),
@@ -32,7 +32,10 @@ def get_shipment_cost(price: float, string: bool = False):
 
 
 def is_bookable(data: bs4):
-    bookable = data.find("span", {"class": "psw-fill-x"})
+    bookable = data.find(
+        "span", {"class": "psw-fill-x psw-t-truncate-1 psw-l-space-x-2"}
+    )
+    logger.info(bookable)
     bookable = de_html(bookable)
     return "pre-ordine" in str(bookable).lower()
 
@@ -59,23 +62,33 @@ def load_picture(data: bs4):
 
 
 def validate(data: bs4):
-    return data.find("h2", {"class": "psw-t-title-m"}) != None
+    logger.info("VALIDATING PLAYSTATION LINK")
+    return data.find("span", {"class": "psw-t-title-m"}) != None
 
 
 def extract_code(url: str) -> str:
-    code: List[str] = re.findall(r"/product/.*", url)
+    find_re = r"/concept/.*" if "/concept/" in url else r"/product/.*"
+    code: List[str] = re.findall(find_re, url)
     if code:
         code: str = code[0]
-        return re.sub("/|product", "", code)
+        if code.startswith("/"):
+            return code[1:]
+        else:
+            return code
 
 
 def extract_missing_data(product: dict, data: bs4):
+    logger.info("EXTRACTING INFO FROM [%s]" % product)
     product["bookable"] = is_bookable(data)
     return product
 
 
 def get_extra_info(tracked_link: TrackedLink):
-    return ""
+    bookable = "✅" if tracked_link.bookable else "❌"
+    if tracked_link.bookable:
+        return "%s  Preordine" % bookable
+    else:
+        return "✅  Disponib."
 
 
 # fmt: off

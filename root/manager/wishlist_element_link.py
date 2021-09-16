@@ -231,13 +231,14 @@ def view_wishlist_element_links(
     tc = []
     for link in wishlist_element.links:
         if extractor.is_supported(link):
-            code = extractor.extract_code(link)
+            code: str = extractor.extract_code(link)
+            logger.info("finding by code [%s]" % code)
             tracked_link: TrackedLink = find_link_by_code(code)
             tracked_links.append(tracked_link)
         else:
             links.insert(0, link)
-    tracked_links.sort(key=lambda link: link.price, reverse=True)
     logger.info(tracked_links)
+    tracked_links.sort(key=lambda link: link.price, reverse=True)
     for link in tracked_links:
         logger.info("checking price for %s" % link.link)
         if link.price > 0:

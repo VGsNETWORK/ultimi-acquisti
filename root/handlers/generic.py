@@ -7,6 +7,7 @@ from html import unescape
 from urllib.parse import unquote
 import requests
 import re
+import telegram_utils.utils.logger as logger
 
 
 def de_html(data: str):
@@ -30,6 +31,7 @@ def load_url(url: str) -> str:
 
 
 def extract_data(url: str, rules: dict) -> dict:
+    logger.info("querying url [%s]" % url)
     data: bs4 = load_url(url)
     product: dict = {}
     for field in rules:

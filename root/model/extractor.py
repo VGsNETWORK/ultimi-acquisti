@@ -25,6 +25,7 @@ class Extractor:
 
     def is_supported(self, url: str):
         if self.validate_url(url):
+            logger.info("THE LINK IS VALID")
             if url:
                 return self.extractor_exists(url)
             return False
@@ -137,7 +138,9 @@ class Extractor:
 
     def parse_url(self, url: str):
         if not self.is_supported(url):
-            raise ValueError("No valid handler registered for the specfied url")
+            raise ValueError(
+                "No valid handler registered for the specfied url [%s]" % url
+            )
         # search for an valid handler for the url
         handler = next(
             (handler for handler in self.handlers if re.findall(handler.match, url)),
