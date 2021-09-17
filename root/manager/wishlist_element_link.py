@@ -5,12 +5,13 @@ from operator import add
 from os import environ
 from re import I, S, sub
 import re
+from root.handlers.generic import de_html
 from root.contants.message_timeout import THIRTY_MINUTES
 
 from telegram.bot import Bot
 from root.helper.process_helper import find_process, stop_process, create_process
 from time import sleep
-from root.util.util import format_price
+from root.util.util import format_date, format_price, format_time
 from typing import List
 from root.model.tracked_link import TrackedLink
 from root.helper.subscriber_helper import find_subscriber
@@ -37,6 +38,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     PRICE_MESSAGE_POPUP,
     PRICE_MESSAGE_POPUP_NO_VARIATION,
+    PRODUCT_DEAL,
     PRODUCT_TYPE,
     SUPPORTED_LINKS_MESSAGE,
     TRACKED_LINK_EXPLANATION,
@@ -266,8 +268,13 @@ def view_wishlist_element_links(
             message += TRACKED_LINK_EXPLANATION
         wishlist_element.links.reverse()
         if len(wishlist_element.links) == 10:
-            spaces = "  "
+            if is_tracked:
+                leading_space = " "
+            else:
+                leading_space = ""
+            spaces = " "
         else:
+            leading_space = ""
             spaces = ""
         medals = ["🥇", "🥈", "🥉"]
         for index, wishlist_link in enumerate(wishlist_element.links):
@@ -276,10 +283,22 @@ def view_wishlist_element_links(
                     extractor.extract_code(wishlist_link)
                 )
                 logger.info("IS DIGITAL [%s]" % tracked_link.digital)
-                if tracked_link.digital:
-                    tracked = f"  (💹)\n<i>{tracked_link.platform}  •  {PRODUCT_TYPE[tracked_link.digital]}</i>"
+                if tracked_link.deals_end:
+                    if tracked_link.deals_percentage:
+                        deal = int(tracked_link.deals_percentage)
+                    else:
+                        deal = 0
+                    deal_date = PRODUCT_DEAL % (
+                        deal,
+                        format_date(tracked_link.deals_end),
+                        format_time(tracked_link.deals_end),
+                    )
                 else:
-                    tracked = f"  (💹)\n<i>{tracked_link.platform}  •  {PRODUCT_TYPE[False]}</i>"
+                    deal_date = "<code>    </code>"
+                if tracked_link.digital:
+                    tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[tracked_link.digital]})</i>"
+                else:
+                    tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[False]})</i>"
             else:
                 tracked = ""
             if index == 9:
@@ -290,22 +309,22 @@ def view_wishlist_element_links(
                     wishlist_link[:MAX_LINK_LENGTH],
                 )
             if not tracked:
-                i = " <b>%s.</b> " % (index + 1)
+                i = "<code>%s<b>%s.</b> </code>" % (leading_space, (index + 1))
             else:
                 if index > 2:
                     if is_tracked:
-                        i = " <b>%s.</b> " % (index + 1)
+                        i = "<code>%s<b>%s.</b> </code>" % (leading_space, (index + 1))
                 else:
-                    i = "%s " % medals[index]
+                    i = "<code> %s </code>" % medals[index]
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n{spaces}{i} {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i}{wishlist_link}{tracked}"
                 else:
-                    message += f"\n{spaces}{i} {wishlist_link}{tracked}"
+                    message += f"\n{spaces}{i}{wishlist_link}{tracked}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n{spaces}{i} {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i}{wishlist_link}{tracked}"
             else:
-                message += f"\n\n{spaces}{i} {wishlist_link}{tracked}"
+                message += f"\n\n{spaces}{i}{wishlist_link}{tracked}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."

@@ -66,6 +66,7 @@ class Extractor:
         return domain in domains
 
     def standard_platform(self, product: dict, handler: ExtractorHandler):
+        logger.info(product)
         platform: str = product["platform"]
         platform = platform.lower()
         # PLAYSTATION

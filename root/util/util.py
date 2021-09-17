@@ -218,6 +218,18 @@ def is_text_month(month: str) -> bool:
     return month in long_text_month.keys() or month in short_text_month.keys()
 
 
+def format_date(date: datetime, show_year: bool = False):
+    if show_year:
+        return date.strftime("%d/%m/%Y")
+    else:
+        return date.strftime("%d/%m")
+
+
+def format_time(date: datetime):
+    logger.info("formatting %s [%s]" % (date, type(date)))
+    return date.astimezone().strftime("%H:%M %Z")
+
+
 def has_number(content: str) -> bool:
     """Check if a string contains a number
 

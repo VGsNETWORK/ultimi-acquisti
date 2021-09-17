@@ -11,6 +11,9 @@ from root.util.util import de_html
 import telegram_utils.utils.logger as logger
 import requests
 import json
+from datetime import datetime, time
+from dateutil import tz, parser
+from dateutil.relativedelta import relativedelta
 
 BASE_URL = "store.playstation.com/it-it/"
 MATCH = "store.playstation.com"
@@ -25,6 +28,7 @@ RULE = {
     "bookable": False,
     "sold_out": False,
     "digital": True,
+    "deals_percentage": 0,
 }
 
 
@@ -79,20 +83,70 @@ def extract_code(url: str) -> str:
 
 
 def extract_platform(data: bs4):
-    platform = data.find("div", {"class": "psw-l-space-x-2 psw-l-line-left psw-m-t-4"})
-    logger.info(platform)
-    platform = platform.find_all("span", {"class": "psw-p-x-2 psw-p-y-1 psw-t-tag"})
-    logger.info(platform)
-    platform = [de_html(p) for p in platform]
-    logger.info(platform)
-    platform = [p for p in platform if not "edition" in p.lower()]
-    logger.info(platform)
+    try:
+        platform = data.find(
+            "div", {"class": "psw-l-space-x-2 psw-l-line-left psw-m-t-4"}
+        )
+        logger.info(platform)
+        platform = platform.find_all("span", {"class": "psw-p-x-2 psw-p-y-1 psw-t-tag"})
+        logger.info(platform)
+        platform = [de_html(p) for p in platform]
+        logger.info(platform)
+        platform = [p for p in platform if not "edition" in p.lower()]
+        logger.info(platform)
+    except Exception:
+        platform = ["PS4", "PS5"]
     return ", ".join(platform)
+
+
+def has_date(date: str):
+    return re.search(r"\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{1,2}", date)
+
+
+def has_percentage(content: str):
+    return re.search(r"\d{1,3}%", content)
+
+
+def deals_perc(data: bs4):
+    deals_perc = data.find_all("span", {"class": "psw-m-r-3"})
+    logger.info(deals_perc)
+    if deals_perc:
+        deals_perc = [de_html(n) for n in deals_perc]
+        deals_perc = (next(n for n in deals_perc if has_percentage(n)), None)
+        if deals_perc:
+            deals_perc = de_html(deals_perc)
+            deals_perc = re.search(r"\d{1,3}%", deals_perc)
+            if deals_perc:
+                deals_perc = deals_perc[0]
+                deals_perc = float(deals_perc.replace("%", ""))
+                return deals_perc
+    return 0.00
+
+
+def deals_end(data: bs4):
+    ending_date = data.find_all("span", {"class": "psw-c-t-2"})
+    logger.info(ending_date)
+    if ending_date:
+        ending_date = [de_html(n) for n in ending_date]
+        ending_date = (next(n for n in ending_date if has_date(n)), None)
+        if ending_date:
+            ending_date = de_html(ending_date)
+            ending_date = re.search(
+                r"\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{1,2}", ending_date
+            )
+            if ending_date:
+                ending_date = ending_date.group()
+                ending_date = datetime.strptime(ending_date, "%d/%m/%Y %H:%M")
+                return ending_date + relativedelta(hours=14)
+    return None
 
 
 def extract_missing_data(product: dict, data: bs4):
     product["platform"] = extract_platform(data)
     product["bookable"] = is_bookable(data)
+    product["deals_end"] = deals_end(data)
+    product["deals_percentage"] = deals_perc(data)
+    logger.info(product)
     return product
 
 

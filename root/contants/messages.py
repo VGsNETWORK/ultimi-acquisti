@@ -1259,4 +1259,6 @@ YOU_ARE_CREATING_A_NEW_CATEGORY = "✍🏻  <i>Stai inserendo una nuova categori
 
 YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i>"
 
-PRODUCT_TYPE = {True: "Formato digitale", False: "Formato fisico"}
+PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
+
+PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino al %s alle %s</b>  •  "

@@ -3,6 +3,7 @@
 
 from mongoengine.fields import (
     BooleanField,
+    DateTimeField,
     FloatField,
     IntField,
     ListField,
@@ -25,3 +26,5 @@ class TrackedLink(BaseModel):
     bookable = BooleanField()
     sold_out = BooleanField()
     digital = BooleanField()
+    deals_end = DateTimeField()
+    deals_percentage = FloatField()

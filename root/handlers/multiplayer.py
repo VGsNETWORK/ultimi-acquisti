@@ -26,6 +26,8 @@ RULE = {
     "bookable": False,
     "sold_out": False,
     "digital": False,
+    "deals_end": None,
+    "deals_percentage": 0.00,
 }
 
 

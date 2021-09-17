@@ -22,6 +22,8 @@ RULE = {
     "collect_available": False,
     "sold_out": False,
     "digital": Rule("div", {"class": "singleVariantText"}),
+    "deals_end": None,
+    "deals_percentage": 0.00,
 }
 
 
