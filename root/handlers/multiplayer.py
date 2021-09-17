@@ -25,6 +25,7 @@ RULE = {
     "collect_available": False,
     "bookable": False,
     "sold_out": False,
+    "digital": False,
 }
 
 

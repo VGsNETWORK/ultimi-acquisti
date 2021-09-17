@@ -37,6 +37,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
     PRICE_MESSAGE_POPUP,
     PRICE_MESSAGE_POPUP_NO_VARIATION,
+    PRODUCT_TYPE,
     SUPPORTED_LINKS_MESSAGE,
     TRACKED_LINK_EXPLANATION,
     WISHLIST_HEADER,
@@ -274,7 +275,11 @@ def view_wishlist_element_links(
                 tracked_link: TrackedLink = find_link_by_code(
                     extractor.extract_code(wishlist_link)
                 )
-                tracked = f"  (💹)\n<i>{tracked_link.platform}</i>"
+                logger.info("IS DIGITAL [%s]" % tracked_link.digital)
+                if tracked_link.digital:
+                    tracked = f"  (💹)\n<i>{tracked_link.platform}  •  {PRODUCT_TYPE[tracked_link.digital]}</i>"
+                else:
+                    tracked = f"  (💹)\n<i>{tracked_link.platform}  •  {PRODUCT_TYPE[False]}</i>"
             else:
                 tracked = ""
             if index == 9:

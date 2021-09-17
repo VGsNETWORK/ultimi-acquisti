@@ -24,6 +24,7 @@ RULE = {
     "collect_available": False,
     "bookable": False,
     "sold_out": False,
+    "digital": True,
 }
 
 
@@ -86,7 +87,7 @@ def extract_platform(data: bs4):
     logger.info(platform)
     platform = [p for p in platform if not "edition" in p.lower()]
     logger.info(platform)
-    return "  •  ".join(platform)
+    return ", ".join(platform)
 
 
 def extract_missing_data(product: dict, data: bs4):

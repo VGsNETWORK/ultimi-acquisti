@@ -21,6 +21,7 @@ RULE = {
     "delivery_available": False,
     "collect_available": False,
     "sold_out": False,
+    "digital": Rule("div", {"class": "singleVariantText"}),
 }
 
 
@@ -96,6 +97,10 @@ def extract_missing_data(product: dict, data: bs4):
             product["delivery_available"] = False
             product["collect_available"] = False
             product["bookable"] = False
+    if product["digital"]:
+        product["digital"] = "digital" in product["digital"].lower()
+    else:
+        product["digital"] = False
     logger.info(product)
     return product
 

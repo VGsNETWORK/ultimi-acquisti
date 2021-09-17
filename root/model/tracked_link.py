@@ -24,3 +24,4 @@ class TrackedLink(BaseModel):
     delivery_available = BooleanField()
     bookable = BooleanField()
     sold_out = BooleanField()
+    digital = BooleanField()

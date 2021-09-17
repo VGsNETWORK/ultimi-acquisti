@@ -61,6 +61,7 @@ def update_or_create_scraped_link(product: dict):
                                               set__delivery_available=product["delivery_available"],
                                               set__bookable=product["bookable"],
                                               set__sold_out=product["sold_out"],
+                                              set__digital=product["digital"],
                                               upsert=True)
         return True
         # fmt: on
@@ -84,6 +85,7 @@ def update_scraped_link_information(product: dict):
         tracked_link.bookable = product["bookable"]
         tracked_link.sold_out = product["sold_out"]
         tracked_link.platform = product["platform"]
+        tracked_link.digital = product["digital"]
         tracked_link.save() 
 
 

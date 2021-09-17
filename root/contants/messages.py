@@ -1258,3 +1258,5 @@ CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI = (
 YOU_ARE_CREATING_A_NEW_CATEGORY = "✍🏻  <i>Stai inserendo una nuova categoria</i>"
 
 YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i>"
+
+PRODUCT_TYPE = {True: "Formato digitale", False: "Formato fisico"}
