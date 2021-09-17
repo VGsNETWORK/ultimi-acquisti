@@ -91,6 +91,7 @@ class Extractor:
             platform = "XB360"
         elif "xbox" in platform:
             platform = "XBOX"
+        platform = platform.upper()
         product["platform"] = platform
         return product
 

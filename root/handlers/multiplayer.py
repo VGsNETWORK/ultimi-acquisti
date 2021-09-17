@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+from root.contants.constant import PLATFORMS_REGEX
 from root.model.tracked_link import TrackedLink
 from typing import List
 from root.model.rule import Rule
@@ -32,6 +33,10 @@ def get_shipment_cost(price: float, string: bool = False):
         return "4,90" if string else 4.90
     else:
         return "" if string else 0.00
+
+
+def is_valid_platform(platform: str):
+    return re.search(PLATFORMS_REGEX, platform).group()
 
 
 def is_bookable(data: bs4):
@@ -93,6 +98,14 @@ def extract_missing_data(product: dict, data: bs4):
             product["price"] = float(price)
         else:
             product["price"] = 0
+    platform = data.findAll("span", {"class": "label-categoria"})
+    logger.info(platform)
+    platform = [de_html(p) for p in platform]
+    logger.info(platform)
+    platform = next((p for p in platform if is_valid_platform(p)), None)
+    if platform:
+        logger.info("FOUND PLATFORM [%s]" % platform)
+        product["platform"] = platform
     logger.info(product)
     return product
 
