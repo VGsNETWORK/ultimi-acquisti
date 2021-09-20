@@ -61,6 +61,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(update.effective_user, message),
             parse_mode="HTML",
+            disable_web_page_preview=True,
         )
         add_message(message.message_id, update.effective_user.id)
     return
@@ -92,6 +93,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(update.effective_user, message),
             parse_mode="HTML",
+            disable_web_page_preview=True,
         )
         logger.info(f"FUCK OFF {msg.message_id}")
         add_message(message.message_id, update.effective_user.id)
