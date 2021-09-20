@@ -267,15 +267,12 @@ def view_wishlist_element_links(
         if is_tracked:
             message += TRACKED_LINK_EXPLANATION
         wishlist_element.links.reverse()
-        if len(wishlist_element.links) == 10:
-            if is_tracked:
-                leading_space = " "
-            else:
-                leading_space = ""
-            spaces = " "
+        if len(wishlist_element.links) == 10 or is_tracked:
+            leading_space = " "
+            spaces_before_medal = ""
         else:
             leading_space = ""
-            spaces = ""
+            spaces_before_medal = ""
         medals = ["🥇", "🥈", "🥉"]
         for index, wishlist_link in enumerate(wishlist_element.links):
             if extractor.is_supported(wishlist_link):
@@ -290,19 +287,22 @@ def view_wishlist_element_links(
                         deal = 0
                     deal_date = PRODUCT_DEAL % (
                         deal,
-                        format_date(tracked_link.deals_end),
                         format_time(tracked_link.deals_end),
+                        format_date(tracked_link.deals_end, timezone=True),
                     )
                 else:
                     deal_date = "<code>    </code>"
-                if tracked_link.digital:
-                    tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[tracked_link.digital]})</i>"
+                if tracked_link.platform == "MISSING":
+                    tracked = f"  (💹)\n<i>{deal_date}</i>"
                 else:
-                    tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[False]})</i>"
+                    if tracked_link.digital:
+                        tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[tracked_link.digital]})</i>"
+                    else:
+                        tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[False]})</i>"
             else:
                 tracked = ""
             if index == 9:
-                spaces = ""
+                spaces_before_medal = ""
             if len(wishlist_link) > MAX_LINK_LENGTH:
                 wishlist_link = '<a href="%s">%s...</a>' % (
                     wishlist_link,
@@ -318,13 +318,13 @@ def view_wishlist_element_links(
                     i = "<code> %s </code>" % medals[index]
             if index == 0:
                 if len(wishlist_element.links) > 1:
-                    message += f"\n{spaces}{i}{wishlist_link}{tracked}"
+                    message += f"\n{spaces_before_medal}{i}{wishlist_link}{tracked}"
                 else:
-                    message += f"\n{spaces}{i}{wishlist_link}{tracked}"
+                    message += f"\n{spaces_before_medal}{i}{wishlist_link}{tracked}"
             elif index == len(wishlist_element.links) - 1:
-                message += f"\n\n{spaces}{i}{wishlist_link}{tracked}"
+                message += f"\n\n{spaces_before_medal}{i}{wishlist_link}{tracked}"
             else:
-                message += f"\n\n{spaces}{i}{wishlist_link}{tracked}"
+                message += f"\n\n{spaces_before_medal}{i}{wishlist_link}{tracked}"
     else:
         message += (
             f"Qui puoi aggiungere dei link per <b>{wishlist_element.description}</b>."

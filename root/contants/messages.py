@@ -909,7 +909,8 @@ EDIT_WISHLIST_LINK_EXISTING_PHOTOS = (
 EDIT_WISHLIST_LINK_NO_PHOTOS = (
     ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
     "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album.\n\n"
-    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>\n   •  gamestop.it;\n   •  multiplayer.com"
+    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>"
+    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com"
 )
 
 SUPPORTED_LINKS_MESSAGE = (
@@ -1261,4 +1262,4 @@ YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i
 
 PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
 
-PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino al %s alle %s</b>  •  "
+PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino alle %s del %s</b>  •  "

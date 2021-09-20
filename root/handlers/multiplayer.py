@@ -18,7 +18,7 @@ MATCH = "multiplayer.com"
 RULE = {
     "title": Rule("h1", {"class": "titolo-prodotto"}),
     "price": "price",
-    "platform": Rule("span", {"class": "label-categoria"}),
+    "platform": "MISSING",
     "store": "Multiplayer",
     "base_url": BASE_URL,
     "delivery_available": True,
@@ -39,6 +39,7 @@ def get_shipment_cost(price: float, string: bool = False):
 
 
 def is_valid_platform(platform: str):
+    logger.info(platform)
     return re.search(PLATFORMS_REGEX, platform).group()
 
 
@@ -106,8 +107,8 @@ def extract_missing_data(product: dict, data: bs4):
     platform = [de_html(p) for p in platform]
     logger.info(platform)
     platform = next((p for p in platform if is_valid_platform(p)), None)
+    logger.info("MATCHED WITH [%s]" % platform)
     if platform:
-        logger.info("FOUND PLATFORM [%s]" % platform)
         product["platform"] = platform
     logger.info(product)
     return product
