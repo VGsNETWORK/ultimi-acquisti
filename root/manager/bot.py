@@ -7,6 +7,7 @@ from operator import index
 import os
 from random import random
 import random
+from root.manager.notification_hander import show_notifications
 from root.manager.admin_handler import handle_admin
 from root.manager.deal_test_handler import command_send_deal
 from root.job.update_product import update_products
@@ -290,6 +291,12 @@ class BotManager:
             logger.info("adding test commands")
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="show_notifications", callback=show_notifications
+            )
+        )
 
         self.disp.add_handler(CommandHandler("aggiorna", update_purchases_for_chat))
 

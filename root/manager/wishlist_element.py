@@ -2,49 +2,28 @@
 # region
 import enum
 import operator
-import emoji
 import re
-from root.helper.custom_category_helper import (
-    create_category_for_user,
-    find_categories_for_user,
-    find_category_for_user_by_description,
-    find_category_for_user_by_id,
-)
-from root.model.custom_category import CustomCategory
-from root.manager.command_redirect import command_redirect
-from root.helper.process_helper import find_process
-from root.helper.tracked_link_helper import (
-    find_link_by_code,
-    find_link_by_link,
-    remove_tracked_subscriber,
-)
-from root.model.tracked_link import TrackedLink
-from root.helper.subscriber_helper import find_subscriber
-
-from telegram import message
-from root.helper import wishlist_element
-from root.model.wishlist import Wishlist
-from root.manager.view_other_wishlists import view_other_wishlists
-from root.helper.user_helper import (
-    create_user,
-    get_current_wishlist_id,
-    retrieve_user,
-    user_exists,
-)
-from root.helper.wishlist import (
-    count_all_wishlists_for_user,
-    create_wishlist_if_empty,
-    find_wishlist_by_id,
-)
+from difflib import SequenceMatcher
+from root.model import notification
 from typing import List
-from telegram.files.inputmedia import InputMediaPhoto
 
-from telegram.files.photosize import PhotoSize
-from telegram_utils.utils.tutils import delete_if_private
+import emoji
+import telegram_utils.helper.redis as redis_helper
+import telegram_utils.utils.logger as logger
 from root.contants.constant import CATEGORIES
-from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+from root.contants.keyboard import (
+    ADD_LINK_TO_WISHLIST_ITEM,
+    ADD_LINK_TO_WISHLIST_ITEM_NO_LINK,
+    ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
+    ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
+    ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
+    NEW_CUSTOM_CATEGORY_KEYBOARD,
+    TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
+    build_add_wishlist_element_category_keyboard,
+    create_delete_all_wishlist_element_items_keyboard,
+    create_wishlist_element_keyboard,
+)
 from root.contants.messages import (
-    ADDED_TO_WISHLIST,
     ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
     ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
@@ -53,20 +32,24 @@ from root.contants.messages import (
     ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT,
     ADD_TO_WISHLIST_PROMPT,
     ADD_TO_WISHLIST_START_PROMPT,
+    ADDED_TO_WISHLIST,
     CATEGORY_NAME_TOO_LONG,
     CATEGORY_NAME_TOO_LONG_WITH_EMOJI,
     CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI,
     CYCLE_INSERT_ENABLED_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_AND_LIST_MESSAGE,
-    DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
     DELETE_ALL_WISHLIST_ITEMS_MESSAGE,
     DELETE_ALL_WISHLIST_ITEMS_NO_PHOTO_MESSAGE,
+    DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
     DELETE_WISHLIST_ITEMS_APPEND,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
     NO_ELEMENT_IN_WISHLIST,
     NO_EMOJI_FOUND,
+    NOTIFICATION_CREATED_ITEM_LINK_APPEND,
+    NOTIFICATION_CREATED_ITEM_MESSAGE,
+    NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -84,12 +67,32 @@ from root.contants.messages import (
     YOU_ARE_CREATING_A_NEW_CATEGORY,
     YOU_ARE_MODIFYING_THIS_ELEMENT,
 )
-from root.util.util import (
-    create_button,
-    extract_first_link_from_message,
-    format_price,
-    get_article,
-    max_length_error_format,
+from root.handlers.handlers import extractor
+from root.helper import wishlist_element
+from root.helper.custom_category_helper import (
+    create_category_for_user,
+    find_categories_for_user,
+    find_category_for_user_by_description,
+    find_category_for_user_by_id,
+)
+from root.helper.notification import create_notification
+from root.helper.process_helper import find_process
+from root.helper.subscriber_helper import find_subscriber
+from root.helper.tracked_link_helper import (
+    find_link_by_code,
+    find_link_by_link,
+    remove_tracked_subscriber,
+)
+from root.helper.user_helper import (
+    create_user,
+    get_current_wishlist_id,
+    retrieve_user,
+    user_exists,
+)
+from root.helper.wishlist import (
+    count_all_wishlists_for_user,
+    create_wishlist_if_empty,
+    find_wishlist_by_id,
 )
 from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_user,
@@ -103,21 +106,21 @@ from root.helper.wishlist_element import (
     remove_wishlist_element_item_for_user,
     update_category_of_elements,
 )
+from root.manager.command_redirect import command_redirect
+from root.manager.view_other_wishlists import view_other_wishlists
+from root.model.custom_category import CustomCategory
+from root.model.tracked_link import TrackedLink
+from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
-from root.contants.keyboard import (
-    ADD_LINK_TO_WISHLIST_ITEM,
-    ADD_LINK_TO_WISHLIST_ITEM_NO_LINK,
-    ADD_TO_WISHLIST_ABORT_CYCLE_KEYBOARD,
-    ADD_TO_WISHLIST_ABORT_NO_CYCLE_KEYBOARD,
-    ADD_TO_WISHLIST_ABORT_TOO_LONG_KEYBOARD,
-    NEW_CUSTOM_CATEGORY_KEYBOARD,
-    TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
-    build_add_wishlist_element_category_keyboard,
-    create_delete_all_wishlist_element_items_keyboard,
-    create_wishlist_element_keyboard,
+from root.util.telegram import TelegramSender
+from root.util.util import (
+    create_button,
+    extract_first_link_from_message,
+    format_price,
+    get_article,
+    max_length_error_format,
 )
-
-from telegram import Update
+from telegram import Update, message
 from telegram.chat import Chat
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext
@@ -125,13 +128,12 @@ from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
+from telegram.files.inputmedia import InputMediaPhoto
+from telegram.files.photosize import PhotoSize
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.user import User
-import telegram_utils.helper.redis as redis_helper
-import telegram_utils.utils.logger as logger
-from root.handlers.handlers import extractor
-from difflib import SequenceMatcher
-from root.util.telegram import TelegramSender
+from telegram_utils.utils.tutils import delete_if_private
 
 sender = TelegramSender()
 
@@ -1177,6 +1179,28 @@ def add_category(update: Update, context: CallbackContext):
                 user.user_id,
                 count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.user_id),
             )
+            wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
+            element_extra = []
+            format_text = [wish.description]
+            if wish.links:
+                element_extra.append(
+                    NOTIFICATION_CREATED_ITEM_LINK_APPEND % len(wish.links)
+                )
+            if wish.photos:
+                element_extra.append(
+                    NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND % len(wish.photos)
+                )
+            if element_extra:
+                element_extra = " (%s)" % ", ".join(element_extra)
+            else:
+                element_extra = ""
+            format_text.append(element_extra)
+            format_text.append(wishlist.title)
+            notification_message = NOTIFICATION_CREATED_ITEM_MESSAGE % tuple(
+                format_text
+            )
+
+            create_notification(user.user_id, notification_message)
             if len(cycle_insert) > 0:
                 cycle_insert = eval(cycle_insert.decode())
                 if cycle_insert:

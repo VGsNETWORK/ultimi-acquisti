@@ -4,6 +4,7 @@
 # region
 from re import sub
 import re
+from root.helper.notification import create_notification
 from root.helper.wishlist_element import find_containing_link
 from root.util.util import format_price
 from telegram_utils.utils.misc import format_error
@@ -70,6 +71,7 @@ def send_deal(product: TrackedLink, previous_price: float, context: CallbackCont
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
+                    create_notification(user_id, message)
                 except BadRequest as br:
                     logger.error(format_error(br))
             else:

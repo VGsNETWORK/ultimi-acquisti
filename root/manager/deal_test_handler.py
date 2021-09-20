@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+from root.helper.notification import create_notification
 from root.util.util import format_error, format_price
 from telegram.chat import Chat
 from telegram.error import BadRequest
@@ -50,5 +51,6 @@ def command_send_deal(update: Update, context: CallbackContext):
                 disable_web_page_preview=True,
                 parse_mode="HTML",
             )
+            create_notification(user.id, text)
         except BadRequest as br:
             logger.error(format_error(br))

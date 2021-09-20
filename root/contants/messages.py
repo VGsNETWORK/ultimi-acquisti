@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from os import environ
+from root.helper.notification import count_unread_notifications
 from root.contants.VERSION import WISHLIST_VERSION
 from root.model.user import User
 from root.model.user_rating import UserRating
@@ -1263,3 +1264,27 @@ YOU_ARE_MODIFYING_THIS_ELEMENT = "✏️  <i>Stai modificando questo elemento</i
 PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
 
 PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino alle %s del %s</b>  •  "
+
+NOTIFICATION_CREATED_ITEM_MESSAGE = 'Elemento "%s"%s creato nella lista "%s".'
+
+NOTIFICATION_CREATED_ITEM_LINK_APPEND = "%s foto"
+
+NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "%s link"
+
+NOTIFICATION_MODIFIED_ITEM_MESSAGE = 'Elemento "%s"%s modificato nella lista "%s".'
+
+NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "%s foto"
+
+NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND = "%s link"
+
+
+def build_show_notification_button(user: User):
+    unread = count_unread_notifications(user.id)
+    if unread:
+        if unread == 1:
+            text = f"📬  {unread} nuova notifica"
+        else:
+            text = f"📬  {unread} nuove notifiche"
+    else:
+        text = "📭  Nessuna notifica"
+    return text

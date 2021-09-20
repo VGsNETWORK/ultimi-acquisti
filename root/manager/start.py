@@ -4,6 +4,7 @@
 
 from os import environ
 import re
+from root.helper.notification import create_notification
 from root.manager.command_redirect import command_redirect
 from root.helper.user_helper import is_admin
 
@@ -26,6 +27,7 @@ from root.contants.messages import (
     PLEASE_NOTE_APPEND,
     START_COMMANDS_LIST_HEADER,
     START_GROUP_GROUP_APPEND,
+    build_show_notification_button,
 )
 from root.helper.redis_message import add_message
 from root.contants.message_timeout import THREE_MINUTES
@@ -253,6 +255,13 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             [create_button("📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
+                    build_show_notification_button(update.effective_user),
+                    "show_notification",
+                    "show_notification",
+                )
+            ],
+            [
+                create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
                 ),
                 create_button(
@@ -382,7 +391,11 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "start_show_commands",
                 )
             ],
-            [
+            create_button(
+                build_show_notification_button(update.effective_user),
+                "show_notification",
+                "show_notification",
+            )[
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
                 ),
@@ -503,6 +516,13 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                 [
                     create_button(
                         "📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0"
+                    )
+                ],
+                [
+                    create_button(
+                        build_show_notification_button(user),
+                        "show_notification",
+                        "show_notification",
                     )
                 ],
                 [

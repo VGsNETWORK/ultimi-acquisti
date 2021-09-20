@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+from root.helper.notification import create_notification
 from root.manager.wishlist_element_link import view_wishlist_element_links
 import emoji
 from telegram.error import BadRequest
@@ -43,6 +44,9 @@ from root.contants.messages import (
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
     NO_EMOJI_FOUND,
+    NOTIFICATION_MODIFIED_ITEM_LINK_APPEND,
+    NOTIFICATION_MODIFIED_ITEM_MESSAGE,
+    NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -335,6 +339,23 @@ def edit_category(update: Update, context: CallbackContext):
     rphotos = eval(rphotos.decode()) if rphotos else None
     wish.photos = rphotos if rphotos else wish.photos
     wish.save()
+    wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
+    element_extra = []
+    format_text = [wish.description]
+    if wish.links:
+        element_extra.append(NOTIFICATION_MODIFIED_ITEM_LINK_APPEND % len(wish.links))
+    if wish.photos:
+        element_extra.append(
+            NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND % len(wish.photos)
+        )
+    if element_extra:
+        element_extra = " (%s)" % ", ".join(element_extra)
+    else:
+        element_extra = ""
+    format_text.append(element_extra)
+    format_text.append(wishlist.title)
+    notification_message = NOTIFICATION_MODIFIED_ITEM_MESSAGE % tuple(format_text)
+    create_notification(update.effective_user.id, notification_message)
     cancel_edit_wishlist_element(update, context)
     return ConversationHandler.END
 

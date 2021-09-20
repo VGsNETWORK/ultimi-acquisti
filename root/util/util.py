@@ -231,9 +231,12 @@ def format_date(date: datetime, show_year: bool = False, timezone: bool = False)
         return date.strftime("%d/%m")
 
 
-def format_time(date: datetime):
+def format_time(date: datetime, sec: bool = False):
     logger.info("formatting %s [%s]" % (date, type(date)))
-    return date.astimezone().strftime("%H:%M")
+    if not sec:
+        return date.astimezone().strftime("%H:%M")
+    else:
+        return date.astimezone().strftime("%H:%M:%S")
 
 
 def has_number(content: str) -> bool:
