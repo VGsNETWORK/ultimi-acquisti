@@ -1182,18 +1182,39 @@ def add_category(update: Update, context: CallbackContext):
             wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
             element_extra = []
             format_text = [wish.description]
-            if wish.links:
-                element_extra.append(
-                    NOTIFICATION_CREATED_ITEM_LINK_APPEND % len(wish.links)
-                )
             if wish.photos:
                 element_extra.append(
                     NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND % len(wish.photos)
                 )
+            if wish.links:
+                element_extra.append(
+                    NOTIFICATION_CREATED_ITEM_LINK_APPEND % len(wish.links)
+                )
+                for link in wish.links:
+                    if len(link) >= MAX_LINK_LENGTH:
+                        link = '   •  <a href="%s">%s...</a>' % (
+                            link,
+                            link[: MAX_LINK_LENGTH - 3],
+                        )
+                    else:
+                        link = '   •  <a href="%s">%s</a>' % (link, link)
+                    element_extra.append(link)
             if element_extra:
-                element_extra = " (%s)" % ", ".join(element_extra)
+                element_extra = "\n%s\n" % "\n".join(element_extra)
+                # if wish.photos:
+                #    if wish.links:
+                #        element = [element_extra[0], element_extra[1]]
+                #        element_extra = element_extra[2:]
+                #        element_extra = "\n".join(element_extra)
+                #        element = " (%s)" % ", ".join(element)
+                #        element_extra = " (%s%s)" % (element, element_extra)
+                #    else:
+                #        element_extra = " (%s)" % element_extra[0]
+                # else:
+                #    element_extra = " (%s)" % "\n".join(element_extra)
             else:
                 element_extra = ""
+            format_text.append(wish.category)
             format_text.append(element_extra)
             format_text.append(wishlist.title)
             notification_message = NOTIFICATION_CREATED_ITEM_MESSAGE % tuple(

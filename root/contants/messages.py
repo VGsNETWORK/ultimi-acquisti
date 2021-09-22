@@ -1265,17 +1265,25 @@ PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
 
 PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino alle %s del %s</b>  •  "
 
-NOTIFICATION_CREATED_ITEM_MESSAGE = 'Elemento "%s"%s creato nella lista "%s".'
+NOTIFICATION_CREATED_ITEM_MESSAGE = (
+    'Elemento "<i>%s</i>" (%s)%s creato nella lista "<i>%s</i>".'
+)
 
-NOTIFICATION_CREATED_ITEM_LINK_APPEND = "%s foto"
+NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"
 
-NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "%s link"
+NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "➕  %s foto"
 
-NOTIFICATION_MODIFIED_ITEM_MESSAGE = 'Elemento "%s"%s modificato nella lista "%s".'
+NOTIFICATION_MODIFIED_ITEM_MESSAGE = (
+    'Elemento "<i>%s</i>" (%s)%s della lista "<i>%s</i>" modificato.'
+)
 
-NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "%s foto"
+NOTIFICATION_MODIFIED_TITLE = '✏️  Titolo modificato in "<i>%s</i>"'
 
-NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND = "%s link"
+NOTIFICATION_MODIFIED_CATEGORY = '✏️  Categoria modificata in "<i>%s</i>"'
+
+NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
+
+NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND = "▪️ %s foto"
 
 
 def build_show_notification_button(user: User):

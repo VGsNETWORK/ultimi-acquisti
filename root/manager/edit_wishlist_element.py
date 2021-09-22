@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+from root.manager.notification_hander import show_notifications
 from root.helper.notification import create_notification
 from root.manager.wishlist_element_link import view_wishlist_element_links
 import emoji
@@ -44,9 +45,11 @@ from root.contants.messages import (
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
     NO_EMOJI_FOUND,
+    NOTIFICATION_MODIFIED_CATEGORY,
     NOTIFICATION_MODIFIED_ITEM_LINK_APPEND,
     NOTIFICATION_MODIFIED_ITEM_MESSAGE,
     NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND,
+    NOTIFICATION_MODIFIED_TITLE,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -73,6 +76,7 @@ import telegram_utils.utils.logger as logger
 EDIT_WISHLIST_TEXT, EDIT_CATEGORY, CREATE_CATEGORY = range(3)
 
 MAX_CATEGORY_LENGTH = 15
+MAX_LINK_LENGTH = 27
 
 
 def show_photo(wishlist_element: WishlistElement):
@@ -165,6 +169,11 @@ def edit_wishlist_element_description(
             ).decode()
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     if update.callback_query:
+        logger.info("THIS IS THE PREVIOUS TITLE [%s]" % "MISSING")
+        redis_helper.save(
+            "element_description_modified_%s" % update.effective_user.id,
+            "0_%s" % "MISSING",
+        )
         if "from_category" in update.callback_query.data:
             text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id)
             if text:
@@ -200,6 +209,18 @@ def edit_wishlist_element_description(
         )
     else:
         ask = "*" if not wish.description == text else ""
+        if not wish.description == text:
+            logger.info("* THIS IS THE PREVIOUS TITLE [%s]" % wish.description)
+            redis_helper.save(
+                "element_description_modified_%s" % update.effective_user.id,
+                "1_%s" % wish.description,
+            )
+        else:
+            logger.info("THIS IS THE PREVIOUS TITLE [%s]" % wish.description)
+            redis_helper.save(
+                "element_description_modified_%s" % update.effective_user.id,
+                "0_%s" % wish.description,
+            )
         wish.description = text
         redis_helper.save("%s_stored_wishlist_element" % user.id, text)
         wishlist_id = get_current_wishlist_id(user.id)
@@ -280,6 +301,17 @@ def edit_wishlist_element_link(update: Update, context: CallbackContext):
     ask = "*" if not wish.description == text else ""
     ask = "*" if removed == "1" else ask
     ask = "*" if not update.callback_query else ask
+    logger.info("THIS IS THE ASK")
+    if ask:
+        redis_helper.save(
+            "element_description_modified_%s" % update.effective_user.id,
+            "1_%s" % wish.description,
+        )
+    else:
+        redis_helper.save(
+            "element_description_modified_%s" % update.effective_user.id,
+            "0_%s" % wish.description,
+        )
     wish.description = text
     redis_helper.save("%s_stored_wishlist_element" % user.id, text)
     wishlist_id = get_current_wishlist_id(user.id)
@@ -331,6 +363,7 @@ def edit_category(update: Update, context: CallbackContext):
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
     removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()
     wish.description = text
+    previous_category = wish.category
     if not "custom" in data:
         wish.category = CATEGORIES[category]
     else:
@@ -340,22 +373,57 @@ def edit_category(update: Update, context: CallbackContext):
     wish.photos = rphotos if rphotos else wish.photos
     wish.save()
     wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
+    description_modified: str = redis_helper.retrieve(
+        "element_description_modified_%s" % update.effective_user.id
+    ).decode()
     element_extra = []
-    format_text = [wish.description]
-    if wish.links:
-        element_extra.append(NOTIFICATION_MODIFIED_ITEM_LINK_APPEND % len(wish.links))
+    show_notification = False
+    previous_name = wish.description
+    if description_modified.startswith("1_"):
+        previous_name = description_modified.replace("1_", "", 1)
+        show_notification = True
+        logger.info("THIS IS THE PREVIOUS TITLE [%s]" % previous_name)
+        element_extra.append(NOTIFICATION_MODIFIED_TITLE % wish.description)
+    if previous_category != wish.category:
+        show_notification = True
+        element_extra.append(NOTIFICATION_MODIFIED_CATEGORY % wish.category)
+    format_text = [previous_name]
     if wish.photos:
         element_extra.append(
             NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND % len(wish.photos)
         )
+    if wish.links:
+        element_extra.append(NOTIFICATION_MODIFIED_ITEM_LINK_APPEND % len(wish.links))
+        for link in wish.links:
+            if len(link) >= MAX_LINK_LENGTH:
+                link = '   •  <a href="%s">%s...</a>' % (
+                    link,
+                    link[: MAX_LINK_LENGTH - 3],
+                )
+            else:
+                link = '   •  <a href="%s">%s</a>' % (link, link)
+            element_extra.append(link)
     if element_extra:
-        element_extra = " (%s)" % ", ".join(element_extra)
+        element_extra = "\n%s\n" % "\n".join(element_extra)
+    # if wish.photos:
+    #    if wish.links:
+    #        element = [element_extra[0], element_extra[1]]
+    #        element_extra = element_extra[2:]
+    #        element_extra = "\n".join(element_extra)
+    #        element = " (%s)" % ", ".join(element)
+    #        element_extra = " (%s%s)" % (element, element_extra)
+    #    else:
+    #        element_extra = " (%s)" % element_extra[0]
+    # else:
+    #    element_extra = " (%s)" % "\n".join(element_extra)
     else:
         element_extra = ""
+    format_text.append(previous_category)
     format_text.append(element_extra)
     format_text.append(wishlist.title)
     notification_message = NOTIFICATION_MODIFIED_ITEM_MESSAGE % tuple(format_text)
-    create_notification(update.effective_user.id, notification_message)
+    if show_notifications:
+        create_notification(update.effective_user.id, notification_message)
     cancel_edit_wishlist_element(update, context)
     return ConversationHandler.END
 

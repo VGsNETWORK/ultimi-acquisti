@@ -3,7 +3,10 @@ from typing import List
 
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.model.notification import Notification
-from root.helper.notification import find_notifications_for_user, mark_all_notification_as_read
+from root.helper.notification import (
+    find_notifications_for_user,
+    mark_all_notification_as_read,
+)
 from telegram import Update
 from telegram.chat import Chat
 from telegram.ext import CallbackContext
@@ -25,13 +28,13 @@ def show_notifications(update: Update, context: CallbackContext):
     message = "<u><b>NOTIFICHE</b></u>\n\n"
     if notifications:
         for notification in notifications:
-            date = format_date(notification.creation_date)
+            date = format_date(notification.creation_date, show_year=True)
             time = format_time(notification.creation_date, True)
             date = "%s %s" % (date, time)
             if notification.read:
-                message += f"\n[{date}]  {notification.message}\n\n"
+                message += f"\n<b>[{date}]</b>  {notification.message}\n"
             else:
-                message += f"\n🆕  [{date}]  <b>{notification.message}</b>\n\n"
+                message += f"\n🆕  <b>[{date}]</b>  <b>{notification.message}</b>\n"
     else:
         message += "\n<i>Non hai ancora alcuna notifica da visualizzare.</i>"
     if update.callback_query:
