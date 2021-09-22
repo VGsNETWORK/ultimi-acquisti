@@ -149,7 +149,7 @@ def update_purchases_for_chat(update: Update, context: CallbackContext):
             disable_web_page_preview=True,
         )
     except Exception as e:
-        e = format_error(e)
+        e = format_error(e, update.effective_user)
         logger.error(e)
     finally:
         client.stop()

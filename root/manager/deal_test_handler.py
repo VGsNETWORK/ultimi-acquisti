@@ -53,4 +53,4 @@ def command_send_deal(update: Update, context: CallbackContext):
             )
             create_notification(user.id, text)
         except BadRequest as br:
-            logger.error(format_error(br))
+            logger.error(format_error(br, update.effective_user))

@@ -24,7 +24,10 @@ def handle_error(update: Update, context: CallbackContext):
     """
     if update:
         error_channel = retrieve_key("ERROR_CHANNEL")
-        text = format_error(context.error)
+        if update.effective_user:
+            text = format_error(context.error, update.effective_user)
+        else:
+            text = format_error(context.error)
         if "Message can't be deleted for everyone" in text:
             if update.callback_query:
                 context.bot.answer_callback_query(

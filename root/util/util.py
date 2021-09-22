@@ -9,6 +9,7 @@ import re
 import sys
 from types import TracebackType
 from telegram.message import Message
+from telegram.user import User
 from urlextract import URLExtract
 import traceback
 from xml.sax.saxutils import escape
@@ -303,7 +304,7 @@ def escape_value(value: object):
     return escape(str(value))
 
 
-def format_error(error: Exception):
+def format_error(error: Exception, user: User = None):
     """ format an exception showing the type, filename, line number and message """
     # extreact the information about the exception
     exc_type, _, exc_tb = sys.exc_info()
@@ -312,11 +313,15 @@ def format_error(error: Exception):
     logger.error(exc_tb.tb_frame.f_code.co_filename)
     file_name = split(exc_tb.tb_frame.f_code.co_filename)[1]
     # return a formatted message with the exception info
+    if user:
+        user_link = '<a href="tg://user?id=%s">%s</a>' % (user.id, user.id)
+    else:
+        user_link = "<code>User not found</code>"
     return (
+        f"<b>From User:</b>  {user_link}\n"
         f"<b>Bot Name:</b>  <code>#ultimiacquisti</code>\n"
         f"<b>Exception Type:</b>  <code>{escape_value(exc_type)}</code>\n"
-        f"<b>File Name:</b>  <code>{escape_value(file_name)}</code>\n"
-        f"<b>Line Number:</b>  <code>{escape_value(exc_tb.tb_lineno)}</code>\n"
+        f"<b>File Name:</b>  <code>{escape_value(file_name)}:{escape_value(exc_tb.tb_lineno)}</code>\n"
         f"<b>Message:</b>  <code>{escape_value(error)}</code>"
     )
 
