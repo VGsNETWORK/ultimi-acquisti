@@ -1289,6 +1289,12 @@ NOTIFICATION_WIPED_WISHLIST_ELEMENTS = (
     'Lista dei desideri "<i>%s</i>" (%s element%s) svuotata.'
 )
 
+NOTIFICATION_DELETED_WISHLIST = (
+    'Lista dei desideri "<i>%s</i>" (%s element%s) eliminata.'
+)
+
+NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = 'Lista dei desideri "<i>%s</i>" eliminata.'
+
 
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)
