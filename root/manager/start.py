@@ -35,8 +35,8 @@ import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 
-DEVELOPER = '<a href="https://t.me/WMD_Edoardo">Edoardo Zerbo</a>'
-DESIGNER = '<a href="https://t.me/WMD_Lorenzo">Lorenzo Maffii</a>'
+DEVELOPER = '<a href="tg://user?id=84872221">Edoardo Zerbo</a>'
+DESIGNER = '<a href="tg://user?id=109191781">Lorenzo Maffii</a>'
 
 sender = TelegramSender()
 current_year = datetime.now().year
