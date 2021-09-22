@@ -192,7 +192,10 @@ class BotManager:
                 "Riavvio il bot...",
                 timeout=10,
             )
-            os.popen("sudo systemctl restart last-purchase")
+            if is_develop():
+                os.popen("sudo systemctl restart last-purchase-quality")
+            else:
+                os.popen("sudo systemctl restart last-purchase")
 
     def send_git_link(self, update: Update, context: CallbackContext):
         """Send the link to the gitlab page of this project

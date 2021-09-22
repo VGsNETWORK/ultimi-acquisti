@@ -29,7 +29,7 @@ def find_notifications_for_user(
 def count_unread_notifications(
     user_id: int,
 ):
-    return len(Notification.objects().filter(user_id=user_id))
+    return len(Notification.objects().filter(user_id=user_id, read=False))
 
 
 def mark_all_notification_as_read(

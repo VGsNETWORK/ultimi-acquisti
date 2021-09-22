@@ -256,8 +256,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             [
                 create_button(
                     build_show_notification_button(update.effective_user),
-                    "show_notification",
-                    "show_notification",
+                    "show_notifications",
+                    "show_notifications",
                 )
             ],
             [
@@ -393,8 +393,8 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             ],
             create_button(
                 build_show_notification_button(update.effective_user),
-                "show_notification",
-                "show_notification",
+                "show_notifications",
+                "show_notifications",
             )[
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
@@ -521,8 +521,8 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                 [
                     create_button(
                         build_show_notification_button(user),
-                        "show_notification",
-                        "show_notification",
+                        "show_notifications",
+                        "show_notifications",
                     )
                 ],
                 [

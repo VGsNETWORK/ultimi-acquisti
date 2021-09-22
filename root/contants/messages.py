@@ -1286,5 +1286,5 @@ def build_show_notification_button(user: User):
         else:
             text = f"📬  {unread} nuove notifiche"
     else:
-        text = "📭  Nessuna notifica"
+        text = "📭  Nessuna notifica da leggere"
     return text
