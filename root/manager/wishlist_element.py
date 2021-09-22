@@ -50,6 +50,7 @@ from root.contants.messages import (
     NOTIFICATION_CREATED_ITEM_LINK_APPEND,
     NOTIFICATION_CREATED_ITEM_MESSAGE,
     NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND,
+    NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -550,6 +551,13 @@ def confirm_delete_all_wishlist_elements(
     data = update.callback_query.data
     wishlist_id = data.split("_")[-1]
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    elements = count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
+    if elements == 1:
+        char = "o"
+    else:
+        char = "i"
+    notification = NOTIFICATION_WIPED_WISHLIST_ELEMENTS % (wishlist.title, elements, char)
+    create_notification(user.id, notification)
     delete_all_wishlist_element_for_user(
         update.effective_user.id, wishlist_id, from_wishlist
     )

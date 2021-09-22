@@ -1285,6 +1285,10 @@ NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
 
 NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND = "▪️ %s foto"
 
+NOTIFICATION_WIPED_WISHLIST_ELEMENTS = (
+    'Lista dei desideri "<i>%s</i>" (%s element%s) svuotata.'
+)
+
 
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)
