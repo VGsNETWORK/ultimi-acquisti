@@ -1270,7 +1270,7 @@ PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
 PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino alle %s del %s</b>  •  "
 
 NOTIFICATION_CREATED_ITEM_MESSAGE = (
-    'Elemento "<i>%s</i>" (%s)%screato nella lista "<i>%s</i>".'
+    'Elemento "<i>%s</i>" (%s)%screato nella lista dei desideri "<i>%s</i>".'
 )
 
 NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"
@@ -1278,10 +1278,10 @@ NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"
 NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "➕  %s foto"
 
 NOTIFICATION_MODIFIED_ITEM_MESSAGE = (
-    'Elemento "<i>%s</i>" (%s)%s della lista "<i>%s</i>" modificato.'
+    'Elemento "<i>%s</i>" (%s)%s della lista dei desideri "<i>%s</i>" modificato.'
 )
 
-NOTIFICATION_MODIFIED_TITLE = '✏️  Titolo modificato in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_TITLE = '✏️  Nome modificato in "<i>%s</i>"'
 
 NOTIFICATION_MODIFIED_CATEGORY = '✏️  Categoria modificata in "<i>%s</i>"'
 
@@ -1298,6 +1298,8 @@ NOTIFICATION_DELETED_WISHLIST = (
 )
 
 NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = 'Lista dei desideri "<i>%s</i>" eliminata.'
+
+NOTIFICATION_NEW_WISHLIST = 'Lista dei desideri "<i>%s</i>" creata.'
 
 
 def build_show_notification_button(user: User):

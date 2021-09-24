@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.helper.notification import create_notification
 
 from bs4 import element
 from root.helper.redis_message import is_develop
@@ -16,6 +17,7 @@ from random import randint
 from telegram_utils.utils.tutils import delete_if_private, log
 from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
+    NOTIFICATION_NEW_WISHLIST,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_LIST_LEGEND_HAS_ELEMENTS,
@@ -392,6 +394,8 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
                 True,
             )
     if not overload:
+        notification_message = NOTIFICATION_NEW_WISHLIST % message
+        create_notification(update.effective_user.id, notification_message)
         if is_develop():
             message = f"USER_ID: {user.id}\n"
             wishlists = find_wishlist_for_user(user.id)
@@ -404,6 +408,7 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
                 ]
             )
             log(0, message, disable_notification=True)
+        pass
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
