@@ -2,6 +2,7 @@
 # region
 import operator
 import re
+from root.helper.notification import create_notification
 from root.contants.constant import MAX_WISHLIST_NAME_LENGTH
 from root.util.util import max_length_error_format
 from root.helper.user_helper import get_current_wishlist_id
@@ -13,6 +14,7 @@ from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     EDIT_WISHLIST_PROMPT,
     EDIT_WISHLIST_TITLE_PROMPT,
+    NOTIFICATION_WISHLIST_NAME_CHANGED,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_TITLE_TOO_LONG,
@@ -96,7 +98,6 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
     message_id: int = message.message_id
     chat_id: int = update.effective_chat.id
     user: User = update.effective_user
-    cdopohat: Chat = update.effective_chat
     delete_if_private(message)
     message = message.text
     message: str = re.sub(r"\n{1,}", "\n", message)
@@ -132,6 +133,8 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
         old_name = wishlist.title
         change_wishlist_title(wishlist_id, message)
         overload = False
+        notification_message = NOTIFICATION_WISHLIST_NAME_CHANGED % (old_name, message)
+        create_notification(update.effective_user.id, notification_message)
         view_other_wishlists(
             update,
             context,

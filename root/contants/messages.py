@@ -1310,6 +1310,11 @@ NOTIFICATION_REORDER_WISHLIST_DOWN = (
 )
 
 
+NOTIFICATION_WISHLIST_NAME_CHANGED = (
+    'Lista dei desideri "<i>%s</i>" rinominata in "<i>%s</i>".'
+)
+
+
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)
     if unread:
