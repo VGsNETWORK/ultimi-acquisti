@@ -18,6 +18,8 @@ from telegram_utils.utils.tutils import delete_if_private, log
 from root.contants.messages import (
     ADD_WISHLIST_TITLE_PROMPT,
     NOTIFICATION_NEW_WISHLIST,
+    NOTIFICATION_REORDER_WISHLIST_DOWN,
+    NOTIFICATION_REORDER_WISHLIST_UP,
     WISHLIST_DESCRIPTION_TOO_LONG,
     WISHLIST_HEADER,
     WISHLIST_LIST_LEGEND_HAS_ELEMENTS,
@@ -96,6 +98,11 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     other_wishlist.save()
                     wishlist.save()
+                    notification_message = NOTIFICATION_REORDER_WISHLIST_DOWN % (
+                        wishlist.title,
+                        other_wishlist.title,
+                    )
+                    create_notification(update.effective_user.id, notification_message)
         elif "up" in data:
             if wishlist.index > 0:
                 logger.info("SEARCHING WISHLIST WITH INDEX %s" % (wishlist.index + 1))
@@ -109,6 +116,11 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     other_wishlist.save()
                     wishlist.save()
+                    notification_message = NOTIFICATION_REORDER_WISHLIST_UP % (
+                        wishlist.title,
+                        other_wishlist.title,
+                    )
+                    create_notification(update.effective_user.id, notification_message)
         if is_develop():
             message = f"USER_ID: {user_id}\n"
             wishlists = find_wishlist_for_user(user_id)
@@ -121,7 +133,6 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                 ]
             )
             log(0, message, disable_notification=True)
-
     try:
         update.callback_query.data += "_0"
         view_other_wishlists(update, context)

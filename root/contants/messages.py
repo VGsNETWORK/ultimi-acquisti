@@ -1301,6 +1301,14 @@ NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = 'Lista dei desideri "<i>%s</i>" elim
 
 NOTIFICATION_NEW_WISHLIST = 'Lista dei desideri "<i>%s</i>" creata.'
 
+NOTIFICATION_REORDER_WISHLIST_UP = (
+    'Lista dei desideri "<i>%s</i>" spostata sopra "<i>%s</i>".'
+)
+
+NOTIFICATION_REORDER_WISHLIST_DOWN = (
+    'Lista dei desideri "<i>%s</i>" spostata sotto "<i>%s</i>".'
+)
+
 
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)
