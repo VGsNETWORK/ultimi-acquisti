@@ -287,8 +287,8 @@ PURCHASE_DELETED = (
 # fmt: on
 
 GROUP_NOT_ALLOWED = (
-    "❌  Questo gruppo non è abilitato all'utilizzo di questo bot.\n"
-    "Puoi creare il tuo bot personale con il codice al seguente link:\n\n"
+    "❌  <i>Questo gruppo non è abilitato al mio utilizzo.\n"
+    "Puoi creare il tuo bot personale con il codice al seguente link:</i>\n\n"
     "https://gitlab.com/nautilor/ultimi-acquisti"
 )
 

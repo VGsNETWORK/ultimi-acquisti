@@ -7,6 +7,7 @@ from operator import index
 import os
 from random import random
 import random
+from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import show_notifications
 from root.manager.admin_handler import handle_admin
 from root.manager.deal_test_handler import command_send_deal
@@ -294,6 +295,8 @@ class BotManager:
             logger.info("adding test commands")
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
+
+        self.disp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_group))
 
         self.disp.add_handler(
             CallbackQueryHandler(

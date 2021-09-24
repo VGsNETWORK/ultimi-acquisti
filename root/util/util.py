@@ -6,6 +6,7 @@ from random import randint
 from re import sub
 from base64 import b64decode
 import re
+from root.helper.whitelist_helper import is_whitelisted
 import sys
 from types import TracebackType
 from telegram.message import Message
@@ -388,8 +389,9 @@ def is_group_allowed(chat_id: int) -> bool:
     if not str(chat_id) in groups:
         token = retrieve_key("TOKEN")
         logger.warn(f"chat_id {chat_id} is not allowed")
-        sender.send_message(token, chat_id, GROUP_NOT_ALLOWED)
-        return False
+        if not is_whitelisted(chat_id):
+            sender.send_message(token, chat_id, GROUP_NOT_ALLOWED, parse_mode="HTML")
+            return False
     return True
 
 
