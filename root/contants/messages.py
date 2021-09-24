@@ -1315,6 +1315,11 @@ NOTIFICATION_WISHLIST_NAME_CHANGED = (
 )
 
 
+NOTIFICATION_WISHLIST_ELEMENT_MOVED = (
+    'Elemento "<i>%s</i>" spostato dalla lista "<i>%s</i>" alla lista "<i>%s</i>".'
+)
+
+
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)
     if unread:

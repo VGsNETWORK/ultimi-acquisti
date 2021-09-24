@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 
+from root.helper.notification import create_notification
 from telegram import user
 from root.model.user import User
-from root.contants.messages import CHANGE_ELEMENT_WISHLIST_MESSAGE, WISHLIST_CHANGED
+from root.contants.messages import (
+    CHANGE_ELEMENT_WISHLIST_MESSAGE,
+    NOTIFICATION_WISHLIST_ELEMENT_MOVED,
+    WISHLIST_CHANGED,
+)
 from root.helper import wishlist
 from root.model.wishlist_element import WishlistElement
 from root.manager.wishlist_element import view_wishlist
@@ -95,6 +100,15 @@ def change_wishlist(update: Update, context: CallbackContext):
     wishlist_element.save()
     update.callback_query.data += "_0"
     append = WISHLIST_CHANGED % (wishlist_element.description, wishlist.title)
+    old_wishlist_obj: Wishlist = find_wishlist_by_id(old_wishlist)
+    if len(wishlist_element.description) > 64:
+        wishlist_element.description = "%s..." % wishlist_element.description[:61]
+    notification_message = NOTIFICATION_WISHLIST_ELEMENT_MOVED % (
+        wishlist_element.description,
+        old_wishlist_obj.title,
+        wishlist.title,
+    )
+    create_notification(update.effective_user.id, notification_message)
     view_wishlist(
         update, context, append=append, under_first=False, reset_keyboard=True
     )
