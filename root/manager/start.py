@@ -312,7 +312,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
     message_id: int = message.message_id
     message: str = build_message(update.effective_user, message)
     command = START_COMMANDS_LIST[page]
-    message: str = f"{message}\n{START_COMMANDS_LIST_HEADER}{command}"
+    message: str = f"{START_COMMANDS_LIST_HEADER}{command}"
     if update.callback_query:
         context.bot.edit_message_text(
             text=message,
@@ -391,11 +391,14 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                     "start_show_commands",
                 )
             ],
-            create_button(
-                build_show_notification_button(update.effective_user),
-                "show_notifications",
-                "show_notifications",
-            )[
+            [
+                create_button(
+                    build_show_notification_button(update.effective_user),
+                    "show_notifications",
+                    "show_notifications",
+                )
+            ],
+            [
                 create_button(
                     "📈  Apri il report mensile", "expand_report", "expand_report"
                 ),

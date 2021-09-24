@@ -98,6 +98,7 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
     redis_helper.save(user.id, message_id)
     logger.info("THIS IS THE CALLBACK [%s]" % update.callback_query.data)
     _id = update.callback_query.data.split("_")[-1]
+    logger.info("EDITING %s" % _id)
     page = int(update.callback_query.data.split("_")[-2])
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     index = update.callback_query.data.split("_")[-3]
@@ -352,13 +353,15 @@ def edit_category(update: Update, context: CallbackContext):
     if not "custom" in data:
         category = int(data.split("_")[-4])
     else:
-        info = redis_helper.retrieve("edit_wishlist_element_info_%s" % user.id).decode()
-        _id = info.split("_")[-1]
+        info = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
         update.callback_query.data += "_%s" % info
         category: CustomCategory = find_category_for_user_by_id(
             user.id, data.split("_")[-1]
         )
         category = category.description
+        logger.info("THESE ARE THE INFO %s" % info)
+        _id = info.split("_")[-1]
+    logger.info("SEARCHING ELEMENT WITH ID %s" % _id)
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
     removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()

@@ -294,7 +294,7 @@ def view_wishlist_element_links(
                 else:
                     deal_date = "<code>    </code>"
                 if tracked_link.platform == "MISSING":
-                    tracked = f"  (💹)\n<i>{deal_date}</i>"
+                    tracked = f"  (💹)"
                 else:
                     if tracked_link.digital:
                         tracked = f"  (💹)\n<i>{deal_date}{tracked_link.platform} ({PRODUCT_TYPE[tracked_link.digital]})</i>"

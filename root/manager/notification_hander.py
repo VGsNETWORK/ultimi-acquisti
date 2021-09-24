@@ -30,7 +30,7 @@ def show_notifications(update: Update, context: CallbackContext):
         for notification in notifications:
             date = format_date(notification.creation_date, show_year=True)
             time = format_time(notification.creation_date, True)
-            date = "%s %s" % (date, time)
+            date = "%s @ %s" % (date, time)
             if notification.read:
                 message += f"\n<b>[{date}]</b>  {notification.message}\n"
             else:

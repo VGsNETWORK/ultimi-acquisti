@@ -31,6 +31,7 @@ from telegram.error import BadRequest
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 from root.contants.messages import (
+    RATING_HEADER_MENU,
     RATING_PLACEHOLDER,
     RATING_VALUES,
     USER_ALREADY_VOTED,
@@ -138,6 +139,7 @@ class Rating:
             text += f"\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>"
             text += "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
             try:
+                text = "%s%s" % (RATING_HEADER_MENU, text)
                 context.bot.edit_message_text(
                     chat_id=chat_id,
                     message_id=self.message_id[user_id],
@@ -166,7 +168,7 @@ class Rating:
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=self.user_message[user_id] + "\n\n\n<b>Dai un voto a...</b>",
+            text=RATING_HEADER_MENU + self.user_message[user_id] + "\n\n\n<b>Dai un voto a...</b>",
             parse_mode="HTML",
         )
         if text != "<b>Non presente</b>":
@@ -185,7 +187,7 @@ class Rating:
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=f"{self.user_message[user_id]}\n\n\n<b>Grazie per aver votato!</b>",
+            text=RATING_HEADER_MENU + f"{self.user_message[user_id]}\n\n\n<b>Grazie per aver votato!</b>",
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -303,6 +305,7 @@ class Rating:
             self.previous_votes[user_id] = None
             self.previous_votes[user_id] = None
             # fmt: on
+        message = "%s%s" % (RATING_HEADER_MENU, message)
         if update.callback_query:
             context.bot.edit_message_text(
                 chat_id=chat_id,
@@ -347,12 +350,13 @@ class Rating:
 
     def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
+        message = "%s%s" % (RATING_HEADER_MENU, RATING_PLACEHOLDER)
         chat_id = update.effective_chat.id
         user_id = update.effective_user.id
         self.message_id[user_id] = context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=update.effective_message.message_id,
-            text=RATING_PLACEHOLDER,
+            text=message,
             disable_web_page_preview=True,
             parse_mode="HTML",
         ).message_id
@@ -407,7 +411,7 @@ class Rating:
             context.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=self.message_id[user_id],
-                text=self.user_message[user_id]
+                text=f"{RATING_HEADER_MENU}" + self.user_message[user_id]
                 + f"\n\n\n{previous_comment}<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>\n"
                 + "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
                 reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
@@ -438,10 +442,13 @@ class Rating:
         user_message = "\n\n".join(user_message.split("\n\n")[:-2])
         self.user_message[user_id] = user_message
         self.create_poll(f"{status}", chat_id, context)
+        current_user_message = self.user_message[user_id]
+        if current_user_message:
+            current_user_message += "\n\n\n"
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=self.user_message[user_id] + "\n\n\n<b>Dai un voto a...</b>",
+            text=RATING_HEADER_MENU + current_user_message + "<b>Dai un voto a...</b>",
             parse_mode="HTML",
         )
         return

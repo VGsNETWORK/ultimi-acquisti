@@ -63,7 +63,7 @@ PLEASE_NOTE_APPEND = (
 )
 
 START_COMMANDS_LIST_HEADER = (
-    "\n\n\n<u><b>LISTA COMANDI</b></u>\n\n"
+    "<u><b>LISTA DEI COMANDI</b></u>\n\n\n"
     "Questo è un riepilogo di tutti i comandi che supporto.\nTieni presente che alcuni di questi"
     " funzionano <b>solo nei gruppi</b> (👥), mentre altri funzionano anche qui, <b>in chat privata</b> (👤).\n"
     "<i>💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
@@ -533,19 +533,19 @@ HOW_TO_MODIFY_A_PURCHASE = (
     " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
 )
 
+RATING_HEADER_MENU = "<b><u>VALUTAZIONE</u></b>\n\n\n"
+
 USER_HAS_NO_VOTE = (
-    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
-    "Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
-    " opzionalmente un commento per ogni area di competenza. Tieni presente che un"
-    " voto provvisto di commento avrà <b>più peso</b> nella <i>media pubblica</i>"
-    "  (consultabile nella sezione <b>[Menu principale] &gt; [Info]</b>) !\n\n\n"
+    "<i>Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
+    " opzionalmente un commento per ogni area di competenza.\n"
+    "💡 Tieni presente che un voto provvisto di commento avrà <b>più peso</b> nella <u>media pubblica</u>"
+    "  (consultabile nella sezione  <b>[Menu principale]  &gt;  [Info]</b>) !</i>\n\n\n"
     "<b><i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali"
     ' commenti non idonei al <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
     "regolamento</a>.</i></b>"
 )
 
 USER_ALREADY_VOTED = (
-    "Benvenuto nella sezione di valutazione di <b>#ultimiacquisti</b>!\n\n"
     "🗳  Hai %s%s%s.\n<i>%s</i>\n\n\n"
     "<b><i>Lo Staff si riserva il diritto di valutare e rimuovere eventuali commenti non idonei al"
     ' <a href="telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">regolamento</a>.</i></b>'
@@ -599,7 +599,11 @@ HOW_TO_PAGES = [
     HOW_TO_MODIFY_A_PURCHASE,
 ]
 
-FEEDBACK_SEND_MESSAGE = "Digita il testo che vuoi inviare, assicurandoti di inserire il tutto in un unico messaggio, poi premi Invia:"
+FEEDBACK_SEND_MESSAGE = (
+    "<b><u>SUPPORTO</u>    ➔    INVIA UN FEEDBACK</b>\n\n\n"
+    "Digita il testo che vuoi inviare, "
+    "<b>assicurandoti di inserire il tutto in un unico messaggio</b>, poi premi <i>Invio</i>:"
+)
 
 FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s</code>):\n\n<i>%s</i>"
 
@@ -1266,7 +1270,7 @@ PRODUCT_TYPE = {True: "formato digitale", False: "formato fisico"}
 PRODUCT_DEAL = "<code>    </code><b>Scontato del %s%% fino alle %s del %s</b>  •  "
 
 NOTIFICATION_CREATED_ITEM_MESSAGE = (
-    'Elemento "<i>%s</i>" (%s)%s creato nella lista "<i>%s</i>".'
+    'Elemento "<i>%s</i>" (%s)%screato nella lista "<i>%s</i>".'
 )
 
 NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"

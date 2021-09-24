@@ -1216,12 +1216,12 @@ def add_category(update: Update, context: CallbackContext):
                 )
                 for link in wish.links:
                     if len(link) >= MAX_LINK_LENGTH:
-                        link = '   •  <a href="%s">%s...</a>' % (
+                        link = '        •  <a href="%s">%s...</a>' % (
                             link,
                             link[: MAX_LINK_LENGTH - 3],
                         )
                     else:
-                        link = '   •  <a href="%s">%s</a>' % (link, link)
+                        link = '        •  <a href="%s">%s</a>' % (link, link)
                     element_extra.append(link)
             if element_extra:
                 element_extra = "\n%s\n" % "\n".join(element_extra)
