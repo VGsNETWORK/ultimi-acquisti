@@ -15,6 +15,8 @@ TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
 
 BOT_NAME = environ["BOT_NAME"]
 
+BOT_ID = environ["BOT_ID"]
+
 VGS_GROUPS_PRIMARY_LINK = "https://t.me/joinchat/T8CJkZHor02rIzVy"
 
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
