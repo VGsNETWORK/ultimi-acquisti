@@ -23,7 +23,7 @@ def show_notifications(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id = message.message_id
     notifications: List[Notification] = find_notifications_for_user(
-        user.id, page_size=50
+        user.id, page_size=25
     )
     message = "<u><b>NOTIFICHE</b></u>\n\n"
     if notifications:
