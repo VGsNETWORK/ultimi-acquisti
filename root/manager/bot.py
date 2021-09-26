@@ -4,9 +4,14 @@
 
 from datetime import date, datetime, time
 from operator import index
+import subprocess
 import os
 from random import random
 import random
+import re
+
+from telegram.chat import Chat
+from telegram.error import BadRequest
 from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import show_notifications
 from root.manager.admin_handler import handle_admin
@@ -118,6 +123,7 @@ from root.manager.start import (
 from root.manager.feedback import FEEDBACK_CONVERSATION
 from telegram_utils.utils.tutils import log
 import root.manager.view_other_wishlists as view_other_wishlists
+import subprocess
 
 
 ADD_NEW_WISHLIST = ConversationHandler(
@@ -241,6 +247,72 @@ class BotManager:
         else:
             logger.info("this is not a development environment, ARE YOU CRAZY?")
 
+    def switch_bot(self, update: Update, context: CallbackContext):
+        message: Message = update.effective_message
+        chat: Chat = update.effective_chat
+        text: str = message.text
+        bot: str = re.sub("\/\w+(\s)?", "", text)
+        try:
+            delete_if_private(message)
+            if message.chat.type == "private":
+                if not bot:
+                    context.bot.send_message(
+                        chat_id=chat.id,
+                        text=(
+                            "Il comando  <code>/switch &lt;nome-servizio&gt;</code>  "
+                            "va usato accompagnato da un argomento.\n\n"
+                            "<code>&lt;nome-servizio&gt;</code>  può avere i seguenti valori:\n"
+                            "    -  <code>vgs-antispam-quality</code>\n"
+                            "    -  <code>last-purchase-quality</code>"
+                        ),
+                        disable_web_page_preview=True,
+                        parse_mode="HTML",
+                    )
+                    return
+                try:
+                    subprocess.check_output(["systemctl", "is-active", bot])
+                    status = True
+                except subprocess.CalledProcessError:
+                    status = False
+                if not status:
+                    context.bot.send_message(
+                        chat_id=chat.id,
+                        text=(
+                            "L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  <code>/switch</code>  "
+                            "può avere i seguenti valori:\n"
+                            "    -  <code>vgs-antispam-quality</code>\n"
+                            "    -  <code>last-purchase-quality</code>"
+                        ),
+                        disable_web_page_preview=True,
+                        parse_mode="HTML",
+                    )
+                    return
+                if bot == "last-purchase-quality":
+                    context.bot.send_message(
+                        chat_id=chat.id,
+                        text="Il progetto <code>#ultimiacquisti</code> è già online.",
+                        disable_web_page_preview=True,
+                    )
+                    return
+                context.bot.send_message(
+                    chat_id=chat.id,
+                    text="Cambio il bot con <code>%s</code>." % bot,
+                    disable_web_page_preview=True,
+                    parse_mode="HTML",
+                )
+                logger.info("/opt/quality/scripts/switch_from_purchase.sh %s" % bot)
+                subprocess.check_call(
+                    ["/opt/quality/scripts/switch_from_purchase.sh", bot]
+                )
+        except BadRequest:
+            context.bot.send_message(
+                chat_id=chat.id,
+                text="❌  Non sono riuscito a fare lo switch con il bot <code>%s</code>."
+                % bot,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+            )
+
     def add_handler(self):
         """Add handlers for the various operations"""
         rating = Rating()
@@ -295,8 +367,11 @@ class BotManager:
             logger.info("adding test commands")
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
+            self.disp.add_handler(CommandHandler("switch", self.switch_bot))
 
-        self.disp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_group))
+        self.disp.add_handler(
+            MessageHandler(Filters.status_update.new_chat_members, handle_new_group)
+        )
 
         self.disp.add_handler(
             CallbackQueryHandler(

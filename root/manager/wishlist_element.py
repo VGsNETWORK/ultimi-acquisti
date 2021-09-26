@@ -899,11 +899,7 @@ def view_wishlist(
     # #############################################################################
     if len(list(wishlist_elements)) > 0:
         message += WISHLIST_LEGEND_APPEND_LEGEND
-    if not under_first and append:
-        if len(wishlist_elements) > 0:
-            message += f"\n\n{append}"
-        else:
-            message += f"\n\n\n{append}"
+
     if not reset_keyboard:
         first_page_added = False
         second_page_added = False
@@ -966,6 +962,11 @@ def view_wishlist(
         user.id, page, wishlist_id=wishlist_id
     )
     wishlist_elements = list(wishlist_elements)
+    if not under_first and append:
+        if len(wishlist_elements) > 0:
+            message += f"\n\n{append}"
+        else:
+            message += f"\n\n\n{append}"
     if update.callback_query:
         try:
             context.bot.edit_message_text(
