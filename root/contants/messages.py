@@ -69,7 +69,7 @@ START_COMMANDS_LIST_HEADER = (
     "Questo è un riepilogo di tutti i comandi che supporto.\nTieni presente che alcuni di questi"
     " funzionano <b>solo nei gruppi</b> (👥), mentre altri funzionano anche qui, <b>in chat privata</b> (👤).\n"
     "<i>💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
-    " <u>gruppo in cui sono presente</u>: inserirò per te il comando nel campo di testo della chat indicata,"
+    f' <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>gruppo in cui sono presente</u></b></a>: inserirò per te il comando nel campo di testo della chat indicata,'
     " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!</i>\n\n\n"
 )
 
@@ -243,18 +243,18 @@ ONLY_PRIVATE = (
 
 ONLY_GROUP = (
     "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
-    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
+    f'Assicurati di selezionarne <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>uno in cui sono presente</u></b></a> e di'
     " <b>quotare prima il messaggio di un utente</b>!"
 )
 
 ONLY_GROUP_NO_QUOTE = (
     "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
-    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u>!"
+    f'Assicurati di selezionarne <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>uno in cui sono presente</u></b></a>!'
 )
 
 ONLY_GROUP_QUOTE_SELF_PURCHASE = (
     "❌  La funzione  <code>%s</code>  è disponibile solo all'interno di un <b>gruppo</b>.\n\n"
-    "Assicurati di selezionarne uno <u><b>in cui sono presente</b></u> e di"
+    f'Assicurati di selezionarne <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>uno in cui sono presente</u></b></a> e di'
     " <b>quotare prima un tuo <u>acquisto</u></b>!"
 )
 
@@ -298,7 +298,7 @@ NO_PURCHASE = (
     '⚠  <a href="tg://user?id=%s">%s</a>, '
     "<b>non hai ancora registrato alcun acquisto</b> su questo bot.\n\n"
     "Per aggiungerne uno, clicca il pulsante sottostante e seleziona un"
-    " <b><u>gruppo in cui sono presente</u></b>: inserirò per te un modello di acquisto nel campo di testo della chat indicata,"
+    f' <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>gruppo in cui sono presente</u></b></a>: inserirò per te un <i>modello di acquisto</i> nel campo di testo della chat indicata,'
     " così potrai completarlo con i dati necessari e inviarlo in men che non si dica!"
 )
 
@@ -880,7 +880,7 @@ EDIT_WISHLIST_PROMPT = (
     "   •  solo testo;\n"
     "   •  massimo <b>128 caratteri</b>;\n"
     "   •  testo su più righe non supportato.\n"
-    '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la NUOVA <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
+    '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la nuova <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
 )
 
 CYCLE_INSERT_ENABLED_APPEND = "\n\n🔄  <i><b>Inserimento ciclico</b> attivo!</i>"
@@ -916,7 +916,9 @@ EDIT_WISHLIST_LINK_EXISTING_PHOTOS = (
 EDIT_WISHLIST_LINK_NO_PHOTOS = (
     ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
     "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album.\n\n"
-    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>"
+    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
+    ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
+    '  e il <i>tracking del prezzo</i> e della sua disponibilità nella <u>sezione link</u>  ("🔗"):</b>'
     "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com"
 )
 
@@ -1152,7 +1154,10 @@ CHANGE_ELEMENT_WISHLIST_MESSAGE = (
 
 ADD_NEW_LINK_MESSAGE = (
     f"{WISHLIST_HEADER}%sInvia adesso i link che vuoi aggiungere per <b>%s</b>:\n\n"
-    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti siti, potrai avere il <u>tracking del prezzo</u>:</b>\n   •  gamestop.it;\n   •  multiplayer.com."
+    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
+    ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
+    "  e il <i>tracking del prezzo</i> e della sua disponibilità:</b>"
+    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com"
 )
 
 

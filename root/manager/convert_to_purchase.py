@@ -5,7 +5,11 @@ from root.helper.user_helper import get_current_wishlist_id
 from root.helper.wishlist import find_wishlist_by_id
 from root.model.wishlist import Wishlist
 from telegram.error import BadRequest
-from root.contants.messages import ASK_FOR_CONVERT_WISHLIST, WISHLIST_HEADER
+from root.contants.messages import (
+    ASK_FOR_CONVERT_WISHLIST,
+    VGS_GROUPS_PRIMARY_LINK,
+    WISHLIST_HEADER,
+)
 from typing import List
 
 from telegram.files.inputmedia import InputMediaPhoto
@@ -178,7 +182,7 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
     message = WISHLIST_HEADER % title
     message += (
         "😃  Link di acquisto per <b>%s</b> creato!\n\nPuoi registrare il tuo nuovo acquisto"
-        " premendo il tasto sottostante e selezionando un gruppo <b><u>dove sono presente</u></b>."
+        f' premendo il tasto sottostante e selezionando un <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>gruppo in cui sono presente</u></b></a>'
         % wish_description
     )
     messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()

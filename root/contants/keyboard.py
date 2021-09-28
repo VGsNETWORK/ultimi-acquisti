@@ -600,8 +600,8 @@ def create_user_settings_keyboard(user: User):
 
 
 ADD_LINK_TO_WISHLIST_ITEM_NO_LINK = InlineKeyboardMarkup(
+    # [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
     [
-        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
         [
             create_button("↩️  Torna indietro", "go_back_from_link", None),
             create_button(
@@ -615,7 +615,7 @@ ADD_LINK_TO_WISHLIST_ITEM_NO_LINK = InlineKeyboardMarkup(
 
 ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
     [
-        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+        # [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
         [
             create_button(
                 "✅  Concludi inserimento", "skip_add_link_to_wishlist_element", None
@@ -692,9 +692,9 @@ def build_edit_wishlist_element_link_keyboard(
             ),
         ]
     ]
-    keyboard.insert(
-        0, [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)]
-    )
+    # keyboard.insert(
+    #    0, [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)]
+    # )
     if has_link:
         keyboard.append(
             [
@@ -1135,16 +1135,17 @@ def create_cancel_wishlist_element_photo_keyboard(
         logger.info("This is the %s" % link)
         if link:
             if link != "" or link != "None":
-                keyboard.insert(
-                    0,
-                    [
-                        create_button(
-                            "ℹ️  Domini web supportati",
-                            "show_supported_link",
-                            "show_supported_link",
-                        )
-                    ],
-                )
+                #keyboard.insert(
+                #    0,
+                #    [
+                #        create_button(
+                #            "ℹ️  Domini web supportati",
+                #            "show_supported_link",
+                #            "show_supported_link",
+                #        )
+                #    ],
+                #)
+                pass
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -1711,9 +1712,9 @@ def build_new_link_keyboard(page: int, wishlist_element_id: str):
         wishlist_element_id,
     )
     keyboard = []
-    keyboard.append(
-        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
-    )
+    # keyboard.append(
+    #    [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+    # )
     keyboard.append([create_button("❌  Annulla", cancel_callback, None)])
     return InlineKeyboardMarkup(keyboard)
 
@@ -1724,9 +1725,9 @@ def build_new_link_keyboard_added(page: int, wishlist_element_id: str):
         wishlist_element_id,
     )
     keyboard = []
-    keyboard.append(
-        [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
-    )
+    # keyboard.append(
+    #    [create_button("ℹ️  Funzioni avanzate", "show_step_2_advance", None)],
+    # )
     keyboard.append([create_button("✅  Concludi inserimento", link_insert, None)])
     return InlineKeyboardMarkup(keyboard)
 
