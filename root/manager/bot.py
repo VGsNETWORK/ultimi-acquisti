@@ -290,8 +290,9 @@ class BotManager:
                 if bot == "last-purchase-quality":
                     context.bot.send_message(
                         chat_id=chat.id,
-                        text="Il progetto <code>#ultimiacquisti</code> è già online.",
+                        text="Il servizio  <code>last-purchase-quality</code>  è già online.",
                         disable_web_page_preview=True,
+                        parse_mode="HTML",
                     )
                     return
                 context.bot.send_message(
