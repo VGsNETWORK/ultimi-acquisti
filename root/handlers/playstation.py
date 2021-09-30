@@ -108,36 +108,44 @@ def has_percentage(content: str):
 
 
 def deals_perc(data: bs4):
-    deals_perc = data.find_all("span", {"class": "psw-m-r-3"})
-    logger.info(deals_perc)
-    if deals_perc:
-        deals_perc = [de_html(n) for n in deals_perc]
-        deals_perc = (next(n for n in deals_perc if has_percentage(n)), None)
+    try:
+        data = data.find("div", {"class": "psw-c-bg-card-1"})
+        deals_perc = data.find_all("span", {"class": "psw-m-r-3"})
+        logger.info(deals_perc)
         if deals_perc:
-            deals_perc = de_html(deals_perc)
-            deals_perc = re.search(r"\d{1,3}%", deals_perc)
+            deals_perc = [de_html(n) for n in deals_perc]
+            deals_perc = (next(n for n in deals_perc if has_percentage(n)), None)
             if deals_perc:
-                deals_perc = deals_perc[0]
-                deals_perc = float(deals_perc.replace("%", ""))
-                return deals_perc
+                deals_perc = de_html(deals_perc)
+                deals_perc = re.search(r"\d{1,3}%", deals_perc)
+                if deals_perc:
+                    deals_perc = deals_perc[0]
+                    deals_perc = float(deals_perc.replace("%", ""))
+                    return deals_perc
+    except Exception as e:
+        logger.error(e)
     return 0.00
 
 
 def deals_end(data: bs4):
-    ending_date = data.find_all("span", {"class": "psw-c-t-2"})
-    logger.info(ending_date)
-    if ending_date:
-        ending_date = [de_html(n) for n in ending_date]
-        ending_date = (next(n for n in ending_date if has_date(n)), None)
+    try:
+        data = data.find("div", {"class": "psw-c-bg-card-1"})
+        ending_date = data.find_all("span", {"class": "psw-c-t-2"})
+        logger.info(ending_date)
         if ending_date:
-            ending_date = de_html(ending_date)
-            ending_date = re.search(
-                r"\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{1,2}", ending_date
-            )
+            ending_date = [de_html(n) for n in ending_date]
+            ending_date = (next(n for n in ending_date if has_date(n)), None)
             if ending_date:
-                ending_date = ending_date.group()
-                ending_date = datetime.strptime(ending_date, "%d/%m/%Y %H:%M")
-                return ending_date + relativedelta(hours=14)
+                ending_date = de_html(ending_date)
+                ending_date = re.search(
+                    r"\d{1,2}/\d{1,2}/\d{4}\s\d{1,2}:\d{1,2}", ending_date
+                )
+                if ending_date:
+                    ending_date = ending_date.group()
+                    ending_date = datetime.strptime(ending_date, "%d/%m/%Y %H:%M")
+                    return ending_date + relativedelta(hours=14)
+    except Exception as e:
+        logger.info(e)
     return None
 
 
