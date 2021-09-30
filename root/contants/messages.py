@@ -1285,12 +1285,12 @@ NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"
 NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "➕  %s foto"
 
 NOTIFICATION_MODIFIED_ITEM_MESSAGE = (
-    'Elemento "<i>%s</i>" (%s)%s della lista dei desideri "<i>%s</i>" modificato.'
+    'Elemento "<i>%s</i>" (%s)%sdella lista dei desideri "<i>%s</i>" modificato:%s'
 )
 
-NOTIFICATION_MODIFIED_TITLE = '✏️  Nome modificato in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_TITLE = '     ✏️  nome modificato in "<i>%s</i>"'
 
-NOTIFICATION_MODIFIED_CATEGORY = '✏️  Categoria modificata in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_CATEGORY = '     ✏️  categoria modificata in "<i>%s</i>"'
 
 NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
 

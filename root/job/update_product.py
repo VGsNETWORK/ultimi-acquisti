@@ -4,7 +4,12 @@
 # region
 from re import sub
 import re
-from root.helper.notification import create_notification
+from root.contants.keyboard import create_new_deal_keyboard
+
+from telegram.update import Update
+from telegram_utils.utils.tutils import delete_if_private
+from root.model.notification import Notification
+from root.helper.notification import create_notification, find_notification_by_id
 from root.helper.wishlist_element import find_containing_link
 from root.util.util import format_price
 from telegram_utils.utils.misc import format_error
@@ -28,6 +33,21 @@ from root.handlers.handlers import extractor
 import math
 
 # endregion
+
+
+def read_deal_notification(update: Update, context: CallbackContext):
+    data = update.callback_query.data
+    notification_id = data.split("_")[-1]
+    notification: Notification = find_notification_by_id(notification_id)
+    if not notification:
+        return
+    notification.read = True
+    notification.save()
+    close_deal_notification(update, context)
+
+
+def close_deal_notification(update: Update, _: CallbackContext):
+    delete_if_private(update.effective_message)
 
 
 def send_deal(product: TrackedLink, previous_price: float, context: CallbackContext):
@@ -64,14 +84,17 @@ def send_deal(product: TrackedLink, previous_price: float, context: CallbackCont
                 logger.info("sending deal to %s" % user_id)
                 user = retrieve_user(subscriber.user_id)
                 chat_id = user.channel if user.channel else subscriber.user_id
+
                 try:
+                    notification: Notification = create_notification(user_id, message)
+                    keyboard = create_new_deal_keyboard(notification)
                     context.bot.send_message(
                         chat_id=chat_id,
                         text=message,
+                        reply_markup=keyboard,
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
-                    create_notification(user_id, message)
                 except BadRequest as br:
                     logger.error(format_error(br))
             else:

@@ -380,17 +380,9 @@ def edit_category(update: Update, context: CallbackContext):
         "element_description_modified_%s" % update.effective_user.id
     ).decode()
     element_extra = []
+    modification_list = []
     show_notification = False
     previous_name = wish.description
-    if description_modified.startswith("1_"):
-        previous_name = description_modified.replace("1_", "", 1)
-        show_notification = True
-        logger.info("THIS IS THE PREVIOUS TITLE [%s]" % previous_name)
-        element_extra.append(NOTIFICATION_MODIFIED_TITLE % wish.description)
-    if previous_category != wish.category:
-        show_notification = True
-        element_extra.append(NOTIFICATION_MODIFIED_CATEGORY % wish.category)
-    format_text = [previous_name]
     if wish.photos:
         element_extra.append(
             NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND % len(wish.photos)
@@ -399,13 +391,24 @@ def edit_category(update: Update, context: CallbackContext):
         element_extra.append(NOTIFICATION_MODIFIED_ITEM_LINK_APPEND % len(wish.links))
         for link in wish.links:
             if len(link) >= MAX_LINK_LENGTH:
-                link = '   •  <a href="%s">%s...</a>' % (
+                link = '        •  <a href="%s">%s...</a>' % (
                     link,
                     link[: MAX_LINK_LENGTH - 3],
                 )
             else:
-                link = '   •  <a href="%s">%s</a>' % (link, link)
+                link = '        •  <a href="%s">%s</a>' % (link, link)
             element_extra.append(link)
+    if description_modified.startswith("1_"):
+        previous_name = description_modified.replace("1_", "", 1)
+        show_notification = True
+        logger.info("THIS IS THE PREVIOUS TITLE [%s]" % previous_name)
+        modification_list.append(NOTIFICATION_MODIFIED_TITLE % wish.description)
+    if previous_category != wish.category:
+        show_notification = True
+        modification_list.append(NOTIFICATION_MODIFIED_CATEGORY % wish.category)
+    format_text = [previous_name]
+    if modification_list:
+        modification_list = "\n%s\n" % "\n".join(modification_list)
     if element_extra:
         element_extra = "\n%s\n" % "\n".join(element_extra)
     # if wish.photos:
@@ -424,6 +427,7 @@ def edit_category(update: Update, context: CallbackContext):
     format_text.append(previous_category)
     format_text.append(element_extra)
     format_text.append(wishlist.title)
+    format_text.append(modification_list)
     notification_message = NOTIFICATION_MODIFIED_ITEM_MESSAGE % tuple(format_text)
     if show_notifications:
         create_notification(update.effective_user.id, notification_message)

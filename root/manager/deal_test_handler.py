@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+from root.contants.keyboard import create_new_deal_keyboard
+from root.model.notification import Notification
 from root.helper.notification import create_notification
 from root.util.util import format_error, format_price
 from telegram.chat import Chat
@@ -45,12 +47,16 @@ def command_send_deal(update: Update, context: CallbackContext):
         )
         logger.info(text)
         try:
+            notification: Notification = create_notification(
+                update.effective_user.id, text
+            )
+            keyboard = create_new_deal_keyboard(notification)
             context.bot.send_message(
                 chat_id=chat.id,
                 text=text,
+                reply_markup=keyboard,
                 disable_web_page_preview=True,
                 parse_mode="HTML",
             )
-            create_notification(user.id, text)
         except BadRequest as br:
             logger.error(format_error(br, update.effective_user))

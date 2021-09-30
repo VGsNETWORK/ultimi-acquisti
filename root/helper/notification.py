@@ -2,12 +2,24 @@
 
 """ File used to manage the bot configurations """
 
+from mongoengine.errors import DoesNotExist
 from root.model.notification import Notification
 import telegram_utils.utils.logger as logger
 
 
 def create_notification(user_id: int, message: str, category: str = ""):
-    Notification(user_id=user_id, message=message, category=category, read=False).save()
+    notification = Notification(
+        user_id=user_id, message=message, category=category, read=False
+    )
+    notification.save()
+    return notification
+
+
+def find_notification_by_id(notification_id: str):
+    try:
+        return Notification.objects().get(id=notification_id)
+    except DoesNotExist:
+        return None
 
 
 def find_notifications_for_user(

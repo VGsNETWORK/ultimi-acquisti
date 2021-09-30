@@ -16,7 +16,11 @@ from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import show_notifications
 from root.manager.admin_handler import handle_admin
 from root.manager.deal_test_handler import command_send_deal
-from root.job.update_product import update_products
+from root.job.update_product import (
+    close_deal_notification,
+    read_deal_notification,
+    update_products,
+)
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
@@ -369,6 +373,17 @@ class BotManager:
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
             self.disp.add_handler(CommandHandler("switch", self.switch_bot))
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="close_deal_notification", callback=close_deal_notification
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="read_deal_notification", callback=read_deal_notification
+            )
+        )
 
         self.disp.add_handler(
             MessageHandler(Filters.status_update.new_chat_members, handle_new_group)

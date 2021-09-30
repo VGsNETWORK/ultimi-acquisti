@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
+from root.model.notification import Notification
 
 import emoji
 from root.model.custom_category import CustomCategory
@@ -1135,7 +1136,7 @@ def create_cancel_wishlist_element_photo_keyboard(
         logger.info("This is the %s" % link)
         if link:
             if link != "" or link != "None":
-                #keyboard.insert(
+                # keyboard.insert(
                 #    0,
                 #    [
                 #        create_button(
@@ -1144,7 +1145,7 @@ def create_cancel_wishlist_element_photo_keyboard(
                 #            "show_supported_link",
                 #        )
                 #    ],
-                #)
+                # )
                 pass
     return InlineKeyboardMarkup(keyboard)
 
@@ -1746,3 +1747,23 @@ TOO_LONG_CUSTOM_CATEGORY_KEYBOARD = InlineKeyboardMarkup(
 NEW_CUSTOM_CATEGORY_KEYBOARD = InlineKeyboardMarkup(
     [[create_button("❌  Annulla", "skip_add_link_to_wishlist_element", "")]]
 )
+
+
+def create_new_deal_keyboard(notification: Notification):
+    notification_id = str(notification.id)
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button(
+                    "📫  Chiudi", "close_deal_notification_%s" % notification_id, None
+                ),
+            ],
+            [
+                create_button(
+                    "📪  Chiudi e segna come letto",
+                    "read_deal_notification_%s" % notification_id,
+                    None,
+                )
+            ],
+        ]
+    )
