@@ -1288,9 +1288,9 @@ NOTIFICATION_MODIFIED_ITEM_MESSAGE = (
     'Elemento "<i>%s</i>" (%s)%sdella lista dei desideri "<i>%s</i>" modificato:%s'
 )
 
-NOTIFICATION_MODIFIED_TITLE = '     ✏️  nome modificato in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_TITLE = '    ✏️  nome modificato in "<i>%s</i>"'
 
-NOTIFICATION_MODIFIED_CATEGORY = '     ✏️  categoria modificata in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_CATEGORY = '    ✏️  categoria modificata in "<i>%s</i>"'
 
 NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
 
@@ -1308,13 +1308,9 @@ NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = 'Lista dei desideri "<i>%s</i>" elim
 
 NOTIFICATION_NEW_WISHLIST = 'Lista dei desideri "<i>%s</i>" creata.'
 
-NOTIFICATION_REORDER_WISHLIST_UP = (
-    'Lista dei desideri "<i>%s</i>" spostata sopra "<i>%s</i>".'
-)
+NOTIFICATION_REORDER_WISHLIST_UP = 'Lista dei desideri "<i>%s</i>" spostata sopra "<i>%s</i>".\nIl nuovo ordine delle liste è:\n%s'
 
-NOTIFICATION_REORDER_WISHLIST_DOWN = (
-    'Lista dei desideri "<i>%s</i>" spostata sotto "<i>%s</i>".'
-)
+NOTIFICATION_REORDER_WISHLIST_DOWN = 'Lista dei desideri "<i>%s</i>" spostata sotto "<i>%s</i>".\nIl nuovo ordine delle liste è:\n%s'
 
 
 NOTIFICATION_WISHLIST_NAME_CHANGED = (

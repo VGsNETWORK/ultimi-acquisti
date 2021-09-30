@@ -98,9 +98,19 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     other_wishlist.save()
                     wishlist.save()
+                    wishlists = find_wishlist_for_user(user_id)
+                    wishlists = list(wishlists)
+                    wishlists.sort(key=lambda x: x.index, reverse=True)
+                    message = "\n".join(
+                        [
+                            f"    <b>{wishlist.index}.</b>  {wishlist.title}"
+                            for wishlist in wishlists
+                        ]
+                    )
                     notification_message = NOTIFICATION_REORDER_WISHLIST_DOWN % (
                         wishlist.title,
                         other_wishlist.title,
+                        message,
                     )
                     create_notification(update.effective_user.id, notification_message)
         elif "up" in data:
@@ -116,16 +126,24 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     other_wishlist.save()
                     wishlist.save()
+                    wishlists = find_wishlist_for_user(user_id)
+                    wishlists = list(wishlists)
+                    wishlists.sort(key=lambda x: x.index, reverse=True)
+                    message = "\n".join(
+                        [
+                            f"    <b>{wishlist.index}.</b>  {wishlist.title}"
+                            for wishlist in wishlists
+                        ]
+                    )
                     notification_message = NOTIFICATION_REORDER_WISHLIST_UP % (
                         wishlist.title,
                         other_wishlist.title,
+                        message,
                     )
                     create_notification(update.effective_user.id, notification_message)
         if is_develop():
-            message = f"USER_ID: {user_id}\n"
-            wishlists = find_wishlist_for_user(user_id)
-            wishlists = list(wishlists)
             wishlists.sort(key=lambda x: x.index, reverse=True)
+            message = f"USER_ID: {user_id}\n"
             message += "\n".join(
                 [
                     f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
