@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 from difflib import SequenceMatcher
-from operator import add
+from operator import add, contains
 from os import environ
 from re import I, S, sub
 import re
+
+from telegram import callbackquery
 from root.handlers.generic import de_html
 from root.contants.message_timeout import THIRTY_MINUTES
 
@@ -213,6 +215,8 @@ def view_wishlist_element_links(
     redis_helper.save("%s_%s_on_list" % (user.id, user.id), "1")
     if update.callback_query:
         data = update.callback_query.data
+        if "view_wishlist_link_element" in data:
+            scrape = True
         wishlist_element_id = data.split("_")[-1]
         page = data.split("_")[-2]
     else:
@@ -443,14 +447,30 @@ def view_wishlist_element_links(
     try:
         logger.info("editing message")
         bot = Bot(environ["TOKEN"])
-        bot.edit_message_text(
-            message_id=message_id,
-            chat_id=chat.id,
-            text=message,
-            reply_markup=keyboard,
-            disable_web_page_preview=True,
-            parse_mode="HTML",
-        )
+        if update.callback_query:
+            data = update.callback_query.data
+            if not "view_wishlist_link_element" in data:
+                bot.edit_message_text(
+                    message_id=message_id,
+                    chat_id=chat.id,
+                    text=message,
+                    reply_markup=keyboard,
+                    disable_web_page_preview=True,
+                    parse_mode="HTML",
+                )
+            else:
+                update.callback_query.data = str(data).replace(
+                    "view_wishlist_link_element", "ignore_update"
+                )
+        else:
+            bot.edit_message_text(
+                message_id=message_id,
+                chat_id=chat.id,
+                text=message,
+                reply_markup=keyboard,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+            )
         if scrape:
             update_list(update, context, False)
     except BadRequest as e:
