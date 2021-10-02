@@ -559,20 +559,43 @@ def confirm_delete_all_wishlist_elements(
     else:
         char = "i"
     if not "confirm_delete_wishlist_list" in update.callback_query.data:
+        photos: int = count_all_wishlist_elements_photos(
+            update.effective_user.id, str(wishlist.id)
+        )
+        logger.info("QUESTE SONO LE FOTO DELLA WISHLIST [%s]" % wishlist_id)
+        if photos > 0:
+            photos = ", %s foto" % photos
+        else:
+            photos = ""
         notification = NOTIFICATION_WIPED_WISHLIST_ELEMENTS % (
             wishlist.title,
             elements,
+            photos,
             char,
         )
     else:
+        photos: int = count_all_wishlist_elements_photos(
+            update.effective_user.id, str(wishlist.id)
+        )
+        logger.info("QUESTE SONO LE FOTO DELLA WISHLIST [%s]" % wishlist_id)
+        if photos > 0:
+            photos = ", %s foto" % photos
+        else:
+            photos = ""
+        count = count_all_wishlists_for_user(user_id=update.effective_user.id)
         if elements > 0:
             notification = NOTIFICATION_DELETED_WISHLIST % (
                 wishlist.title,
                 elements,
                 char,
+                photos,
+                count,
             )
         else:
-            notification = NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS % wishlist.title
+            notification = NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS % (
+                wishlist.title,
+                count,
+            )
     create_notification(user.id, notification)
     delete_all_wishlist_element_for_user(
         update.effective_user.id, wishlist_id, from_wishlist

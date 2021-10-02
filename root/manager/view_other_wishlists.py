@@ -423,7 +423,8 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
                 True,
             )
     if not overload:
-        notification_message = NOTIFICATION_NEW_WISHLIST % message
+        count = count_all_wishlists_for_user(user_id=update.effective_user.id)
+        notification_message = NOTIFICATION_NEW_WISHLIST % (message, count)
         create_notification(update.effective_user.id, notification_message)
         if is_develop():
             message = f"USER_ID: {user.id}\n"

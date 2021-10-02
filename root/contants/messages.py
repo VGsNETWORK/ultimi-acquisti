@@ -1305,16 +1305,18 @@ NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
 NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND = "▪️ %s foto"
 
 NOTIFICATION_WIPED_WISHLIST_ELEMENTS = (
-    'Lista dei desideri "<i>%s</i>" (%s element%s) svuotata.'
+    'Lista dei desideri "<i>%s</i>" (%s element%s%s) svuotata.'
 )
 
-NOTIFICATION_DELETED_WISHLIST = (
-    'Lista dei desideri "<i>%s</i>" (%s element%s) eliminata.'
+NOTIFICATION_DELETED_WISHLIST = 'Lista dei desideri "<i>%s</i>" (%s element%s%s) eliminata.\nIl numero di liste residuo è %s.'
+
+NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = (
+    'Lista dei desideri "<i>%s</i>" eliminata.\nIl numero di liste residuo è %s.'
 )
 
-NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS = 'Lista dei desideri "<i>%s</i>" eliminata.'
-
-NOTIFICATION_NEW_WISHLIST = 'Lista dei desideri "<i>%s</i>" creata.'
+NOTIFICATION_NEW_WISHLIST = (
+    'Lista dei desideri "<i>%s</i>" creata.\nIl nuovo numero di liste è %s.'
+)
 
 NOTIFICATION_REORDER_WISHLIST_UP = 'Lista dei desideri "<i>%s</i>" spostata sopra "<i>%s</i>".\nIl nuovo ordine delle liste è:\n%s'
 
