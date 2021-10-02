@@ -1333,3 +1333,8 @@ def build_show_notification_button(user: User):
     else:
         text = "📭  Nessuna notifica da leggere"
     return text
+
+
+NOTIFICATION_WISHLIST_CHANGED = (
+    'La lista dei desideri attiva è stata cambiata da "<i>%s</i>" a "<i>%s</i>".'
+)
