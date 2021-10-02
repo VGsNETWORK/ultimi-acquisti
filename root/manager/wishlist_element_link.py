@@ -114,13 +114,16 @@ def show_price_popup(update: Update, context: CallbackContext):
         price = "%s €" % format_price(tracked_link.price)
     else:
         price = "N/D"
+    lowest_price = format_price(subscriber.lowest_price)
+    if lowest_price > 0:
+        lowest_price = "%s €" % lowest_price
     if not subscriber.never_updated:
         message = PRICE_MESSAGE_POPUP % (
             title.upper(),
             price,
             sign,
             extra,
-            "%s%s" % (format_price(subscriber.lowest_price), extra_lowest),
+            "%s%s" % (lowest_price, extra_lowest),
         )
     else:
         message = PRICE_MESSAGE_POPUP_NO_VARIATION % (

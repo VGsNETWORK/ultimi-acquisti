@@ -1600,7 +1600,7 @@ def view_wishlist_element_links_keyboard(
                         % (
                             ""
                             if subscribers[index].never_updated
-                            else f"{deals[index]} ",
+                            else f"{deals[index]}  ",
                             real_price,
                         ),
                         "spp_%s_%s"
