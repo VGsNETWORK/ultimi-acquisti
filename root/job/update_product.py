@@ -114,44 +114,52 @@ def update_products(context: CallbackContext):
         logger.info("querying page %s" % page)
         products: List[TrackedLink] = get_paged_link(page=page)
         for product in products:
-            logger.info("querying product %s" % product.code)
-            if not product.code.startswith("//"):
-                previous_price: float = product.price
-                logger.info("loading %s/%s" % (product.base_url, product.code))
-                url = "%s/%s" % (product.base_url, product.code)
-                if "www." in url:
-                    url = re.sub("www\.", "", url)
-                product: dict = extractor.parse_url(url)
-                if product["code"].startswith("/"):
-                    product["code"] = product["code"][1:]
-                updated: bool = update_scraped_link_information(product)
-                if updated:
-                    product: TrackedLink = find_link_by_code(product["code"])
-                    if int(product.price) == 0:
-                        logger.warn("product %s price is 0, resetting" % product.code)
-                        product.price = previous_price
-                        product.save()
-                        continue
-                    if product.price > previous_price:
-                        logger.warn(
-                            "product %s price is raised, resetting" % product.code
-                        )
-                        for subscriber in product.subscribers:
-                            subscriber: Subscriber = find_subscriber(
-                                subscriber, product.code
+            try:
+                logger.info("querying product %s" % product.code)
+                if not product.code.startswith("//"):
+                    previous_price: float = product.price
+                    logger.info("loading %s/%s" % (product.base_url, product.code))
+                    url = "%s/%s" % (product.base_url, product.code)
+                    if "www." in url:
+                        url = re.sub("www\.", "", url)
+                    product: dict = extractor.parse_url(url)
+                    if product["code"].startswith("/"):
+                        product["code"] = product["code"][1:]
+                    updated: bool = update_scraped_link_information(product)
+                    if updated:
+                        product: TrackedLink = find_link_by_code(product["code"])
+                        if int(product.price) == 0:
+                            logger.warn(
+                                "product %s price is 0, resetting" % product.code
                             )
-                            if previous_price < subscriber.lowest_price:
-                                update_subscriber(
-                                    subscriber.user_id,
-                                    product.code,
-                                    previous_price,
-                                    True,
+                            product.price = previous_price
+                            product.save()
+                            continue
+                        if product.price > previous_price:
+                            logger.warn(
+                                "product %s price is raised, resetting" % product.code
+                            )
+                            for subscriber in product.subscribers:
+                                subscriber: Subscriber = find_subscriber(
+                                    subscriber, product.code
                                 )
-                        # ! Please look into this
-                        # product.price = previous_price
-                        product.save()
-                    if product.price < previous_price:
-                        logger.info("that's what i call a deal for %s" % product.code)
-                        send_deal(product, previous_price, context)
-            else:
-                product.delete()
+                                if previous_price < subscriber.lowest_price:
+                                    update_subscriber(
+                                        subscriber.user_id,
+                                        product.code,
+                                        previous_price,
+                                        True,
+                                    )
+                            # ! Please look into this
+                            # product.price = previous_price
+                            product.save()
+                        if product.price < previous_price:
+                            logger.info(
+                                "that's what i call a deal for %s" % product.code
+                            )
+                            send_deal(product, previous_price, context)
+                else:
+                    product.delete()
+            except Exception as e:
+                logger.error(e)
+                logger.error("Unable to update product information [%s]" % product)
