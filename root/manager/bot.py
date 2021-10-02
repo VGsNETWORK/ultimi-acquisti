@@ -12,6 +12,7 @@ import re
 
 from telegram.chat import Chat
 from telegram.error import BadRequest
+from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import show_notifications
 from root.manager.admin_handler import handle_admin
@@ -252,32 +253,38 @@ class BotManager:
             logger.info("this is not a development environment, ARE YOU CRAZY?")
 
     def switch_bot(self, update: Update, context: CallbackContext):
+        logger.info("switching bot...")
         message: Message = update.effective_message
         chat: Chat = update.effective_chat
-        text: str = message.text
-        bot: str = re.sub("\/\w+(\s)?", "", text)
+        if not update.callback_query:
+            text: str = message.text
+            bot: str = re.sub("\/\w+(\s)?", "", text)
+        else:
+            bot: str = update.callback_query.data
+            bot: str = bot.split("_")[-1]
+        # self.sender.delete_previous_message(
+        #    update.effective_user.id, message.message_id, chat.id, context
+        # )
         try:
-            delete_if_private(message)
+            self.sender.delete_if_private(context, update.effective_message)
+            logger.info("THIS IS THE NEW BOT [%s]" % bot)
             if message.chat.type == "private":
                 if not bot:
+                    keyboard = create_switch_bot_keyboard()
                     context.bot.send_message(
                         chat_id=chat.id,
                         text=(
-                            "Il comando  <code>/switch &lt;nome-servizio&gt;</code>  "
-                            "va usato accompagnato da un argomento.\n\n"
-                            "<code>&lt;nome-servizio&gt;</code>  può avere i seguenti valori:\n"
-                            "    -  <code>vgs-antispam-quality</code>\n"
-                            "    -  <code>last-purchase-quality</code>"
+                            "Seleziona il servizio da avviare:\n\n"
+                            "In alternativa, puoi usare il comando  <code>/switch vgs-antispam-quality</code>."
                         ),
+                        reply_markup=keyboard,
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
                     return
-                try:
-                    subprocess.check_output(["systemctl", "is-active", bot])
+                status = os.path.isfile("/etc/systemd/system/%s.service" % bot)
+                if update.callback_query:
                     status = True
-                except subprocess.CalledProcessError:
-                    status = False
                 if not status:
                     context.bot.send_message(
                         chat_id=chat.id,
@@ -285,7 +292,8 @@ class BotManager:
                             "L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  <code>/switch</code>  "
                             "può avere i seguenti valori:\n"
                             "    -  <code>vgs-antispam-quality</code>\n"
-                            "    -  <code>last-purchase-quality</code>"
+                            "    -  <code>last-purchase-quality</code>\n\n"
+                            "In alternativa, puoi usare il comando  <code>/switch</code>  senza argomenti."
                         ),
                         disable_web_page_preview=True,
                         parse_mode="HTML",
@@ -299,12 +307,12 @@ class BotManager:
                         parse_mode="HTML",
                     )
                     return
-                context.bot.send_message(
-                    chat_id=chat.id,
-                    text="Cambio il bot con <code>%s</code>." % bot,
-                    disable_web_page_preview=True,
-                    parse_mode="HTML",
-                )
+                # context.bot.send_message(
+                #    chat_id=chat.id,
+                #    text="Cambio il bot con <code>%s</code>." % bot,
+                #    disable_web_page_preview=True,
+                #    parse_mode="HTML",
+                # )
                 logger.info("/opt/quality/scripts/switch_from_purchase.sh %s" % bot)
                 subprocess.check_call(
                     ["/opt/quality/scripts/switch_from_purchase.sh", bot]
@@ -373,6 +381,9 @@ class BotManager:
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
             self.disp.add_handler(CommandHandler("switch", self.switch_bot))
+            self.disp.add_handler(
+                CallbackQueryHandler(pattern="switch_bot", callback=self.switch_bot)
+            )
 
         self.disp.add_handler(
             CallbackQueryHandler(

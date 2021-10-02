@@ -1767,3 +1767,11 @@ def create_new_deal_keyboard(notification: Notification):
             ],
         ]
     )
+
+
+def create_switch_bot_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [create_button("VGs NETWORK", "switch_bot_vgs-antispam-quality", None)],
+        ]
+    )
