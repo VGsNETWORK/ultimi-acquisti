@@ -115,7 +115,7 @@ def show_price_popup(update: Update, context: CallbackContext):
     else:
         price = "N/D"
     lowest_price = format_price(subscriber.lowest_price)
-    if lowest_price > 0:
+    if float(subscriber.lowest_price) > 0:
         lowest_price = "%s €" % lowest_price
     if not subscriber.never_updated:
         message = PRICE_MESSAGE_POPUP % (

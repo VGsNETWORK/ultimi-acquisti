@@ -583,6 +583,7 @@ def confirm_delete_all_wishlist_elements(
         else:
             photos = ""
         count = count_all_wishlists_for_user(user_id=update.effective_user.id)
+        count += 1
         if elements > 0:
             notification = NOTIFICATION_DELETED_WISHLIST % (
                 wishlist.title,
