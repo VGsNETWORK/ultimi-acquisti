@@ -33,7 +33,8 @@ def change_current_wishlist(update: Update, context: CallbackContext):
     change_wishlist(user_id, wishlist_id)
     update.callback_query.data += "_0"
     notification_message = NOTIFICATION_WISHLIST_CHANGED % (previous_name, new_name)
-    create_notification(user_id, notification_message)
+    if not wishlist_id == current_wishlist_id:
+        create_notification(user_id, notification_message)
     view_wishlist(update, context, page=0, reset_keyboard=True)
 
 
