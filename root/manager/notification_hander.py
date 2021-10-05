@@ -32,9 +32,9 @@ def show_notifications(update: Update, context: CallbackContext):
             time = format_time(notification.creation_date, True)
             date = "%s @ %s" % (date, time)
             if notification.read:
-                message += f"\n<b>[{date}]</b>  {notification.message}\n"
+                message += f"\n<b>[{date}]</b>  {notification.message}\n\n"
             else:
-                message += f"\n🆕  <b>[{date}]</b>  <b>{notification.message}</b>\n"
+                message += f"\n🆕  <b>[{date}]</b>  <b>{notification.message}</b>\n\n"
     else:
         message += "\n<i>Non hai ancora alcuna notifica da visualizzare.</i>"
     if update.callback_query:
