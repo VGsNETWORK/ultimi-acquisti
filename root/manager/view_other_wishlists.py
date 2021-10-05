@@ -103,7 +103,7 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     wishlists.sort(key=lambda x: x.index, reverse=True)
                     message = "\n".join(
                         [
-                            f"    <b>{wishlist.index}.</b>  {wishlist.title}"
+                            f"    <b>{wishlist.index}.</b>  <i>{wishlist.title}</i>"
                             for wishlist in wishlists
                         ]
                     )
@@ -131,7 +131,7 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     wishlists.sort(key=lambda x: x.index, reverse=True)
                     message = "\n".join(
                         [
-                            f"    <b>{wishlist.index}.</b>  {wishlist.title}"
+                            f"    <b>{wishlist.index}.</b>  <i>{wishlist.title}</i>"
                             for wishlist in wishlists
                         ]
                     )
