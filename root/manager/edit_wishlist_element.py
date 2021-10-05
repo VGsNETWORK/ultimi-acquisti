@@ -408,7 +408,7 @@ def edit_category(update: Update, context: CallbackContext):
         modification_list.append(NOTIFICATION_MODIFIED_CATEGORY % wish.category)
     format_text = [previous_name]
     if modification_list:
-        modification_list = "\n%s\n" % "\n".join(modification_list)
+        modification_list = "\n%s" % "\n".join(modification_list)
     if element_extra:
         element_extra = "\n%s\n" % "\n".join(element_extra)
     # if wish.photos:
