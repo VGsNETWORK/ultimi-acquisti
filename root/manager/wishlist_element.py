@@ -344,7 +344,9 @@ def check_message_length(
                     message += "\n"
             cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
+            logger.info(append)
             message += f"\n{WISHLIST_STEP_TWO}{append}{cycle_message}"
+            logger.info(message)
             if pictures:
                 try:
                     if len(pictures) > 0:

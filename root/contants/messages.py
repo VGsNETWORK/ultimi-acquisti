@@ -927,13 +927,12 @@ EDIT_WISHLIST_LINK_NO_PHOTOS = (
     "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
     ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
     '  e il <i>tracking del prezzo</i> e della sua disponibilità nella <u>sezione link</u>  ("🔗"):</b>'
-    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com"
+    "\n   •  gamestop.it;\n   •  store.playstation.com."
 )
 
 SUPPORTED_LINKS_MESSAGE = (
     "🆕  Da oggi i seguenti siti supportano il download automatico delle foto:\n\n"
-    "  •  GameStop.it ;\n"
-    "  •  Multiplayer.com .\n\n"
+    "  •  GameStop.it ;\n\n"
     "Aggiungi ora un link al prodotto e lascia che sia io a occuparmi delle scartoffie!"
 )
 
@@ -943,7 +942,7 @@ ADD_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "Se vuoi che il tuo elemento riporti a una pagina web, puoi inserirne qui il link:\n"
     "   •  sono ammessi solamente link;\n"
     "   •  sono supportati un massimo di <b>10</b> link;\n"
-    "   •  in caso di link multipli immessi nello stesso messaggio, prenderò in considerazione soltanto il primo%s."
+    "   •  in caso di link multipli immessi nello stesso messaggio, prenderò in considerazione soltanto il primo%s"
 )
 
 ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE = (
@@ -1165,7 +1164,7 @@ ADD_NEW_LINK_MESSAGE = (
     "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
     ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
     "  e il <i>tracking del prezzo</i> e della sua disponibilità:</b>"
-    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com"
+    "\n   •  gamestop.it;\n   •  store.playstation.com."
 )
 
 
