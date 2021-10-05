@@ -1775,3 +1775,8 @@ def create_switch_bot_keyboard():
             [create_button("VGs NETWORK", "switch_bot_vgs-antispam-quality", None)],
         ]
     )
+
+
+ERROR_KEYBOARD = InlineKeyboardMarkup(
+    [[create_button("❎  Chiudi", "delete_message", "")]]
+)

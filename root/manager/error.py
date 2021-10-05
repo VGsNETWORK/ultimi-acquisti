@@ -6,6 +6,8 @@ import sys
 import traceback
 from telegram import Update
 from telegram.ext import CallbackContext
+from telegram_utils.utils.tutils import delete_if_private
+from root.contants.keyboard import ERROR_KEYBOARD
 from root.util.util import format_error, retrieve_key
 import root.util.logger as logger
 from root.contants.messages import MESSAGE_TOO_OLD, TELEGRAM_ERROR, USER_ERROR
@@ -22,6 +24,16 @@ def handle_error(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    if update.effective_message:
+        if "/err" in update.effective_message.text:
+            delete_if_private(update.effective_message)
+            context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=USER_ERROR,
+                parse_mode="HTML",
+                reply_markup=ERROR_KEYBOARD,
+            )
+            return
     if update:
         error_channel = retrieve_key("ERROR_CHANNEL")
         if update.effective_user:
@@ -36,6 +48,11 @@ def handle_error(update: Update, context: CallbackContext):
                 return
         if update.effective_message:
             if update.effective_chat.id != error_channel:
-                update.effective_message.reply_text(USER_ERROR, parse_mode="HTML")
+                context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=USER_ERROR,
+                    parse_mode="HTML",
+                    reply_markup=ERROR_KEYBOARD,
+                )
         logger.error(text)
         context.bot.send_message(error_channel, text, parse_mode="HTML")

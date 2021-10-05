@@ -49,7 +49,7 @@ from root.manager.advertisement_handler import (
 )
 from telegram_utils.utils.misc import environment
 
-from telegram_utils.utils.tutils import delete_if_private
+from telegram_utils.utils.tutils import delete_if_private, delete_message
 from root.manager.wishlist_element_photo import (
     ADD_WISHLIST_PHOTO_CONVERSATION,
     abort_delete_all_wishlist_element_photos,
@@ -326,6 +326,13 @@ class BotManager:
                 parse_mode="HTML",
             )
 
+    def delete_message(self, update: Update, context: CallbackContext):
+        context.bot.answer_callback_query(update.callback_query.id)
+        context.bot.delete_message(
+            chat_id=update.effective_chat.id,
+            message_id=update.effective_message.message_id,
+        )
+
     def add_handler(self):
         """Add handlers for the various operations"""
         rating = Rating()
@@ -379,6 +386,7 @@ class BotManager:
         if is_develop():
             logger.info("adding test commands")
             self.disp.add_handler(CommandHandler("ad", command_send_advertisement))
+            self.disp.add_handler(CommandHandler("err", handle_error))
             self.disp.add_handler(CommandHandler("deal", command_send_deal))
             self.disp.add_handler(CommandHandler("switch", self.switch_bot))
             self.disp.add_handler(
@@ -484,6 +492,10 @@ class BotManager:
             CallbackQueryHandler(
                 confirm_delete_wishlist_list, pattern="confirm_delete_wishlist_list"
             )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(self.delete_message, pattern="delete_message")
         )
 
         self.disp.add_handler(
