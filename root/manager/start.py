@@ -619,11 +619,11 @@ def show_info(update: Update, context: CallbackContext):
     if not update.effective_message.chat.type == "private":
         command_redirect("info", "show_info", update, context)
         return
-    spaces = 5
-    ux_header = "🤹🏻 Facilità di utilizzo:"
-    functionality_header = "➕ Funzionalità:"
-    ui_header = "👁‍🗨 Interfaccia utente:"
-    overall_header = "🌐 Esperienza generale:"
+    spaces = 10
+    ux_header = "🤹🏻  <i>Semplicità</i>"
+    functionality_header = "➕  <i>Funzionalità</i>"
+    ui_header = "👁‍🗨  <i>Interfaccia</i>"
+    overall_header = "🌐  <i>Generale</i>"
 
     message = update.effective_message
     message_id = message.message_id
@@ -670,15 +670,14 @@ def show_info(update: Update, context: CallbackContext):
             )
         ]
         keyboard.insert(0, button)
+        message += f"{create_rating_moons(ux_vote)}{' ' * spaces}{ux_header}\n"
+        message += f"{create_rating_moons(functionality_vote)}{' ' * spaces}{functionality_header}\n"
+        message += f"{create_rating_moons(ui_vote)}{' ' * spaces}{ui_header}\n"
         message += (
-            f"<code>{ux_header}</code>{' ' * spaces}{create_rating_moons(ux_vote)}\n"
+            f"{create_rating_moons(overall_vote)}{' ' * spaces}{overall_header}\n"
         )
-        message += f"<code>{functionality_header}{' ' * (hlength - (len(functionality_header) + 1))}</code>{' ' * spaces}{create_rating_moons(functionality_vote)}\n"
-        message += f"<code>{ui_header}{' ' * (hlength - len(ui_header) + 1)}</code>{' ' * spaces}{create_rating_moons(ui_vote)}\n"
-        message += f"<code>{overall_header}{' ' * (hlength - (len(overall_header) + 1))}</code>{' ' * spaces}{create_rating_moons(overall_vote)}\n"
-        message += (
-            f"<code>{' ' * hlength}</code>{' ' * spaces}<code>{'─' * 13}</code>\n"
-        )
+        # message += f"<code>{'─' * 13}</code>\n"
+        message += f"{'─' * 12}\n"
     else:
         button = [
             create_button(
@@ -686,14 +685,12 @@ def show_info(update: Update, context: CallbackContext):
             )
         ]
         keyboard.insert(0, button)
-    average_header = "⭐️ Valutazione:"
+    average_header = "⭐️  <i><b>Valutazione</b></i>"
     message += (
-        f"<code>{average_header}{' ' * (hlength-(len(average_header)))}</code>{' ' * spaces}{average_message}\n"
-        if average_message
-        else ""
+        f"{average_message}{' ' * spaces}{average_header}\n" if average_message else ""
     )
     if average_message:
-        average_append = f"<code>{' ' * (hlength)}</code><i>     (basato su {number_of_reviews} recensioni)</i>\n\n"
+        average_append = f"<i>(basata su {number_of_reviews} recensioni)</i>\n\n\n"
         message += average_append
     message += (
         f"🔄  Versione:  <code>{VERSION}</code>     (rilasciata il {LAST_UPDATE})\n\n"
@@ -747,4 +744,4 @@ def create_rating_moons(average):
         average_message[index] = replace
         logger.info(average_message)
     message = "".join(average_message)
-    return f"<b>{'%.2f' % (float(average))}</b>  {message}"
+    return f"<b>{'%.2f' % (float(average))}</b>   {message}"
