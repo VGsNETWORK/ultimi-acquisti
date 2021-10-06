@@ -319,11 +319,11 @@ def format_error(error: Exception, user: User = None):
     else:
         user_link = "<code>User not found</code>"
     return (
-        f"<b>From User:</b>  {user_link}\n"
-        f"<b>Bot Name:</b>  <code>#ultimiacquisti</code>\n"
-        f"<b>Exception Type:</b>  <code>{escape_value(exc_type)}</code>\n"
-        f"<b>File Name:</b>  <code>{escape_value(file_name)}:{escape_value(exc_tb.tb_lineno)}</code>\n"
-        f"<b>Message:</b>  <code>{escape_value(error)}</code>"
+        "<code>[#ultimiacquisti]</code>\n"
+        f"<b>Da:</b>  {user_link}\n"
+        f"<b>File:</b>  <code>{escape_value(file_name)}:{escape_value(exc_tb.tb_lineno)}</code>\n"
+        f"<b>Tipo eccezione:</b>  <code>{escape_value(exc_type)}</code>\n"
+        f"<b>Messaggio:</b>  <code>{escape_value(error)}</code>"
     )
 
 
