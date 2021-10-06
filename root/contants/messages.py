@@ -19,6 +19,8 @@ BOT_ID = environ["BOT_ID"]
 
 VGS_GROUPS_PRIMARY_LINK = "https://t.me/joinchat/T8CJkZHor02rIzVy"
 
+REPO_LINK = "https://github.com/VGsNETWORK/ultimi-acquisti"
+
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
 DB_CONNECTION_ERROR = (
@@ -299,7 +301,7 @@ PURCHASE_DELETED = (
 GROUP_NOT_ALLOWED = (
     "❌  <i>Questo gruppo non è abilitato al mio utilizzo.\n"
     "Puoi creare il tuo bot personale con il codice al seguente link:</i>\n\n"
-    "https://gitlab.com/nautilor/ultimi-acquisti"
+    "https://github.com/VGsNETWORK/ultimi-acquisti"
 )
 
 NO_PURCHASE = (

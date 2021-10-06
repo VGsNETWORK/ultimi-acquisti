@@ -22,6 +22,7 @@ from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
 from root.util.util import create_button, retrieve_key
 from root.contants.messages import (
+    REPO_LINK,
     START_COMMAND,
     START_COMMANDS_LIST,
     PLEASE_NOTE_APPEND,
@@ -649,6 +650,7 @@ def show_info(update: Update, context: CallbackContext):
                 "⭐  Valutami", "rating_menu_from_info", "rating_menu_from_info"
             )
         ],
+        [create_button("🐙  Link al progetto", "github_link", None, REPO_LINK)],
         [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],
     ]
     number_of_reviews = len(UserRating.objects().filter(approved=True))

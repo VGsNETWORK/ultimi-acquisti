@@ -210,7 +210,7 @@ class BotManager:
                 os.popen("sudo systemctl restart last-purchase")
 
     def send_git_link(self, update: Update, context: CallbackContext):
-        """Send the link to the gitlab page of this project
+        """Send the link to the github page of this project
 
         Args:
             update (Update): Telegram update
@@ -226,7 +226,7 @@ class BotManager:
             update.effective_user.id,
             context,
             chat_id=chat_id,
-            text="https://gitlab.com/nautilor/ultimi-acquisti",
+            text="https://github.com/VGsNETWORK/ultimi-acquisti",
         )
 
     def show_alert(self, update: Update, context: CallbackContext, message: str):
