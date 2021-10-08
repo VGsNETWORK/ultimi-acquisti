@@ -29,6 +29,7 @@ class Extractor:
             if url:
                 return self.extractor_exists(url)
             return False
+        logger.info("LINK HAS NOT PASSED THE validate_url FUNCTION")
         return False
 
     def show_extra_info(self, tracked_link: TrackedLink):
@@ -99,8 +100,7 @@ class Extractor:
     def validate_url(self, url):
         if not url:
             return False
-        logger.info(re.findall(r"/\w+/?", url))
-        url = re.sub(r"^.*//:", "", url)
+        url = re.sub("https://|http://", "", url)
         if not re.findall(r"/\w+/?", url):
             return False
         if not url.startswith("http"):

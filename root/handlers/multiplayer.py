@@ -13,10 +13,10 @@ import telegram_utils.utils.logger as logger
 import requests
 import json
 
-BASE_URL = "multiplayer.com/"
+BASE_URL = "multiplayer.com/shop/"
 MATCH = "multiplayer.com"
 RULE = {
-    "title": Rule("h1", {"class": "titolo-prodotto"}),
+    "title": Rule("h1", {"class": "te_product_name"}),
     "price": "price",
     "platform": "MISSING",
     "store": "Multiplayer",
@@ -44,71 +44,62 @@ def is_valid_platform(platform: str):
 
 
 def is_bookable(data: bs4):
-    path = data.find_all("script")[-6]
-    if path:
-        path = de_html(path).split("'")
-        path = [line for line in path if "url" in line]
-        if path:
-            path = path[0].strip()
-            path = re.sub('^.*url:|,.*|"', "", path)
-            path = path.strip()
-            headers = {"X-Requested-With": "XMLHttpRequest"}
-            url = "https://%s%s" % (MATCH, path)
-            print(url)
-            data = requests.get(url, headers=headers)
-            if data.status_code == 200:
-                data = json.loads(data.content)
-                return data["status"]["code"] == 6
+    data = data.find("small", "text-primary")
+    if data:
+        return not "mt-2" in str(data)
+    return False
 
 
 def load_picture(data: bs4):
-    logger.info("loading pictures for multiplayer")
-    pictures = data.find("div", {"id": "row-image-gallery"})
-    if pictures:
-        pictures = pictures.findAll("a", {"data-gallery": "#gallery"})
-    else:
-        pictures = data.findAll("a", {"class": "main-image"})
-    return [picture["href"] for picture in pictures]
+    try:
+        images = data.find("script", {"type": "application/ld+json"})
+        images = re.sub("<.*?>|\n\n", "", str(images))
+        images = json.loads(images)
+        return images["image"]
+    except Exception as e:
+        logger.error("unable to extract pictures")
+        logger.error(e)
+        return []
 
 
 def validate(data: bs4):
-    data = data.find("div", {"class": "tout1_404_4Tell"})
-    return False if data else True
+    data = data.find_all("link")
+    logger.info(data)
+    return next((False for e in data if "404" in str(e)), True)
 
 
 def extract_code(url: str) -> str:
     # https://multiplayer.com/videogiochi/playstation-4/nier-replicant-ver122474487139_453068.html
     url: str = re.sub("\?.*", "", url)
-    url = re.sub("https://|http://", "", url)
-    code: List[str] = re.sub(r"(www.)?multiplayer.com(/)?", "", url)
+    url = re.sub(r"https://|http://", "", url)
+    code: str = re.sub(r"^.*/shop/", "", url)
     if code:
         return code
 
 
 def extract_missing_data(product: dict, data: bs4):
-    price = data.findAll("script", {"type": "application/ld+json"})
-    availability = data.find("div", {"class": "dyn-product-status"})
-    product["delivery_available"] = True if availability else False
-    add_to_cart = data.find("a", {"id": "price-garancy"})
+    # se disponibile
+    availability = data.find("button", {"class": "submit-notify"})
+    logger.info("IS AVAILABLE: %s" % availability)
+    product["delivery_available"] = True if not availability else False
+    # se prenotabile
     product["bookable"] = is_bookable(data)
-    if len(price) > 1:
-        price: str = str(price[1])
-        price: str = re.sub("<.*?>", "", price)
-        price: str = next(
-            (line for line in price.split("\n") if '"price"' in line), None
-        )
-        price: str = re.sub(r'.*:|"|,|\s', "", price)
+    # prezzo
+    price = data.find("span", {"class": "oe_currency_value"})
+    if price:
+        price: str = re.sub("<.*?>", "", str(price))
         if price:
+            price: str = re.sub(",", ".", price)
             product["price"] = float(price)
         else:
             product["price"] = 0
-    platform = data.findAll("span", {"class": "label-categoria"})
-    logger.info(platform)
-    platform = [de_html(p) for p in platform]
-    logger.info(platform)
-    platform = next((p for p in platform if is_valid_platform(p)), None)
-    logger.info("MATCHED WITH [%s]" % platform)
+    # piattaforma
+    platform = data.find("li", {"data-attribute_name": "Piattaforma"})
+    platform = platform.find("span")
+    logger.info("PIATTAFORMA [%s]" % platform)
+    logger.info("PIATTAFORMA [%s]" % de_html(platform))
     if platform:
+        platform = de_html(platform)
         product["platform"] = platform
     logger.info(product)
     return product
@@ -137,17 +128,16 @@ def get_extra_info(tracked_link: TrackedLink):
         )
     else:
         if tracked_link.price > 0:
-            return "%s  Disponib.\n%s  Spediz.%s\n\n" % (
-                available,
-                delivery_available,
-                extra_price,
-            )
+            if tracked_link.delivery_available:
+                return "%s  Disponib.\n%s  Spediz.%s\n\n" % (
+                    available,
+                    delivery_available,
+                    extra_price,
+                )
+            else:
+                return "%s  Disponib.\n\n" % (available)
         else:
-            return "❌  Preordine\n%s  Spediz.%s\n\n" % (
-                bookable,
-                delivery_available,
-                extra_price,
-            )
+            return "❌  Preordine\n\n" % (bookable)
 
 
 # fmt: off

@@ -929,7 +929,7 @@ EDIT_WISHLIST_LINK_NO_PHOTOS = (
     "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
     ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
     '  e il <i>tracking del prezzo</i> e della sua disponibilità nella <u>sezione link</u>  ("🔗"):</b>'
-    "\n   •  gamestop.it;\n   •  store.playstation.com."
+    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com."
 )
 
 SUPPORTED_LINKS_MESSAGE = (
@@ -1166,7 +1166,7 @@ ADD_NEW_LINK_MESSAGE = (
     "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
     ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
     "  e il <i>tracking del prezzo</i> e della sua disponibilità:</b>"
-    "\n   •  gamestop.it;\n   •  store.playstation.com."
+    "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com."
 )
 
 

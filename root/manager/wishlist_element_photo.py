@@ -236,7 +236,9 @@ def view_wishlist_element_photos(
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
-    message_id = redis_helper.retrieve("%s_ask_photo_message" % user.id).decode()
+    message_id = redis_helper.retrieve("%s_ask_photo_message" % user.id)
+    if message_id:
+        message_id = message_id.decode()
     message_id = message_id if append else message.message_id
     if update.callback_query:
         data: str = update.callback_query.data
