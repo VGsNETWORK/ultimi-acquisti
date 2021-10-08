@@ -1,6 +1,6 @@
 # \!/usr/bin/env python3
 
 
-VERSION = "1.7.7"
-WISHLIST_VERSION = "4.0.28"
-LAST_UPDATE = "06/10/2021"
+VERSION = "1.7.8"
+WISHLIST_VERSION = "4.0.29"
+LAST_UPDATE = "09/10/2021"
