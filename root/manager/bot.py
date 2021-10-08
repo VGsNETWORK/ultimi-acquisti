@@ -313,9 +313,11 @@ class BotManager:
                 #    disable_web_page_preview=True,
                 #    parse_mode="HTML",
                 # )
-                logger.info("/opt/quality/scripts/switch_from_purchase.sh %s" % bot)
+                logger.info(
+                    "/opt/bot/network/quality/scripts/switch_from_purchase.sh %s" % bot
+                )
                 subprocess.check_call(
-                    ["/opt/quality/scripts/switch_from_purchase.sh", bot]
+                    ["/opt/bot/network/quality/scripts/switch_from_purchase.sh", bot]
                 )
         except BadRequest:
             context.bot.send_message(

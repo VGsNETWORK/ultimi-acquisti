@@ -88,7 +88,6 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     if params:
         handle_params(update, context, params)
         return
-    sender.delete_if_private(update, message)
     chat_id = message.chat.id
     if message.chat.type == "private":
         msg: Message = context.bot.send_message(
@@ -111,6 +110,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
             parse_mode="HTML",
             timeout=THREE_MINUTES,
         )
+    sender.delete_if_private(update, message)
 
 
 def help_end(update: Update, context: CallbackContext):
