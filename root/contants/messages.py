@@ -744,7 +744,7 @@ PURCHASE_NOT_FOUND = (
 GROUP_NOT_ALLOWED = (
     "❌  <i>Questo gruppo non è abilitato al mio utilizzo.\n"
     "Puoi creare il tuo bot personale con il codice al seguente link:</i>\n\n"
-    "https://github.com/VGsNETWORK/ultimi-acquisti"
+    f"{REPO_LINK}"
 )
 
 # continua...
@@ -791,13 +791,13 @@ COMMAND_FORMAT_ERROR = (
     f' <a href="t.me/{BOT_NAME}?start=command_list">clicca qui</a>.</i>'
 )
 
-# ERROR__DONT_QUOTE_YOURSELF
+# ERROR__CANT_QUOTE_YOURSELF
 NO_QUOTE_YOURSELF = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
     " non puoi lanciare questo comando <b>quotando un tuo messaggio</b>!"
 )
 
-# ERROR__DONT_QUOTE_A_BOT
+# ERROR__CANT_QUOTE_A_BOT
 NO_QUOTE_BOT = (
     '❌  <a href="tg://user?id=%s">%s</a>,'
     " non puoi lanciare questo comando <b>quotando un bot</b>!"
@@ -812,7 +812,7 @@ NO_QUOTE_FOUND = (
 # ERROR__REQUESTED_BY_OTHER_USER
 NOT_MESSAGE_OWNER = "❌  Non puoi interagire con questo messaggio: la richiesta è stata fatta da un altro utente!"
 
-# ERROR__CANNOT_MODIFY_OTHER_USER_SETTINGS
+# ERROR__CANT_MODIFY_OTHER_USER_SETTINGS
 CANNOT_MODIFY_OTHERS_SETTINGS = (
     "❌  Non puoi modificare le impostazioni di un altro utente!"
 )
