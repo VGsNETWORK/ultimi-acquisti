@@ -364,7 +364,6 @@ def edit_category(update: Update, context: CallbackContext):
     logger.info("SEARCHING ELEMENT WITH ID %s" % _id)
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
-    removed: str = redis_helper.retrieve("%s_removed_link" % user.id).decode()
     wish.description = text
     previous_category = wish.category
     if not "custom" in data:
