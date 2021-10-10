@@ -53,6 +53,7 @@ from root.contants.messages import (
     NOTIFICATION_DELETED_WISHLIST,
     NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS,
     NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
+    NOTIFICATION_WISHLIST_CHANGED,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -95,6 +96,7 @@ from root.helper.user_helper import (
 from root.helper.wishlist import (
     count_all_wishlists_for_user,
     create_wishlist_if_empty,
+    find_default_wishlist,
     find_wishlist_by_id,
 )
 from root.helper.wishlist_element import (
@@ -554,6 +556,8 @@ def confirm_delete_all_wishlist_elements(
     user = update.effective_user
     data = update.callback_query.data
     wishlist_id = data.split("_")[-1]
+    current_wishlist_id = get_current_wishlist_id(user.id)
+    current_wishlist: Wishlist = find_wishlist_by_id(current_wishlist_id)
     wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
     elements = count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
     if elements == 1:
@@ -585,7 +589,7 @@ def confirm_delete_all_wishlist_elements(
         else:
             photos = ""
         count = count_all_wishlists_for_user(user_id=update.effective_user.id)
-        count += 1
+        count -= 1
         if elements > 0:
             notification = NOTIFICATION_DELETED_WISHLIST % (
                 wishlist.title,
@@ -600,6 +604,13 @@ def confirm_delete_all_wishlist_elements(
                 count,
             )
     create_notification(user.id, notification)
+    default_wishlist = find_default_wishlist(user.id)
+    if str(current_wishlist.id) == str(wishlist.id):
+        notification = NOTIFICATION_WISHLIST_CHANGED % (
+            wishlist.title,
+            default_wishlist.title,
+        )
+        create_notification(user.id, notification)
     delete_all_wishlist_element_for_user(
         update.effective_user.id, wishlist_id, from_wishlist
     )
