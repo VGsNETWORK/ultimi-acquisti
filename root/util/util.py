@@ -483,6 +483,53 @@ def retrieve_key(key: str, decode=False):
         return None
 
 
+def format_deal_due_date(deal: datetime, today: datetime):
+    difference = deal - today
+    seconds = difference.seconds
+    days = difference.days
+    minutes = seconds // 60
+    hours = seconds // 60 // 60
+    message = " per "
+    append = []
+    ### PARSING DAYS ######################################
+    if days > 0:
+        if days > 1:
+            append.append("altri %s giorni" % days)
+        else:
+            append.append("%s altro giorno" % days)
+    ### PARSING HOURS #####################################
+    if hours > 0:
+        minutes -= hours * 60
+        if hours > 1:
+            if days > 0:
+                append.append("%s ore" % hours)
+            else:
+                append.append("altre %s ore" % hours)
+        else:
+            if not days:
+                append.append("1 altra ora")
+            else:
+                append.append("1 ora")
+    ### PARSING MINUTES ###################################
+    if minutes > 0:
+        if minutes > 1:
+            if days > 0 or hours > 0:
+                append.append("%s minuti" % minutes)
+            else:
+                append.append("altri %s minuti" % minutes)
+        else:
+            if days or hours:
+                append.append("%s minuto" % minutes)
+            else:
+                append.append("%s altro minuto" % minutes)
+
+    append = ", ".join(append)
+    # replace last comma with a ' e '
+    append = re.sub(r"(.*), ", r"\1 e ", append)
+    message += append
+    return message
+
+
 def db_connect():
     """connect to the desire database"""
     username = retrieve_key("DBUSERNAME", False)

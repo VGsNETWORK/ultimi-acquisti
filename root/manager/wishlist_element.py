@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # region
+from datetime import datetime
 import enum
 import operator
 import re
@@ -121,6 +122,7 @@ from root.util.telegram import TelegramSender
 from root.util.util import (
     create_button,
     extract_first_link_from_message,
+    format_deal_due_date,
     format_price,
     get_article,
     max_length_error_format,
@@ -903,7 +905,16 @@ def view_wishlist(
                                     tracked_link.price, tracked_link.link
                                 )
                             )
-                        price = "<b>%s € ⁽*⁾</b>\n" % format_price(tracked_link.price)
+                        if tracked_link.deals_end:
+                            append = format_deal_due_date(
+                                tracked_link.deals_end, datetime.now()
+                            )
+                        else:
+                            append = ""
+                        price = "<b>%s €%s ⁽*⁾</b>\n" % (
+                            format_price(tracked_link.price),
+                            append,
+                        )
                     else:
                         price = "<b>N/D ⁽*⁾</b>\n"
 
