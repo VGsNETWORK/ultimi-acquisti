@@ -218,7 +218,12 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
         except BadRequest as e:
             logger.error(e)
     data = update.callback_query.data
-    page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+    page = redis_helper.retrieve("%s_current_page" % user.id)
+    if page:
+        page = page.decode()
+    else:
+        page = data.split("_")[-1]
+        redis_helper.save("%s_current_page" % user.id, page)
     redis_helper.save(user.id, message.message_id)
     logger.info("THIS NEEDS TO BE EDITED %s " % message.message_id)
     if not page:
@@ -432,7 +437,6 @@ def ask_for_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     redis_helper.save("%s_photo_sended" % user.id, "0")
     wish_id = update.callback_query.data.split("_")[-1]
-    wish_id_ = redis_helper.retrieve("%s_%s" % (user.id, user.id)).decode()
     page = update.callback_query.data.split("_")[-2]
     if not page.isnumeric():
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
