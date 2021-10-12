@@ -688,6 +688,8 @@ class BotManager:
             CallbackQueryHandler(callback=view_user_settings, pattern="user_settings")
         )
 
+        self.disp.add_handler(CommandHandler("settings", view_user_settings))
+
         self.disp.add_handler(
             CallbackQueryHandler(
                 callback=settings_toggle_purchase_tips, pattern="settings_toggle_tips"
@@ -746,6 +748,7 @@ class BotManager:
         self.disp.add_handler(CommandHandler("git", self.send_git_link))
         self.disp.add_handler(CommandHandler("restart", self.restart))
         self.disp.add_handler(CommandHandler("howto", help_init))
+        self.disp.add_handler(CommandHandler("help", help_init))
         self.disp.add_handler(
             CallbackQueryHandler(callback=help_navigate, pattern="how_to_page_.*")
         )

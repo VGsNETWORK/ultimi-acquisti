@@ -25,7 +25,7 @@ def view_user_settings(update: Update, context: CallbackContext):
     if not update.effective_message.chat.type == "private":
         command_redirect("impostazioni", "show_settings", update, context)
         return
-    message: Message = update.effective_message
+    message: Message = update.effective_messag
     if not update.callback_query:
         sender.delete_if_private(context, message)
     if message.chat.type == "private":
@@ -46,6 +46,12 @@ def view_user_settings(update: Update, context: CallbackContext):
                 parse_mode="HTML",
             )
         else:
+            sender.delete_previous_message(
+                update.effective_user.id,
+                update.effective_message.message_id,
+                update.effective_chat.id,
+                context,
+            )
             context.bot.send_message(
                 chat_id=chat.id,
                 text=USER_SETTINGS_MESSAGE,
