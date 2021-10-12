@@ -110,17 +110,20 @@ def remove_wishlist_for_user(_id: str, user_id: int):
                 wishlist.save()
             wish.delete()
             if is_develop():
-                message = f"USER_ID: {user_id}\n"
-                wishlists = find_wishlist_for_user(user_id)
-                wishlists = list(wishlists)
+                wishlists = list(find_wishlist_for_user(user_id))
                 wishlists.sort(key=lambda x: x.index, reverse=True)
-                message += "\n".join(
-                    [
-                        f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
-                        for wishlist in wishlists
-                    ]
+                message = (
+                    "Nuovo ordine delle liste dei desideri"
+                    f' per <a href="tg://user?id={user_id}">{user_id}</a>:\n'
                 )
-                log(0, message, disable_notification=True)
+                if len(wishlists) > 0:
+                    message += "\n".join(
+                        [
+                            f"    <b>{wishlist.index}.</b>  <i>{wishlist.title}</i>"
+                            for wishlist in wishlists
+                        ]
+                    )
+                    log(0, message, disable_notification=True)
     except DoesNotExist as e:
         logger.error(e)
         return

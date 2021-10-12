@@ -142,11 +142,15 @@ def reorder_wishlist(update: Update, context: CallbackContext):
                     )
                     create_notification(update.effective_user.id, notification_message)
         if is_develop():
+            wishlists = list(find_wishlist_for_user(user_id))
             wishlists.sort(key=lambda x: x.index, reverse=True)
-            message = f"USER_ID: {user_id}\n"
+            message = (
+                "Nuovo ordine delle liste dei desideri"
+                f' per <a href="tg://user?id={user_id}">{user_id}</a>:\n'
+            )
             message += "\n".join(
                 [
-                    f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
+                    f"    <b>{wishlist.index}.</b>  <i>{wishlist.title}</i>"
                     for wishlist in wishlists
                 ]
             )
@@ -431,13 +435,21 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
             wishlists = find_wishlist_for_user(user.id)
             wishlists = list(wishlists)
             wishlists.sort(key=lambda x: x.index, reverse=True)
-            message += "\n".join(
-                [
-                    f"    —  <b>{wishlist.title}</b>: <i>{wishlist.index}</i>"
-                    for wishlist in wishlists
-                ]
-            )
-            log(0, message, disable_notification=True)
+            if is_develop():
+                user_id = update.effective_user.id
+                wishlists = list(find_wishlist_for_user(user_id))
+                wishlists.sort(key=lambda x: x.index, reverse=True)
+                message = (
+                    "Nuovo ordine delle liste dei desideri"
+                    f' per <a href="tg://user?id={user_id}">{user_id}</a>:\n'
+                )
+                message += "\n".join(
+                    [
+                        f"    <b>{wishlist.index}.</b>  <i>{wishlist.title}</i>"
+                        for wishlist in wishlists
+                    ]
+                )
+                log(0, message, disable_notification=True)
         pass
     return INSERT_TITLE if overload else ConversationHandler.END
 
