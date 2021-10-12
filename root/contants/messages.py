@@ -57,7 +57,7 @@ START_COMMAND = (
 START_GROUP_GROUP_APPEND = (
     "\n\n🏁  Per iniziare, <b>invia</b> o <b>modifica</b> un messaggio di qualunque"
     ' tipo aggiungendo l\'hashtag "<code>#ultimiacquisti</code>"...\n\n'
-    "ℹ️  Per maggiori informazioni sul mio utilizzo, <b>vai alla chat privata</b>!\n\n"
+    "📚  Per maggiori informazioni sul mio utilizzo, <b>vai alla chat privata</b>!\n\n"
 )
 
 PLEASE_NOTE_APPEND = (
@@ -468,8 +468,8 @@ MESSAGE_TOO_OLD = (
 )
 
 HOW_TO_DEEP_LINK = (
-    '<a href="tg://user?id=%s">%s</a>, per visualizzare la guida all\'utilizzo del bot...'
-    ' <a href="t.me/%s?start=how_to">clicca qui</a>!'
+    '<a href="tg://user?id=%s">%s</a>, per visualizzare la <b>guida all\'utilizzo</b> del bot...'
+    ' <a href="t.me/%s?start=how_to"><b>clicca qui</b></a>!'
 )
 
 DEEP_LINK = '<a href="t.me/%s?start=%s">clicca qui</a>!'
@@ -1348,4 +1348,18 @@ def build_show_notification_button(user: User):
 
 NOTIFICATION_WISHLIST_CHANGED = (
     'La lista dei desideri attiva è stata cambiata da "<i>%s</i>" a "<i>%s</i>".'
+)
+
+BOT_ADDED_WELCOME_MESSAGE = (
+    "Ciao <b>%s</b>, grazie per avermi aggiunto!"
+    "\n\nSono <b>#ultimiacquisti</b>, un <b>bot di gestione"
+    " della spesa personale</b>, e potete usarmi per registrare i vostri acquisti recenti"
+    " e passati e tracciarli nel tempo."
+    "%s<b>Buon utilizzo!</b>"
+)
+
+BOT_ADDED_WELCOME_APPEND = (
+    "\n\n🏁  Per iniziare, <b>inviate</b> o <b>modificate</b> un messaggio di qualunque"
+    ' tipo aggiungendo l\'hashtag "<code>#ultimiacquisti</code>"...\n\n'
+    "📚  Per maggiori informazioni sul mio utilizzo, <b>andate alla chat privata</b>!\n\n"
 )

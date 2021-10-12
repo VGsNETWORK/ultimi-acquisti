@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
+import re
 from typing import List
+from root.contants.keyboard import GROUP_START_KEYBOARD
+from root.contants.message_timeout import THIRTY_MINUTES
 from root.helper.whitelist_helper import is_whitelisted, whitelist_chat
-from root.contants.messages import BOT_ID, GROUP_NOT_ALLOWED
+from root.contants.messages import (
+    BOT_ADDED_WELCOME_APPEND,
+    BOT_ADDED_WELCOME_MESSAGE,
+    BOT_ID,
+    GROUP_NOT_ALLOWED,
+)
 from telegram import Update
 from telegram.chat import Chat
 from telegram.ext import CallbackContext
@@ -11,6 +19,10 @@ from telegram.user import User
 from root.helper.user_helper import retrieve_user
 import telegram_utils.utils.logger as logger
 from telegram import ChatMember
+from root.util.telegram import TelegramSender
+
+
+sender = TelegramSender()
 
 
 def handle_new_group(update: Update, context: CallbackContext):
@@ -29,6 +41,22 @@ def handle_new_group(update: Update, context: CallbackContext):
             whitelist_chat(chat.id)
         else:
             logger.info("La chat %s è già whitelistata." % chat.id)
+        group_name = update.effective_chat.title
+        group_name = re.sub(r"\s?\|.*$", "", group_name)
+        welcome_message = BOT_ADDED_WELCOME_MESSAGE % (
+            group_name,
+            BOT_ADDED_WELCOME_APPEND,
+        )
+        sender.send_and_delete(
+            message.message_id,
+            user.id,
+            context,
+            chat.id,
+            welcome_message,
+            reply_markup=GROUP_START_KEYBOARD,
+            timeout=THIRTY_MINUTES,
+        )
+
     else:
         logger.info("L'utente %s non è admin del bot." % user.id)
         context.bot.send_message(

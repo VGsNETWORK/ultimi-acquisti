@@ -4,6 +4,7 @@
 
 from os import environ
 import re
+from root.contants.keyboard import GROUP_START_KEYBOARD
 from root.helper.notification import create_notification
 from root.manager.command_redirect import command_redirect
 from root.helper.user_helper import is_admin
@@ -573,18 +574,7 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                 ],
             ]
         )
-    return InlineKeyboardMarkup(
-        [
-            [
-                create_button(
-                    "Maggiori informazioni  ➡️",
-                    "go_start",
-                    "go_start",
-                    url=f"t.me/{bot_name}?start=start",
-                )
-            ],
-        ]
-    )
+    return GROUP_START_KEYBOARD
 
 
 def navigate_command_list(update: Update, _: CallbackContext):

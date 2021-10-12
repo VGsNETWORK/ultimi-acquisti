@@ -34,6 +34,19 @@ import telegram_utils.helper.redis as redis_helper
 
 BOT_NAME = environ["BOT_NAME"]
 
+GROUP_START_KEYBOARD = InlineKeyboardMarkup(
+    [
+        [
+            create_button(
+                "📚  Apri la guida completa",
+                "go_start",
+                "go_start",
+                url=f"t.me/{BOT_NAME}?start=how_to",
+            )
+        ],
+    ]
+)
+
 
 def send_command_to_group_keyboard(
     command: str, args: str = "", custom: bool = False, command_only: bool = False
