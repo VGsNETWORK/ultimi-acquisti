@@ -67,8 +67,6 @@ def ask_wishlist_change(
     keyboard = choose_new_wishlist_keyboard(wishlists, wishlist_element_id, index, page)
     title = f"{wishlist.title.upper()}  –  "
     description = wishlist_element.description
-    if wishlist_element.links:
-        description = f'<a href="{wishlist_element.links[0]}">{description}</a>'
     if len(wishlist_element.photos) > 0:
         info = "(<i>%s</i>  •  <i>%s foto</i>)" % (
             wishlist_element.category,
