@@ -95,12 +95,13 @@ def extract_missing_data(product: dict, data: bs4):
             product["price"] = 0
     # piattaforma
     platform = data.find("li", {"data-attribute_name": "Piattaforma"})
-    platform = platform.find("span")
-    logger.info("PIATTAFORMA [%s]" % platform)
-    logger.info("PIATTAFORMA [%s]" % de_html(platform))
     if platform:
-        platform = de_html(platform)
-        product["platform"] = platform
+        platform = platform.find("span")
+        logger.info("PIATTAFORMA [%s]" % platform)
+        logger.info("PIATTAFORMA [%s]" % de_html(platform))
+        if platform:
+            platform = de_html(platform)
+            product["platform"] = platform
     logger.info(product)
     return product
 
