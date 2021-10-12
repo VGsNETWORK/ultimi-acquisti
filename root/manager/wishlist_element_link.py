@@ -249,7 +249,12 @@ def view_wishlist_element_links(
             links.insert(0, link)
     logger.info(tracked_links)
     tracked_links = [t for t in tracked_links if t != None]
-    tracked_links.sort(key=lambda link: link.price, reverse=True)
+    tracked_links.sort(
+        key=lambda link: (
+            link.price + extractor.get_shipment_cost(link.price, link.link)
+        ),
+        reverse=True,
+    )
     for link in tracked_links:
         logger.info("checking price for %s" % link.link)
         if link.price > 0:
