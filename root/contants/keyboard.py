@@ -646,7 +646,11 @@ ADD_LINK_TO_WISHLIST_ITEM = InlineKeyboardMarkup(
 
 
 def build_edit_wishlist_element_desc_keyboard(
-    _id: str, page: int, index: int, text_limit_reached: bool = False
+    _id: str,
+    page: int,
+    index: int,
+    text_limit_reached: bool = False,
+    show_remove_price: bool = True,
 ):
     keyboard = [
         [
@@ -654,9 +658,19 @@ def build_edit_wishlist_element_desc_keyboard(
                 "⏩  Salta passaggio",
                 "keep_current_description_%s_%s_%s" % (index, page, _id),
                 None,
-            )
+            ),
         ],
     ]
+    if show_remove_price:
+        keyboard.append(
+            [
+                create_button(
+                    "🗑  Rimuovi prezzo target",
+                    "remove_element_price_%s_%s_%s" % (index, page, _id),
+                    None,
+                ),
+            ]
+        )
     if text_limit_reached:
         keyboard.insert(
             0,

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+from root.helper.purchase_helper import convert_to_float
 from root.manager.notification_hander import show_notifications
 from root.helper.notification import create_notification
 from root.manager.wishlist_element_link import view_wishlist_element_links
@@ -20,7 +21,11 @@ from typing import List
 from root.handlers.handlers import extractor
 from root.contants.constant import CATEGORIES
 from root.manager.wishlist_element import CREATE_CATEGORY, view_wishlist
-from root.util.util import extract_first_link_from_message, max_length_error_format
+from root.util.util import (
+    extract_first_link_from_message,
+    format_price,
+    max_length_error_format,
+)
 from root.model.user import User
 import telegram_utils.helper.redis as redis_helper
 from telegram.chat import Chat
@@ -42,6 +47,7 @@ from root.contants.messages import (
     EDIT_WISHLIST_LINK_EXISTING_PHOTOS,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     EDIT_WISHLIST_PROMPT,
+    EDIT_WISHLIST_TARGET_PRICE_PROMPT,
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
     NO_EMOJI_FOUND,
@@ -92,6 +98,8 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
     message_id = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    logger.info("RESETTING REMOVE PRICE FLAG TO FALSE")
+    redis_helper.save("remove_element_price_%s" % user.id, "false")
     if update.callback_query:
         if "from_link" in update.callback_query.data:
             redis_helper.save("%s_%s_user_link" % (user.id, user.id), "")
@@ -113,9 +121,28 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
         view_wishlist(update, context, reset_keyboard=False)
         return
     redis_helper.save("%s_stored_wishlist_element" % user.id, wish.description)
-    message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)})\n{append}\n\n"
-    message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
-    keyboard = build_edit_wishlist_element_desc_keyboard(_id, page, index)
+    if wish.user_price:
+        price = (
+            "  •  🎯  <b><i>%s €</i></b>" % format_price(wish.user_price)
+            if wish.user_price
+            else None
+        )
+    else:
+        price = ""
+    if "rprice" in update.callback_query.data:
+        logger.info("SETTING REMOVE PRICE FLAG TO TRUE")
+        redis_helper.save("remove_element_price_%s" % user.id, "true")
+        price = ""
+    message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)}{price})\n{append}\n\n"
+    target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if price else ""
+    message += "\n%s%s%s" % (
+        WISHLIST_EDIT_STEP_ONE,
+        EDIT_WISHLIST_PROMPT,
+        target_price_append,
+    )
+    keyboard = build_edit_wishlist_element_desc_keyboard(
+        _id, page, index, show_remove_price=price
+    )
     context.bot.edit_message_text(
         chat_id=chat.id,
         text=message,
@@ -132,6 +159,7 @@ def edit_wishlist_element_description(
 ):
     logger.info("EDIT_WISHLIST_DESCRIPTION")
     message: Message = update.effective_message
+    message_content = update.effective_message.text
     message_id: int = message.message_id
     chat: Chat = update.effective_chat
     user: User = update.effective_user
@@ -161,7 +189,7 @@ def edit_wishlist_element_description(
         page = int(data.split("_")[-2])
         index = data.split("_")[-3]
         if not from_new_category:
-            text = message.text
+            text = message_content
             if not update.callback_query:
                 redis_helper.save("%s_stored_wishlist_element" % user.id, text)
         else:
@@ -169,6 +197,20 @@ def edit_wishlist_element_description(
                 "%s_stored_wishlist_element" % user.id
             ).decode()
     wish: WishlistElement = find_wishlist_element_by_id(_id)
+    if not update.callback_query:
+        user_price = re.findall(r"%(?:\d{1,})(?:[.,'])?(?:\d{1,})?%", message_content)
+        logger.info("THESE IS THE USER PRICE [%s]" % user_price)
+        if user_price:
+            user_price = user_price[0]
+            text = message_content.replace(user_price, "")
+            text = text.strip()
+            user_price = re.sub("%", "", user_price)
+            user_price = user_price.strip()
+            user_price = convert_to_float(user_price)
+        else:
+            user_price = wish.user_price
+    else:
+        user_price = wish.user_price
     if update.callback_query:
         logger.info("THIS IS THE PREVIOUS TITLE [%s]" % "MISSING")
         redis_helper.save(
@@ -192,10 +234,8 @@ def edit_wishlist_element_description(
                 "%s_stored_wishlist_element" % user.id
             ).decode()
     if len(text) > 128:
-        redis_helper.save(
-            "%s_stored_wishlist_element" % user.id, update.effective_message.text[:128]
-        )
-        user_text = max_length_error_format(update.effective_message.text, 128, 200)
+        redis_helper.save("%s_stored_wishlist_element" % user.id, message_content[:128])
+        user_text = max_length_error_format(message_content, 128, 200)
         wishlist_id = get_current_wishlist_id(user.id)
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
@@ -203,11 +243,10 @@ def edit_wishlist_element_description(
             f"{WISHLIST_HEADER % title}<b>1.</b>  {user_text}\n"
             f"{WISHLIST_DESCRIPTION_TOO_LONG}\n{YOU_ARE_MODIFYING_THIS_ELEMENT}\n\n"
         )
+        target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if user_price else ""
         message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
         keyboard = build_edit_wishlist_element_desc_keyboard(_id, page, index, True)
-        redis_helper.save(
-            "%s_stored_wishlist_element" % user.id, update.effective_message.text[:128]
-        )
+        redis_helper.save("%s_stored_wishlist_element" % user.id, message_content[:128])
     else:
         ask = "*" if not wish.description == text else ""
         if not wish.description == text:
@@ -222,17 +261,41 @@ def edit_wishlist_element_description(
                 "element_description_modified_%s" % update.effective_user.id,
                 "0_%s" % wish.description,
             )
+        redis_helper.save(
+            "element_description_modified_%s" % update.effective_user.id,
+            "0_%s" % wish.description,
+        )
         wish.description = text
+        if user_price != "0":
+            wish.user_price = user_price
+        logger.info("IMMABOUTOSAVETHIS [%s]" % user_price)
+        if not user_price:
+            user_price = 0
+        redis_helper.save(
+            "element_price_modified_%s" % update.effective_user.id, user_price
+        )
         redis_helper.save("%s_stored_wishlist_element" % user.id, text)
         wishlist_id = get_current_wishlist_id(user.id)
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
         message = WISHLIST_HEADER % title
         append = "✏️  <i>Stai modificando questo elemento</i>"
-        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)})\n{append}\n\n"
+        if user_price:
+            price = "  •  🎯  <b><i>%s €</i></b>" % format_price(user_price)
+        else:
+            price = ""
+        remove_price = redis_helper.retrieve(
+            "remove_element_price_%s" % user.id
+        ).decode()
+
+        if remove_price.lower() == "true":
+            logger.info("REMOVE PRICE FLAG IS TRUE =[%s]" % remove_price)
+            price = ""
+        message += f"<b>{index}</b>  {ask}<b>{wish.description}</b>     (<b><i>{wish.category}</i></b>{show_photo(wish)}{price})\n{append}\n\n"
 
         append = EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE
         message += f"\n{WISHLIST_EDIT_STEP_THREE}{append}"
+        message += EDIT_WISHLIST_TARGET_PRICE_PROMPT if price else ""
         categories: List[CustomCategory] = find_categories_for_user(
             user_id=update.effective_user.id
         )
@@ -373,6 +436,19 @@ def edit_category(update: Update, context: CallbackContext):
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     rphotos = eval(rphotos.decode()) if rphotos else None
     wish.photos = rphotos if rphotos else wish.photos
+    user_price: float = float(
+        redis_helper.retrieve(
+            "element_price_modified_%s" % update.effective_user.id
+        ).decode()
+    )
+    remove_price = redis_helper.retrieve("remove_element_price_%s" % user.id).decode()
+    if remove_price.lower() == "true":
+        price = ""
+        wish.user_price = None
+    else:
+        if user_price != 0:
+            if user_price != wish.user_price:
+                wish.user_price = user_price
     wish.save()
     wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
     description_modified: str = redis_helper.retrieve(
@@ -612,6 +688,15 @@ def go_to_link_session(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+def remove_element_price(update: Update, context: CallbackContext):
+    logger.info("***REMOVING PRICE***")
+    update.callback_query.data = update.callback_query.data.replace(
+        "remove_element_price", "edit_wishlist_element_item_rprice"
+    )
+    edit_wishlist_element_item(update, context)
+    return EDIT_WISHLIST_TEXT
+
+
 EDIT_WISHLIST_CONVERSATION = ConversationHandler(
     entry_points=[
         CallbackQueryHandler(
@@ -624,6 +709,10 @@ EDIT_WISHLIST_CONVERSATION = ConversationHandler(
             MessageHandler(
                 Filters.text,
                 edit_wishlist_element_description,
+            ),
+            CallbackQueryHandler(
+                callback=remove_element_price,
+                pattern="remove_element_price",
             ),
             CallbackQueryHandler(
                 callback=edit_wishlist_element_description,

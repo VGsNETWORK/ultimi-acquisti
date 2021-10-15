@@ -5,6 +5,7 @@ import enum
 import operator
 import re
 from difflib import SequenceMatcher
+from root.helper.purchase_helper import convert_to_float
 from root.model import notification
 from typing import List
 
@@ -44,6 +45,7 @@ from root.contants.messages import (
     DELETE_WISHLIST_ITEMS_AND_PHOTOS_APPEND,
     DELETE_WISHLIST_ITEMS_APPEND,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
+    EDIT_WISHLIST_TARGET_PRICE_PROMPT,
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
     NO_ELEMENT_IN_WISHLIST,
@@ -163,24 +165,33 @@ def cycle_enabled(user: User):
     return False
 
 
-def retrieve_photos_append(user: User, links: List[str] = None):
+def retrieve_photos_append(user: User, links: List[str] = None, user_price=0):
+    if user_price:
+        price = "  •  🎯  <b><i>%s €</i></b>" % format_price(user_price)
+    else:
+        price = ""
     rphotos: List[str] = redis_helper.retrieve("%s_%s_photos" % (user.id, user.id))
     if links:
         links = [link for link in links if not "🚫" in link]
     rphotos = eval(rphotos.decode()) if rphotos else []
     if len(rphotos) > 0:
         if not links:
-            append = "   (<code>%s</code> / 10  foto)" % len(rphotos)
+            append = f"     (<code>%s</code> / 10  foto{price})" % len(rphotos)
         else:
-            append = "   (<code>%s</code> / 10  foto  •  <code>%s</code> / 10 link)" % (
+            append = f"     (<code>%s</code> / 10  foto  •  <code>%s</code> / 10  link{price})" % (
                 len(rphotos),
                 len(links),
             )
     else:
         if not links:
-            append = ""
+            if user_price:
+                append = (
+                    "     (%s)" % "🎯  <b><i>%s €</i></b>" % format_price(user_price)
+                )
+            else:
+                append = ""
         else:
-            append = "   (<code>%s</code> / 10 link)" % len(links)
+            append = f"     (<code>%s</code> / 10  link{price})" % len(links)
     return append
 
 
@@ -279,8 +290,22 @@ def check_message_length(
             wishlist_id = get_current_wishlist_id(user.id)
             if not wishlist_element:
                 logger.info("WISHLIST ELEMENT MISSING, CREATING ONE...")
+                # CERCO UN PREZZO
+                user_price = re.findall(r"%(?:\d{1,})(?:[.,'])?(?:\d{1,})?%", message)
+                if user_price:
+                    user_price = user_price[0]
+                    message = message.replace(user_price, "")
+                    message = message.strip()
+                    user_price = re.sub("%", "", user_price)
+                    user_price = user_price.strip()
+                    user_price = convert_to_float(user_price)
+                else:
+                    user_price = None
                 wishlist_element = WishlistElement(
-                    user_id=user.id, description=message, wishlist_id=wishlist_id
+                    user_id=user.id,
+                    description=message,
+                    wishlist_id=wishlist_id,
+                    user_price=user_price,
                 ).save()
                 if links:
                     logger.info("UPDATING ELEMENT LINKS")
@@ -323,8 +348,9 @@ def check_message_length(
                     links_append += f"\n      ├─  {wishlist_link}"
             if links:
                 links_append += "\n"
+                user_price = wishlist_element.user_price
             message = (
-                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user, wishlist_element.links)}\n{links_append}"
+                f"{WISHLIST_HEADER % title}<b>1.  {message}</b>{retrieve_photos_append(user, wishlist_element.links, user_price)}\n{links_append}"
                 "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
             )
             if wishlist_elements:
@@ -350,6 +376,7 @@ def check_message_length(
             append = ADD_LINK_TO_WISHLIST_ITEM_MESSAGE % EDIT_WISHLIST_LINK_NO_PHOTOS
             logger.info(append)
             message += f"\n{WISHLIST_STEP_TWO}{append}{cycle_message}"
+            message += EDIT_WISHLIST_TARGET_PRICE_PROMPT if user_price else ""
             logger.info(message)
             if pictures:
                 try:
@@ -888,7 +915,10 @@ def view_wishlist(
             else:
                 space = "  " if add_space else ""
                 new_line = "\n"
-            price = ""
+            if wish.user_price:
+                price = "<b>%s €</b>  🎯\n" % format_price(wish.user_price)
+            else:
+                price = ""
             if wish.links:
                 link = ""
                 for l in wish.links:
@@ -911,13 +941,12 @@ def view_wishlist(
                             )
                         else:
                             append = ""
-                        price = "<b>%s €%s ⁽*⁾</b>\n" % (
+                        price += "<b>%s €%s ⁽*⁾</b>\n" % (
                             format_price(tracked_link.price),
                             append,
                         )
                     else:
-                        price = "<b>N/D ⁽*⁾</b>\n"
-
+                        price += "<b>N/D ⁽*⁾</b>\n"
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
                 f"{price}<i>{wish.category}</i>{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
@@ -1426,7 +1455,7 @@ def handle_insert_for_link(
     title = f"{wishlist.title.upper()}  –  "
     links = wishlist_element.links
     message = (
-        f"{WISHLIST_HEADER % title}<b>1.  {wishlist_element.description}</b>{retrieve_photos_append(user, links)}\n"
+        f"{WISHLIST_HEADER % title}<b>1.  {wishlist_element.description}</b>{retrieve_photos_append(user, links, wishlist_element.user_price)}\n"
         "✍🏻  <i>Stai inserendo questo elemento</i>\n\n"
     )
     cycle_message = CYCLE_INSERT_ENABLED_APPEND if cycle_enabled(user) else ""
@@ -1446,6 +1475,9 @@ def handle_insert_for_link(
             WISHLIST_STEP_THREE,
             ADD_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
             cycle_message,
+        )
+        message += (
+            EDIT_WISHLIST_TARGET_PRICE_PROMPT if wishlist_element.user_price else ""
         )
     else:
         message += "\n%s%s%s" % (

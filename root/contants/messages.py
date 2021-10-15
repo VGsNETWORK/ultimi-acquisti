@@ -893,6 +893,8 @@ EDIT_WISHLIST_PROMPT = (
     '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la nuova <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
 )
 
+EDIT_WISHLIST_TARGET_PRICE_PROMPT = "\n\n\n<b>LEGENDA</b>\n🎯  =  Prezzo target"
+
 CYCLE_INSERT_ENABLED_APPEND = "\n\n🔄  <i><b>Inserimento ciclico</b> attivo!</i>"
 
 

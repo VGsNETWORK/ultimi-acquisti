@@ -298,7 +298,7 @@ class BotManager:
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
-                    return
+                    returnp
                 if bot == "last-purchase-quality":
                     context.bot.send_message(
                         chat_id=chat.id,
