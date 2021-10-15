@@ -25,7 +25,7 @@ def view_user_settings(update: Update, context: CallbackContext):
     if not update.effective_message.chat.type == "private":
         command_redirect("impostazioni", "show_settings", update, context)
         return
-    message: Message = update.effective_messag
+    message: Message = update.effective_message
     if not update.callback_query:
         sender.delete_if_private(context, message)
     if message.chat.type == "private":
