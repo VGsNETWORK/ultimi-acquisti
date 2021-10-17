@@ -133,7 +133,7 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
         logger.info("SETTING REMOVE PRICE FLAG TO TRUE")
         redis_helper.save("remove_element_price_%s" % user.id, "true")
         price = ""
-    message += f"<b>{index}</b>  <code>{wish.description}</code>     (<i>{wish.category}</i>{show_photo(wish)}{price})\n{append}\n\n"
+    message += f"<b>{index}</b>  <code>{wish.description.replace('%', '%%')}</code>     (<i>{wish.category}</i>{show_photo(wish)}{price})\n{append}\n\n"
     target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if price else ""
     message += "\n%s%s%s" % (
         WISHLIST_EDIT_STEP_ONE,

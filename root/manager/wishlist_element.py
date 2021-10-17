@@ -245,7 +245,7 @@ def check_message_length(
             message += "\n".join(
                 [
                     (
-                        f"<b>{index + 2}.</b>  {wish.description}\n"
+                        f"<b>{index + 2}.</b>  {wish.description.replace('%', '%%')}\n"
                         f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                         % (get_article(wish.creation_date))
                     )
@@ -360,7 +360,7 @@ def check_message_length(
                 message += "\n".join(
                     [
                         (
-                            f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<b>{index + 2}.</b>  {wish.description.replace('%', '%%')}\n"
                             f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                             % (get_article(wish.creation_date))
                         )
@@ -427,7 +427,7 @@ def check_message_length(
                 message += "\n".join(
                     [
                         (
-                            f"<b>{index + 2}.</b>  {wish.description}\n"
+                            f"<b>{index + 2}.</b>  {wish.description.replace('%', '%%')}\n"
                             f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                             % (get_article(wish.creation_date))
                         )
@@ -948,8 +948,9 @@ def view_wishlist(
                     else:
                         price += "💹  <b>N/D ⁽*⁾</b>\n"
             wish.description = wish.description.replace("%", "%%")
+            logger.info(wish.description)
             msgs.append(
-                f"<b>{space}{index}.</b>  {wish.description}\n"
+                f"<b>{space}{index}.</b>  {wish.description.replace('%', '%%')}\n"
                 f"{price}<i>{wish.category}</i>{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 % (get_article(wish.creation_date))
             )
@@ -1161,7 +1162,7 @@ def add_in_wishlist_element(
         message += "\n".join(
             [
                 (
-                    f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<b>{index + 2}.</b>  {wish.description.replace('%', '%%')}\n"
                     f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     % (get_article(wish.creation_date))
                 )
@@ -1465,7 +1466,7 @@ def handle_insert_for_link(
         message += "\n".join(
             [
                 (
-                    f"<b>{index + 2}.</b>  {wish.description}\n"
+                    f"<b>{index + 2}.</b>  {wish.description.replace('%', '%%')}\n"
                     f"<i>{wish.category}</i>{has_media(wish)}{show_new_line('', has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>\n"
                     % (get_article(wish.creation_date))
                 )
