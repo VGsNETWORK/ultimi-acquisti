@@ -947,6 +947,7 @@ def view_wishlist(
                         )
                     else:
                         price += "<b>N/D ⁽*⁾</b>\n"
+            wish.description = wish.description.replace("%", "%%")
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
                 f"{price}<i>{wish.category}</i>{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
