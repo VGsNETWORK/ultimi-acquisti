@@ -849,6 +849,7 @@ ADD_TO_WISHLIST_PROMPT = (
     "   •  sono supportati sia del testo che altre <b>%s</b> foto;\n"
     "   •  se hai delle foto da aggiungere, assicurati di inserirle tutte prima del testo;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
+    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%%...%%</code>";\n'
     "   •  testo su più righe non supportato.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>\n\n%s"
 )
@@ -856,9 +857,10 @@ ADD_TO_WISHLIST_PROMPT = (
 ADD_TO_WISHLIST_START_PROMPT = (
     "Inserisci l'elemento da aggiungere alla lista dei"
     " desideri:\n"
-    "   •  sono supportati sia del testo che un massimo di <b>10</b> foto;\n"
+    "   •  sono supportati sia del testo che un massimo di <b>10 foto</b>;\n"
     "   •  se hai delle foto da aggiungere, assicurati di inserirle tutte prima del testo;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
+    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%%...%%</code>";\n'
     "   •  testo su più righe non supportato.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>\n\n%s"
 )
@@ -868,6 +870,7 @@ ADD_TO_WISHLIST_MAX_PHOTOS_PROMPT = (
     " desideri:\n"
     "   •  sono supportati <s>sia</s> del testo <s>che un massimo di 10 foto</s>;\n"
     "   •  testo di massimo <b>128 caratteri</b>;\n"
+    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%%...%%</code>";\n'
     "   •  testo su più righe non supportato.\n"
     "<b>Se l'elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>\n\n%s"
 )
