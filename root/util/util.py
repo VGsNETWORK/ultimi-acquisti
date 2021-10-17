@@ -506,7 +506,7 @@ def format_deal_due_date(deal: datetime, today: datetime):
             else:
                 append.append("altre %s ore" % hours)
         else:
-            if not days:
+            if not days > 0:
                 append.append("1 altra ora")
             else:
                 append.append("1 ora")
