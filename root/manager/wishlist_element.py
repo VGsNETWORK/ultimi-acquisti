@@ -915,10 +915,7 @@ def view_wishlist(
             else:
                 space = "  " if add_space else ""
                 new_line = "\n"
-            if wish.user_price:
-                price = "🎯  <b><i>%s €</i></b>\n" % format_price(wish.user_price)
-            else:
-                price = ""
+            price = ""
             if wish.links:
                 link = ""
                 for l in wish.links:
@@ -941,17 +938,23 @@ def view_wishlist(
                             )
                         else:
                             append = ""
-                        price += "💹  <b>%s €%s ⁽*⁾</b>\n" % (
+                        price = f"<b>%s €%s ⁽*⁾</b>\n{price}" % (
                             format_price(tracked_link.price),
                             append,
                         )
                     else:
-                        price += "💹  <b>N/D ⁽*⁾</b>\n"
+                        price = f"<b>N/D ⁽*⁾</b>\n{price}"
             wish.description = wish.description.replace("%", "%%")
+            category_emoji = wish.category.split("  ")[0]
+            category_name = " ".join(wish.category.split("  ")[1:])
+            if wish.user_price:
+                user_price = "  •  🎯  <i>%s €</i>" % format_price(wish.user_price)
+            else:
+                user_price = ""
             logger.info(wish.description)
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description.replace('%', '%%')}\n"
-                f"{price}<i>{wish.category}</i>{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
+                f"{price}{category_emoji}  <i><u>{category_name}</u></i>{user_price}{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 % (get_article(wish.creation_date))
             )
         message += "\n".join(msgs)
@@ -964,7 +967,7 @@ def view_wishlist(
     title = f"{wishlist.title.upper()}  –  "
     if total_pages > 1:
         more_pages_append = (
-            f"🧮  <i>Questa lista dei desideri contiene <b>%s</b> elementi.</i>\n\n"
+            f"🧮  <i>Questa lista contiene <b>%s</b> elementi.</i>\n\n"
             % count_all_wishlist_elements_for_wishlist_id(wishlist_id, user.id)
         )
     else:
