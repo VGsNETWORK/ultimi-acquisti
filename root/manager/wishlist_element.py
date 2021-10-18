@@ -55,6 +55,7 @@ from root.contants.messages import (
     NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND,
     NOTIFICATION_DELETED_WISHLIST,
     NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS,
+    NOTIFICATION_ELEMENT_DELETED,
     NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
     NOTIFICATION_WISHLIST_CHANGED,
     SUPPORTED_LINKS_MESSAGE,
@@ -682,6 +683,11 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
         _id = update.callback_query.data.split("_")[-1]
         page = int(update.callback_query.data.split("_")[-2])
         wishlist_element = find_wishlist_element_by_id(_id)
+        wishlist = find_wishlist_by_id(wishlist_element.wishlist_id)
+        notification_message = NOTIFICATION_ELEMENT_DELETED % (
+            wishlist_element.description,
+            wishlist.title,
+        )
         remove_wishlist_element_item_for_user(_id)
         for link in wishlist_element.links:
             logger.info("removing %s" % link)
@@ -707,6 +713,7 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat.id, message_id=message_id)
         except BadRequest:
             pass
+    create_notification(update.effective_user.id, notification_message)
     view_wishlist(update, context, reset_keyboard=True)
 
 
