@@ -1304,9 +1304,9 @@ NOTIFICATION_MODIFIED_ITEM_MESSAGE = (
     'Elemento "<i>%s</i>" (%s)%sdella lista dei desideri "<i>%s</i>" modificato:%s'
 )
 
-NOTIFICATION_MODIFIED_TITLE = '    ✏️  nome modificato in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_TITLE = '    ✏️  nome cambiato in "<i>%s</i>"'
 
-NOTIFICATION_MODIFIED_CATEGORY = '    ✏️  categoria modificata in "<i>%s</i>"'
+NOTIFICATION_MODIFIED_CATEGORY = '    ✏️  categoria cambiata in "<i>%s</i>"'
 
 NOTIFICATION_MODIFIED_ITEM_LINK_APPEND = "▪️ %s link:"
 

@@ -1320,7 +1320,7 @@ def add_category(update: Update, context: CallbackContext):
                 # else:
                 #    element_extra = " (%s)" % "\n".join(element_extra)
             else:
-                element_extra = ""
+                element_extra = " "
             format_text.append(wish.category)
             format_text.append(element_extra)
             format_text.append(wishlist.title)

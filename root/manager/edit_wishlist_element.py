@@ -427,6 +427,7 @@ def edit_category(update: Update, context: CallbackContext):
     logger.info("SEARCHING ELEMENT WITH ID %s" % _id)
     wish: WishlistElement = find_wishlist_element_by_id(_id)
     text = redis_helper.retrieve("%s_stored_wishlist_element" % user.id).decode()
+    previous_description = wish.description
     wish.description = text
     previous_category = wish.category
     if not "custom" in data:
@@ -451,9 +452,7 @@ def edit_category(update: Update, context: CallbackContext):
                 wish.user_price = user_price
     wish.save()
     wishlist: Wishlist = find_wishlist_by_id(wish.wishlist_id)
-    description_modified: str = redis_helper.retrieve(
-        "element_description_modified_%s" % update.effective_user.id
-    ).decode()
+    description_modified: str = text
     element_extra = []
     modification_list = []
     show_notification = False
@@ -473,7 +472,8 @@ def edit_category(update: Update, context: CallbackContext):
             else:
                 link = '        •  <a href="%s">%s</a>' % (link, link)
             element_extra.append(link)
-    if description_modified.startswith("1_"):
+    logger.info(f"THIS IS THE DESCRIPTION: [{description_modified}]")
+    if description_modified != previous_description:
         previous_name = description_modified.replace("1_", "", 1)
         show_notification = True
         logger.info("THIS IS THE PREVIOUS TITLE [%s]" % previous_name)
@@ -498,7 +498,7 @@ def edit_category(update: Update, context: CallbackContext):
     # else:
     #    element_extra = " (%s)" % "\n".join(element_extra)
     else:
-        element_extra = ""
+        element_extra = " "
     format_text.append(previous_category)
     format_text.append(element_extra)
     format_text.append(wishlist.title)
