@@ -1340,6 +1340,11 @@ NOTIFICATION_WISHLIST_ELEMENT_MOVED = (
     'Elemento "<i>%s</i>" spostato dalla lista "<i>%s</i>" alla lista "<i>%s</i>".'
 )
 
+NOTIFICATION_ELEMENT_CONVERTED = (
+    'Elemento "<i>%s</i>" della lista dei desideri "<i>%s</i>"'
+    ' convertito; <a href="%s">questo è il link</a> per registrare l\'acquisto.\n'
+)
+
 
 def build_show_notification_button(user: User):
     unread = count_unread_notifications(user.id)

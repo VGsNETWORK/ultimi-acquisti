@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
 
+from root.helper.notification import create_notification
 from root.helper.user_helper import get_current_wishlist_id
 from root.helper.wishlist import find_wishlist_by_id
 from root.model.wishlist import Wishlist
 from telegram.error import BadRequest
 from root.contants.messages import (
     ASK_FOR_CONVERT_WISHLIST,
+    NOTIFICATION_ELEMENT_CONVERTED,
     VGS_GROUPS_PRIMARY_LINK,
     WISHLIST_HEADER,
 )
@@ -144,17 +146,16 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
     )
     if wish.links:
-        if len(wish.links) == 1:
-            wish_description = '<a href="%s">%s</a>' % (wish.links[0], wish_description)
-        url += "%0A"
+        url = ""
         for link in wish.links:
-            if len(link) > MAX_LINK_LENGTH:
-                link = '<a href="%s">%s...</a>' % (
-                    link,
-                    link[:MAX_LINK_LENGTH],
-                )
             url += f"%0A➜%20%20{quote(link)}"
     url += "%0A%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
+    wishlist = find_wishlist_by_id(wish.wishlist_id)
+    notification_message = NOTIFICATION_ELEMENT_CONVERTED % (
+        wish.description,
+        wishlist.title,
+        url,
+    )
     wish.delete()
     keyboard = InlineKeyboardMarkup(
         [
@@ -204,3 +205,4 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
+    create_notification(update.effective_user.id, notification_message)
