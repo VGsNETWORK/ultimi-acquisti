@@ -1349,7 +1349,9 @@ NOTIFICATION_ELEMENT_DELETED = (
     'Elemento "<i>%s</i>" della lista dei desideri "<i>%s</i>" eliminato.'
 )
 
-NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = 'Elementi:%sdella lista "<i>%s</i>" eliminati.'
+NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = (
+    'Elementi:\n%s\ndella lista "<i>%s</i>" eliminati.'
+)
 
 
 def build_show_notification_button(user: User):

@@ -56,6 +56,7 @@ from root.contants.messages import (
     NOTIFICATION_DELETED_WISHLIST,
     NOTIFICATION_DELETED_WISHLIST_NO_ELEMENTS,
     NOTIFICATION_ELEMENT_DELETED,
+    NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED,
     NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
     NOTIFICATION_WISHLIST_CHANGED,
     SUPPORTED_LINKS_MESSAGE,
@@ -603,12 +604,24 @@ def confirm_delete_all_wishlist_elements(
             photos = ", %s foto" % photos
         else:
             photos = ""
-        notification = NOTIFICATION_WIPED_WISHLIST_ELEMENTS % (
-            wishlist.title,
-            elements,
-            char,
-            photos,
-        )
+        if "_fw_" in update.callback_query.data:
+            notification = NOTIFICATION_WIPED_WISHLIST_ELEMENTS % (
+                wishlist.title,
+                elements,
+                char,
+                photos,
+            )
+        else:
+            elements: List[WishlistElement] = find_wishlist_element_for_user(
+                update.effective_user.id, 0, 1000, wishlist_id
+            )
+            elements = "\n".join(
+                [f"    •  {element.description}" for element in elements]
+            )
+            notification = NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED % (
+                elements,
+                wishlist.title,
+            )
     else:
         photos: int = count_all_wishlist_elements_photos(
             update.effective_user.id, str(wishlist.id)
