@@ -606,8 +606,8 @@ def confirm_delete_all_wishlist_elements(
         notification = NOTIFICATION_WIPED_WISHLIST_ELEMENTS % (
             wishlist.title,
             elements,
-            photos,
             char,
+            photos,
         )
     else:
         photos: int = count_all_wishlist_elements_photos(
