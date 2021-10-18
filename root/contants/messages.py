@@ -1342,15 +1342,15 @@ NOTIFICATION_WISHLIST_ELEMENT_MOVED = (
 
 NOTIFICATION_ELEMENT_CONVERTED = (
     'Elemento "<i>%s</i>" della lista dei desideri "<i>%s</i>"'
-    ' convertito; <a href="%s">questo è il link</a> per registrare l\'acquisto.\n'
+    ' convertito in un acquisto; <a href="%s">questo è il link</a> per registrarlo.'
 )
 
 NOTIFICATION_ELEMENT_DELETED = (
-    'Elemento "<i>%s</i>" della lista dei desideri "<i>%s</i>" eliminato.'
+    'Elemento "<i>%s</i>" della lista dei desideri "<i>%s</i>" cancellato.'
 )
 
 NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = (
-    'Elementi:\n%s\ndella lista "<i>%s</i>" eliminati.'
+    'Elementi:\n%s\ndella lista dei desideri "<i>%s</i>" cancellati.'
 )
 
 

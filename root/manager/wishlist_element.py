@@ -616,7 +616,7 @@ def confirm_delete_all_wishlist_elements(
                 update.effective_user.id, 0, 1000, wishlist_id
             )
             elements = "\n".join(
-                [f"    •  {element.description}" for element in elements]
+                [f'        •  "<i>{element.description}</i>"' for element in elements]
             )
             notification = NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED % (
                 elements,
