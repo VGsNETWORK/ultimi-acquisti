@@ -916,7 +916,7 @@ def view_wishlist(
                 space = "  " if add_space else ""
                 new_line = "\n"
             if wish.user_price:
-                price = "<b>%s €</b>  🎯\n" % format_price(wish.user_price)
+                price = "🎯  <b><i>%s €</i></b>\n" % format_price(wish.user_price)
             else:
                 price = ""
             if wish.links:
@@ -941,12 +941,12 @@ def view_wishlist(
                             )
                         else:
                             append = ""
-                        price += "<b>%s €%s ⁽*⁾</b>\n" % (
+                        price += "💹  <b>%s €%s ⁽*⁾</b>\n" % (
                             format_price(tracked_link.price),
                             append,
                         )
                     else:
-                        price += "<b>N/D ⁽*⁾</b>\n"
+                        price += "💹  <b>N/D ⁽*⁾</b>\n"
             wish.description = wish.description.replace("%", "%%")
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description}\n"
