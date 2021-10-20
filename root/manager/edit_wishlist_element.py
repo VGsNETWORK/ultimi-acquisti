@@ -209,6 +209,9 @@ def edit_wishlist_element_description(
             user_price = convert_to_float(user_price)
         else:
             user_price = wish.user_price
+        if not text:
+            text = wish.description
+            redis_helper.save("%s_stored_wishlist_element" % user.id, text)
     else:
         user_price = wish.user_price
     if update.callback_query:
@@ -234,8 +237,8 @@ def edit_wishlist_element_description(
                 "%s_stored_wishlist_element" % user.id
             ).decode()
     if len(text) > 128:
-        redis_helper.save("%s_stored_wishlist_element" % user.id, message_content[:128])
-        user_text = max_length_error_format(message_content, 128, 200)
+        redis_helper.save("%s_stored_wishlist_element" % user.id, text[:128])
+        user_text = max_length_error_format(text, 128, 200)
         wishlist_id = get_current_wishlist_id(user.id)
         wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
         title = f"{wishlist.title.upper()}  –  "
@@ -246,7 +249,7 @@ def edit_wishlist_element_description(
         target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if user_price else ""
         message += "\n%s%s" % (WISHLIST_EDIT_STEP_ONE, EDIT_WISHLIST_PROMPT)
         keyboard = build_edit_wishlist_element_desc_keyboard(_id, page, index, True)
-        redis_helper.save("%s_stored_wishlist_element" % user.id, message_content[:128])
+        redis_helper.save("%s_stored_wishlist_element" % user.id, text[:128])
     else:
         ask = "*" if not wish.description == text else ""
         if not wish.description == text:

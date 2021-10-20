@@ -885,7 +885,7 @@ EDIT_WISHLIST_PROMPT = (
     "Inserisci il nuovo testo dell'elemento:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>128 caratteri</b>;\n"
-    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%%...%%</code>";\n'
+    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>";\n'
     "   •  testo su più righe non supportato.\n"
     "<b>Se il nuovo elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
@@ -893,7 +893,7 @@ EDIT_WISHLIST_PROMPT = (
     "Inserisci il nuovo testo dell'elemento:\n"
     "   •  solo testo;\n"
     "   •  massimo <b>128 caratteri</b>;\n"
-    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%%...%%</code>";\n'
+    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>";\n'
     "   •  testo su più righe non supportato.\n"
     '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la nuova <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
 )
