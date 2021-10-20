@@ -887,19 +887,24 @@ ADD_TO_WISHLIST_DEACTIVATE_CYCLE_INSERT_APPEND = (
 EDIT_WISHLIST_PROMPT = (
     "Inserisci il nuovo testo dell'elemento:\n"
     "   •  solo testo;\n"
-    "   •  massimo <b>128 caratteri</b>;\n"
-    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>";\n'
+    "   •  minimo <b>1 carattere</b> e massimo <b>128</b>;\n"
+    "%s"
     "   •  testo su più righe non supportato.\n"
     "<b>Se il nuovo elemento che vuoi aggiungere è un <u>link</u>, aspetta a inserirlo!</b>"
 )
+
 EDIT_WISHLIST_PROMPT = (
     "Inserisci il nuovo testo dell'elemento:\n"
     "   •  solo testo;\n"
-    "   •  massimo <b>128 caratteri</b>;\n"
-    '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>";\n'
+    "   •  minimo <b>1 carattere</b> e massimo <b>128</b>;\n"
+    "%s"
     "   •  testo su più righe non supportato.\n"
     '<b>Se il nuovo elemento che vuoi aggiungere è un <i>link</i>, sfrutta la nuova <u>sezione link</u>  ("🔗")  dell\'elemento!</b>'
 )
+
+EDIT_WISHLIST_PROMPT_TARGET_PRICE = '   •  puoi indicare un nuovo  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>"; se non specifichi niente, verrà mantenuto quello corrente;\n'
+
+EDIT_WISHLIST_PROMPT_NO_TARGET_PRICE = '   •  puoi indicare un  🎯 <b>prezzo target</b>  aggiungendo un numero tra "<code>%...%</code>";\n'
 
 EDIT_WISHLIST_TARGET_PRICE_PROMPT = "\n\n\n<b>LEGENDA</b>\n🎯  =  Prezzo target"
 

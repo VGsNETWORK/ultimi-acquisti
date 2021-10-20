@@ -47,6 +47,8 @@ from root.contants.messages import (
     EDIT_WISHLIST_LINK_EXISTING_PHOTOS,
     EDIT_WISHLIST_LINK_NO_PHOTOS,
     EDIT_WISHLIST_PROMPT,
+    EDIT_WISHLIST_PROMPT_NO_TARGET_PRICE,
+    EDIT_WISHLIST_PROMPT_TARGET_PRICE,
     EDIT_WISHLIST_TARGET_PRICE_PROMPT,
     NEW_CATEGORY_MESSAGE,
     NO_CATEGORY_NAME_FOUND,
@@ -134,12 +136,14 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
         redis_helper.save("remove_element_price_%s" % user.id, "true")
         price = ""
     message += f"<b>{index}</b>  <code>{wish.description.replace('%', '%%')}</code>     (<i>{wish.category}</i>{show_photo(wish)}{price})\n{append}\n\n"
-    target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if price else ""
-    message += "\n%s%s%s" % (
-        WISHLIST_EDIT_STEP_ONE,
-        EDIT_WISHLIST_PROMPT,
-        target_price_append,
-    )
+    # target_price_append = EDIT_WISHLIST_TARGET_PRICE_PROMPT if price else ""
+    if not wish.user_price or "rprice" in update.callback_query.data:
+        edit_wishlist_message = (
+            EDIT_WISHLIST_PROMPT % EDIT_WISHLIST_PROMPT_NO_TARGET_PRICE
+        )
+    else:
+        edit_wishlist_message = EDIT_WISHLIST_PROMPT % EDIT_WISHLIST_PROMPT_TARGET_PRICE
+    message += "\n%s%s%s" % (WISHLIST_EDIT_STEP_ONE, edit_wishlist_message, "")
     keyboard = build_edit_wishlist_element_desc_keyboard(
         _id, page, index, show_remove_price=price
     )
