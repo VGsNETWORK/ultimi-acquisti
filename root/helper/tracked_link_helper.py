@@ -64,19 +64,12 @@ def update_or_create_scraped_link(product: dict):
                                               set__digital=product["digital"],
                                               set__deals_end=product["deals_end"],
                                               set__deals_percentage=product["deals_percentage"],
+                                              set__included_in_premium=product["included_in_premium"],
+                                              set__premium_type=product["premium_type"],
                                               upsert=True)
         return True
         # fmt: on
     return False
-
-def update_link_information(code: str, collect_available: bool, delivery_available: bool, price: float, sold_out: bool):
-    tracked_link: TrackedLink = find_link_by_code(code)
-    if tracked_link:
-        tracked_link.collect_available = collect_available
-        tracked_link.delivery_available = delivery_available
-        tracked_link.price = price
-        tracked_link.sold_out = sold_out
-        tracked_link.save()
 
 def update_scraped_link_information(product: dict):
     tracked_link: TrackedLink = find_link_by_code(product["code"])
@@ -90,6 +83,8 @@ def update_scraped_link_information(product: dict):
         tracked_link.digital = product["digital"]
         tracked_link.deals_end=product["deals_end"]
         tracked_link.deals_percentage=product["deals_percentage"]
+        tracked_link.included_in_premium=product["included_in_premium"]
+        tracked_link.premium_type=product["premium_type"]
         tracked_link.save() 
 
 

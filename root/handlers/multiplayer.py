@@ -28,6 +28,8 @@ RULE = {
     "digital": False,
     "deals_end": None,
     "deals_percentage": 0.00,
+    "included_in_premium": False,
+    "premium_type": "",
 }
 
 

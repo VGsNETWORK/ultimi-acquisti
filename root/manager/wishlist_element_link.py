@@ -38,6 +38,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
+    PREMIUM_DEALS_MESSAGES,
     PRICE_MESSAGE_POPUP,
     PRICE_MESSAGE_POPUP_NO_VARIATION,
     PRODUCT_DEAL,
@@ -298,11 +299,48 @@ def view_wishlist_element_links(
                         deal = int(tracked_link.deals_percentage)
                     else:
                         deal = 0
-                    deal_date = PRODUCT_DEAL % (
-                        deal,
-                        format_time(tracked_link.deals_end),
-                        format_date(tracked_link.deals_end, timezone=True),
+                    logger.info(
+                        "THE PRODUCT IS PREMIUM [%s]" % tracked_link.included_in_premium
                     )
+                    if not tracked_link.included_in_premium:
+                        deal_date = PRODUCT_DEAL % (
+                            deal,
+                            format_time(tracked_link.deals_end),
+                            format_date(tracked_link.deals_end, timezone=True),
+                        )
+                    else:
+                        if tracked_link.store in PREMIUM_DEALS_MESSAGES:
+                            deal_date = PREMIUM_DEALS_MESSAGES[tracked_link.store]
+                            if deal_date:
+                                logger.info(f"*** {tracked_link.premium_type} ***")
+                                if tracked_link.premium_type in deal_date:
+                                    deal_date = deal_date[tracked_link.premium_type]
+                                    deal_date = deal_date % (
+                                        format_time(tracked_link.deals_end),
+                                        format_date(
+                                            tracked_link.deals_end, timezone=True
+                                        ),
+                                    )
+                                else:
+                                    deal_date = PRODUCT_DEAL % (
+                                        deal,
+                                        format_time(tracked_link.deals_end),
+                                        format_date(
+                                            tracked_link.deals_end, timezone=True
+                                        ),
+                                    )
+                            else:
+                                deal_date = PRODUCT_DEAL % (
+                                    deal,
+                                    format_time(tracked_link.deals_end),
+                                    format_date(tracked_link.deals_end, timezone=True),
+                                )
+                        else:
+                            deal_date = PRODUCT_DEAL % (
+                                deal,
+                                format_time(tracked_link.deals_end),
+                                format_date(tracked_link.deals_end, timezone=True),
+                            )
                 else:
                     deal_date = "<code>    </code>"
                 if tracked_link.platform == "MISSING":

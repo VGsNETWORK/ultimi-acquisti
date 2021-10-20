@@ -28,3 +28,5 @@ class TrackedLink(BaseModel):
     digital = BooleanField()
     deals_end = DateTimeField()
     deals_percentage = FloatField()
+    included_in_premium = BooleanField()
+    premium_type = StringField()

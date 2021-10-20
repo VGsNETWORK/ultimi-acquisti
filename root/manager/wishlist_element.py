@@ -59,6 +59,7 @@ from root.contants.messages import (
     NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED,
     NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
     NOTIFICATION_WISHLIST_CHANGED,
+    PREMIUM_HOME_DEALS_MESSAGES,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
@@ -952,12 +953,26 @@ def view_wishlist(
                                     tracked_link.price, tracked_link.link
                                 )
                             )
+                        append = ""
+                        if tracked_link.included_in_premium:
+                            if tracked_link.store in PREMIUM_HOME_DEALS_MESSAGES:
+                                premium_message = PREMIUM_HOME_DEALS_MESSAGES[
+                                    tracked_link.store
+                                ]
+                                if tracked_link.premium_type in premium_message:
+                                    logger.info("[%s]" % premium_message)
+                                    premium_message = str(
+                                        premium_message[tracked_link.premium_type]
+                                    )
+                                    logger.info("%s" % premium_message)
+                                    append += premium_message
                         if tracked_link.deals_end:
-                            append = format_deal_due_date(
+                            append += format_deal_due_date(
                                 tracked_link.deals_end, datetime.now()
                             )
                         else:
                             append = ""
+                        logger.info("THIS IS THE APPEND [%s]" % append)
                         price = f"<b>%s €%s ⁽*⁾</b>\n{price}" % (
                             format_price(tracked_link.price),
                             append,

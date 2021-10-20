@@ -29,6 +29,8 @@ RULE = {
     "sold_out": False,
     "digital": True,
     "deals_percentage": 0,
+    "included_in_premium": False,
+    "premium_type": "PLUS",
 }
 
 
@@ -127,6 +129,19 @@ def deals_perc(data: bs4):
     return 0.00
 
 
+def included_in_premium(data: bs4):
+    data = data.find("div", {"class": "psw-c-bg-card-1"})
+    premium = data.find_all("span", {"data-qa": "mfeCtaMain#offer1#discountInfo"})
+    premium = de_html(premium)
+    if premium:
+        premium = premium.lower()
+        if "ps plus" in premium:
+            return "PLUS", True
+        if "ps now" in premium:
+            return "NOW", True
+    return "", False
+
+
 def deals_end(data: bs4):
     try:
         data = data.find("div", {"class": "psw-c-bg-card-1"})
@@ -154,6 +169,10 @@ def extract_missing_data(product: dict, data: bs4):
     product["bookable"] = is_bookable(data)
     product["deals_end"] = deals_end(data)
     product["deals_percentage"] = deals_perc(data)
+    (
+        product["premium_type"],
+        product["included_in_premium"],
+    ) = included_in_premium(data)
     logger.info(product)
     return product
 

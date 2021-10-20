@@ -1386,3 +1386,29 @@ BOT_ADDED_WELCOME_APPEND = (
     ' tipo aggiungendo l\'hashtag "<code>#ultimiacquisti</code>"...\n\n'
     "📚  Per maggiori informazioni sul mio utilizzo, <b>andate alla chat privata</b>!\n\n"
 )
+
+PREMIUM_DEALS_MESSAGES = {
+    "Playstation Store": {
+        "PLUS": (
+            "<code>    </code><b>GRATIS per gli utenti"
+            ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a> fino alle %s del %s</b>  •  '
+        ),
+        "NOW": (
+            "<code>    </code><b>GRATIS per gli utenti"
+            ' <a href="https://www.playstation.com/it-it/ps-now/">PS Now</a> fino alle %s del %s</b>  •  '
+        ),
+    }
+}
+
+PREMIUM_HOME_DEALS_MESSAGES = {
+    "Playstation Store": {
+        "PLUS": (
+            "\n<b>GRATIS per gli utenti"
+            ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a></b>'
+        ),
+        "NOW": (
+            "\n<b>GRATIS per gli utenti"
+            ' <a href="https://www.playstation.com/it-it/ps-now/">PS Now</a></b>'
+        ),
+    }
+}
