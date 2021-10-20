@@ -10,8 +10,11 @@ from root.model.user import User
 from root.model.user_rating import UserRating
 import root.util.logger as logger
 
-TODAY = datetime.now()
-TODAY = "%s/%s/%s" % ("%02d" % TODAY.day, "%02d" % TODAY.month, TODAY.year)
+
+def TODAY():
+    T = datetime.now()
+    T = "%s/%s/%s" % ("%02d" % T.day, "%02d" % T.month, T.year)
+
 
 BOT_NAME = environ["BOT_NAME"]
 
@@ -369,14 +372,14 @@ REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTAL
 PURCHASE_DATE_ERROR = (
     '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai tentando di registrare presenta una data futura o errata.'
     " Dal momento che non è possibile collocare un acquisto al futuro, questo"
-    f" sarà aggiunto alla data di oggi, <b>{TODAY}</b>.\n\n"
+    f" sarà aggiunto alla data di oggi, <b>{TODAY()}</b>.\n\n"
     "Vuoi continuare o annullare questo inserimento?"
 )
 
 PURCHASE_MODIFIED_DATE_ERROR = (
     '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai modificando presenta una data futura o errata.'
     " Dal momento che non è possibile collocare un acquisto al futuro, questo"
-    f" sarà spostato alla data di oggi, <b>{TODAY}</b>.\n\n"
+    f" sarà spostato alla data di oggi, <b>{TODAY()}</b>.\n\n"
     "Accetti queste condizioni o preferisci eliminare l'acquisto?"
 )
 
