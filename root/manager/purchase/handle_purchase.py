@@ -142,6 +142,23 @@ def handle_purchase(
     logger.info("Parsing purchase")
     try:
         caption = caption.replace("\n", " ")
+        # caption = remove_url_from_text(original_message)
+        title = re.findall(r"%.*?%", caption)
+        logger.info(caption)
+        logger.info(title)
+        if title:
+            title = title[0]
+            caption = caption.replace(title, "")
+            title = title[1:-1]
+            title = title[:100]
+            if not title:
+                title = "&lt;vuoto&gt;"
+                append_message[2] = PURCHASE_EMPTY_TITLE_HINT
+        else:
+            title = ""
+            append_message[2] = PURCHASE_TITLE_HINT
+        if title:
+            caption = caption.replace(title, "")
         caption = caption.split(" ")
         if "#ultimiacquisti" in caption:
             caption.remove("#ultimiacquisti")
@@ -172,22 +189,6 @@ def handle_purchase(
             caption.remove(mdate)
         else:
             mdate = "NO_DATE_TO_PARSE"
-        caption = " ".join(caption)
-        # caption = remove_url_from_text(original_message)
-        title = re.findall(r"%.*?%", caption)
-        logger.info(caption)
-        logger.info(title)
-        if title:
-            title = title[0]
-            caption = caption.replace(title, "")
-            title = title[1:-1]
-            title = title[:100]
-            if not title:
-                title = "&lt;vuoto&gt;"
-                append_message[2] = PURCHASE_EMPTY_TITLE_HINT
-        else:
-            title = ""
-            append_message[2] = PURCHASE_TITLE_HINT
         logger.info(f"USING CAPTION {caption}")
         # regex: \d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2}|[\.,]\d{1,2})?
         # \d      -> matches a number
@@ -202,6 +203,7 @@ def handle_purchase(
         # [\.,]   -> marches . or ,
         # \d{1,2} -> matches one or two numbers
         # ?       -> makes the capturing group optional
+        caption = " ".join(caption)
         price = re.findall(r"(?:\s|^|€)\d+(?:[\.\',]\d{3})?(?:[\.,]\d{1,2})?", caption)
         logger.info(price)
         original_price = price
