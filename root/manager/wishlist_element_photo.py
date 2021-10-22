@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from root.helper import notification
+from root.helper.notification import create_notification
 from root.helper.user_helper import get_current_wishlist_id
 from root.helper.wishlist import find_wishlist_by_id, find_wishlist_for_user
 from root.handlers.handlers import extractor
@@ -9,6 +11,7 @@ from root.contants.messages import (
     MALFORMED_VALID_LINK_APPEND,
     NOT_SUPPORTED_LINKS_APPEND,
     NOT_SUPPORTED_LINK_APPEND,
+    NOTIFICATION_MANAGED_PHOTOS,
     REQUEST_WISHLIST_PHOTO,
     SINGLE_WISHLIST_PHOTO_ADDED,
     VIEW_WISHLIST_PHOTO_MESSAGE,
@@ -49,6 +52,70 @@ from telegram_utils.utils.tutils import delete_if_private
 
 
 ADD_PHOTO = range(1)
+
+
+def get_added_photo(user: User):
+    return int(redis_helper.retrieve("%s_photo_added" % user.id).decode())
+
+
+def get_removed_photo(user: User):
+    return int(redis_helper.retrieve("%s_photo_removed" % user.id).decode())
+
+
+def increase_photo_added(user: User, count: int):
+    photo_added = int(redis_helper.retrieve("%s_photo_added" % user.id).decode())
+    logger.info(f"INCREMENTING PHOTO ADDED COUNT TO +{count} FROM {photo_added}")
+    photo_added += count
+    redis_helper.save("%s_photo_added" % user.id, str(photo_added))
+
+
+def increase_photo_removed(user: User, count: int):
+    photo_removed = int(redis_helper.retrieve("%s_photo_removed" % user.id).decode())
+    logger.info(f"INCREMENTING PHOTO REMOVED COUNT TO +{count} FROM {photo_removed}")
+    photo_removed += count
+    redis_helper.save("%s_photo_removed" % user.id, str(photo_removed))
+
+
+def reset_notification_counter(user: User, message: bool = False):
+    logger.info(f"RESETTING NOTIFICATION COUNTER - {message}")
+    redis_helper.save("%s_photo_added" % user.id, "0")
+    redis_helper.save("%s_photo_removed" % user.id, "0")
+    if message:
+        redis_helper.save("%s_photo_operation_message" % user.id, "")
+
+
+def reset_photo_removed(user: User):
+    logger.info(f"RESETTING NOTIFICATION COUNTER FOR REMOVED PHOTO")
+    redis_helper.save("%s_photo_removed" % user.id, "0")
+
+
+def reset_photo_added(user: User):
+    logger.info(f"RESETTING NOTIFICATION COUNTER FOR ADDED PHOTO")
+    redis_helper.save("%s_photo_added" % user.id, "0")
+
+
+def add_removed_notification(user: User):
+    photo_removed = int(redis_helper.retrieve("%s_photo_removed" % user.id).decode())
+    logger.info(f"THE NUMBER OF PHOTO REMOVED IS {photo_removed}")
+    if photo_removed > 0:
+        photo_removed_message = redis_helper.retrieve(
+            "%s_photo_operation_message" % user.id
+        ).decode()
+        photo_removed_message += "\n        ➖  rimosse %s foto" % photo_removed
+        logger.info("THIS IS THE NOTIFICATION [%s]" % photo_removed_message)
+        redis_helper.save("%s_photo_operation_message" % user.id, photo_removed_message)
+
+
+def add_added_notification(user: User):
+    photo_added = int(redis_helper.retrieve("%s_photo_added" % user.id).decode())
+    logger.info(f"THE NUMBER OF PHOTO ADDED IS {photo_added}")
+    if photo_added > 0:
+        photo_added_message = redis_helper.retrieve(
+            "%s_photo_operation_message" % user.id
+        ).decode()
+        photo_added_message += "\n        ➕  aggiunte %s foto" % photo_added
+        logger.info("THIS IS THE NOTIFICATION [%s]" % photo_added_message)
+        redis_helper.save("%s_photo_operation_message" % user.id, photo_added_message)
 
 
 def extract_wishlist_link(links: List[str]):
@@ -140,7 +207,7 @@ def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackCo
         keyboard = build_view_wishlist_element_photos_keyboard(
             wishlist_element, message
         )
-    context.bot.edit_message_text(
+    context.bot.edit_message_tes_photo_removedxt(
         chat_id=chat.id,
         message_id=message_id,
         text=text,
@@ -175,6 +242,9 @@ def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     photos.remove(photo)
     wishlist_element.photos = photos
     remove_photo(wish_id, photo)
+    increase_photo_removed(update.effective_user, 1)
+    add_added_notification(update.effective_user)
+    reset_photo_added(update.effective_user)
     messages.remove(str(message_id))
     redis_helper.save("%s_photos_message" % user.id, str(messages))
     if not photos:
@@ -229,6 +299,24 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
     if not page:
         page: str = data.split("_")[-1]
     logger.info("%s this is the page" % page)
+    if get_removed_photo(update.effective_user) > 0:
+        add_removed_notification(update.effective_user)
+    if get_added_photo(update.effective_user) > 0:
+        add_added_notification(update.effective_user)
+    notification_message = redis_helper.retrieve(
+        "%s_photo_operation_message" % update.effective_user.id
+    )
+    if notification_message:
+        notification_message = notification_message.decode()
+        wishlist_elemement_id = data.split("_")[-2]
+        wishlist_element = find_wishlist_element_by_id(wishlist_elemement_id)
+        wishlist = find_wishlist_by_id(wishlist_element.wishlist_id)
+        notification_message = NOTIFICATION_MANAGED_PHOTOS % (
+            wishlist_element.description,
+            wishlist.title,
+            notification_message,
+        )
+        create_notification(update.effective_user.id, notification_message)
     view_wishlist(update, context, page=int(page), reset_keyboard=False)
 
 
@@ -241,6 +329,10 @@ def view_wishlist_element_photos(
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
+    if update.callback_query:
+        if not "sended" in update.callback_query.data:
+            if not "auto_download_pictures" in update.callback_query.data:
+                reset_notification_counter(user, True)
     message_id = redis_helper.retrieve("%s_ask_photo_message" % user.id)
     if message_id:
         message_id = message_id.decode()
@@ -369,6 +461,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     else:
         photo_sended = int(photo_sended)
         photo_sended += 1
+    increase_photo_added(update.effective_user, 1)
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
     if len(wishlist_element.photos) == 10:
         messages = redis_helper.retrieve("%s_photos_message" % user.id)
@@ -440,6 +533,10 @@ def ask_for_photo(update: Update, context: CallbackContext):
     page = update.callback_query.data.split("_")[-2]
     if not page.isnumeric():
         page = redis_helper.retrieve("%s_current_page" % user.id).decode()
+        add_removed_notification(update.effective_user)
+        reset_photo_removed(update.effective_user)
+    else:
+        reset_notification_counter(update.effective_user, page.isnumeric())
     redis_helper.save("%s_current_page" % user.id, page)
     redis_helper.save("%s_%s" % (user.id, user.id), wish_id)
     wishlist_element: WishlistElement = find_wishlist_element_by_id(wish_id)
@@ -546,6 +643,7 @@ def download_photo_automatically(update: Update, context: CallbackContext):
             else wishlist_element.photos
         )
     wishlist_element.save()
+    increase_photo_added(update.effective_user, len(pictures))
     view_wishlist_element_photos(update, context)
     return ConversationHandler.END
 

@@ -1104,7 +1104,7 @@ def build_view_wishlist_element_photos_keyboard(
     keyboard.append(
         [
             create_button(
-                "↩️  Torna indietro", "go_back_from_wishlist_element_photos_0", None
+                "↩️  Torna indietro", "go_back_from_wishlist_element_photos_%s_0" % str(wishlist_element.id), None
             )
         ]
     )

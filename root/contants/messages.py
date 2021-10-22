@@ -1333,6 +1333,8 @@ NOTIFICATION_CREATED_ITEM_MESSAGE = (
     'Elemento "<i>%s</i>" (%s)%screato nella lista dei desideri "<i>%s</i>".'
 )
 
+NOTIFICATION_MANAGED_PHOTOS = 'Modifiche apportate all\'album dell\'elemento "<i>%s</i>" (lista dei desideri "<i>%s</i>"):%s'
+
 NOTIFICATION_CREATED_ITEM_LINK_APPEND = "➕  %s link:"
 
 NOTIFICATION_CREATED_ITEM_PHOTOS_APPEND = "➕  %s foto"
