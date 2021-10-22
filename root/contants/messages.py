@@ -369,17 +369,18 @@ PURCHASE_REPORT_ADD_NEW_PURCHASE = '<code>%s</code>%s► <a href="%s">%s</a>'
 
 REPORT_PURCHASE_TOTAL = "<code>%s</code><code>%s €</code>             <b>TOTALE</b>"
 
+
 PURCHASE_DATE_ERROR = (
-    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai tentando di registrare presenta una data futura o errata.'
+    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai tentando di registrare presenta una data futura o in formato errato.'
     " Dal momento che non è possibile collocare un acquisto al futuro, questo"
     f" sarà aggiunto alla data di oggi, <b>{TODAY()}</b>.\n\n"
     "Vuoi continuare o annullare questo inserimento?"
 )
 
 PURCHASE_MODIFIED_DATE_ERROR = (
-    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai modificando presenta una data futura o errata.'
+    '⚠️  <a href="tg://user?id=%s">%s</a>, l\'acquisto che stai modificando presenta una data futura o in formato errato.'
     " Dal momento che non è possibile collocare un acquisto al futuro, questo"
-    f" sarà spostato alla data di oggi, <b>{TODAY()}</b>.\n\n"
+    f" sarà mantenuto alla data di registrazione originale, <b>%s</b>.\n\n"
     "Accetti queste condizioni o preferisci eliminare l'acquisto?"
 )
 

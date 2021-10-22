@@ -305,7 +305,21 @@ def handle_purchase(
         return
     ####################################
     if not result["error"]:
-        add_purchase(user, price, message_id, chat_id, date, caption)
+        purchase_found = find_by_message_id_and_chat_id(
+            message.message_id, message.chat.id
+        )
+        if purchase_found:
+            if custom_date_error:
+                add_purchase(
+                    user,
+                    price,
+                    message_id,
+                    chat_id,
+                    purchase_found.creation_date,
+                    caption,
+                )
+            else:
+                add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
             date = datetime.now() if not date else date
@@ -329,6 +343,7 @@ def handle_purchase(
                 message = PURCHASE_MODIFIED_DATE_ERROR % (
                     user.id,
                     user.first_name,
+                    purchase_found.creation_date.strftime("%d/%m/%Y"),
                 )
             else:
                 message = PURCHASE_DATE_ERROR % (
@@ -374,6 +389,7 @@ def build_purchase_keyboard(user: UserModel):
 
 
 def toggle_purchase_tips(update: Update, context: CallbackContext):
+    logger.info("CONFIRM_PURCHASE OR TOGGLE")
     total_tips = 0
     price = 0.00
     date = None
@@ -411,6 +427,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                 mdate = next(
                     (mdate for mdate in caption if ("/" in mdate and has_number(mdate))),
                     None)
+                logger.info("THIS IS THE mdate %s" % mdate)
                 # fmt: on
                 if not mdate:
                     logger.info("Adding date hint")
@@ -421,6 +438,11 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                         date = datetime.strptime(mdate, "%d/%m/%y")
                     except ValueError:
                         date = datetime.strptime(mdate, "%d/%m/%Y")
+                    logger.info("THIS IS THE date %s" % date)
+                    logger.info("THIS IS THE creation_date %s" % purchase.creation_date)
+                    if date > datetime.now():
+                        date = purchase.creation_date
+
                 if not purchase.description:
                     logger.info("Adding title hint")
                     message += PURCHASE_TITLE_HINT
@@ -445,7 +467,6 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
                         target=sender.delete_message,
                         args=(None, chat_id, message_id, ONE_MINUTE + append_timeout),
                     )
-                date = datetime.now() if not date else date
                 recap_message = PURCHASE_RECAP_APPEND(
                     format_price(price),
                     title,
