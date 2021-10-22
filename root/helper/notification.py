@@ -35,6 +35,8 @@ def find_notifications_for_user(
         .skip(page * page_size)
         .limit(page_size)
     )
+    notifications = list(notifications)
+    notifications.reverse()
     return notifications
 
 
