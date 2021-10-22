@@ -26,6 +26,8 @@ REPO_LINK = "https://github.com/VGsNETWORK/ultimi-acquisti"
 
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
+GLOSSARY_LINK = "https://telegra.ph/ultimiacquisti--Glossario-dei-termini-10-22"
+
 DB_CONNECTION_ERROR = (
     "Impossibile stabilire un collegamento con il database,"
     " alcune funzionalità non funzioneranno come dovrebbero."
