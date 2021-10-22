@@ -13,7 +13,7 @@ import root.util.logger as logger
 
 def TODAY():
     T = datetime.now()
-    T = "%s/%s/%s" % ("%02d" % T.day, "%02d" % T.month, T.year)
+    return "%s/%s/%s" % ("%02d" % T.day, "%02d" % T.month, T.year)
 
 
 BOT_NAME = environ["BOT_NAME"]
