@@ -3,6 +3,7 @@
 """ Feedback manager for  the bot """
 
 from time import sleep
+from telegram.chat import Chat
 from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
@@ -13,22 +14,55 @@ from telegram.ext import (
 )
 from telegram import Update, InlineKeyboardMarkup
 from telegram.message import Message
+from root.contants import keyboard
 from root.manager.start import conversation_main_menu
 from root.util.util import retrieve_key, create_button
-from root.contants.messages import FEEDBACK_FROM_MESSAGE, FEEDBACK_SEND_MESSAGE
+from root.contants.messages import (
+    FEEDBACK_CATEGORIES,
+    FEEDBACK_CATEGORIES_BUTTONS,
+    FEEDBACK_CHOOSE_CATEGORY,
+    FEEDBACK_FROM_MESSAGE,
+    FEEDBACK_SEND_MESSAGE,
+)
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
+from telegram_utils.helper import redis as redis_helper
 
 sender = TelegramSender()
 
 MESSAGE_ID = 0
 
-FEEDBACK_MESSAGE = range(1)
+FEEDBACK_CATEGORY, FEEDBACK_MESSAGE = range(2)
 
 MESSAGE = 0
 
 
 def start_feedback(update: Update, context: CallbackContext):
+    global MESSAGE_ID
+    keyboard = []
+    redis_helper.save("%s_feedback_category" % update.effective_user.id, "0")
+    for button_line in FEEDBACK_CATEGORIES_BUTTONS:
+        line = []
+        for button in button_line:
+            callback = "select_category_%s" % FEEDBACK_CATEGORIES.index(button)
+            line.append(create_button(button, callback, None))
+        keyboard.append(line)
+    keyboard.append([create_button("❌  Annulla", "cancel_feedback", None)])
+    keyboard = InlineKeyboardMarkup(keyboard)
+    message = FEEDBACK_CHOOSE_CATEGORY
+    MESSAGE_ID = update.effective_message.message_id
+    context.bot.edit_message_text(
+        text=message,
+        chat_id=update.effective_user.id,
+        disable_web_page_preview=True,
+        message_id=update.effective_message.message_id,
+        reply_markup=keyboard,
+        parse_mode="HTML",
+    )
+    return FEEDBACK_CATEGORY
+
+
+def ask_for_message(update: Update, context: CallbackContext):
     """Start the conversation handler for the feedback
 
     Args:
@@ -40,10 +74,14 @@ def start_feedback(update: Update, context: CallbackContext):
         context.bot.answer_callback_query(update.callback_query.id)
     message_id = update.effective_message.message_id
     user_id = update.effective_user.id
+    category_index = redis_helper.retrieve(
+        "%s_feedback_category" % update.effective_user.id
+    ).decode()
+    category_index = int(category_index)
+    category = FEEDBACK_CATEGORIES[category_index]
     if update.callback_query:
-        logger.info("EDITING MESSAGE?????")
         context.bot.edit_message_text(
-            text=FEEDBACK_SEND_MESSAGE,
+            text=FEEDBACK_SEND_MESSAGE % category.upper(),
             chat_id=user_id,
             disable_web_page_preview=True,
             message_id=message_id,
@@ -78,6 +116,12 @@ def send_feedback(update: Update, context: CallbackContext):
     username: str = update.effective_user.username
     user_id: int = update.effective_user.id
     message: str = update.effective_message.text
+    category_index = redis_helper.retrieve(
+        "%s_feedback_category" % update.effective_user.id
+    ).decode()
+    category_index = int(category_index)
+    category = FEEDBACK_CATEGORIES[category_index]
+    logger.info("THIS IS THE CATEGORY %s" % category)
     if not username:
         username = '<a href="tg://user?id=%s">%s</a>' % (
             user_id,
@@ -85,7 +129,7 @@ def send_feedback(update: Update, context: CallbackContext):
         )
     else:
         username = f"@{username}"
-    message: str = FEEDBACK_FROM_MESSAGE % (f"{username}", user_id, message)
+    message: str = FEEDBACK_FROM_MESSAGE % (category, f"{username}", user_id, message)
     message: str = f"{message}\n\n\n#feedback @{bot_name}"
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
     conversation_main_menu(update, context, MESSAGE_ID)
@@ -113,12 +157,32 @@ def build_keyboard():
     )
 
 
+def select_category(update: Update, context: CallbackContext):
+    logger.info("CATEGORY SELECT")
+    data = update.callback_query.data
+    message: Message = update.effective_chat
+    chat: Chat = update.effective_chat
+    category_index = int(data.split("_")[-1])
+    logger.info("THIS IS THE CATEGORY %s" % category_index)
+    redis_helper.save("%s_feedback_category" % update.effective_user.id, category_index)
+    ask_for_message(update, context)
+    return FEEDBACK_MESSAGE
+
+
 FEEDBACK_CONVERSATION = ConversationHandler(
     entry_points=[
         CommandHandler("start", start_feedback, Filters.regex("^.*leave_feedback*.$")),
         CallbackQueryHandler(callback=start_feedback, pattern="send_feedback"),
     ],
-    states={FEEDBACK_MESSAGE: [MessageHandler(Filters.text, send_feedback)]},
+    states={
+        FEEDBACK_CATEGORY: [
+            CallbackQueryHandler(
+                callback=select_category,
+                pattern="select_category",
+            )
+        ],
+        FEEDBACK_MESSAGE: [MessageHandler(Filters.text, send_feedback)],
+    },
     fallbacks=[
         CallbackQueryHandler(callback=cancel_feedback, pattern="cancel_feedback")
     ],

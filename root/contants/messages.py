@@ -615,13 +615,41 @@ HOW_TO_PAGES = [
     HOW_TO_MODIFY_A_PURCHASE,
 ]
 
-FEEDBACK_SEND_MESSAGE = (
+FEEDBACK_CHOOSE_CATEGORY = (
     "<b><u>SUPPORTO</u>    ➔    INVIA UN FEEDBACK</b>\n\n\n"
+    "Scegli una sezione per cui lasciare un feedback:"
+)
+
+FEEDBACK_CATEGORIES = [
+    "📖  Lista dei comandi",
+    "📚  Guida all'utilizzo",
+    "📬  Notifiche",
+    "📈  Report mensile",
+    "📈  Report annuale",
+    "♥️  Lista dei desideri",
+    "⚙️  Impostazioni",
+    "⭐️  Valutami",
+    "🌐  Altro",
+]
+
+FEEDBACK_CATEGORIES_BUTTONS = [
+    ["📖  Lista dei comandi"],
+    ["📚  Guida all'utilizzo", "📬  Notifiche"],
+    ["📈  Report mensile", "📈  Report annuale"],
+    ["♥️  Lista dei desideri", "⚙️  Impostazioni"],
+    ["⭐️  Valutami", "🌐  Altro"],
+]
+
+FEEDBACK_SEND_MESSAGE = (
+    "<b><u>SUPPORTO</u>    ➔    INVIA UN FEEDBACK    ➔    %s</b>\n\n\n"
     "Digita il testo che vuoi inviare, "
     "<b>assicurandoti di inserire il tutto in un unico messaggio</b>, poi premi <i>Invio</i>:"
 )
 
-FEEDBACK_FROM_MESSAGE = "Feedback da %s (ID utente: <code>%s</code>):\n\n<i>%s</i>"
+
+FEEDBACK_FROM_MESSAGE = (
+    'Feedback su <b>%s</b> da %s (ID utente: <code>%s</code>):\n\n<i>"%s"</i>'
+)
 
 MONTH_REPORT_FUNNY_APPEND = (
     "💡 <i>Ricordi cosa hai acquistato il <b>{}</b>? Era{} o era{}?\n"
