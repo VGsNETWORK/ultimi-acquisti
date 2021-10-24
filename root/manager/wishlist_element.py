@@ -59,6 +59,7 @@ from root.contants.messages import (
     NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED,
     NOTIFICATION_WIPED_WISHLIST_ELEMENTS,
     NOTIFICATION_WISHLIST_CHANGED,
+    FREE_PREMIUM_HOME_DEALS_MESSAGES,
     PREMIUM_HOME_DEALS_MESSAGES,
     SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
@@ -955,8 +956,22 @@ def view_wishlist(
                             )
                         append = ""
                         if tracked_link.included_in_premium:
-                            if tracked_link.store in PREMIUM_HOME_DEALS_MESSAGES:
-                                premium_message = PREMIUM_HOME_DEALS_MESSAGES[
+                            if tracked_link.deals_percentage > 0:
+                                if tracked_link.store in PREMIUM_HOME_DEALS_MESSAGES:
+                                    premium_message = PREMIUM_HOME_DEALS_MESSAGES[
+                                        tracked_link.store
+                                    ][tracked_link.premium_type]
+                                    deal_price = tracked_link.price
+                                    deal_price = deal_price - (
+                                        (deal_price * tracked_link.deals_percentage)
+                                        / 100
+                                    )
+                                    premium_message = premium_message % format_price(
+                                        deal_price
+                                    )
+                                    append += premium_message
+                            elif tracked_link.store in FREE_PREMIUM_HOME_DEALS_MESSAGES:
+                                premium_message = FREE_PREMIUM_HOME_DEALS_MESSAGES[
                                     tracked_link.store
                                 ]
                                 if tracked_link.premium_type in premium_message:

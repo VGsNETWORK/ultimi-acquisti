@@ -1270,7 +1270,7 @@ PRICE_MESSAGE_POPUP = (
 PRICE_MESSAGE_POPUP_NO_VARIATION = ": :   %s   : :\n\n" "PREZZO ATTUALE:\n      %s%s"
 
 WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING = (
-    "\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo o le info visualizzati "
+    "\n\n<b>* <i><u>NOTA BENE</u>:</i></b>  <i>Il prezzo e/o le info visualizzati "
     'per il prodotto potrebbero non essere aggiornati. Apri la <b>sezione link</b>  ("🔗")  '
     "del relativo elemento per aggiornarli.</i>"
 )
@@ -1425,28 +1425,46 @@ BOT_ADDED_WELCOME_APPEND = (
     "📚  Per maggiori informazioni sul mio utilizzo, <b>andate alla chat privata</b>!\n\n"
 )
 
-PREMIUM_DEALS_MESSAGES = {
+FREE_PREMIUM_DEALS_MESSAGES = {
     "Playstation Store": {
         "PLUS": (
-            "<code>    </code><b>GRATIS per gli utenti"
+            "<code>    </code><b>GRATIS per gli abbonati"
             ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a> fino alle %s del %s</b>  •  '
         ),
         "NOW": (
-            "<code>    </code><b>GRATIS per gli utenti"
+            "<code>    </code><b>GRATIS per gli abbonati"
             ' <a href="https://www.playstation.com/it-it/ps-now/">PS Now</a> fino alle %s del %s</b>  •  '
         ),
+    }
+}
+
+FREE_PREMIUM_HOME_DEALS_MESSAGES = {
+    "Playstation Store": {
+        "PLUS": (
+            " ⁽*⁾\n<b>GRATIS per gli abbonati"
+            ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a></b>'
+        ),
+        "NOW": (
+            " ⁽*⁾\n<b>GRATIS per gli abbonati"
+            ' <a href="https://www.playstation.com/it-it/ps-now/">PS Now</a></b>'
+        ),
+    }
+}
+
+PREMIUM_DEALS_MESSAGES = {
+    "Playstation Store": {
+        "PLUS": (
+            "<code>    </code><b>Scontato del %s%% per gli abbonati"
+            ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a> fino alle %s del %s</b>  •  '
+        )
     }
 }
 
 PREMIUM_HOME_DEALS_MESSAGES = {
     "Playstation Store": {
         "PLUS": (
-            "\n<b>GRATIS per gli utenti"
+            " ⁽*⁾\n%s € <b>per gli abbonati"
             ' <a href="https://www.playstation.com/it-it/ps-plus/">PS Plus</a></b>'
-        ),
-        "NOW": (
-            "\n<b>GRATIS per gli utenti"
-            ' <a href="https://www.playstation.com/it-it/ps-now/">PS Now</a></b>'
         ),
     }
 }

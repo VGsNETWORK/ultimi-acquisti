@@ -38,6 +38,7 @@ from root.contants.messages import (
     ADD_NEW_LINK_MESSAGE,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_LINK,
     ADD_NEW_LINK_MESSAGE_NUMBER_OF_NEW_PHOTOS,
+    FREE_PREMIUM_DEALS_MESSAGES,
     PREMIUM_DEALS_MESSAGES,
     PRICE_MESSAGE_POPUP,
     PRICE_MESSAGE_POPUP_NO_VARIATION,
@@ -309,8 +310,19 @@ def view_wishlist_element_links(
                             format_date(tracked_link.deals_end, timezone=True),
                         )
                     else:
-                        if tracked_link.store in PREMIUM_DEALS_MESSAGES:
-                            deal_date = PREMIUM_DEALS_MESSAGES[tracked_link.store]
+                        if tracked_link.deals_percentage > 0:
+                            if tracked_link.store in PREMIUM_DEALS_MESSAGES:
+                                premium_message = PREMIUM_DEALS_MESSAGES[
+                                    tracked_link.store
+                                ][tracked_link.premium_type]
+                                premium_message = premium_message % (
+                                    tracked_link.deals_percentage,
+                                    format_time(tracked_link.deals_end),
+                                    format_date(tracked_link.deals_end, timezone=True),
+                                )
+                                deal_date = premium_message
+                        elif tracked_link.store in FREE_PREMIUM_DEALS_MESSAGES:
+                            deal_date = FREE_PREMIUM_DEALS_MESSAGES[tracked_link.store]
                             if deal_date:
                                 logger.info(f"*** {tracked_link.premium_type} ***")
                                 if tracked_link.premium_type in deal_date:
