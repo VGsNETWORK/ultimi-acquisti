@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from mongoengine.errors import ValidationError
 from root.helper import notification
 from root.helper.notification import create_notification
 from root.helper.user_helper import get_current_wishlist_id
@@ -55,11 +56,13 @@ ADD_PHOTO = range(1)
 
 
 def get_added_photo(user: User):
-    return int(redis_helper.retrieve("%s_photo_added" % user.id).decode())
+    photo_added = redis_helper.retrieve("%s_photo_added" % user.id)
+    return int(photo_added.decode()) if photo_added else 0
 
 
 def get_removed_photo(user: User):
-    return int(redis_helper.retrieve("%s_photo_removed" % user.id).decode())
+    photo_removed = redis_helper.retrieve("%s_photo_removed" % user.id)
+    return int(photo_removed.decode()) if photo_removed else 0
 
 
 def increase_photo_added(user: User, count: int):
@@ -309,14 +312,17 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
     if notification_message:
         notification_message = notification_message.decode()
         wishlist_elemement_id = data.split("_")[-2]
-        wishlist_element = find_wishlist_element_by_id(wishlist_elemement_id)
-        wishlist = find_wishlist_by_id(wishlist_element.wishlist_id)
-        notification_message = NOTIFICATION_MANAGED_PHOTOS % (
-            wishlist_element.description,
-            wishlist.title,
-            notification_message,
-        )
-        create_notification(update.effective_user.id, notification_message)
+        try:
+            wishlist_element = find_wishlist_element_by_id(wishlist_elemement_id)
+            wishlist = find_wishlist_by_id(wishlist_element.wishlist_id)
+            notification_message = NOTIFICATION_MANAGED_PHOTOS % (
+                wishlist_element.description,
+                wishlist.title,
+                notification_message,
+            )
+            create_notification(update.effective_user.id, notification_message)
+        except ValidationError:
+            pass
     view_wishlist(update, context, page=int(page), reset_keyboard=False)
 
 

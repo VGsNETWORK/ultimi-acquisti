@@ -27,7 +27,7 @@ from telegram.ext import CallbackContext
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
-
+import telegram_utils.utils.logger as logger
 
 MAX_LINK_LENGTH = 27
 
@@ -146,7 +146,7 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         f"prezzo%3E%20%3CDD%2FMM%2FYY%28YY%29%3E%0A%0A%25{quote(wish.description)}%25"
     )
     if wish.links:
-        url = ""
+        url += "%0A"
         for link in wish.links:
             url += f"%0A➜%20%20{quote(link)}"
     url += "%0A%0A%0A__Importato%20da%20lista%20dei%20desideri.__"
@@ -156,14 +156,14 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         wishlist.title,
         url,
     )
-    wish.delete()
+    logger.info("THIS IS THE URL [%s]" % url)
     keyboard = InlineKeyboardMarkup(
         [
             [
                 create_button(
                     "🛍  Registra l'acquisto",
-                    f"convert_and_do_a_barrel_roll",
-                    f"convert_and_do_a_barrel_roll",
+                    f"convert_the_barrell",
+                    None,
                     url,
                 ),
             ],
@@ -183,7 +183,7 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
     message = WISHLIST_HEADER % title
     message += (
         "😃  Link di acquisto per <b>%s</b> creato!\n\nPuoi registrare il tuo nuovo acquisto"
-        f' premendo il tasto sottostante e selezionando un <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>gruppo in cui sono presente</u></b></a>'
+        f' premendo il tasto sottostante e selezionando un <a href="{VGS_GROUPS_PRIMARY_LINK}"><b><u>gruppo in cui sono presente</u></b></a>.'
         % wish_description
     )
     messages = redis_helper.retrieve("%s_photos_message" % user.id).decode()
@@ -205,4 +205,5 @@ def wishlist_element_confirm_convertion(update: Update, context: CallbackContext
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
+    wish.delete()
     create_notification(update.effective_user.id, notification_message)
