@@ -14,7 +14,11 @@ from telegram.chat import Chat
 from telegram.error import BadRequest
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
-from root.manager.notification_hander import show_notifications
+from root.manager.notification_hander import (
+    open_notification_panel,
+    show_messages,
+    show_notifications,
+)
 from root.manager.admin_handler import handle_admin
 from root.manager.deal_test_handler import command_send_deal
 from root.job.update_product import (
@@ -413,6 +417,16 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="show_notifications", callback=show_notifications
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="show_messages", callback=show_messages)
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="go_to_notification_section", callback=open_notification_panel
             )
         )
 

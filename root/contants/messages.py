@@ -4,6 +4,7 @@
 
 from datetime import datetime
 from os import environ
+from root.helper.admin_message import count_unread_admin_messages_for_user
 from root.helper.notification import count_unread_notifications
 from root.contants.VERSION import WISHLIST_VERSION
 from root.model.user import User
@@ -625,7 +626,7 @@ FEEDBACK_CHOOSE_CATEGORY = (
 FEEDBACK_CATEGORIES = [
     "📖  Lista dei comandi",
     "📚  Guida all'utilizzo",
-    "📬  Notifiche",
+    "📬  Centro Messaggi",
     "📈  Report mensile",
     "📈  Report annuale",
     "♥️  Lista dei desideri",
@@ -636,7 +637,7 @@ FEEDBACK_CATEGORIES = [
 
 FEEDBACK_CATEGORIES_BUTTONS = [
     ["📖  Lista dei comandi"],
-    ["📚  Guida all'utilizzo", "📬  Notifiche"],
+    ["📚  Guida all'utilizzo", "📬  Centro Messaggi"],
     ["📈  Report mensile", "📈  Report annuale"],
     ["♥️  Lista dei desideri", "⚙️  Impostazioni"],
     ["⭐️  Valutami", "🌐  Altro"],
@@ -1396,14 +1397,22 @@ NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = (
 
 
 def build_show_notification_button(user: User):
-    unread = count_unread_notifications(user.id)
-    if unread:
-        if unread == 1:
-            text = f"📬  {unread} nuova notifica"
-        else:
-            text = f"📬  {unread} nuove notifiche"
+    nof_notifications = count_unread_notifications(user.id)
+    nof_messages = count_unread_admin_messages_for_user(user.id)
+    if nof_notifications > 0:
+        nof_notification_icon = "📬"
     else:
-        text = "📭  Nessuna notifica da leggere"
+        nof_notification_icon = "📭"
+    if nof_messages > 0:
+        nof_message_icon = "📩"
+    else:
+        nof_message_icon = "✉️"
+    text = "📥  Centro messaggi │ %s %s  %s %s" % (
+        nof_notifications,
+        nof_notification_icon,
+        nof_messages,
+        nof_message_icon,
+    )
     return text
 
 

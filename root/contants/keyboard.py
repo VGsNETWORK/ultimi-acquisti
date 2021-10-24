@@ -1104,7 +1104,9 @@ def build_view_wishlist_element_photos_keyboard(
     keyboard.append(
         [
             create_button(
-                "↩️  Torna indietro", "go_back_from_wishlist_element_photos_%s_0" % str(wishlist_element.id), None
+                "↩️  Torna indietro",
+                "go_back_from_wishlist_element_photos_%s_0" % str(wishlist_element.id),
+                None,
             )
         ]
     )
@@ -1808,3 +1810,35 @@ def create_switch_bot_keyboard():
 ERROR_KEYBOARD = InlineKeyboardMarkup(
     [[create_button("❎  Chiudi", "delete_message", "")]]
 )
+
+
+def build_notification_choose_section(
+    nof_notifications: int, nof_messages: int, default: int = 0
+):
+    keyboard = []
+    ############ NOF_NOTIFICATIONS
+    if nof_notifications == 0:
+        button_text = "📭  Nessuna notifica da leggere"
+    else:
+        if nof_notifications == 1:
+            button_text = f"📬  {nof_notifications} nuova notifica"
+        else:
+            button_text = f"📬  {nof_notifications} nuove notifiche"
+    if default == 0:
+        button_text = f"►     {button_text}     ◄"
+    keyboard.append([create_button(button_text, "show_notifications", None)])
+    ############ NOF_MESSAGES
+    if nof_messages == 0:
+        button_text = "✉️  Nessun messaggio da leggere"
+    else:
+        if nof_messages == 1:
+            button_text = f"📩  {nof_messages} nuovo messaggio"
+        else:
+            button_text = f"📩  {nof_messages} nuovi messaggi"
+    if default == 1:
+        button_text = f"►     {button_text}     ◄"
+    keyboard.append([create_button(button_text, "show_messages", None)])
+    keyboard.append(
+        [create_button("↩️  Torna indietro", "cancel_rating", None)],
+    )
+    return InlineKeyboardMarkup(keyboard)
