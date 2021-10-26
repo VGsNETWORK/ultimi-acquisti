@@ -627,21 +627,22 @@ FEEDBACK_CHOOSE_CATEGORY = (
 FEEDBACK_CATEGORIES = [
     "📖  Lista dei comandi",
     "📚  Guida all'utilizzo",
-    "📬  Centro Messaggi",
+    "📬  Notifiche",
+    "📨  Comunicazioni",
     "📈  Report mensile",
     "📈  Report annuale",
     "♥️  Lista dei desideri",
     "⚙️  Impostazioni",
     "⭐️  Valutami",
-    "🌐  Altro",
+    "🌐  ALTRO",
 ]
 
 FEEDBACK_CATEGORIES_BUTTONS = [
-    ["📖  Lista dei comandi"],
-    ["📚  Guida all'utilizzo", "📬  Centro Messaggi"],
+    ["📖  Lista dei comandi", "📚  Guida all'utilizzo"],
+    ["📬  Notifiche", "📨  Comunicazioni"],
     ["📈  Report mensile", "📈  Report annuale"],
     ["♥️  Lista dei desideri", "⚙️  Impostazioni"],
-    ["⭐️  Valutami", "🌐  Altro"],
+    ["⭐️  Valutami", "🌐  ALTRO"],
 ]
 
 FEEDBACK_SEND_MESSAGE = (
