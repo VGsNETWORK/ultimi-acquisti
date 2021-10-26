@@ -95,6 +95,7 @@ def extract_platform(data: bs4):
         platform = [de_html(p) for p in platform]
         logger.info(platform)
         platform = [p for p in platform if not "edition" in p.lower()]
+        platform = [p for p in platform if re.findall(r"([pP][sS]\d{1})", p)]
         logger.info(platform)
     except Exception:
         platform = ["PS4", "PS5"]
