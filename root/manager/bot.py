@@ -15,11 +15,17 @@ from telegram.error import BadRequest
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import (
+    navigate_notifications,
     open_notification_panel,
     show_messages,
     show_notifications,
+    view_comunication,
 )
-from root.manager.admin_handler import handle_admin
+from root.manager.admin_handler import (
+    handle_admin,
+    show_usage,
+    SEND_COMUNICATION_CONVERSTATION,
+)
 from root.manager.deal_test_handler import command_send_deal
 from root.job.update_product import (
     close_deal_notification,
@@ -440,6 +446,11 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(pattern="show_admin_panel", callback=handle_admin)
         )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="show_usage", callback=show_usage)
+        )
+        self.disp.add_handler(SEND_COMUNICATION_CONVERSTATION)
 
         self.disp.add_handler(CommandHandler("vota", rating.poll))
         self.disp.add_handler(
@@ -919,4 +930,12 @@ class BotManager:
 
         self.disp.add_handler(
             MessageHandler(callback=rating.send_feedback, filters=Filters.text)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(pattern="view_comms", callback=navigate_notifications)
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="view_comunication", callback=view_comunication
+            )
         )
