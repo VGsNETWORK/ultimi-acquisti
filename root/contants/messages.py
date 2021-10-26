@@ -1408,10 +1408,10 @@ def build_show_notification_button(user: User):
     else:
         nof_notification_icon = "📭"
     if nof_messages > 0:
-        nof_message_icon = "📩"
+        nof_message_icon = "📨"
     else:
-        nof_message_icon = "✉️"
-    text = "📥  Centro messaggi │ %s %s  %s %s" % (
+        nof_message_icon = "📥"
+    text = "📮 Centro messaggi │ %s %s  %s %s" % (
         nof_notifications,
         nof_notification_icon,
         nof_messages,

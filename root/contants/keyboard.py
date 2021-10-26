@@ -1829,12 +1829,12 @@ def build_notification_choose_section(
     keyboard.append([create_button(button_text, "show_notifications", None)])
     ############ NOF_MESSAGES
     if nof_messages == 0:
-        button_text = "✉️  Nessun messaggio da leggere"
+        button_text = "📥  Nessun messaggio da leggere"
     else:
         if nof_messages == 1:
-            button_text = f"📩  {nof_messages} nuovo messaggio"
+            button_text = f"📨  {nof_messages} nuovo messaggio"
         else:
-            button_text = f"📩  {nof_messages} nuovi messaggi"
+            button_text = f"📨  {nof_messages} nuovi messaggi"
     if default == 1:
         button_text = f"►     {button_text}     ◄"
     keyboard.append([create_button(button_text, "show_messages", None)])
