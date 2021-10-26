@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 from typing import List
 
-from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
+import telegram_utils.utils.logger as logger
 from root.contants.keyboard import build_notification_choose_section
 from root.helper.admin_message import (
     count_unread_admin_messages_for_user,
     get_unread_admin_messages_for_user,
 )
-from root.model.admin_message import AdminMessage
-from root.model.notification import Notification
 from root.helper.notification import (
     count_unread_notifications,
     find_notifications_for_user,
     mark_all_notification_as_read,
 )
+from root.model.admin_message import AdminMessage
+from root.model.notification import Notification
+from root.util.util import create_button, format_date, format_time
 from telegram import Update
 from telegram.chat import Chat
 from telegram.ext import CallbackContext
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.user import User
-from root.util.util import create_button, format_date, format_time
-import telegram_utils.utils.logger as logger
 
 
 def open_notification_panel(update: Update, context: CallbackContext):
@@ -34,7 +34,7 @@ def show_messages(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id = message.message_id
     admin_messages: List[AdminMessage] = get_unread_admin_messages_for_user(user.id)
-    message = "<b><u>CENTRO MESSAGGI</u>    ➔    MESSAGGI</b>\n\n"
+    message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n"
     if admin_messages:
         for admin_message in admin_messages:
             date = format_date(admin_message.creation_date, show_year=True)
@@ -45,7 +45,7 @@ def show_messages(update: Update, context: CallbackContext):
             else:
                 message += f"\n🆕  <b>[{date}]</b>  <b>{admin_message.message}</b>\n\n"
     else:
-        message += "\n<i>Non hai ancora alcun messaggio da visualizzare.</i>"
+        message += "\n<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
     nof_notifications = count_unread_notifications(user.id)
     nof_messages = count_unread_admin_messages_for_user(user.id)
     keyboard = build_notification_choose_section(nof_notifications, nof_messages, 1)
