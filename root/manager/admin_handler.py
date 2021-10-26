@@ -22,7 +22,7 @@ def handle_admin(update: Update, context: CallbackContext):
             else:
                 name = "%s" % (result["first_name"])
         except KeyError:
-            name = "Sconosciuto"
+            name = "<i>&lt;Sconosciuto&gt;</i>"
         try:
             line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
                 result["user_id"],
