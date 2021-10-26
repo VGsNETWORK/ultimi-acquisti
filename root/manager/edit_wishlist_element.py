@@ -1,51 +1,22 @@
 #!/usr/bin/env python3
 
 import re
-from root.helper.purchase_helper import convert_to_float
-from root.manager.notification_hander import show_notifications
-from root.helper.notification import create_notification
-from root.manager.wishlist_element_link import view_wishlist_element_links
-import emoji
-from telegram.error import BadRequest
-from telegram_utils.utils.tutils import delete_if_private
-from root.model.custom_category import CustomCategory
-from root.helper.custom_category_helper import (
-    create_category_for_user,
-    find_categories_for_user,
-    find_category_for_user_by_id,
-)
-from root.helper.wishlist import find_wishlist_by_id
-from root.model.wishlist import Wishlist
-from root.helper.user_helper import get_current_wishlist_id
 from typing import List
-from root.handlers.handlers import extractor
-from root.contants.constant import CATEGORIES
-from root.manager.wishlist_element import CREATE_CATEGORY, view_wishlist
-from root.util.util import (
-    extract_first_link_from_message,
-    format_price,
-    max_length_error_format,
-)
-from root.model.user import User
+
+import emoji
 import telegram_utils.helper.redis as redis_helper
-from telegram.chat import Chat
-from telegram.message import Message
+import telegram_utils.utils.logger as logger
+from root.contants.constant import CATEGORIES
 from root.contants.keyboard import (
     NEW_CUSTOM_CATEGORY_KEYBOARD,
     TOO_LONG_CUSTOM_CATEGORY_KEYBOARD,
     build_edit_wishlist_element_category_keyboard,
     build_edit_wishlist_element_desc_keyboard,
-    build_edit_wishlist_element_link_keyboard,
 )
 from root.contants.messages import (
-    ADD_LINK_TO_WISHLIST_ITEM_MESSAGE,
-    CATEGORY_NAME_TOO_LONG,
     CATEGORY_NAME_TOO_LONG_WITH_EMOJI,
     CATEGORY_NAME_TOO_LONG_WITHOUT_EMOJI,
     EDIT_CATEGORY_TO_WISHLIST_ITEM_MESSAGE,
-    EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE,
-    EDIT_WISHLIST_LINK_EXISTING_PHOTOS,
-    EDIT_WISHLIST_LINK_NO_PHOTOS,
     EDIT_WISHLIST_PROMPT,
     EDIT_WISHLIST_PROMPT_NO_TARGET_PRICE,
     EDIT_WISHLIST_PROMPT_TARGET_PRICE,
@@ -58,28 +29,50 @@ from root.contants.messages import (
     NOTIFICATION_MODIFIED_ITEM_MESSAGE,
     NOTIFICATION_MODIFIED_ITEM_PHOTOS_APPEND,
     NOTIFICATION_MODIFIED_TITLE,
-    SUPPORTED_LINKS_MESSAGE,
     TOO_LONG_NEW_CATEGORY_MESSAGE,
     WISHLIST_DESCRIPTION_TOO_LONG,
-    WISHLIST_HEADER,
     WISHLIST_EDIT_STEP_ONE,
     WISHLIST_EDIT_STEP_THREE,
-    WISHLIST_EDIT_STEP_TWO,
+    WISHLIST_HEADER,
     YOU_ARE_CREATING_A_NEW_CATEGORY,
     YOU_ARE_MODIFYING_THIS_ELEMENT,
 )
+from root.handlers.handlers import extractor
+from root.helper.custom_category_helper import (
+    create_category_for_user,
+    find_categories_for_user,
+    find_category_for_user_by_id,
+)
+from root.helper.notification import create_notification
+from root.helper.purchase_helper import convert_to_float
+from root.helper.user_helper import get_current_wishlist_id
+from root.helper.wishlist import find_wishlist_by_id
 from root.helper.wishlist_element import (
     find_wishlist_element_by_id,
     update_category_of_elements,
 )
+from root.manager.notification_hander import show_notifications
+from root.manager.wishlist_element import CREATE_CATEGORY, view_wishlist
+from root.manager.wishlist_element_link import view_wishlist_element_links
+from root.model.custom_category import CustomCategory
+from root.model.user import User
+from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
+from root.util.util import (
+    extract_first_link_from_message,
+    format_price,
+    max_length_error_format,
+)
 from telegram import Update
+from telegram.chat import Chat
+from telegram.error import BadRequest
 from telegram.ext import CallbackContext
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
-import telegram_utils.utils.logger as logger
+from telegram.message import Message
+from telegram_utils.utils.tutils import delete_if_private
 
 EDIT_WISHLIST_TEXT, EDIT_CATEGORY, CREATE_CATEGORY = range(3)
 

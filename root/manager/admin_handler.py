@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
-from root.model.wishlist import Wishlist
+import telegram_utils.utils.logger as logger
 from root.contants.messages import USER_INFO_RECAP_LEGEND
-from root.util.util import create_button
-from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from root.helper.aggregation.user_info import USER_INFO_NATIVE_QUERY
+from root.model.wishlist import Wishlist
+from root.util.util import create_button
 from telegram import Update
 from telegram.ext import CallbackContext
-from root.model.subscriber import Subscriber
-import telegram_utils.utils.logger as logger
+from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 
 
 def handle_admin(update: Update, context: CallbackContext):

@@ -4,12 +4,13 @@
 
 from datetime import datetime
 from os import environ
+
+import root.util.logger as logger
+from root.contants.VERSION import WISHLIST_VERSION
 from root.helper.admin_message import count_unread_admin_messages_for_user
 from root.helper.notification import count_unread_notifications
-from root.contants.VERSION import WISHLIST_VERSION
 from root.model.user import User
 from root.model.user_rating import UserRating
-import root.util.logger as logger
 
 
 def TODAY():
@@ -964,16 +965,19 @@ EDIT_LINK_TO_WISHLIST_ITEM_MESSAGE = (
     "   •  in caso di link multipli immessi, prenderò in considerazione soltanto il primo%s."
 )
 
+# deprecated
 EDIT_WISHLIST_LINK_EXISTING_PHOTOS = (
     ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download "
     "automatico delle foto</i>, <u><b>tutte le foto attualmente salvate per questo elemento"
     " verranno sostituite da quelle nuove</b></u>"
 )
 
+"""
+;\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
+    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album.\n\n
+"""
 EDIT_WISHLIST_LINK_NO_PHOTOS = (
-    ";\n   •  se l'URL inserito fa parte di quelli supportati per il <i>download automatico delle "
-    "foto</i>, sarà aggiunto un numero di foto compatibile al numero di slot liberi nell'album.\n\n"
-    "🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
+    ".\n\n🆕  <b>Da oggi, aggiungendo un prodotto da uno dei seguenti <i>siti supportati</i> potrai avere"
     ' il <i>download automatico delle sue foto</i> nell\'<u>album</u>  ("🖼")'
     '  e il <i>tracking del prezzo</i> e della sua disponibilità nella <u>sezione link</u>  ("🔗"):</b>'
     "\n   •  gamestop.it;\n   •  multiplayer.com;\n   •  store.playstation.com."

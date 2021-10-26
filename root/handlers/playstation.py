@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
-import re
-from root.model.tracked_link import TrackedLink
-from typing import List
-from root.model.rule import Rule
-from bs4 import BeautifulSoup as bs4
-from root.model.extractor_handler import ExtractorHandler
-from root.handlers.generic import extract_data
-from root.util.util import de_html
-import telegram_utils.utils.logger as logger
-import requests
 import json
+import re
 from datetime import datetime, time
-from dateutil import tz, parser
+from typing import List
+
+import requests
+import telegram_utils.utils.logger as logger
+from bs4 import BeautifulSoup as bs4
+from dateutil import parser, tz
 from dateutil.relativedelta import relativedelta
+from root.handlers.generic import extract_data
+from root.model.extractor_handler import ExtractorHandler
+from root.model.rule import Rule
+from root.model.tracked_link import TrackedLink
+from root.util.util import de_html
 
 BASE_URL = "store.playstation.com/it-it/"
 MATCH = "store.playstation.com"
