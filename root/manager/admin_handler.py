@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import List
 from telegram.error import BadRequest
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
@@ -7,12 +8,21 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 import telegram_utils.utils.logger as logger
 from telegram_utils.utils.tutils import delete_if_private
+from root.contants.keyboard import build_admin_communication_keyboard
 from root.contants.messages import ADMIN_PANEL_MAIN_MESSAGE, USER_INFO_RECAP_LEGEND
-from root.helper.admin_message import create_admin_message
+from root.helper import keyboard
+from root.helper.admin_message import (
+    create_admin_message,
+    find_admin_message_by_id,
+    get_paged_admin_messages,
+    get_total_admin_messages,
+    purge_admin_message,
+)
 from root.helper.aggregation.user_info import USER_INFO_NATIVE_QUERY
+from root.model.admin_message import AdminMessage
 from root.model.user import User
 from root.model.wishlist import Wishlist
-from root.util.util import create_button
+from root.util.util import create_button, format_date, format_time
 from telegram import Update
 from telegram.chat import Chat
 from telegram.ext import CallbackContext
@@ -24,15 +34,104 @@ SEND_COMMUNICATION = range(1)
 
 ADMIN_PANEL_KEYBOARD = InlineKeyboardMarkup(
     [
-        [create_button("✉️  Invia un messaggio", "send_comunication", None)],
+        [create_button("✉️  Comunicazioni", "show_admin_messages", None)],
         [create_button("📊  Vedi le statistiche", "show_usage", None)],
         [create_button("↩️  Torna indietro", "cancel_rating", None)],
     ]
 )
 
 INIT_SEND_COMMUNICATION_KEYBOARD = InlineKeyboardMarkup(
-    [[create_button("❌  Annulla", "cancel_send_comunication", None)]]
+    [[create_button("❌  Annulla", "show_admin_messages", None)]]
 )
+
+
+def resend_communication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    communication: AdminMessage = find_admin_message_by_id(communication_id)
+    if communication:
+        create_admin_message(communication.message)
+    show_admin_messages(update, context, page)
+
+
+def navigate_admin_notifications(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    total_pages = get_total_admin_messages()
+    if page < 0:
+        page = 0
+    if page > total_pages - 1:
+        page = total_pages - 1
+    show_admin_messages(update, context, page)
+
+
+def view_admin_comunication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    admin_message: AdminMessage = find_admin_message_by_id(communication_id)
+    total_pages = get_total_admin_messages()
+    if page < 0:
+        page = 0
+    if page > total_pages - 1:
+        page = total_pages - 1
+    logger.info(admin_message)
+    logger.info(admin_message.message)
+    show_admin_messages(update, context, page, admin_message)
+
+
+def delete_admin_communication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    purge_admin_message(communication_id)
+    show_admin_messages(update, context, page, None)
+
+
+def show_admin_messages(
+    update: Update,
+    context: CallbackContext,
+    page: int = 0,
+    communication: AdminMessage = None,
+):
+    logger.info("NOTIFICATIONS")
+    user: User = update.effective_user
+    chat: Chat = update.effective_chat
+    message: Message = update.effective_message
+    message_id = message.message_id
+    admin_messages: List[AdminMessage] = get_paged_admin_messages(page)
+    total_pages = get_total_admin_messages()
+    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    if admin_messages:
+        if not communication:
+            message += "<i>Seleziona una comunicazione da visualizzare:</i>"
+        else:
+            date = communication.creation_date
+            date = "Inviato il %s alle %s" % (
+                format_date(date, True),
+                format_time(date),
+            )
+            message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
+    else:
+        message += "\n<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
+    communication_id = str(communication.id) if communication else ""
+    keyboard = build_admin_communication_keyboard(
+        admin_messages, communication_id, page, total_pages
+    )
+    if update.callback_query:
+        try:
+            context.bot.edit_message_text(
+                message_id=message_id,
+                chat_id=chat.id,
+                text=message,
+                disable_web_page_preview=True,
+                parse_mode="HTML",
+                reply_markup=keyboard,
+            )
+        except BadRequest:
+            pass
+    return ConversationHandler.END
 
 
 def handle_admin(update: Update, context: CallbackContext):
@@ -138,11 +237,12 @@ def init_send_comunication(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message_id = message.message_id
     redis_helper.save("%s_%s_admin" % (user.id, user.id), str(message_id))
-    text = "Inserisci la comunicazione:"
+    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    message += "Inserisci la comunicazione:"
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
-        text=text,
+        text=message,
         disable_web_page_preview=True,
         reply_markup=INIT_SEND_COMMUNICATION_KEYBOARD,
         parse_mode="HTML",

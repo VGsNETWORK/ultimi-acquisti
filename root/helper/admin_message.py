@@ -21,6 +21,22 @@ def get_unread_admin_messages_for_user(user_id: int):
     return AdminMessage.objects.filter(Q(deleted__ne=user_id) & Q(read__ne=user_id))
 
 
+def get_total_admin_messages(page_size: int = 5):
+    total_products = AdminMessage.objects().count() / page_size
+    if int(total_products) == 0:
+        return 1
+    elif int(total_products) < total_products:
+        return int(total_products) + 1
+    else:
+        return int(total_products)
+
+
+def purge_admin_message(communication_id: str):
+    message: AdminMessage = find_admin_message_by_id(communication_id)
+    if message:
+        message.delete()
+
+
 def get_total_unread_messages(user_id: int, page_size: int = 5):
     total_products = (
         AdminMessage.objects().filter(deleted__ne=user_id).count() / page_size
@@ -31,6 +47,14 @@ def get_total_unread_messages(user_id: int, page_size: int = 5):
         return int(total_products) + 1
     else:
         return int(total_products)
+
+
+def get_paged_admin_messages(page: int = 0, page_size: int = 5):
+    return (
+        AdminMessage.objects.order_by("-creation_date")
+        .skip(page * page_size)
+        .limit(page_size)
+    )
 
 
 def get_paged_unread_messages(user_id: int, page: int = 0, page_size: int = 5):

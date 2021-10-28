@@ -9,16 +9,11 @@ import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.contants.constant import CATEGORIES
 from root.contants.messages import BOT_NAME
-from root.handlers.generic import extract_data
 from root.handlers.handlers import extractor
-from root.helper import keyboard, wishlist_element
-from root.helper.wishlist import count_all_wishlists_for_user
 from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_user,
     count_all_wishlist_elements_photos,
 )
-from root.manager.admin_handler import SEND_COMMUNICATION
-from root.model import user
 from root.model.admin_message import AdminMessage
 from root.model.custom_category import CustomCategory
 from root.model.notification import Notification
@@ -30,7 +25,6 @@ from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
 from root.util.util import create_button, format_date, format_price, format_time
 from telegram import InlineKeyboardMarkup
-from telegram.message import Message
 
 BOT_NAME = environ["BOT_NAME"]
 
@@ -1918,4 +1912,87 @@ def build_notification_choose_section(
     keyboard.append(
         [create_button("↩️  Torna indietro", "cancel_rating", None)],
     )
+    return InlineKeyboardMarkup(keyboard)
+
+
+def build_admin_communication_keyboard(
+    admin_messages: List[AdminMessage],
+    communication_id: str,
+    page: int,
+    total_pages: int,
+):
+    keyboard = [
+        [create_button("✉️  Invia una nuova comunicazione", "send_comunication", None)]
+    ]
+    if admin_messages:
+        for admin_message in admin_messages:
+            emoji = "✉️"
+            date = admin_message.creation_date
+            date = "%s %s" % (format_date(date, True), format_time(date))
+            if communication_id == str(admin_message.id):
+                callback = "empty_button"
+                emoji = "📩"
+            else:
+                callback = "view_admin_comunication_%s_%s" % (
+                    str(admin_message.id),
+                    page,
+                )
+            read_message = f"{emoji}  {date}"
+            keyboard.append(
+                [
+                    create_button(
+                        read_message,
+                        callback,
+                        None,
+                    ),
+                ]
+            )
+            keyboard.append(
+                [
+                    create_button("➥", "empty_button", None),
+                    create_button(
+                        "🔄",
+                        "resend_communication_%s_%s" % (str(admin_message.id), page),
+                        None,
+                    ),
+                    create_button(
+                        "⚠️🗑",
+                        "delete_admin_communication_%s_%s"
+                        % (str(admin_message.id), page),
+                        None,
+                    ),
+                ]
+            )
+        if total_pages > 1:
+            if page == 0:
+                keyboard.append(
+                    [
+                        create_button("🔚", "empty_button", None),
+                        create_button(
+                            "%s/%s" % (page + 1, total_pages), "empty_button", None
+                        ),
+                        create_button("►", "view_admin_comms_%s" % (page + 1), None),
+                    ]
+                )
+            elif page == total_pages - 1:
+                keyboard.append(
+                    [
+                        create_button("◄", "view_admin_comms_%s" % (page - 1), None),
+                        create_button(
+                            "%s/%s" % (page + 1, total_pages), "empty_button", None
+                        ),
+                        create_button("🔚", "empty_button", None),
+                    ]
+                )
+            else:
+                keyboard.append(
+                    [
+                        create_button("◄", "view_admin_comms_%s" % (page - 1), None),
+                        create_button(
+                            "%s/%s" % (page + 1, total_pages), "empty_button", None
+                        ),
+                        create_button("►", "view_admin_comms_%s" % (page + 1), None),
+                    ]
+                )
+    keyboard.append([create_button("↩️  Torna indietro", "show_admin_panel", None)])
     return InlineKeyboardMarkup(keyboard)

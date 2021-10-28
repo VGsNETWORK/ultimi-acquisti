@@ -23,9 +23,14 @@ from root.manager.notification_hander import (
     view_comunication,
 )
 from root.manager.admin_handler import (
+    delete_admin_communication,
     handle_admin,
+    navigate_admin_notifications,
+    resend_communication,
+    show_admin_messages,
     show_usage,
     SEND_COMUNICATION_CONVERSTATION,
+    view_admin_comunication,
 )
 from root.manager.deal_test_handler import command_send_deal
 from root.job.update_product import (
@@ -943,5 +948,36 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="delete_communication", callback=delete_communication
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="show_admin_messages", callback=show_admin_messages
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="view_admin_comms", callback=navigate_admin_notifications
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="delete_admin_communication",
+                callback=delete_admin_communication,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="view_admin_comunication",
+                callback=view_admin_comunication,
+            )
+        )
+
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="resend_communication",
+                callback=resend_communication,
             )
         )
