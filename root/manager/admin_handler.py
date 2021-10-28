@@ -248,8 +248,8 @@ def init_send_comunication(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message_id = message.message_id
     redis_helper.save("%s_%s_admin" % (user.id, user.id), str(message_id))
-    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
-    message += "Inserisci la comunicazione:"
+    message = "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
+    message += "<i>Inserisci il messaggio da inviare:</i>"
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
