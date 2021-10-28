@@ -1827,7 +1827,7 @@ def build_notification_choose_section(
             button_text = f"📬  {nof_notifications} nuove notifiche"
     if default == 0:
         button_text = f"►     {button_text}     ◄"
-        keyboard.append([create_button(button_text, "show_notifications", None)])
+        keyboard.append([create_button(button_text, "empty_button", None)])
     else:
         notification_button = [create_button(button_text, "show_notifications", None)]
     ############ NOF_MESSAGES
