@@ -37,6 +37,10 @@ def purge_admin_message(communication_id: str):
         message.delete()
 
 
+def get_total_not_deleted_messages(user_id: int):
+    return AdminMessage.objects().filter(deleted__ne=user_id).count()
+
+
 def get_total_unread_messages(user_id: int, page_size: int = 5):
     total_products = (
         AdminMessage.objects().filter(deleted__ne=user_id).count() / page_size

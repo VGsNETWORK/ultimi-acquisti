@@ -39,6 +39,7 @@ from root.contants.messages import (
     MESSAGE_EDIT_TIMEOUT,
     RANDOM_ITEM_LIST,
 )
+import telegram_utils.helper.redis as redis_helper
 
 extractor = URLExtract()
 sender = TelegramSender()
@@ -105,6 +106,20 @@ long_text_month = {
     "dicembre": 12,
     "e̵̓l̴̓u̴̔l̵͋": 13,
 }
+
+
+def generate_random_invisible_char(user_id):
+    previous = redis_helper.retrieve("%s_%s_previous_value" % (user_id, user_id))
+    if previous:
+        previous = previous.decode()
+        previous = int(previous)
+    else:
+        previous = 0
+    n = randint(1, 10)
+    while n == previous:
+        n = randint(1, 10)
+    redis_helper.save("%s_%s_previous_value" % (user_id, user_id), str(n))
+    return "&#8203;" * n
 
 
 def remove_url_from_text(message: Message):

@@ -1876,6 +1876,10 @@ def build_notification_choose_section(
                     ),
                 ]
             )
+        if communication_id:
+            callback = "view_comms_%s_" % communication_id
+        else:
+            callback = "view_comms_%s_" % "NONE"
         if total_pages > 1:
             if page == 0:
                 keyboard.append(
@@ -1884,13 +1888,13 @@ def build_notification_choose_section(
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", "view_comms_%s" % (page + 1), None),
+                        create_button("►", f"{callback}%s" % (page + 1), None),
                     ]
                 )
             elif page == total_pages - 1:
                 keyboard.append(
                     [
-                        create_button("◄", "view_comms_%s" % (page - 1), None),
+                        create_button("◄", f"{callback}%s" % (page - 1), None),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
@@ -1900,11 +1904,11 @@ def build_notification_choose_section(
             else:
                 keyboard.append(
                     [
-                        create_button("◄", "view_comms_%s" % (page - 1), None),
+                        create_button("◄", f"{callback}%s" % (page - 1), None),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", "view_comms_%s" % (page + 1), None),
+                        create_button("►", f"{callback}%s" % (page + 1), None),
                     ]
                 )
     if default == 1:
@@ -1963,6 +1967,10 @@ def build_admin_communication_keyboard(
                     ),
                 ]
             )
+        if communication_id:
+            callback = "view_admin_comms_%s_" % communication_id
+        else:
+            callback = "view_admin_comms_%s_" % "NONE"
         if total_pages > 1:
             if page == 0:
                 keyboard.append(
@@ -1971,13 +1979,13 @@ def build_admin_communication_keyboard(
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", "view_admin_comms_%s" % (page + 1), None),
+                        create_button("►", f"{callback}%s" % (page + 1), None),
                     ]
                 )
             elif page == total_pages - 1:
                 keyboard.append(
                     [
-                        create_button("◄", "view_admin_comms_%s" % (page - 1), None),
+                        create_button("◄", f"{callback}%s" % (page - 1), None),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
@@ -1987,11 +1995,11 @@ def build_admin_communication_keyboard(
             else:
                 keyboard.append(
                     [
-                        create_button("◄", "view_admin_comms_%s" % (page - 1), None),
+                        create_button("◄", f"{callback}%s" % (page - 1), None),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", "view_admin_comms_%s" % (page + 1), None),
+                        create_button("►", f"{callback}%s" % (page + 1), None),
                     ]
                 )
     keyboard.append([create_button("↩️  Torna indietro", "show_admin_panel", None)])

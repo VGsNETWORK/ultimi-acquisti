@@ -7,7 +7,10 @@ from os import environ
 
 import root.util.logger as logger
 from root.contants.VERSION import WISHLIST_VERSION
-from root.helper.admin_message import count_unread_admin_messages_for_user
+from root.helper.admin_message import (
+    count_unread_admin_messages_for_user,
+    get_total_not_deleted_messages,
+)
 from root.helper.notification import count_unread_notifications
 from root.model.user import User
 from root.model.user_rating import UserRating
@@ -1412,7 +1415,8 @@ def build_show_notification_button(user: User):
         nof_message_icon = "📨"
     else:
         nof_message_icon = "📥"
-    text = "📮 Centro messaggi │ %s %s  %s %s" % (
+    nof_messages = f"{nof_messages} / %s" % get_total_not_deleted_messages(user.id)
+    text = "📮 Centro messaggi   │   %s  %s    %s  %s" % (
         nof_notifications,
         nof_notification_icon,
         nof_messages,

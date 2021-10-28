@@ -22,7 +22,12 @@ from root.helper.aggregation.user_info import USER_INFO_NATIVE_QUERY
 from root.model.admin_message import AdminMessage
 from root.model.user import User
 from root.model.wishlist import Wishlist
-from root.util.util import create_button, format_date, format_time
+from root.util.util import (
+    create_button,
+    format_date,
+    format_time,
+    generate_random_invisible_char,
+)
 from telegram import Update
 from telegram.chat import Chat
 from telegram.ext import CallbackContext
@@ -58,12 +63,17 @@ def resend_communication(update: Update, context: CallbackContext):
 def navigate_admin_notifications(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
     total_pages = get_total_admin_messages()
+    if communication_id != "NONE":
+        communication: AdminMessage = find_admin_message_by_id(communication_id)
+    else:
+        communication = None
     if page < 0:
         page = 0
     if page > total_pages - 1:
         page = total_pages - 1
-    show_admin_messages(update, context, page)
+    show_admin_messages(update, context, page, communication)
 
 
 def view_admin_comunication(update: Update, context: CallbackContext):
@@ -110,7 +120,7 @@ def show_admin_messages(
             date = communication.creation_date
             date = "Inviato il %s alle %s" % (
                 format_date(date, True),
-                format_time(date),
+                format_time(date, True),
             )
             message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
     else:
@@ -120,6 +130,7 @@ def show_admin_messages(
         admin_messages, communication_id, page, total_pages
     )
     if update.callback_query:
+        message += generate_random_invisible_char(user.id)
         try:
             context.bot.edit_message_text(
                 message_id=message_id,
