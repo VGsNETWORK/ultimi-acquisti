@@ -1858,13 +1858,16 @@ def build_notification_choose_section(
             date = admin_message.creation_date
             date = "%s %s" % (format_date(date, True), format_time(date))
             if communication_id == str(admin_message.id):
+                callback = "empty_button"
                 emoji = "▶️"
+            else:
+                callback = "view_comunication_%s_%s" % (str(admin_message.id), page)
             read_message = f"{emoji}  {date}"
             keyboard.append(
                 [
                     create_button(
                         read_message,
-                        "view_comunication_%s_%s" % (str(admin_message.id), page),
+                        callback,
                         None,
                     ),
                     create_button(
