@@ -16,3 +16,4 @@ class AdminMessage(BaseModel):
 
     message = StringField(required=True)
     read = ListField(IntField())
+    deleted = ListField(IntField())

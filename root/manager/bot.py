@@ -15,6 +15,7 @@ from telegram.error import BadRequest
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager.notification_hander import (
+    delete_communication,
     navigate_notifications,
     open_notification_panel,
     show_messages,
@@ -937,5 +938,10 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="view_comunication", callback=view_comunication
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="delete_communication", callback=delete_communication
             )
         )

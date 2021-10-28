@@ -2,7 +2,9 @@
 
 from mongoengine.errors import DoesNotExist
 from mongoengine.queryset.visitor import Q
+from root.model import admin_message
 from root.model.admin_message import AdminMessage
+import telegram_utils.utils.logger as logger
 
 
 def create_admin_message(message: str):
@@ -10,17 +12,19 @@ def create_admin_message(message: str):
 
 
 def count_unread_admin_messages_for_user(user_id: int):
-    messages = AdminMessage.objects.filter(Q(read__ne=user_id))
+    messages = AdminMessage.objects.filter(Q(deleted__ne=user_id) & Q(read__ne=user_id))
     messages = list(messages)
     return len(messages)
 
 
 def get_unread_admin_messages_for_user(user_id: int):
-    return AdminMessage.objects.filter(Q(read__ne=user_id))
+    return AdminMessage.objects.filter(Q(deleted__ne=user_id) & Q(read__ne=user_id))
 
 
 def get_total_unread_messages(user_id: int, page_size: int = 5):
-    total_products = AdminMessage.objects().count() / page_size
+    total_products = (
+        AdminMessage.objects().filter(deleted__ne=user_id).count() / page_size
+    )
     if int(total_products) == 0:
         return 1
     elif int(total_products) < total_products:
@@ -31,7 +35,8 @@ def get_total_unread_messages(user_id: int, page_size: int = 5):
 
 def get_paged_unread_messages(user_id: int, page: int = 0, page_size: int = 5):
     return (
-        AdminMessage.objects.order_by("-creation_date")
+        AdminMessage.objects.filter(deleted__ne=user_id)
+        .order_by("-creation_date")
         .skip(page * page_size)
         .limit(page_size)
     )
@@ -42,6 +47,19 @@ def find_admin_message_by_id(admin_message_id: str):
         return AdminMessage.objects.get(id=admin_message_id)
     except DoesNotExist:
         return None
+
+
+def delete_admin_message(user_id: str, admin_message_id: str):
+    logger.info("deleting admin_message for user %s" % user_id)
+    message: AdminMessage = find_admin_message_by_id(admin_message_id)
+    if message:
+        logger.info("Found admin_message")
+        deleted = list(message.deleted)
+        if not user_id in deleted:
+            logger.info(f"Adding user {user_id} to {admin_message_id}")
+            deleted.append(user_id)
+            message.deleted = deleted
+            message.save()
 
 
 def read_admin_message(user_id: str, admin_message_id: str):

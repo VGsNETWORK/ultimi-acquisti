@@ -6,6 +6,7 @@ import telegram_utils.utils.logger as logger
 from root.contants.keyboard import build_notification_choose_section
 from root.helper.admin_message import (
     count_unread_admin_messages_for_user,
+    delete_admin_message,
     find_admin_message_by_id,
     get_paged_unread_messages,
     get_total_unread_messages,
@@ -57,6 +58,14 @@ def view_comunication(update: Update, context: CallbackContext):
     logger.info(admin_message.message)
     read_admin_message(update.effective_user.id, communication_id)
     show_messages(update, context, page, admin_message)
+
+
+def delete_communication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    delete_admin_message(update.effective_user.id, communication_id)
+    show_messages(update, context, page)
 
 
 def show_messages(

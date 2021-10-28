@@ -1871,7 +1871,9 @@ def build_notification_choose_section(
                         None,
                     ),
                     create_button(
-                        "🗑", "delete_comunication_%s" % str(admin_message.id), None
+                        "🗑",
+                        "delete_communication_%s_%s" % (str(admin_message.id), page),
+                        None,
                     ),
                 ]
             )
