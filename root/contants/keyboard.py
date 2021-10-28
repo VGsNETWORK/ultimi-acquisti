@@ -1852,14 +1852,14 @@ def build_notification_choose_section(
     if admin_messages:
         for admin_message in admin_messages:
             if user_id not in admin_message.read:
-                emoji = "📩"
+                emoji = "📨"
             else:
                 emoji = "✉️"
             date = admin_message.creation_date
             date = "%s %s" % (format_date(date, True), format_time(date))
             if communication_id == str(admin_message.id):
                 callback = "empty_button"
-                emoji = "▶️"
+                emoji = "📩"
             else:
                 callback = "view_comunication_%s_%s" % (str(admin_message.id), page)
             read_message = f"{emoji}  {date}"
