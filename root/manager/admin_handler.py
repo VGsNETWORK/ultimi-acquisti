@@ -212,6 +212,7 @@ def show_usage(update: Update, context: CallbackContext):
         line += "\n\n\n"
         message += line
     message += USER_INFO_RECAP_LEGEND
+    message = f"<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n{message}"
     keyboard = InlineKeyboardMarkup(
         [[create_button("↩️  Torna indietro", "show_admin_panel", "")]]
     )
