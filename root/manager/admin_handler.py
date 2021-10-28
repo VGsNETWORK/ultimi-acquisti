@@ -46,7 +46,7 @@ ADMIN_PANEL_KEYBOARD = InlineKeyboardMarkup(
 )
 
 INIT_SEND_COMMUNICATION_KEYBOARD = InlineKeyboardMarkup(
-    [[create_button("❌  Annulla", "show_admin_messages", None)]]
+    [[create_button("❌  Annulla", "cancel_send_comunication", None)]]
 )
 
 
@@ -265,7 +265,7 @@ def send_comunication(update: Update, context: CallbackContext):
     text = update.effective_message.text
     delete_if_private(update.effective_message)
     create_admin_message(text)
-    handle_admin(update, context)
+    show_admin_messages(update, context)
     return ConversationHandler.END
 
 
@@ -277,6 +277,6 @@ SEND_COMUNICATION_CONVERSTATION = ConversationHandler(
     ],
     states={SEND_COMMUNICATION: [MessageHandler(Filters.text, send_comunication)]},
     fallbacks=[
-        CallbackQueryHandler(handle_admin, pattern="cancel_send_comunication"),
+        CallbackQueryHandler(show_admin_messages, pattern="cancel_send_comunication"),
     ],
 )
