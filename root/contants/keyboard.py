@@ -1833,7 +1833,9 @@ def build_notification_choose_section(
             button_text = f"📬  {nof_notifications} nuove notifiche"
     if default == 0:
         button_text = f"►     {button_text}     ◄"
-    keyboard.append([create_button(button_text, "show_notifications", None)])
+        keyboard.append([create_button(button_text, "show_notifications", None)])
+    else:
+        notification_button = [create_button(button_text, "show_notifications", None)]
     ############ NOF_MESSAGES
     if nof_messages == 0:
         button_text = "📥  Nessun messaggio da leggere"
@@ -1848,7 +1850,10 @@ def build_notification_choose_section(
         messages_call = "empty_button"
     else:
         messages_call = "show_messages"
-    keyboard.append([create_button(button_text, messages_call, None)])
+    if default == 0:
+        keyboard.append([create_button(button_text, messages_call, None)])
+    else:
+        keyboard.insert(0, [create_button(button_text, messages_call, None)])
     if admin_messages:
         for admin_message in admin_messages:
             if user_id not in admin_message.read:
@@ -1908,7 +1913,8 @@ def build_notification_choose_section(
                         create_button("►", "view_comms_%s" % (page + 1), None),
                     ]
                 )
-
+    if default == 1:
+        keyboard.append(notification_button)
     keyboard.append(
         [create_button("↩️  Torna indietro", "cancel_rating", None)],
     )
