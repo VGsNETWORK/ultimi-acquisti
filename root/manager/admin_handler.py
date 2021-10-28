@@ -64,6 +64,7 @@ def handle_admin(update: Update, context: CallbackContext):
             )
         except Exception as e:
             logger.error(e)
+    return ConversationHandler.END
 
 
 def show_usage(update: Update, context: CallbackContext):
