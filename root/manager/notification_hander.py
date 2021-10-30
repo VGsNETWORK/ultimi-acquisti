@@ -36,7 +36,7 @@ from telegram.user import User
 
 
 def open_notification_panel(update: Update, context: CallbackContext):
-    show_notifications(update, context)
+    show_messages(update, context)
 
 
 def navigate_notifications(update: Update, context: CallbackContext):
