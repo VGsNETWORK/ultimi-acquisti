@@ -4,6 +4,7 @@ from telegram.error import BadRequest
 
 import telegram_utils.utils.logger as logger
 from root.contants.keyboard import build_notification_choose_section
+from root.contants.messages import NO_COMMUNICATION_MESSAGE
 from root.helper.admin_message import (
     count_unread_admin_messages_for_user,
     delete_admin_message,
@@ -100,7 +101,7 @@ def show_messages(
     message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
     if admin_messages:
         if not communication:
-            message += "<i>Seleziona una comunicazione da visualizzare:</i>"
+            message += NO_COMMUNICATION_MESSAGE
         else:
             date = communication.creation_date
             date = "Inviato il %s alle %s" % (
@@ -109,7 +110,7 @@ def show_messages(
             )
             message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
     else:
-        message += "<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
+        message += "<i>Non hai alcun messaggio da visualizzare.</i>"
     nof_notifications = count_unread_notifications(user.id)
     nof_messages = count_unread_admin_messages_for_user(user.id)
     keyboard = build_notification_choose_section(

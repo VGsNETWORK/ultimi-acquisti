@@ -9,7 +9,11 @@ from telegram.ext.messagehandler import MessageHandler
 import telegram_utils.utils.logger as logger
 from telegram_utils.utils.tutils import delete_if_private
 from root.contants.keyboard import build_admin_communication_keyboard
-from root.contants.messages import ADMIN_PANEL_MAIN_MESSAGE, USER_INFO_RECAP_LEGEND
+from root.contants.messages import (
+    ADMIN_PANEL_MAIN_MESSAGE,
+    NO_COMMUNICATION_MESSAGE,
+    USER_INFO_RECAP_LEGEND,
+)
 from root.helper import keyboard
 from root.helper.admin_message import (
     create_admin_message,
@@ -129,7 +133,7 @@ def show_admin_messages(
             )
             message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
     else:
-        message += "<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
+        message += NO_COMMUNICATION_MESSAGE
     communication_id = str(communication.id) if communication else ""
     keyboard = build_admin_communication_keyboard(
         admin_messages, communication_id, page, total_pages
@@ -256,7 +260,7 @@ def init_send_comunication(update: Update, context: CallbackContext):
     message_id = message.message_id
     redis_helper.save("%s_%s_admin" % (user.id, user.id), str(message_id))
     message = "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
-    message += "<i>Inserisci il messaggio da inviare:</i>"
+    message += "Inserisci il messaggio da inviare:"
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,

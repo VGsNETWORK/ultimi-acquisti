@@ -1489,3 +1489,5 @@ PREMIUM_HOME_DEALS_MESSAGES = {
 
 
 ADMIN_PANEL_MAIN_MESSAGE = "<b><u>PANNELLO ADMIN</u></b>\n\n\nCosa vuoi fare?"
+
+NO_COMMUNICATION_MESSAGE = "<i>Non hai alcun messaggio da visualizzare.</i>"

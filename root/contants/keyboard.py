@@ -1926,7 +1926,7 @@ def build_admin_communication_keyboard(
     total_pages: int,
 ):
     keyboard = [
-        [create_button("✉️  Invia una nuova comunicazione", "send_comunication", None)]
+        [create_button("📮 Invia una nuova comunicazione", "send_comunication", None)]
     ]
     if admin_messages:
         for admin_message in admin_messages:
