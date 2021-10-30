@@ -129,7 +129,7 @@ def show_admin_messages(
             )
             message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
     else:
-        message += "\n<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
+        message += "<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
     communication_id = str(communication.id) if communication else ""
     keyboard = build_admin_communication_keyboard(
         admin_messages, communication_id, page, total_pages

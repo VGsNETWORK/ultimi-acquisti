@@ -109,7 +109,7 @@ def show_messages(
             )
             message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
     else:
-        message += "\n<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
+        message += "<i>Non hai ancora alcuna comunicazione da visualizzare.</i>"
     nof_notifications = count_unread_notifications(user.id)
     nof_messages = count_unread_admin_messages_for_user(user.id)
     keyboard = build_notification_choose_section(
