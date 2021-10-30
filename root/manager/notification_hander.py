@@ -89,8 +89,14 @@ def show_messages(
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
     message_id = message.message_id
-    admin_messages: List[AdminMessage] = get_paged_unread_messages(user.id, page)
     total_pages = get_total_unread_messages(user.id)
+    admin_messages: List[AdminMessage] = get_paged_unread_messages(user.id, page)
+    if page == total_pages:
+        if not admin_messages:
+            page -= 1
+            admin_messages: List[AdminMessage] = get_paged_unread_messages(
+                user.id, page
+            )
     message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
     if admin_messages:
         if not communication:

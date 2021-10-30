@@ -110,8 +110,13 @@ def show_admin_messages(
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
     message_id = message.message_id
-    admin_messages: List[AdminMessage] = get_paged_admin_messages(page)
     total_pages = get_total_admin_messages()
+    admin_messages: List[AdminMessage] = get_paged_admin_messages(page)
+    logger.info(f"TOTAL PAGES: {total_pages}, PAGE: {page}")
+    if page == total_pages:
+        if not admin_messages:
+            page -= 1
+            admin_messages: List[AdminMessage] = get_paged_admin_messages(page)
     message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
     if admin_messages:
         if not communication:
@@ -129,19 +134,20 @@ def show_admin_messages(
     keyboard = build_admin_communication_keyboard(
         admin_messages, communication_id, page, total_pages
     )
-    if update.callback_query:
-        message += generate_random_invisible_char(user.id)
-        try:
-            context.bot.edit_message_text(
-                message_id=message_id,
-                chat_id=chat.id,
-                text=message,
-                disable_web_page_preview=True,
-                parse_mode="HTML",
-                reply_markup=keyboard,
-            )
-        except BadRequest:
-            pass
+    if not update.callback_query:
+        message_id = redis_helper.retrieve("%s_%s_admin" % (user.id, user.id)).decode()
+    message += generate_random_invisible_char(user.id)
+    try:
+        context.bot.edit_message_text(
+            message_id=message_id,
+            chat_id=chat.id,
+            text=message,
+            disable_web_page_preview=True,
+            parse_mode="HTML",
+            reply_markup=keyboard,
+        )
+    except BadRequest as e:
+        logger.error(e)
     return ConversationHandler.END
 
 
