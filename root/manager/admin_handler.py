@@ -11,6 +11,7 @@ from telegram_utils.utils.tutils import delete_if_private
 from root.contants.keyboard import build_admin_communication_keyboard
 from root.contants.messages import (
     ADMIN_PANEL_MAIN_MESSAGE,
+    NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
     USER_INFO_RECAP_LEGEND,
 )
@@ -108,6 +109,7 @@ def show_admin_messages(
     context: CallbackContext,
     page: int = 0,
     communication: AdminMessage = None,
+    alert: str = None,
 ):
     logger.info("NOTIFICATIONS")
     user: User = update.effective_user
@@ -140,6 +142,8 @@ def show_admin_messages(
     )
     if not update.callback_query:
         message_id = redis_helper.retrieve("%s_%s_admin" % (user.id, user.id)).decode()
+    if alert:
+        message += alert
     message += generate_random_invisible_char(user.id)
     try:
         context.bot.edit_message_text(
@@ -276,7 +280,7 @@ def send_comunication(update: Update, context: CallbackContext):
     text = update.effective_message.text
     delete_if_private(update.effective_message)
     create_admin_message(text)
-    show_admin_messages(update, context)
+    show_admin_messages(update, context, alert=NEW_COMMUNICATION_CREATED)
     return ConversationHandler.END
 
 
