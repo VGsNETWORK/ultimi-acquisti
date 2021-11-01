@@ -126,7 +126,7 @@ def show_admin_messages(
     message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
     if admin_messages:
         if not communication:
-            message += "<i>Seleziona una comunicazione da visualizzare:</i>"
+            message += NO_COMMUNICATION_MESSAGE
         else:
             date = communication.creation_date
             date = "Inviato il %s alle %s" % (
