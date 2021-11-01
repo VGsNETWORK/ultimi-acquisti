@@ -360,13 +360,14 @@ def create_button(
 
 
 def get_article(current_date: datetime):
+    article = "il "
     if current_date.day == 1:
-        return "l'"
-    if current_date == 8:
-        return "l'"
-    if current_date == 11:
-        return "l'"
-    return "il "
+        article = "l'"
+    elif current_date.day == 8:
+        article = "l'"
+    elif current_date.day == 11:
+        article = "l'"
+    return article
 
 
 def format_price(price: float, accept_zero: bool = True) -> str:
