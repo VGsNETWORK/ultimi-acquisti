@@ -50,8 +50,10 @@ SEND_COMMUNICATION = range(1)
 
 ADMIN_PANEL_KEYBOARD = InlineKeyboardMarkup(
     [
-        [create_button("📨  Comunicazioni", "show_admin_messages", None)],
-        [create_button("📊  Vedi le statistiche", "show_usage", None)],
+        [
+            create_button("📨  Comunicazioni", "show_admin_messages", None),
+            create_button("📊  Statistiche", "show_usage", None),
+        ],
         [create_button("↩️  Torna indietro", "cancel_rating", None)],
     ]
 )
