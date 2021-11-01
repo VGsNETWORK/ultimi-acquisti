@@ -142,6 +142,7 @@ def conversation_main_menu(
     _: CallbackContext,
     message_id: int = None,
     original_message: Message = None,
+    append: str = "",
 ):
     """Show the main menu after a conversation handler
 
@@ -167,8 +168,10 @@ def conversation_main_menu(
         message = original_message
     try:
         bot = Bot(environ["TOKEN"])
+        if append:
+            logger.info("THIS IS THE APPEND [%s]" % append)
         bot.edit_message_text(
-            text=build_message(user, message),
+            text=build_message(user, message, append),
             chat_id=chat_id,
             disable_web_page_preview=True,
             reply_markup=build_keyboard(update.effective_user, message),
@@ -454,7 +457,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
     )
 
 
-def build_message(user: User, message: Message) -> str:
+def build_message(user: User, message: Message, append: str = "") -> str:
     """Create the message to show with the start menu
 
     Args:
@@ -469,6 +472,8 @@ def build_message(user: User, message: Message) -> str:
         message = f"{START_COMMAND}" % (user_id, first_name, PLEASE_NOTE_APPEND)
     else:
         message = f"{START_COMMAND}" % (user_id, first_name, START_GROUP_GROUP_APPEND)
+    if append:
+        message += append
     return message
 
 

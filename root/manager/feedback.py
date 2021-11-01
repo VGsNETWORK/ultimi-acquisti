@@ -24,6 +24,7 @@ from root.contants.messages import (
     FEEDBACK_CHOOSE_CATEGORY,
     FEEDBACK_FROM_MESSAGE,
     FEEDBACK_SEND_MESSAGE,
+    NEW_FEEDBACK_SENT,
 )
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
@@ -134,7 +135,8 @@ def send_feedback(update: Update, context: CallbackContext):
     message: str = FEEDBACK_FROM_MESSAGE % (category, f"{username}", user_id, message)
     message: str = f"{message}\n\n\n#feedback @{bot_name}"
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
-    conversation_main_menu(update, context, MESSAGE_ID)
+    logger.info("THIS IS THE APPEND [%s]" % NEW_FEEDBACK_SENT)
+    conversation_main_menu(update, context, MESSAGE_ID, append=NEW_FEEDBACK_SENT)
     sleep(0.5)
     return ConversationHandler.END
 

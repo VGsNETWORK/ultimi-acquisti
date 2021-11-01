@@ -1493,3 +1493,5 @@ ADMIN_PANEL_MAIN_MESSAGE = "<b><u>PANNELLO ADMIN</u></b>\n\n\nCosa vuoi fare?"
 NO_COMMUNICATION_MESSAGE = "Clicca su un messaggio per aprirlo:"
 
 NEW_COMMUNICATION_CREATED = "\n\n\n✅  <i>Nuova comunicazione inviata!</i>"
+
+NEW_FEEDBACK_SENT = "\n\n\n✅  <i>Feedback inviato con successo!</i>"
