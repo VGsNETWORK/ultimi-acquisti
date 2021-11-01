@@ -14,6 +14,7 @@ from telegram.ext import (
 )
 from telegram import Update, InlineKeyboardMarkup
 from telegram.message import Message
+from telegram_utils.utils.tutils import delete_if_private
 from root.contants import keyboard
 from root.manager.start import conversation_main_menu
 from root.util.util import retrieve_key, create_button
@@ -119,6 +120,7 @@ def send_feedback(update: Update, context: CallbackContext):
     category_index = redis_helper.retrieve(
         "%s_feedback_category" % update.effective_user.id
     ).decode()
+    delete_if_private(update.effective_message)
     category_index = int(category_index)
     category = FEEDBACK_CATEGORIES[category_index]
     logger.info("THIS IS THE CATEGORY %s" % category)
@@ -134,7 +136,6 @@ def send_feedback(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=chat_id, text=message, parse_mode="HTML")
     conversation_main_menu(update, context, MESSAGE_ID)
     sleep(0.5)
-    sender.delete_if_private(context, update.effective_message)
     return ConversationHandler.END
 
 
