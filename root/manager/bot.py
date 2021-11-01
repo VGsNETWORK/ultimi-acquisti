@@ -190,8 +190,10 @@ class BotManager:
         self.updater = Updater(
             self.token,
             use_context=True,
-            request_kwargs={},
+            base_url="http://localhost:8081/bot",
+            base_file_url="http://localhost:8081/file/bot/",
         )
+        # self.updater.bot.log_out()
         self.disp = self.updater.dispatcher
         self.add_handler()
         logger.info("Il bot si sta avviando...")
