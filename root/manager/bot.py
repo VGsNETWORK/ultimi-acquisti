@@ -28,7 +28,6 @@ from root.manager.admin_handler import (
     delete_admin_communication,
     handle_admin,
     navigate_admin_notifications,
-    resend_communication,
     show_admin_messages,
     show_usage,
     SEND_COMUNICATION_CONVERSTATION,
@@ -40,6 +39,7 @@ from root.job.update_product import (
     read_deal_notification,
     update_products,
 )
+from root.manager.resend_communication_handler import RESEND_COMMUNICATION_CONVERSATION
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
@@ -414,6 +414,8 @@ class BotManager:
             self.disp.add_handler(
                 CallbackQueryHandler(pattern="switch_bot", callback=self.switch_bot)
             )
+
+        self.disp.add_handler(RESEND_COMMUNICATION_CONVERSATION)
 
         self.disp.add_handler(
             CallbackQueryHandler(
@@ -989,12 +991,5 @@ class BotManager:
             CallbackQueryHandler(
                 pattern="view_admin_comunication",
                 callback=view_admin_comunication,
-            )
-        )
-
-        self.disp.add_handler(
-            CallbackQueryHandler(
-                pattern="resend_communication",
-                callback=resend_communication,
             )
         )

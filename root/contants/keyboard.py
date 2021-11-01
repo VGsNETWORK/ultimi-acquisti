@@ -5,6 +5,8 @@ from typing import List
 from urllib.parse import quote
 
 import emoji
+from telegram.ext.callbackqueryhandler import CallbackQueryHandler
+from telegram.ext.conversationhandler import ConversationHandler
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.contants.constant import CATEGORIES
@@ -1957,7 +1959,8 @@ def build_admin_communication_keyboard(
                     create_button("➥", "empty_button", None),
                     create_button(
                         "🔄",
-                        "resend_communication_%s_%s" % (str(admin_message.id), page),
+                        "ask_resend_communication_%s_%s"
+                        % (str(admin_message.id), page),
                         None,
                     ),
                     create_button(
@@ -2026,3 +2029,17 @@ def build_ask_communication_delete_keyboard(
             ]
         ]
     )
+
+
+def build_resent_prompt_keyboard(communication_id: str, page: int):
+    keyboard = [
+        [
+            create_button(
+                "🔄  Invia",
+                "resend_communication_%s_%s" % (communication_id, page),
+                None
+            )
+        ],
+        [create_button("❌  Annulla", "conv_view_admin_comms_NONE_%s" % page, None)],
+    ]
+    return InlineKeyboardMarkup(keyboard)

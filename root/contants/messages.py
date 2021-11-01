@@ -1506,5 +1506,7 @@ ADMIN_COMMUNICATION_DELETION_CONFIRMATION = (
     "\n\n\n⚠️  <b>Sei sicuro di voler cancellare questo messaggio <u>per tutti</u>?</b>"
 )
 
+ADMIN_RESEND_NOTIFICATION_CONFIRMATION = "\n\n<b>Cosa vuoi fare?</b>"
+
 
 TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
