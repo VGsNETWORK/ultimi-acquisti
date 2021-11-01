@@ -1871,7 +1871,8 @@ def build_notification_choose_section(
                     ),
                     create_button(
                         "🗑",
-                        "delete_communication_%s_%s" % (str(admin_message.id), page),
+                        "ask_delete_communication_%s_%s"
+                        % (str(admin_message.id), page),
                         None,
                     ),
                 ]
@@ -1932,7 +1933,7 @@ def build_admin_communication_keyboard(
         for admin_message in admin_messages:
             emoji = "✉️"
             date = admin_message.creation_date
-            date = "%s %s" % (format_date(date, True), format_time(date))
+            date = "%s %s" % (format_date(date, True), format_time(date, True))
             if communication_id == str(admin_message.id):
                 callback = "empty_button"
                 emoji = "📩"
@@ -1961,7 +1962,7 @@ def build_admin_communication_keyboard(
                     ),
                     create_button(
                         "⚠️🗑",
-                        "delete_admin_communication_%s_%s"
+                        "ask_delete_admin_communication_%s_%s"
                         % (str(admin_message.id), page),
                         None,
                     ),
@@ -2004,3 +2005,24 @@ def build_admin_communication_keyboard(
                 )
     keyboard.append([create_button("↩️  Torna indietro", "show_admin_panel", None)])
     return InlineKeyboardMarkup(keyboard)
+
+
+def build_ask_communication_delete_keyboard(
+    communication_id: str, page: int, admin: bool = False
+):
+    if admin:
+        yes_callback = "delete_admin_communication_%s_%s" % (communication_id, page)
+    else:
+        yes_callback = "delete_communication_%s_%s" % (communication_id, page)
+    if admin:
+        no_callback = "view_admin_comms_NONE_%s" % page
+    else:
+        no_callback = "view_comms_NONE_%s" % page
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_button("✅  Sì", yes_callback, None),
+                create_button("❌  No", no_callback, None),
+            ]
+        ]
+    )

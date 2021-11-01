@@ -1495,3 +1495,11 @@ NO_COMMUNICATION_MESSAGE = "Clicca su un messaggio per aprirlo:"
 NEW_COMMUNICATION_CREATED = "\n\n\n✅  <i>Nuova comunicazione inviata!</i>"
 
 NEW_FEEDBACK_SENT = "\n\n\n✅  <i>Feedback inviato con successo!</i>"
+
+COMMUNICATION_DELETION_CONFIRMATION = (
+    "\n\n\n<b>Sei sicuro di voler cancellare questo messaggio?</b>"
+)
+
+ADMIN_COMMUNICATION_DELETION_CONFIRMATION = (
+    "\n\n\n⚠️  <b>Sei sicuro di voler cancellare questo messaggio <u>per tutti</u>?</b>"
+)

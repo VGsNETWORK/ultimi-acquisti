@@ -8,9 +8,14 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 import telegram_utils.utils.logger as logger
 from telegram_utils.utils.tutils import delete_if_private
-from root.contants.keyboard import build_admin_communication_keyboard
+from root.contants.keyboard import (
+    build_admin_communication_keyboard,
+    build_ask_communication_delete_keyboard,
+)
 from root.contants.messages import (
+    ADMIN_COMMUNICATION_DELETION_CONFIRMATION,
     ADMIN_PANEL_MAIN_MESSAGE,
+    COMMUNICATION_DELETION_CONFIRMATION,
     NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
     USER_INFO_RECAP_LEGEND,
@@ -32,6 +37,7 @@ from root.util.util import (
     format_date,
     format_time,
     generate_random_invisible_char,
+    get_article,
 )
 from telegram import Update
 from telegram.chat import Chat
@@ -96,6 +102,32 @@ def view_admin_comunication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, admin_message)
 
 
+def ask_delete_admin_communication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    communication: AdminMessage = find_admin_message_by_id(communication_id)
+    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    date = communication.creation_date
+    date = "Inviato %s%s alle %s" % (
+        get_article(date),
+        format_date(date, True),
+        format_time(date, True),
+    )
+    message += f'"{communication.message}"\n\n<i>{date}</i>'
+    message += ADMIN_COMMUNICATION_DELETION_CONFIRMATION
+    context.bot.edit_message_text(
+        message_id=update.effective_message.message_id,
+        chat_id=update.effective_chat.id,
+        text=message,
+        disable_web_page_preview=True,
+        parse_mode="HTML",
+        reply_markup=build_ask_communication_delete_keyboard(
+            communication_id, page, True
+        ),
+    )
+
+
 def delete_admin_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -129,7 +161,8 @@ def show_admin_messages(
             message += NO_COMMUNICATION_MESSAGE
         else:
             date = communication.creation_date
-            date = "Inviato il %s alle %s" % (
+            date = "Inviato %s%s alle %s" % (
+                get_article(date),
                 format_date(date, True),
                 format_time(date, True),
             )

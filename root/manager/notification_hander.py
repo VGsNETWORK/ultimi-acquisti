@@ -3,8 +3,14 @@ from typing import List
 from telegram.error import BadRequest
 
 import telegram_utils.utils.logger as logger
-from root.contants.keyboard import build_notification_choose_section
-from root.contants.messages import NO_COMMUNICATION_MESSAGE
+from root.contants.keyboard import (
+    build_ask_communication_delete_keyboard,
+    build_notification_choose_section,
+)
+from root.contants.messages import (
+    COMMUNICATION_DELETION_CONFIRMATION,
+    NO_COMMUNICATION_MESSAGE,
+)
 from root.helper.admin_message import (
     count_unread_admin_messages_for_user,
     delete_admin_message,
@@ -26,6 +32,7 @@ from root.util.util import (
     format_date,
     format_time,
     generate_random_invisible_char,
+    get_article,
 )
 from telegram import Update
 from telegram.chat import Chat
@@ -71,6 +78,30 @@ def view_comunication(update: Update, context: CallbackContext):
     show_messages(update, context, page, admin_message)
 
 
+def ask_delete_communication(update: Update, context: CallbackContext):
+    data: str = update.callback_query.data
+    page = int(data.split("_")[-1])
+    communication_id = data.split("_")[-2]
+    communication: AdminMessage = find_admin_message_by_id(communication_id)
+    message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    date = communication.creation_date
+    date = "Inviato %s%s alle %s" % (
+        get_article(date),
+        format_date(date, True),
+        format_time(date, True),
+    )
+    message += f'"{communication.message}"\n\n<i>{date}</i>'
+    message += COMMUNICATION_DELETION_CONFIRMATION
+    context.bot.edit_message_text(
+        message_id=update.effective_message.message_id,
+        chat_id=update.effective_chat.id,
+        text=message,
+        disable_web_page_preview=True,
+        parse_mode="HTML",
+        reply_markup=build_ask_communication_delete_keyboard(communication_id, page),
+    )
+
+
 def delete_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -104,7 +135,8 @@ def show_messages(
             message += NO_COMMUNICATION_MESSAGE
         else:
             date = communication.creation_date
-            date = "Inviato il %s alle %s" % (
+            date = "Inviato %s%s alle %s" % (
+                get_article(date),
                 format_date(date, True),
                 format_time(date, True),
             )
