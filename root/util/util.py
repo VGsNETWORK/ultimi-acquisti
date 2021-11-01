@@ -6,6 +6,9 @@ from random import randint
 from re import sub
 from base64 import b64decode
 import re
+from pyrogram.client import Client
+
+from telegram_utils.utils.misc import environment
 from root.helper.whitelist_helper import is_whitelisted
 import sys
 from types import TracebackType
@@ -357,6 +360,20 @@ def create_button(
         InlineKeyboardButton: The Telegram Inline Button to use
     """
     return InlineKeyboardButton(message, callback_data=callback, url=url)
+
+
+def retrieve_telegram_user(user_id: int):
+    api_id = environment("API_ID")
+    api_hash = environment("API_HASH")
+    client: Client = Client("retrieve_product", api_id=api_id, api_hash=api_hash)
+    try:
+        client.start()
+        return client.get_users(user_id)
+    except Exception as e:
+        e = format_error(e)
+        logger.error(e)
+    finally:
+        client.stop()
 
 
 def get_article(current_date: datetime):

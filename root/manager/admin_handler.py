@@ -18,6 +18,7 @@ from root.contants.messages import (
     COMMUNICATION_DELETION_CONFIRMATION,
     NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
+    TRIANGLES_MESSAGE_BUTTON,
     USER_INFO_RECAP_LEGEND,
 )
 from root.helper import keyboard
@@ -38,6 +39,7 @@ from root.util.util import (
     format_time,
     generate_random_invisible_char,
     get_article,
+    retrieve_telegram_user,
 )
 from telegram import Update
 from telegram.chat import Chat
@@ -232,18 +234,25 @@ def show_usage(update: Update, context: CallbackContext):
     for result in cursor:
         logger.info(result)
         try:
-            if "last_name" in result:
-                name = "%s %s" % (result["first_name"], result["last_name"])
+            user: User = retrieve_telegram_user(result["user_id"])
+            if user.last_name in result:
+                name = "%s %s" % (user.first_name, user.last_name)
             else:
-                name = "%s" % (result["first_name"])
+                name = "%s" % (user.first_name)
         except KeyError:
             name = "<i>&lt;Sconosciuto&gt;</i>"
         try:
-            line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
-                result["user_id"],
-                name,
-                result["username"],
-            )
+            if user.username:
+                line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
+                    result["user_id"],
+                    name,
+                    user.username,
+                )
+            else:
+                line = '<a href="tg://user?id=%s">%s</a>' % (
+                    result["user_id"],
+                    name,
+                )
         except KeyError:
             line = '<a href="tg://user?id=%s">%s</a>' % (
                 result["user_id"],
@@ -251,19 +260,29 @@ def show_usage(update: Update, context: CallbackContext):
             )
         line += "\n    🗃  <code>%s</code>" % result["wishlists"]
         line += "\n     │"
-        line += "\n     └─🗂  <code>%s</code>" % result["wishlist_elements"]
-        line += "\n            │"
-        line += "\n            ├─🖼  <code>%s</code>" % result["photos"]
-        line += "\n            │"
-        line += "\n            └─🔗  <code>%s</code>" % result["links"]
-        line += "\n                   │"
-        line += "\n                   └─💹  <code>%s</code>" % result["tracked_links"]
+        line += "\n     └──🗂  <code>%s</code>" % result["wishlist_elements"]
+        line += "\n               │"
+        line += "\n               ├──🖼  <code>%s</code>" % result["photos"]
+        line += "\n               └──🔗  <code>%s</code>" % result["links"]
+        line += "\n                         │"
+        line += (
+            "\n                         └──💹  <code>%s</code>" % result["tracked_links"]
+        )
         line += "\n\n\n"
         message += line
     message += USER_INFO_RECAP_LEGEND
     message = f"<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n{message}"
     keyboard = InlineKeyboardMarkup(
-        [[create_button("↩️  Torna indietro", "show_admin_panel", "")]]
+        [
+            [
+                create_button(
+                    TRIANGLES_MESSAGE_BUTTON % "♥️  Lista dei desideri",
+                    "empty_button",
+                    "",
+                )
+            ],
+            [create_button("↩️  Torna indietro", "show_admin_panel", "")],
+        ]
     )
     try:
         context.bot.edit_message_text(
