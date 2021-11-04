@@ -18,6 +18,7 @@ from root.contants.messages import (
     COMMUNICATION_DELETION_CONFIRMATION,
     NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
+    NO_COMMUNICATION_SELECTED_MESSAGE,
     TRIANGLES_MESSAGE_BUTTON,
     USER_INFO_RECAP_LEGEND,
 )
@@ -162,7 +163,7 @@ def show_admin_messages(
     message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
     if admin_messages:
         if not communication:
-            message += NO_COMMUNICATION_MESSAGE
+            message += NO_COMMUNICATION_SELECTED_MESSAGE
         else:
             date = communication.creation_date
             date = "Inviato %s%s alle %s" % (
