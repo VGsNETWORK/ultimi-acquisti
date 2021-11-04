@@ -544,7 +544,7 @@ HOW_TO_TITLE = (
 )
 
 HOW_TO_MODIFY_A_PURCHASE = (
-    "<b><u>GUIDA</u>    ➔    ✍🏻  MODIFICA DI UN ACQUISTO</b>\n\n\n"
+    "<b><u>GUIDA</u>    ➔    ✏️  MODIFICA DI UN ACQUISTO</b>\n\n\n"
     "Tieni presente che puoi <b>cambiare</b>, <b>aggiungere</b> o <b>rimuovere</b>"
     " le info di un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n\n"
     "   •  cercare il post relativo al tuo acquisto  (a tale scopo la <i>funzione di ricerca interna alla chat</i> di Telegram può tornarti utile);\n"
@@ -610,7 +610,7 @@ HOW_TO_TITLE = {"button_text": "🔤  Titolo", "description": HOW_TO_TITLE}
 HOW_TO_DATE = {"button_text": "📅  Data", "description": HOW_TO_DATE}
 
 HOW_TO_MODIFY_A_PURCHASE = {
-    "button_text": "✍🏻  Modifica di un acquisto",
+    "button_text": "✏️  Modifica di un acquisto",
     "description": HOW_TO_MODIFY_A_PURCHASE,
 }
 
@@ -842,7 +842,7 @@ BULK_DELETE_MESSAGE = [
 
 BULK_DELETE_NO_PURCHASE = '<a href="tg://user?id=%s">%s</a>, non hai alcun acquisto da cancellare per questo gruppo.'
 
-BULK_DELETE_CANCELLED = "✅  Cancellazione degli acquisti annullata."
+BULK_DELETE_CANCELLED = "✅  <i>Cancellazione degli acquisti annullata.</i>"
 
 WISHLIST_DESCRIPTION_TOO_LONG = "🚫  <b>Limite di 128 caratteri superato!</b>"
 

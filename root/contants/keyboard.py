@@ -232,7 +232,7 @@ def bulk_delete_keyboard(step: int):
         confirm_message = "✅  Continua"
         abort_message = "❌  ANNULLA"
     elif step == 3:
-        confirm_message = "🌪  CANCELLA IL MIO STORICO"
+        confirm_message = "🌬  CANCELLA IL MIO STORICO"
         abort_message = "❌  ANNULLA"
     else:
         return InlineKeyboardMarkup(
@@ -2051,7 +2051,7 @@ def build_resent_prompt_keyboard(communication: AdminMessage, page: int):
         ],
         [
             create_button(
-                "✏️  Modifica il testo originale",
+                "✏️  Modifica testo e formato originali",
                 "empty_button",
                 None,
                 "https://t.me/share/url?url=%s" % message,

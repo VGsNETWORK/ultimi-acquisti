@@ -96,6 +96,7 @@ def add_purchase(
     """
     if not user_exists(user.id):
         create_user(user)
+    logger.info("CREATING PURCHASE...")
     create_purchase(user.id, price, message_id, chat_id, creation_date, caption)
 
 
@@ -320,6 +321,8 @@ def handle_purchase(
                 )
             else:
                 add_purchase(user, price, message_id, chat_id, date, caption)
+        else:
+            add_purchase(user, price, message_id, chat_id, date, caption)
         if not custom_date_error:
             message = PURCHASE_ADDED if not message.edit_date else PURCHASE_MODIFIED
             date = datetime.now() if not date else date
