@@ -235,18 +235,24 @@ def show_usage(update: Update, context: CallbackContext):
         logger.info(result)
         try:
             user: User = retrieve_telegram_user(result["user_id"])
-            if user.last_name in result:
-                name = "%s %s" % (user.first_name, user.last_name)
+            if user:
+                username = user.username
+                if user.last_name in result:
+                    name = "%s %s" % (user.first_name, user.last_name)
+                else:
+                    name = "%s" % (user.first_name)
             else:
-                name = "%s" % (user.first_name)
+                name = "<i>&lt;Sconosciuto&gt;</i>"
+                username = result["username"]
         except KeyError:
             name = "<i>&lt;Sconosciuto&gt;</i>"
+            username = ""
         try:
-            if user.username:
+            if username:
                 line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
                     result["user_id"],
                     name,
-                    user.username,
+                    username,
                 )
             else:
                 line = '<a href="tg://user?id=%s">%s</a>' % (
