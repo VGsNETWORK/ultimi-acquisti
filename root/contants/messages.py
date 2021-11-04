@@ -1510,3 +1510,13 @@ ADMIN_RESEND_NOTIFICATION_CONFIRMATION = "\n\n<b>Cosa vuoi fare?</b>"
 
 
 TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
+
+
+RESEND_COMMUNICATION_MESSAGE = (
+    "<i>Testo originale inviato %s%s alle %s:</i>"
+    '\n\n"%s"'
+    "\n\n\n<b>Cosa vuoi fare?\n</b>"
+    "Reinvia lo stesso messaggio, oppure inseriscine uno nuovo"
+)
+
+CREATE_COMMUNICATION_MESSAGE = "Inserisci il messaggio da inviare in broadcast:"

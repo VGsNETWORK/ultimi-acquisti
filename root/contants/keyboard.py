@@ -25,7 +25,13 @@ from root.model.user import User
 from root.model.user_rating import UserRating
 from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
-from root.util.util import create_button, format_date, format_price, format_time
+from root.util.util import (
+    create_button,
+    format_date,
+    format_price,
+    format_time,
+    html_to_markdown,
+)
 from telegram import InlineKeyboardMarkup
 
 BOT_NAME = environ["BOT_NAME"]
@@ -1958,7 +1964,7 @@ def build_admin_communication_keyboard(
                 [
                     create_button("➥", "empty_button", None),
                     create_button(
-                        "🔄",
+                        "🔄  Reinvia",
                         "ask_resend_communication_%s_%s"
                         % (str(admin_message.id), page),
                         None,
@@ -2031,13 +2037,24 @@ def build_ask_communication_delete_keyboard(
     )
 
 
-def build_resent_prompt_keyboard(communication_id: str, page: int):
+def build_resent_prompt_keyboard(communication: AdminMessage, page: int):
+    message = communication.message
+    message = html_to_markdown(message)
+    message = quote(message)
     keyboard = [
         [
             create_button(
-                "🔄  Invia",
-                "resend_communication_%s_%s" % (communication_id, page),
-                None
+                "🔄  Reinvia stesso testo e formato",
+                "resend_communication_%s_%s" % (str(communication.id), page),
+                None,
+            )
+        ],
+        [
+            create_button(
+                "✏️  Modifica il testo originale",
+                "empty_button",
+                None,
+                "https://t.me/share/url?url=%s" % message,
             )
         ],
         [create_button("❌  Annulla", "conv_view_admin_comms_NONE_%s" % page, None)],

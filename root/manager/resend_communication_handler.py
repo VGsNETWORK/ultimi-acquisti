@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from telegram import Update
+from telegram import Update, message
 from telegram.ext import CallbackContext
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
@@ -11,11 +11,14 @@ from root.contants.keyboard import (
     build_ask_communication_delete_keyboard,
     build_resent_prompt_keyboard,
 )
-from root.contants.messages import ADMIN_RESEND_NOTIFICATION_CONFIRMATION
+from root.contants.messages import (
+    ADMIN_RESEND_NOTIFICATION_CONFIRMATION,
+    RESEND_COMMUNICATION_MESSAGE,
+)
 from root.helper.admin_message import create_admin_message, find_admin_message_by_id
 from root.manager.admin_handler import show_admin_messages
 from root.model.admin_message import AdminMessage
-from root.util.util import format_date, format_time, get_article
+from root.util.util import format_date, format_time, get_article, text_entities_to_html
 import telegram_utils.utils.logger as logger
 import telegram_utils.helper.redis as redis_helper
 
@@ -29,25 +32,24 @@ def ask_resend_communication(update: Update, context: CallbackContext):
     communication_id = data.split("_")[-2]
     page = data.split("_")[-1]
     communication: AdminMessage = find_admin_message_by_id(communication_id)
-    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    message = "<b><u>PANNELLO ADMIN</u>    ➔    REINVIA COMUNICAZIONE</b>\n\n\n"
     date = communication.creation_date
-    date = "Inviato %s%s alle %s" % (
+    message += RESEND_COMMUNICATION_MESSAGE % (
         get_article(date),
         format_date(date, True),
         format_time(date, True),
+        communication.message,
     )
     redis_helper.save(
         "%s_%s_admin" % (user.id, user.id), str(update.effective_message.message_id)
     )
-    message += f'"<code>{communication.message}</code>"\n\n<i>{date}</i>'
-    message += ADMIN_RESEND_NOTIFICATION_CONFIRMATION
     context.bot.edit_message_text(
         message_id=update.effective_message.message_id,
         chat_id=update.effective_chat.id,
         text=message,
         disable_web_page_preview=True,
         parse_mode="HTML",
-        reply_markup=build_resent_prompt_keyboard(communication_id, page),
+        reply_markup=build_resent_prompt_keyboard(communication, page),
     )
     return RESEND_COMMUNICATION
 
@@ -63,7 +65,11 @@ def resend_commumication(update: Update, context: CallbackContext):
             create_admin_message(communication.message)
     else:
         delete_if_private(update.effective_message)
-        create_admin_message(update.effective_message.text)
+        logger.info(update)
+        text = text_entities_to_html(
+            update.effective_message.text, update.effective_message.entities
+        )
+        create_admin_message(text)
         page = 0
     show_admin_messages(update, context, page)
     return ConversationHandler.END

@@ -6,9 +6,11 @@ from random import randint
 from re import sub
 from base64 import b64decode
 import re
+from typing import List
 from pyrogram.client import Client
 
 from telegram_utils.utils.misc import environment
+from root.contants.constant import FORMAT_ENTITIES, FORMAT_ENTITIES_TYPES
 from root.helper.whitelist_helper import is_whitelisted
 import sys
 from types import TracebackType
@@ -43,6 +45,7 @@ from root.contants.messages import (
     RANDOM_ITEM_LIST,
 )
 import telegram_utils.helper.redis as redis_helper
+from telegram import MessageEntity
 
 extractor = URLExtract()
 sender = TelegramSender()
@@ -136,7 +139,7 @@ def remove_url_from_text(message: Message):
     return text
 
 
-def extract_first_link_from_message(message: TelegramMessage):
+def extract_first_link_from_message(message):
     text = message.text if message.text else message.caption
     entities = message.entities
     entity = next(
@@ -321,6 +324,37 @@ def is_develop() -> bool:
 def escape_value(value: object):
     """ convert any object to a str and escape it """
     return escape(str(value))
+
+
+def html_to_markdown(message: str):
+    message = re.sub(r"<\/?i>", "__", message)
+    message = re.sub(r"<\/?b>", "**", message)
+    message = re.sub(r"<\/?s>", "~~", message)
+    message = re.sub(r"<\/?code>", "`", message)
+    message = re.sub(r"<\/?pre>", "```", message)
+    return message
+
+
+def text_entities_to_html(message: str, entities=List[MessageEntity]):
+    logger.info(entities)
+    entities.reverse()
+    for entity in entities:
+        entity: MessageEntity = entity
+        if entity.type in FORMAT_ENTITIES_TYPES:
+            offset, length = entity.offset, entity.length
+            to_replace = message[offset : offset + length]
+            logger.info("[%s - %s - %s]" % (offset, length, to_replace))
+            if entity.type != "text_link":
+                to_replace = FORMAT_ENTITIES[entity.type] % to_replace
+            else:
+                to_replace = FORMAT_ENTITIES[entity.type] % (entity.url, to_replace)
+            message = "%s%s%s" % (
+                message[:offset],
+                to_replace,
+                message[offset + length :],
+            )
+            logger.info(message)
+    return message
 
 
 def format_error(error: Exception, user: User = None):

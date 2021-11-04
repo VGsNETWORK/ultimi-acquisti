@@ -16,6 +16,7 @@ from root.contants.messages import (
     ADMIN_COMMUNICATION_DELETION_CONFIRMATION,
     ADMIN_PANEL_MAIN_MESSAGE,
     COMMUNICATION_DELETION_CONFIRMATION,
+    CREATE_COMMUNICATION_MESSAGE,
     NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
     NO_COMMUNICATION_SELECTED_MESSAGE,
@@ -41,6 +42,7 @@ from root.util.util import (
     generate_random_invisible_char,
     get_article,
     retrieve_telegram_user,
+    text_entities_to_html,
 )
 from telegram import Update
 from telegram.chat import Chat
@@ -325,7 +327,7 @@ def init_send_comunication(update: Update, context: CallbackContext):
     message_id = message.message_id
     redis_helper.save("%s_%s_admin" % (user.id, user.id), str(message_id))
     message = "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
-    message += "Inserisci il messaggio da inviare in broadcast:"
+    message += CREATE_COMMUNICATION_MESSAGE
     context.bot.edit_message_text(
         chat_id=chat.id,
         message_id=message_id,
@@ -339,6 +341,8 @@ def init_send_comunication(update: Update, context: CallbackContext):
 
 def send_comunication(update: Update, context: CallbackContext):
     text = update.effective_message.text
+    text = text_entities_to_html(text, update.effective_message.entities)
+    logger.info(update)
     delete_if_private(update.effective_message)
     create_admin_message(text)
     show_admin_messages(update, context, alert=NEW_COMMUNICATION_CREATED)
