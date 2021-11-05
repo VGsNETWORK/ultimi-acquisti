@@ -238,15 +238,16 @@ def show_usage(update: Update, context: CallbackContext):
         logger.info(result)
         try:
             user: User = retrieve_telegram_user(result["user_id"])
+            logger.info("This is the user [%s]" % user)
             if user:
                 username = user.username
-                if user.last_name in result:
+                if "last_name" in result:
                     name = "%s %s" % (user.first_name, user.last_name)
                 else:
                     name = "%s" % (user.first_name)
             else:
                 name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
-                username = result["username"]
+                username = ""
         except KeyError:
             name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
             username = ""
