@@ -1404,9 +1404,11 @@ NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = (
 )
 
 
-def build_show_notification_button(user: User):
-    nof_notifications = count_unread_notifications(user.id)
-    nof_messages = count_unread_admin_messages_for_user(user.id)
+def build_show_notification_button(user: User = None, user_id: int = None):
+    if user:
+        user_id = user.id
+    nof_notifications = count_unread_notifications(user_id)
+    nof_messages = count_unread_admin_messages_for_user(user_id)
     if nof_notifications > 0:
         nof_notification_icon = "📬"
     else:
@@ -1415,7 +1417,7 @@ def build_show_notification_button(user: User):
         nof_message_icon = "📨"
     else:
         nof_message_icon = "📥"
-    nof_messages = f"{nof_messages} / %s" % get_total_not_deleted_messages(user.id)
+    nof_messages = f"{nof_messages} / %s" % get_total_not_deleted_messages(user_id)
     text = "📮 Centro messaggi   │   %s  %s    %s  %s" % (
         nof_notifications,
         nof_notification_icon,

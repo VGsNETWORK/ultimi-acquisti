@@ -32,6 +32,8 @@ from root.helper.admin_message import (
     purge_admin_message,
 )
 from root.helper.aggregation.user_info import USER_INFO_NATIVE_QUERY
+from root.helper.start_messages import delete_start_message
+from root.manager.start_messages import update_start_messages
 from root.model.admin_message import AdminMessage
 from root.model.user import User
 from root.model.wishlist import Wishlist
@@ -75,6 +77,7 @@ def resend_communication(update: Update, context: CallbackContext):
     communication: AdminMessage = find_admin_message_by_id(communication_id)
     if communication:
         create_admin_message(communication.message)
+        update_start_messages()
     show_admin_messages(update, context, page)
 
 
@@ -140,6 +143,7 @@ def delete_admin_communication(update: Update, context: CallbackContext):
     page = int(data.split("_")[-1])
     communication_id = data.split("_")[-2]
     purge_admin_message(communication_id)
+    update_start_messages()
     show_admin_messages(update, context, page, None)
 
 
@@ -200,6 +204,8 @@ def show_admin_messages(
 
 
 def handle_admin(update: Update, context: CallbackContext):
+    if update.effective_message.chat.type == "private":
+        delete_start_message(update.effective_user.id)
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
     user: User = update.effective_user
@@ -346,6 +352,7 @@ def send_comunication(update: Update, context: CallbackContext):
     logger.info(update)
     delete_if_private(update.effective_message)
     create_admin_message(text)
+    update_start_messages()
     show_admin_messages(update, context, alert=NEW_COMMUNICATION_CREATED)
     return ConversationHandler.END
 

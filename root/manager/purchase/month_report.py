@@ -13,6 +13,7 @@ import urllib
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
 from root.helper.redis_message import is_owner
+from root.helper.start_messages import delete_start_message
 from root.model.purchase import Purchase
 from root.contants.messages import (
     MONTH_PURCHASE_REPORT,
@@ -188,6 +189,8 @@ class MonthReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
+        if update.effective_message.chat.type == "private":
+            delete_start_message(update.effective_user.id)
         try:
             if not is_owner(
                 update.effective_message.message_id, update.effective_user.id

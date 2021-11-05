@@ -3,6 +3,7 @@
 """ Docstring """
 
 from root.helper.redis_message import add_message
+from root.helper.start_messages import delete_start_message
 from root.manager.start import back_to_the_start
 from telegram import Update, Message, InlineKeyboardMarkup, CallbackQuery, User
 from telegram.ext import CallbackContext
@@ -37,6 +38,8 @@ def help_navigate(update: Update, context: CallbackContext):
         update (Update): Telegram update
         context (CallbackContext): The context of the telegram bot
     """
+    if update.effective_message.chat.type == "private":
+        delete_start_message(update.effective_user.id)
     context.bot.answer_callback_query(update.callback_query.id)
     callback: CallbackQuery = update.callback_query
     query: str = callback.data

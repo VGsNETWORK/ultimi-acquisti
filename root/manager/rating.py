@@ -2,6 +2,7 @@
 
 
 from datetime import datetime
+from root.helper.start_messages import delete_start_message
 from root.manager.command_redirect import command_redirect
 
 from mongoengine.errors import DoesNotExist
@@ -112,6 +113,8 @@ class Rating:
         user_rating.save()
 
     def send_feedback(self, update: Update, context: CallbackContext):
+        if update.effective_message.chat.type == "private":
+            delete_start_message(update.effective_user.id)
         if update.effective_chat.type == "channel":
             return
         if not update.effective_user.id == update.effective_chat.id:
@@ -242,6 +245,8 @@ class Rating:
         context.bot_data.update(payload)
 
     def poll(self, update: Update, context: CallbackContext) -> None:
+        if update.effective_message.chat.type == "private":
+            delete_start_message(update.effective_user.id)
         if not update.effective_message.chat.type == "private":
             command_redirect("vota", "vote", update, context)
             return

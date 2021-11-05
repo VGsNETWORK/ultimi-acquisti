@@ -6,6 +6,7 @@ import operator
 import re
 from difflib import SequenceMatcher
 from root.helper.purchase_helper import convert_to_float
+from root.helper.start_messages import delete_start_message
 from root.model import notification
 from typing import List
 
@@ -844,6 +845,8 @@ def view_wishlist(
     under_first: bool = True,
     reset_keyboard: bool = True,
 ):
+    if update.effective_message.chat.type == "private":
+        delete_start_message(update.effective_user.id)
     if not update.effective_message.chat.type == "private":
         command_redirect("wishlist", "wishlist", update, context)
         return

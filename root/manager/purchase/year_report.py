@@ -12,6 +12,7 @@ from root.contants.keyboard import NO_PURCHASE_KEYBOARD
 from dateutil import tz
 from telegram import InlineKeyboardMarkup, Message, Update, User
 from telegram.ext import CallbackContext
+from root.helper.start_messages import delete_start_message
 from root.helper.user_helper import create_user, user_exists
 from root.helper.redis_message import is_owner
 from root.contants.messages import (
@@ -182,6 +183,8 @@ class YearReport:
             update (Update): Telegram update
             context (CallbackContext): The context of the telegram bot
         """
+        if update.effective_message.chat.type == "private":
+            delete_start_message(update.effective_user.id)
         try:
             if not is_owner(
                 update.effective_message.message_id, update.effective_user.id

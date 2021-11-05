@@ -6,6 +6,7 @@ from os import environ
 import re
 from root.contants.keyboard import GROUP_START_KEYBOARD
 from root.helper.notification import create_notification
+from root.helper.start_messages import delete_start_message, update_or_create_start_message
 from root.manager.command_redirect import command_redirect
 from root.helper.user_helper import is_admin
 
@@ -61,7 +62,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
         chat_id = message.chat.id
         sender.delete_if_private(update, message)
         # TODO: Do I really need this ?
-        context.bot.send_message(
+        message: Message = context.bot.send_message(
             chat_id=chat_id,
             text=build_message(update.effective_user, message),
             reply_markup=build_keyboard(update.effective_user, message),
@@ -69,6 +70,8 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
             disable_web_page_preview=True,
         )
         add_message(message.message_id, update.effective_user.id)
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(update.effective_user, message.message_id)
     return
 
 
@@ -99,6 +102,8 @@ def handle_start(update: Update, context: CallbackContext) -> None:
             parse_mode="HTML",
             disable_web_page_preview=True,
         )
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(update.effective_user, msg.message_id)
         logger.info(f"FUCK OFF {msg.message_id}")
         add_message(message.message_id, update.effective_user.id)
     else:
@@ -135,6 +140,8 @@ def help_end(update: Update, context: CallbackContext):
         reply_markup=build_keyboard(update.effective_user, message),
         parse_mode="HTML",
     )
+    if update.effective_chat.type == "private":
+        update_or_create_start_message(update.effective_user, message.message_id)
 
 
 def conversation_main_menu(
@@ -179,6 +186,8 @@ def conversation_main_menu(
             parse_mode="HTML",
             timeout=10,
         )
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(update.effective_user, message.message_id)
     except Exception as e:
         logger.exception(e)
 
@@ -326,6 +335,10 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             reply_markup=keyboard,
             parse_mode="HTML",
         )
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(
+                update.effective_user, update.effective_message.message_id
+            )
     else:
         msg: Message = context.bot.send_message(
             text=message,
@@ -334,6 +347,8 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             reply_markup=keyboard,
             parse_mode="HTML",
         )
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(update.effective_user, msg.message_id)
         logger.info(f"FUCK OFF {msg.message_id}")
 
 
@@ -354,6 +369,10 @@ def remove_commands(update: Update, context: CallbackContext):
         reply_markup=build_keyboard(update.effective_user, message),
         parse_mode="HTML",
     )
+    if update.effective_chat.type == "private":
+        update_or_create_start_message(
+            update.effective_user, update.effective_message.message_id
+        )
 
 
 def rating_cancelled(update: Update, context: CallbackContext, message_id):
@@ -455,6 +474,10 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
+    if update.effective_chat.type == "private":
+        update_or_create_start_message(
+            update.effective_user, update.effective_message.message_id
+        )
 
 
 def build_message(user: User, message: Message, append: str = "") -> str:
@@ -609,6 +632,8 @@ def back_to_the_start(
 
 
 def show_info(update: Update, context: CallbackContext):
+    if update.effective_message.chat.type == "private":
+        delete_start_message(update.effective_user.id)
     if not update.effective_message.chat.type == "private":
         command_redirect("info", "show_info", update, context)
         return

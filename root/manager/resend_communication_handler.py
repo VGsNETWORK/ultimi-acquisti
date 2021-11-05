@@ -18,6 +18,7 @@ from root.contants.messages import (
 )
 from root.helper.admin_message import create_admin_message, find_admin_message_by_id
 from root.manager.admin_handler import show_admin_messages
+from root.manager.start_messages import update_start_messages
 from root.model.admin_message import AdminMessage
 from root.util.util import format_date, format_time, get_article, text_entities_to_html
 import telegram_utils.utils.logger as logger
@@ -65,6 +66,7 @@ def resend_commumication(update: Update, context: CallbackContext):
         communication: AdminMessage = find_admin_message_by_id(communication_id)
         if communication:
             create_admin_message(communication.message)
+            update_start_messages()
     else:
         delete_if_private(update.effective_message)
         logger.info(update)
@@ -72,6 +74,7 @@ def resend_commumication(update: Update, context: CallbackContext):
             update.effective_message.text, update.effective_message.entities
         )
         create_admin_message(text)
+        update_start_messages()
         page = 0
     show_admin_messages(update, context, page)
     return ConversationHandler.END

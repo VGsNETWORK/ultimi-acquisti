@@ -26,6 +26,7 @@ from root.helper.notification import (
     find_notifications_for_user,
     mark_all_notification_as_read,
 )
+from root.helper.start_messages import delete_start_message
 from root.model.admin_message import AdminMessage
 from root.model.notification import Notification
 from root.util.util import (
@@ -44,6 +45,8 @@ from telegram.user import User
 
 
 def open_notification_panel(update: Update, context: CallbackContext):
+    if update.effective_message.chat.type == "private":
+        delete_start_message(update.effective_user.id)
     show_messages(update, context)
 
 

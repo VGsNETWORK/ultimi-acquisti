@@ -2,7 +2,6 @@
 
 from mongoengine.errors import DoesNotExist
 from mongoengine.queryset.visitor import Q
-from root.model import admin_message
 from root.model.admin_message import AdminMessage
 import telegram_utils.utils.logger as logger
 
