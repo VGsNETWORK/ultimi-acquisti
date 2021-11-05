@@ -13,6 +13,7 @@ from root.contants.keyboard import (
 )
 from root.contants.messages import (
     ADMIN_RESEND_NOTIFICATION_CONFIRMATION,
+    MD_EXPLANATION_APPEND,
     RESEND_COMMUNICATION_MESSAGE,
 )
 from root.helper.admin_message import create_admin_message, find_admin_message_by_id
@@ -40,6 +41,7 @@ def ask_resend_communication(update: Update, context: CallbackContext):
         format_time(date, True),
         communication.message,
     )
+    message += MD_EXPLANATION_APPEND
     redis_helper.save(
         "%s_%s_admin" % (user.id, user.id), str(update.effective_message.message_id)
     )

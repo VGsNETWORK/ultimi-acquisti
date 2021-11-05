@@ -810,7 +810,7 @@ def build_approve_rating_message(rating: UserRating, user: User):
 
 BULK_DELETE_MESSAGE_SINGLE_PURCHASE = (
     "Sei <b>davvero</b> sicuro di voler procedere?\n"
-    "Se vai avanti, <b>cancellerai il tuo acquisto"
+    "Se vai avanti, <b>cancellerai l'acquisto"
     " che hai registrato in questo gruppo</b> tramite @UltimiAcquistiBot."
     " Una volta confermata l'eliminazione, non potrai tornare alla situazione"
     " immediatamente precedente.\n\n<i>Vuoi <b>davvero</b> continuare?</i>\n\n<b>VITE RIMASTE:</b>  ❤️❤️💔"
@@ -1515,8 +1515,23 @@ TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
 RESEND_COMMUNICATION_MESSAGE = (
     "<i>Testo originale inviato %s%s alle %s:</i>"
     '\n\n"%s"'
-    "\n\n\n<b>Cosa vuoi fare?\n</b>"
-    "Reinvia lo stesso messaggio, oppure inseriscine uno nuovo"
+    "\n\n\n<b>Cosa vuoi fare?</b>\n"
+    "🔄  <b>Reinvia lo stesso messaggio</b> mantenendo la formattazione originale,\n"
+    "✏️  <b>crea un nuovo messaggio a partire da testo e formattazione originali</b> e modificalo,\n"
+    "oppure <b>invia un nuovo messaggio da zero</b> inserendolo di seguito:\n\n"
 )
 
-CREATE_COMMUNICATION_MESSAGE = "Inserisci il messaggio da inviare in broadcast:"
+MD_EXPLANATION_APPEND = (
+    "<i>Per la formattazione, sono supportati l'<b>HTML</b> e la <u><b>versione semplice</b></u> (ovvero <u>senza stili multipli innestati</u>) <b>del markdown di Telegram</b>:</i>\n"
+    '   •  "<code>**grassetto**</code>"  risulta in  "<b>grassetto</b>";\n'
+    '   •  "<code>__corsivo__</code>"  risulta in  "<i>corsivo</i>";\n'
+    '   •  "<code>`monospace`</code>"  risulta in  "<code>monospace</code>";\n'
+    '   •  "<code>```monospace su più righe```</code>"  risulta in  "<code>monospace su più righe</code>";\n'
+    '   •  "<code>~~sbarrato~~</code>"  risulta in  "<s>sbarrato</s>".\n'
+    ' ✖️ "<code>[Link testuali](example.com)</code>"  <b><u>non supportati</u></b>;\n'
+    ' ✖️ "<u>sottolineato</u>"  <b><u>non supportato</u></b>."'
+)
+
+CREATE_COMMUNICATION_MESSAGE = (
+    f"Inserisci il messaggio da inviare in broadcast:\n\n{MD_EXPLANATION_APPEND}"
+)

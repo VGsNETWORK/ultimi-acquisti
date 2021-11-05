@@ -13,7 +13,6 @@ from telegram_utils.utils.misc import environment
 from root.contants.constant import FORMAT_ENTITIES, FORMAT_ENTITIES_TYPES
 from root.helper.whitelist_helper import is_whitelisted
 import sys
-from types import TracebackType
 from telegram.message import Message
 from telegram.user import User
 from urlextract import URLExtract
