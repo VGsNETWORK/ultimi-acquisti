@@ -245,7 +245,7 @@ def show_usage(update: Update, context: CallbackContext):
                 else:
                     name = "%s" % (user.first_name)
             else:
-                name = "<i>&lt;Sconosciuto&gt;</i>"
+                name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
                 username = result["username"]
         except KeyError:
             name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
