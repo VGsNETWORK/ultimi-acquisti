@@ -1823,6 +1823,7 @@ def build_notification_choose_section(
     page: int = 0,
     total_pages: int = 0,
     communication_id: str = "",
+    supported_notification: bool = False,
 ):
     keyboard = []
     ############ NOF_NOTIFICATIONS
@@ -1835,7 +1836,20 @@ def build_notification_choose_section(
             button_text = f"📬  {nof_notifications} nuove notifiche"
     if default == 0:
         button_text = f"►     {button_text}     ◄"
-        keyboard.append([create_button(button_text, "empty_button", None)])
+        if not supported_notification:
+            keyboard.append([create_button(button_text, "empty_button", None)])
+        else:
+            keyboard.append([create_button(button_text, "empty_button", None)])
+        if not supported_notification:
+            keyboard.append(
+                [
+                    create_button(
+                        "✅  Notifiche supportate", "show_supported_notification", None
+                    )
+                ]
+            )
+        else:
+            keyboard.append([create_button("❎  Chiudi", "show_notifications", None)])
     else:
         notification_button = [create_button(button_text, "show_notifications", None)]
     ############ NOF_MESSAGES

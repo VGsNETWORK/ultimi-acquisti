@@ -1537,3 +1537,27 @@ MD_EXPLANATION_APPEND = (
 CREATE_COMMUNICATION_MESSAGE = (
     f"Inserisci il messaggio da inviare in broadcast:\n\n{MD_EXPLANATION_APPEND}"
 )
+
+
+SUPPORTED_NOTIFICATIONS = (
+    "<b><u>CENTRO MESSAGGI</u>    ➔    NOTIFICHE SUPPORTATE</b>\n\n\n"
+    "<b><i>LISTA DEI DESIDERI</i></b>\n\n"
+    "     <i>TRACKING</i>\n"
+    "     ✅  Un prodotto è stato scontato\n\n"
+    "     <i>ELEMENTI</i>\n"
+    "     ✅  Creazione di un elemento\n"
+    "     ✅  Conversione di un elemento\n"
+    "     ✅  Cancellazione di un elemento\n"
+    "     ✅  Cancellazione massiva di elementi\n"
+    "     ✅  Foto aggiunte a/rimosse da un elemento (riepilogo delle modifiche)\n"
+    "     ☑️  Link aggiunti a/rimossi da un elemento\n"
+    "     ✅  Modifica di un elemento\n"
+    "     ✅  Spostamento di un elemento in una lista diversa\n\n"
+    "     <i>LISTE</i>\n"
+    "     ✅  Creazione di una lista (+ n° liste)\n"
+    "     ✅  Cambio della lista attiva\n"
+    "     ✅  Riordinamento di una lista\n"
+    "     ✅  Modifica di una lista\n"
+    "     ✅  Svuotamento di una lista\n"
+    "     ✅  Cancellazione di una lista (+ n° liste)\n"
+)

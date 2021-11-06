@@ -40,6 +40,7 @@ from root.job.update_product import (
     update_products,
 )
 from root.manager.resend_communication_handler import RESEND_COMMUNICATION_CONVERSATION
+from root.manager.supported_notification import show_supported_notifications
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
     delete_wishlist_element_link,
@@ -991,5 +992,11 @@ class BotManager:
             CallbackQueryHandler(
                 pattern="view_admin_comunication",
                 callback=view_admin_comunication,
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="show_supported_notification",
+                callback=show_supported_notifications,
             )
         )
