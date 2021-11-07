@@ -1835,21 +1835,31 @@ def build_notification_choose_section(
         else:
             button_text = f"📬  {nof_notifications} nuove notifiche"
     if default == 0:
-        button_text = f"►     {button_text}     ◄"
+        keyboard.append(
+            [create_button("►     📬  Notifiche     ◄", "empty_button", None)]
+        )
         if not supported_notification:
-            keyboard.append([create_button(button_text, "empty_button", None)])
+            button_text = f">     {button_text}     <"
+            callback = "empty_button"
         else:
-            keyboard.append([create_button(button_text, "empty_button", None)])
+            callback = "show_notifications"
+        keyboard.append([create_button(button_text, callback, None)])
         if not supported_notification:
             keyboard.append(
                 [
                     create_button(
-                        "✅  Notifiche supportate", "show_supported_notification", None
+                        "ℹ️  Notifiche supportate", "show_supported_notification", None
                     )
                 ]
             )
         else:
-            keyboard.append([create_button("❎  Chiudi", "show_notifications", None)])
+            keyboard.append(
+                [
+                    create_button(
+                        ">     ℹ️  Notifiche supportate     <", "empty_button", None
+                    )
+                ]
+            )
     else:
         notification_button = [create_button(button_text, "show_notifications", None)]
     ############ NOF_MESSAGES
