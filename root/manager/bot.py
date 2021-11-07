@@ -811,6 +811,10 @@ class BotManager:
         )
 
         self.disp.add_handler(
+            CallbackQueryHandler(callback=show_info, pattern="show_user_info")
+        )
+
+        self.disp.add_handler(
             CallbackQueryHandler(callback=show_info, pattern="expand_info")
         )
 

@@ -21,6 +21,8 @@ def TODAY():
     return "%s/%s/%s" % ("%02d" % T.day, "%02d" % T.month, T.year)
 
 
+TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
+
 BOT_NAME = environ["BOT_NAME"]
 
 BOT_ID = environ["BOT_ID"]
@@ -1509,9 +1511,6 @@ ADMIN_COMMUNICATION_DELETION_CONFIRMATION = (
 )
 
 ADMIN_RESEND_NOTIFICATION_CONFIRMATION = "\n\n<b>Cosa vuoi fare?</b>"
-
-
-TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
 
 
 RESEND_COMMUNICATION_MESSAGE = (

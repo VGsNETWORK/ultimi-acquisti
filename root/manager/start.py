@@ -6,7 +6,10 @@ from os import environ
 import re
 from root.contants.keyboard import GROUP_START_KEYBOARD
 from root.helper.notification import create_notification
-from root.helper.start_messages import delete_start_message, update_or_create_start_message
+from root.helper.start_messages import (
+    delete_start_message,
+    update_or_create_start_message,
+)
 from root.manager.command_redirect import command_redirect
 from root.helper.user_helper import is_admin
 
@@ -31,6 +34,7 @@ from root.contants.messages import (
     PLEASE_NOTE_APPEND,
     START_COMMANDS_LIST_HEADER,
     START_GROUP_GROUP_APPEND,
+    TRIANGLES_MESSAGE_BUTTON,
     build_show_notification_button,
 )
 from root.helper.redis_message import add_message
@@ -38,6 +42,7 @@ from root.contants.message_timeout import THREE_MINUTES
 import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
+import user_reputation.helper.user_reputation as ur_helper
 
 DEVELOPER = '<a href="tg://user?id=84872221">Edoardo Zerbo</a>'
 DESIGNER = '<a href="tg://user?id=109191781">Lorenzo Maffii</a>'
@@ -646,6 +651,12 @@ def show_info(update: Update, context: CallbackContext):
     message = update.effective_message
     message_id = message.message_id
     chat = update.effective_chat
+    user_id = update.effective_user.id
+    if ur_helper.user_reputation_exists(user_id):
+        user_reputation = ur_helper.get_user_reputation(user_id)
+    else:
+        user_reputation = ur_helper.create_user_reputation(user_id)
+    user_reputation_chart = ur_helper.visualize_user_reputation(user_reputation)
     try:
         average: Configuration = Configuration.objects.get(code="average_rating").value
         ui_vote: Configuration = Configuration.objects.get(code="ui_vote").value
@@ -664,12 +675,14 @@ def show_info(update: Update, context: CallbackContext):
     keyboard = [
         [
             create_button(
-                "⭐  Valutami", "rating_menu_from_info", "rating_menu_from_info"
-            )
+                "⭐  Valutami",
+                "rating_menu_from_info",
+                "rating_menu_from_info",
+            ),
+            create_button("🐙  Link al progetto", "github_link", None, REPO_LINK),
         ],
         [
             create_button("🔠  Glossario", "glossary_link", None, GLOSSARY_LINK),
-            create_button("🐙  Link al progetto", "github_link", None, REPO_LINK),
         ],
         [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],
     ]
@@ -677,7 +690,7 @@ def show_info(update: Update, context: CallbackContext):
     average_message = create_rating_moons(average)
     average_header = ux_header
     hlength = len(average_header)
-    message = f"<u><b>INFO</b></u>\n\n\n"
+    message = f"<b><u>INFO</u>    ➔    SUL BOT</b>\n\n\n"
 
     callback = update.callback_query
 
@@ -685,6 +698,17 @@ def show_info(update: Update, context: CallbackContext):
         data = callback.data
     else:
         data = "do_not_expand"
+    default_selection = 1 if data == "show_user_info" else 0
+    if default_selection == 0:
+        bot_info_message = TRIANGLES_MESSAGE_BUTTON % ("🤖  Sul bot")
+        bot_info_callback = "empty_button"
+        user_info_message = "👤  Su di me"
+        user_info_callback = "show_user_info"
+    else:
+        bot_info_message = "🤖  Sul bot"
+        bot_info_callback = "show_bot_info"
+        user_info_callback = "empty_button"
+        user_info_message = TRIANGLES_MESSAGE_BUTTON % "👤  Su di me"
     if data == "expand_info":
         button = [
             create_button(
@@ -707,6 +731,14 @@ def show_info(update: Update, context: CallbackContext):
             )
         ]
         keyboard.insert(0, button)
+    # TABS
+    if default_selection == 1:
+        keyboard = [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
+    tabs = [
+        create_button(bot_info_message, bot_info_callback, None),
+        create_button(user_info_message, user_info_callback, None),
+    ]
+    keyboard.insert(0, tabs)
     average_header = "⭐️  <i><b>Valutazione</b></i>"
     message += (
         f"{average_message}{' ' * spaces}{average_header}\n" if average_message else ""
@@ -720,6 +752,18 @@ def show_info(update: Update, context: CallbackContext):
     message += f"☕️  Sviluppatore:  {DEVELOPER}\n"
     message += f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
     message += f"<i>A cura di @VGsNETWORK</i>"
+    if default_selection == 1:
+        message = f"<b><u>INFO</u>    ➔    SU DI ME</b>\n\n\n"
+        message += f"{user_reputation_chart}{' ' * spaces}🛂  Reputazione\n\n\n"
+        message += (
+            '<i>La <b>Reputazione</b> (anche indicata come "<b>REP</b>") '
+            "è un indicatore della tua condotta all'interno dei gruppi di <b>@VGsNETWORK</b>.\n"
+            "Una <b>Reputazione</b> alta ti qualifica come un membro cordiale, rispettoso, "
+            "affidabile e partecipe della community.\n"
+            'Di contro, infrangere il <a href="https://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
+            "regolamento</a> potrebbe portare, a discrezione degli amministratori, "
+            "alla perdita di uno o più punti di <b>REP</b>.</i>"
+        )
     if callback:
         context.bot.edit_message_text(
             chat_id=chat.id,
