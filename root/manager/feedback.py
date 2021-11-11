@@ -19,6 +19,7 @@ from root.contants import keyboard
 from root.manager.start import conversation_main_menu
 from root.util.util import retrieve_key, create_button
 from root.contants.messages import (
+    CANCEL_BUTTON_TEXT,
     FEEDBACK_CATEGORIES,
     FEEDBACK_CATEGORIES_BUTTONS,
     FEEDBACK_CHOOSE_CATEGORY,
@@ -49,7 +50,7 @@ def start_feedback(update: Update, context: CallbackContext):
             callback = "select_category_%s" % FEEDBACK_CATEGORIES.index(button)
             line.append(create_button(button, callback, None))
         keyboard.append(line)
-    keyboard.append([create_button("❌  Annulla", "cancel_feedback", None)])
+    keyboard.append([create_button(CANCEL_BUTTON_TEXT, "cancel_feedback", None)])
     keyboard = InlineKeyboardMarkup(keyboard)
     message = FEEDBACK_CHOOSE_CATEGORY
     MESSAGE_ID = update.effective_message.message_id
@@ -156,7 +157,7 @@ def cancel_feedback(update: Update, context: CallbackContext):
 def build_keyboard():
     """Create the keyboard for the feedback with the cancel button"""
     return InlineKeyboardMarkup(
-        [[create_button("❌  Annulla", "cancel_feedback", "cancel_feedback")]]
+        [[create_button(CANCEL_BUTTON_TEXT, "cancel_feedback", "cancel_feedback")]]
     )
 
 

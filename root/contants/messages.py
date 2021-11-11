@@ -27,6 +27,104 @@ BOT_NAME = environ["BOT_NAME"]
 
 BOT_ID = environ["BOT_ID"]
 
+DEVELOPER = '<a href="tg://user?id=84872221">Edoardo Zerbo</a>'
+DESIGNER = '<a href="tg://user?id=109191781">Lorenzo Maffii</a>'
+
+UX_HEADER_MESSAGE = "🤹🏻  <i>Semplicità</i>"
+FUNCTIONALITY_HEADER_MESSAGE = "➕  <i>Funzionalità</i>"
+UI_HEADER_MESSAGE = "👁‍🗨  <i>Interfaccia</i>"
+OVERALL_HEADER_MESSAGE = "🌐  <i>Generale</i>"
+AVERAGE_HEADER_MESSAGE = "⭐️  <i><b>Valutazione</b></i>"
+RATING_HEADER_MENU = "<b><u>VALUTAZIONE</u></b>\n\n\n"
+
+RATING_BASED_ON_MESSAGE = "<i>(basata su %s recensioni)</i>\n\n\n"
+VERSION_INFO_MESSAGE = (
+    "🔄  Versione:  <code>%s</code>     (rilasciata il %s)\n\n"
+    f"☕️  Sviluppatore:  {DEVELOPER}\n"
+    f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
+    "<i>A cura di @VGsNETWORK</i>"
+)
+
+BOT_INFO_HEADER_MESSAGE = "<b><u>INFO</u>    ➔    SUL BOT</b>\n\n\n"
+USER_INFO_HEADER_MESSAGE = f"<b><u>INFO</u>    ➔    SU DI ME</b>\n\n\n"
+
+USER_INFO_MESSAGE = (
+    "%s%s🛂  Reputazione\n\n\n"
+    '<i>La <b>Reputazione</b> (anche indicata come "<b>REP</b>") '
+    "è un indicatore della tua condotta all'interno dei gruppi di <b>@VGsNETWORK</b>.\n"
+    "Una <b>Reputazione</b> alta ti qualifica come un membro cordiale, rispettoso, "
+    "affidabile e partecipe della community.\n"
+    'Di contro, infrangere il <a href="https://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
+    "regolamento</a> potrebbe portare, a discrezione degli amministratori, "
+    "alla perdita di uno o più punti di <b>REP</b>.</i>"
+)
+
+ADMIN_BUTTON_TEXT = "🎖 PANNELLO ADMIN"
+SETTINGS_BUTTON_TEXT = "⚙️  Impostazioni"
+HOW_TO_BUTTON_TEXT = "📚  Guida all'utilizzo"
+MONTHLY_REPORT_BUTTON_TEXT = "📈  Report mensile"
+YEARLY_REPORT_BUTTON_TEXT = "📈  Report annuale"
+WHATS_THIS_BUTTON_TEXT = "💡 Che cos'è?"
+WISHLIST_BUTTON_TEXT = "♥️  Lista dei desideri"
+INFO_BUTTON_TEXT = "ℹ️  Info"
+RATE_ME_BUTTON_TEXT = "⭐  Valutami"
+SUPPORT_BUTTON_TEXT = "🆘  Supporto"
+HIDE_COMMANDS_BUTTON_TEXT = "🔺     Nascondi i comandi     🔺"
+SHOW_COMMANDS_BUTTON_TEXT = "🔻     Mostra i comandi     🔻"
+COMPRESS_RATING_BUTTON_TEXT = "🔺     Comprimi valutazione     🔺"
+EXPAND_RATING_BUTTON_TEXT = "🔻     Espandi valutazione     🔻"
+
+GLOSSARY_BUTTON_TEXT = "🔠  Glossario dei termini"
+LINK_TO_PROJECT_BUTTON_TEXT = "🐙  Link al progetto"
+ABOUT_ME_BUTTON_TEXT = "👤  Su di me"
+ABOUT_BOT_BUTTON_TEXT = "🤖  Sul bot"
+
+GO_BACK_BUTTON_TEXT = "↩️  Torna indietro"
+CANCEL_BUTTON_TEXT = "❌  Annulla"
+
+HOW_TO_I_UNDERSTAND_BUTTON_TEXT = "Ho capito!"
+HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT = "📚  Apri la guida completa"
+
+RATING_TEXT_LIMIT_REACHED_MESSAGE = (
+    "\n\n\n🚫  <b>Limite superato di %s caratteri!</b>"
+    '\nEcco quello che hai inserito (tagliato a %s caratteri):\n<i>"%s"</i>'
+    "\n\n<b>Inserisci un commento (massimo %s caratteri):</b>"
+    "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
+)
+
+RATING_INSERT_NEW_COMMENT_MESSAGE = (
+    f"{RATING_HEADER_MENU}%s"
+    "\n\n\n%s<b>Inserisci un commento (massimo %s caratteri):</b>\n"
+    "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
+)
+
+RATING_COMMENT_AND_VOTE_INSERED_MESSAGE = (
+    "<b>%s</b>\n– Voto:  %s\n– Commento:  <i>%s</i>"
+)
+
+PREVIOUS_VOTE = f"\n\nVoto precedente:  %s"
+PREVIOUS_VOTE = "  (prima:  %s)"
+
+STATUS_RATING_MESSAGE = f"<b>%s</b>\n– Voto:  %s"
+RATING_PREVIOUS_COMMENT = f'Commento precedente:  <i>"%s"</i>\n\n'
+
+PUBLISHED_RATING_MESSAGE = "<b>%s</b> recensione pubblicata (✅)"
+TO_APPROVE_RATING_MESSAGE = f"<b>%s</b> recensione in fase di valutazione (⚖️)"
+RATING_NOT_APPROVED = (
+    "\n\n\n❌  <b>Non approvato da" ' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
+)
+RATING_APPROVED_MESSAGE = (
+    "\n\n\n✅  <b>Approvato da" f' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
+)
+
+RATING_COMMENT_INSERED_MESSAGE = "\n– Commento:  <i>%s</i>"
+
+GIVE_RATING_TO_MESSAGE = "\n\n\n<b>Dai un voto a...</b>"
+
+THANK_YOU_FOR_RATING_MESSAGE = "%s\n\n\n<b>Grazie per aver votato!</b>"
+
+NOT_PRESENT_MESSAGE = "<b>Non presente</b>"
+
 VGS_GROUPS_PRIMARY_LINK = "https://t.me/joinchat/T8CJkZHor02rIzVy"
 
 REPO_LINK = "https://github.com/VGsNETWORK/ultimi-acquisti"
@@ -34,6 +132,20 @@ REPO_LINK = "https://github.com/VGsNETWORK/ultimi-acquisti"
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
 
 GLOSSARY_LINK = "https://telegra.ph/ultimiacquisti--Glossario-dei-termini-10-22"
+
+ADMIN_PANEL_COMMUNICATION_HEADER_MESSAGE = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+)
+ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n"
+)
+ADMIN_PANEL_NEW_COMMUNICATION = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
+)
+
+COMMUNICATION_SENT_DATE_TIME_MESSAGE = "Inviato %s%s alle %s"
+
+NEVER_INTERACTED_WITH_THE_BOT_MESSAGE = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
 
 DB_CONNECTION_ERROR = (
     "Impossibile stabilire un collegamento con il database,"
@@ -557,8 +669,6 @@ HOW_TO_MODIFY_A_PURCHASE = (
     ' sempre con la stessa procedura: ti basterà taggare il post con "<code>#ultimiacquisti</code>" in fase di modifica del messaggio e,'
     " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
 )
-
-RATING_HEADER_MENU = "<b><u>VALUTAZIONE</u></b>\n\n\n"
 
 USER_HAS_NO_VOTE = (
     "<i>Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"

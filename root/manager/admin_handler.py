@@ -14,14 +14,21 @@ from root.contants.keyboard import (
 )
 from root.contants.messages import (
     ADMIN_COMMUNICATION_DELETION_CONFIRMATION,
+    ADMIN_PANEL_COMMUNICATION_HEADER_MESSAGE,
+    ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE,
     ADMIN_PANEL_MAIN_MESSAGE,
+    ADMIN_PANEL_NEW_COMMUNICATION,
     COMMUNICATION_DELETION_CONFIRMATION,
+    COMMUNICATION_SENT_DATE_TIME_MESSAGE,
     CREATE_COMMUNICATION_MESSAGE,
+    GO_BACK_BUTTON_TEXT,
+    NEVER_INTERACTED_WITH_THE_BOT_MESSAGE,
     NEW_COMMUNICATION_CREATED,
     NO_COMMUNICATION_MESSAGE,
     NO_COMMUNICATION_SELECTED_MESSAGE,
     TRIANGLES_MESSAGE_BUTTON,
     USER_INFO_RECAP_LEGEND,
+    WISHLIST_BUTTON_TEXT,
 )
 from root.helper import keyboard
 from root.helper.admin_message import (
@@ -166,13 +173,13 @@ def show_admin_messages(
         if not admin_messages:
             page -= 1
             admin_messages: List[AdminMessage] = get_paged_admin_messages(page)
-    message = "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    message = ADMIN_PANEL_COMMUNICATION_HEADER_MESSAGE
     if admin_messages:
         if not communication:
             message += NO_COMMUNICATION_SELECTED_MESSAGE
         else:
             date = communication.creation_date
-            date = "Inviato %s%s alle %s" % (
+            date = COMMUNICATION_SENT_DATE_TIME_MESSAGE % (
                 get_article(date),
                 format_date(date, True),
                 format_time(date, True),
@@ -252,10 +259,10 @@ def show_usage(update: Update, context: CallbackContext):
                 else:
                     name = "%s" % (user.first_name)
             else:
-                name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
+                name = NEVER_INTERACTED_WITH_THE_BOT_MESSAGE
                 username = ""
         except KeyError:
-            name = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
+            name = NEVER_INTERACTED_WITH_THE_BOT_MESSAGE
             username = ""
         try:
             if username:
@@ -287,17 +294,17 @@ def show_usage(update: Update, context: CallbackContext):
         line += "\n\n\n"
         message += line
     message += USER_INFO_RECAP_LEGEND
-    message = f"<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n{message}"
+    message = f"{ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE}{message}"
     keyboard = InlineKeyboardMarkup(
         [
             [
                 create_button(
-                    TRIANGLES_MESSAGE_BUTTON % "♥️  Lista dei desideri",
+                    TRIANGLES_MESSAGE_BUTTON % WISHLIST_BUTTON_TEXT,
                     "empty_button",
                     "",
                 )
             ],
-            [create_button("↩️  Torna indietro", "show_admin_panel", "")],
+            [create_button(GO_BACK_BUTTON_TEXT, "show_admin_panel", "")],
         ]
     )
     try:
@@ -333,7 +340,7 @@ def init_send_comunication(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message_id = message.message_id
     redis_helper.save("%s_%s_admin" % (user.id, user.id), str(message_id))
-    message = "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
+    message = ADMIN_PANEL_NEW_COMMUNICATION
     message += CREATE_COMMUNICATION_MESSAGE
     context.bot.edit_message_text(
         chat_id=chat.id,

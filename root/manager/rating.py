@@ -32,9 +32,24 @@ from telegram.error import BadRequest
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
 from root.contants.messages import (
+    CANCEL_BUTTON_TEXT,
+    GIVE_RATING_TO_MESSAGE,
+    NOT_PRESENT_MESSAGE,
+    PREVIOUS_VOTE,
+    PUBLISHED_RATING_MESSAGE,
+    RATING_APPROVED_MESSAGE,
+    RATING_COMMENT_AND_VOTE_INSERED_MESSAGE,
+    RATING_COMMENT_INSERED_MESSAGE,
     RATING_HEADER_MENU,
+    RATING_INSERT_NEW_COMMENT_MESSAGE,
+    RATING_NOT_APPROVED,
     RATING_PLACEHOLDER,
+    RATING_PREVIOUS_COMMENT,
+    RATING_TEXT_LIMIT_REACHED_MESSAGE,
     RATING_VALUES,
+    STATUS_RATING_MESSAGE,
+    THANK_YOU_FOR_RATING_MESSAGE,
+    TO_APPROVE_RATING_MESSAGE,
     USER_ALREADY_VOTED,
     USER_ALREADY_VOTED_APPROVED,
     USER_ALREADY_VOTED_BOTH,
@@ -137,10 +152,8 @@ class Rating:
             user_text = "".join(user_text)
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
             text = self.user_message[user_id]
-            text += f"\n\n\n🚫  <b>Limite superato di {boundary} caratteri!</b>"
-            text += f'\nEcco quello che hai inserito (tagliato a {self.MAX_CHARACTERS_ALLOWED} caratteri):\n<i>"{user_text}"</i>'
-            text += f"\n\n<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>"
-            text += "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
+            adding_message = RATING_TEXT_LIMIT_REACHED_MESSAGE % (boundary, self.MAX_CHARACTERS_ALLOWED, user_text, self.MAX_CHARACTERS_ALLOWED)
+            text += adding_message
             try:
                 text = "%s%s" % (RATING_HEADER_MENU, text)
                 context.bot.edit_message_text(
@@ -156,25 +169,25 @@ class Rating:
         if not update.callback_query:
             text = f'"{text}"'
         else:
-            text = "<b>Non presente</b>"
+            text = NOT_PRESENT_MESSAGE
         index = self.status_index[user_id] if self.status_index[user_id] >= 0 else 0
         vote = self.feedback[user_id][index - 1]["vote"]
         message_vote = vote * "⭐️"
         message_vote += "🕳" * (5 - vote)
         vote = message_vote
         if self.status_index[user_id] == 1:
-            self.user_message[
-                user_id
-            ] = f"<b>{RATING_VALUES[index - 1]}</b>\n– Voto:  {vote}\n– Commento:  <i>{text}</i>"
+            self.user_message[user_id] = RATING_COMMENT_AND_VOTE_INSERED_MESSAGE % (
+                RATING_VALUES[index - 1], vote, text
+            )
         else:
-            self.user_message[user_id] += f"\n– Commento:  <i>{text}</i>"
+            self.user_message[user_id] += RATING_COMMENT_INSERED_MESSAGE % text
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=RATING_HEADER_MENU + self.user_message[user_id] + "\n\n\n<b>Dai un voto a...</b>",
+            text=RATING_HEADER_MENU + self.user_message[user_id] + GIVE_RATING_TO_MESSAGE,
             parse_mode="HTML",
         )
-        if text != "<b>Non presente</b>":
+        if text != NOT_PRESENT_MESSAGE:
             context.bot.delete_message(chat_id=chat_id, message_id=message_id)
         self.feedback[user_id][index - 1]["message"] = text
         if not index >= len(RATING_VALUES):
@@ -187,10 +200,11 @@ class Rating:
         logger.info("setting status to -1")
         self.status_index[user_id] = 0
         self.status[user_id] = RATING_VALUES[0]
+        adding_message = THANK_YOU_FOR_RATING_MESSAGE % self.user_message[user_id]
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=RATING_HEADER_MENU + f"{self.user_message[user_id]}\n\n\n<b>Grazie per aver votato!</b>",
+            text=RATING_HEADER_MENU + adding_message,
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -216,7 +230,7 @@ class Rating:
         answers=["⭐️" * i for i in range(1, 6)],
     ):
         answers = list(answers)
-        answers.append("❌  Annulla")
+        answers.append(CANCEL_BUTTON_TEXT)
         index = self.status_index[chat_id] if self.status_index[chat_id] >= 0 else 0
         message = ""
         previous = ""
@@ -225,8 +239,8 @@ class Rating:
                 vote = self.previous_votes[chat_id][index]
                 stars = vote * "⭐️"
                 stars += (5 - vote) * "🕳"
-                message = f"\n\nVoto precedente:  {stars}"
-                previous = f"  (prima:  {stars})"
+                message = PREVIOUS_VOTE % stars
+                previous = PREVIOUS_VOTE % stars
         message = context.bot.send_poll(
             chat_id,
             f"{text}{previous}\n⠀",
@@ -265,15 +279,13 @@ class Rating:
         if approved or to_approve:
             message = USER_ALREADY_VOTED
             if approved:
-                approved_message = f"<b>{len(approved)}</b> recensione pubblicata (✅)"
+                approved_message = PUBLISHED_RATING_MESSAGE % len(approved)
                 approved = approved[0]
                 pr = approved
             else:
                 approved_message = ""
             if to_approve:
-                to_approve_message = (
-                    f"<b>{len(to_approve)}</b> recensione in fase di valutazione (⚖️)"
-                )
+                to_approve_message = TO_APPROVE_RATING_MESSAGE % len(to_approve)
                 to_approve = to_approve[0]
                 pr = to_approve
             else:
@@ -281,7 +293,7 @@ class Rating:
             if approved and to_approve_message:
                 message = message % (
                     approved_message,
-                    " e ",
+                    " e ", # TODO: check this
                     to_approve_message,
                     USER_ALREADY_VOTED_BOTH,
                 )
@@ -400,25 +412,24 @@ class Rating:
         stars += (5 - vote) * "🕳"
 
         if self.user_message[user_id]:
-            text = f"\n\n<b>{status}</b>\n– Voto:  {stars}"
+            text = STATUS_RATING_MESSAGE % (status, stars)
+            text = f"\n\n{text}"
         else:
-            text = f"<b>{status}</b>\n– Voto:  {stars}"
+            text = STATUS_RATING_MESSAGE % (status, stars)
         self.user_message[user_id] += text
         previous_comment = ""
         if user_id in self.previous_comments:
             if self.previous_comments[user_id]:
                 previous_comment = self.previous_comments[user_id][index]
                 if previous_comment:
-                    previous_comment = f'Commento precedente:  <i>"{previous_comment}"</i>\n\n'
+                    previous_comment = RATING_PREVIOUS_COMMENT % previous_comment
                 else:
                     previous_comment = ""
         try:
             context.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=self.message_id[user_id],
-                text=f"{RATING_HEADER_MENU}" + self.user_message[user_id]
-                + f"\n\n\n{previous_comment}<b>Inserisci un commento (massimo {self.MAX_CHARACTERS_ALLOWED} caratteri):</b>\n"
-                + "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
+                text=RATING_INSERT_NEW_COMMENT_MESSAGE % (self.user_message[user_id], self.MAX_CHARACTERS_ALLOWED, previous_comment),
                 reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
                 parse_mode="HTML",
             )
@@ -453,7 +464,7 @@ class Rating:
         context.bot.edit_message_text(
             chat_id=chat_id,
             message_id=self.message_id[user_id],
-            text=RATING_HEADER_MENU + current_user_message + "<b>Dai un voto a...</b>",
+            text=RATING_HEADER_MENU + current_user_message + RATING_PLACEHOLDER,
             parse_mode="HTML",
         )
         return
@@ -489,8 +500,7 @@ class Rating:
         date = datetime.now()
         date = date.strftime("%d/%m/%Y alle %H:%M")
         text += (
-            "\n\n\n❌  <b>Non approvato da"
-            f' <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a> in data {date}!</b>'
+            RATING_NOT_APPROVED % (update.effective_user.id, update.effective_user.first_name, date)
         )
         context.bot.edit_message_text(
             message_id=update.effective_message.message_id,
@@ -542,8 +552,7 @@ class Rating:
         date = datetime.now()
         date = date.strftime("%d/%m/%Y alle %H:%M")
         text += (
-            "\n\n\n✅  <b>Approvato da"
-            f' <a href="tg://user?id={update.effective_user.id}">{update.effective_user.first_name}</a> in data {date}!</b>'
+            RATING_APPROVED_MESSAGE % (update.effective_user.id, update.effective_user.first_name, date)
         )
         context.bot.edit_message_text(
             message_id=update.effective_message.message_id,

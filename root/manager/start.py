@@ -16,8 +16,6 @@ from root.helper.user_helper import is_admin
 from mongoengine.errors import DoesNotExist
 from root.model.configuration import Configuration
 
-from mongoengine.fields import key_not_string
-
 from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
@@ -27,14 +25,43 @@ from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
 from root.util.util import create_button, retrieve_key
 from root.contants.messages import (
+    ABOUT_BOT_BUTTON_TEXT,
+    ABOUT_ME_BUTTON_TEXT,
+    ADMIN_BUTTON_TEXT,
+    AVERAGE_HEADER_MESSAGE,
+    BOT_INFO_HEADER_MESSAGE,
+    COMPRESS_RATING_BUTTON_TEXT,
+    EXPAND_RATING_BUTTON_TEXT,
+    FUNCTIONALITY_HEADER_MESSAGE,
+    GLOSSARY_BUTTON_TEXT,
     GLOSSARY_LINK,
+    GO_BACK_BUTTON_TEXT,
+    HIDE_COMMANDS_BUTTON_TEXT,
+    HOW_TO_BUTTON_TEXT,
+    INFO_BUTTON_TEXT,
+    LINK_TO_PROJECT_BUTTON_TEXT,
+    MONTHLY_REPORT_BUTTON_TEXT,
+    OVERALL_HEADER_MESSAGE,
+    RATE_ME_BUTTON_TEXT,
+    RATING_BASED_ON_MESSAGE,
     REPO_LINK,
+    SETTINGS_BUTTON_TEXT,
+    SHOW_COMMANDS_BUTTON_TEXT,
     START_COMMAND,
     START_COMMANDS_LIST,
     PLEASE_NOTE_APPEND,
     START_COMMANDS_LIST_HEADER,
     START_GROUP_GROUP_APPEND,
+    SUPPORT_BUTTON_TEXT,
     TRIANGLES_MESSAGE_BUTTON,
+    UI_HEADER_MESSAGE,
+    USER_INFO_HEADER_MESSAGE,
+    USER_INFO_MESSAGE,
+    UX_HEADER_MESSAGE,
+    VERSION_INFO_MESSAGE,
+    WHATS_THIS_BUTTON_TEXT,
+    WISHLIST_BUTTON_TEXT,
+    YEARLY_REPORT_BUTTON_TEXT,
     build_show_notification_button,
 )
 from root.helper.redis_message import add_message
@@ -43,9 +70,6 @@ import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 import user_reputation.helper.user_reputation as ur_helper
-
-DEVELOPER = '<a href="tg://user?id=84872221">Edoardo Zerbo</a>'
-DESIGNER = '<a href="tg://user?id=109191781">Lorenzo Maffii</a>'
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -223,12 +247,12 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         logger.info("User [%s] is an admin" % update.effective_user.id)
         admin_button = [
             create_button(
-                "🎖 PANNELLO ADMIN",
+                ADMIN_BUTTON_TEXT,
                 "show_admin_panel",
                 "show_admin_panel",
             ),
             create_button(
-                "⚙️  Impostazioni",
+                SETTINGS_BUTTON_TEXT,
                 "user_settings",
                 "user_settings",
             ),
@@ -237,7 +261,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         logger.info("User [%s] is NOT an admin" % update.effective_user.id)
         admin_button = [
             create_button(
-                "⚙️  Impostazioni",
+                SETTINGS_BUTTON_TEXT,
                 "user_settings",
                 "user_settings",
             )
@@ -267,12 +291,12 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             ],
             [
                 create_button(
-                    "🔺     Nascondi i comandi     🔺",
+                    HIDE_COMMANDS_BUTTON_TEXT,
                     "start_hide_commands",
                     "start_hide_commands",
                 ),
             ],
-            [create_button("📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0")],
+            [create_button(HOW_TO_BUTTON_TEXT, "how_to_page_0", "how_to_page_0")],
             [
                 create_button(
                     build_show_notification_button(update.effective_user),
@@ -281,24 +305,26 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                 )
             ],
             [
-                create_button("📈  Report mensile", "expand_report", "expand_report"),
                 create_button(
-                    "💡 Che cos'è?", "monthly_report_info", "monthly_report_info"
+                    MONTHLY_REPORT_BUTTON_TEXT, "expand_report", "expand_report"
+                ),
+                create_button(
+                    WHATS_THIS_BUTTON_TEXT, "monthly_report_info", "monthly_report_info"
                 ),
             ],
             [
                 create_button(
-                    "📈  Report annuale",
+                    YEARLY_REPORT_BUTTON_TEXT,
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
                 ),
                 create_button(
-                    "💡 Che cos'è?", "yearly_report_info", "yearly_report_info"
+                    WHATS_THIS_BUTTON_TEXT, "yearly_report_info", "yearly_report_info"
                 ),
             ],
             [
                 create_button(
-                    "♥️  Lista dei desideri",
+                    WISHLIST_BUTTON_TEXT,
                     "view_wishlist_element_0",
                     "view_wishlist_element_0",
                 )
@@ -306,19 +332,19 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
             admin_button,
             [
                 create_button(
-                    "ℹ️  Info",
+                    INFO_BUTTON_TEXT,
                     "show_bot_info",
                     "show_bot_info",
                 ),
                 create_button(
-                    "⭐  Valutami",
+                    RATE_ME_BUTTON_TEXT,
                     "rating_menu",
                     "rating_menu",
                 ),
             ],
             [
                 create_button(
-                    "🆘  Supporto",
+                    SUPPORT_BUTTON_TEXT,
                     "send_feedback",
                     "send_feedback",
                     # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
@@ -396,7 +422,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                 "show_admin_panel",
             ),
             create_button(
-                "⚙️  Impostazioni",
+                SETTINGS_BUTTON_TEXT,
                 "user_settings",
                 "user_settings",
             ),
@@ -405,7 +431,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
         logger.info("User [%s] is NOT an admin" % update.effective_user.id)
         admin_button = [
             create_button(
-                "⚙️  Impostazioni",
+                SETTINGS_BUTTON_TEXT,
                 "user_settings",
                 "user_settings",
             )
@@ -414,7 +440,7 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
         [
             [
                 create_button(
-                    "🔻     Mostra i comandi     🔻",
+                    SHOW_COMMANDS_BUTTON_TEXT,
                     "start_show_commands",
                     "start_show_commands",
                 )
@@ -427,24 +453,26 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                 )
             ],
             [
-                create_button("📈  Report mensile", "expand_report", "expand_report"),
                 create_button(
-                    "💡 Che cos'è?", "monthly_report_info", "monthly_report_info"
+                    MONTHLY_REPORT_BUTTON_TEXT, "expand_report", "expand_report"
+                ),
+                create_button(
+                    WHATS_THIS_BUTTON_TEXT, "monthly_report_info", "monthly_report_info"
                 ),
             ],
             [
                 create_button(
-                    "📈  Report annuale",
+                    YEARLY_REPORT_BUTTON_TEXT,
                     f"expand_year_report_{current_year}",
                     f"expand_year_report_{current_year}",
                 ),
                 create_button(
-                    "💡 Che cos'è?", "yearly_report_info", "yearly_report_info"
+                    WHATS_THIS_BUTTON_TEXT, "yearly_report_info", "yearly_report_info"
                 ),
             ],
             [
                 create_button(
-                    "♥️  Lista dei desideri",
+                    WISHLIST_BUTTON_TEXT,
                     "view_wishlist_element_0",
                     "view_wishlist_element_0",
                 )
@@ -452,19 +480,19 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
             admin_button,
             [
                 create_button(
-                    "ℹ️  Info",
+                    INFO_BUTTON_TEXT,
                     "show_bot_info",
                     "show_bot_info",
                 ),
                 create_button(
-                    "⭐  Valutami",
+                    RATE_ME_BUTTON_TEXT,
                     "rating_menu",
                     "rating_menu",
                 ),
             ],
             [
                 create_button(
-                    "🆘  Supporto",
+                    SUPPORT_BUTTON_TEXT,
                     "send_feedback",
                     "send_feedback",
                 )
@@ -479,10 +507,11 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
-    if update.effective_chat.type == "private":
-        update_or_create_start_message(
-            update.effective_user, update.effective_message.message_id
-        )
+    if update.effective_chat:
+        if update.effective_chat.type == "private":
+            update_or_create_start_message(
+                update.effective_user, update.effective_message.message_id
+            )
 
 
 def build_message(user: User, message: Message, append: str = "") -> str:
@@ -525,7 +554,7 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                     "show_admin_panel",
                 ),
                 create_button(
-                    "⚙️  Impostazioni",
+                    SETTINGS_BUTTON_TEXT,
                     "user_settings",
                     "user_settings",
                 ),
@@ -534,7 +563,7 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
             logger.info("User [%s] is NOT an admin" % user.id)
             admin_button = [
                 create_button(
-                    "⚙️  Impostazioni",
+                    SETTINGS_BUTTON_TEXT,
                     "user_settings",
                     "user_settings",
                 )
@@ -543,16 +572,12 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
             [
                 [
                     create_button(
-                        "🔻     Mostra i comandi     🔻",
+                        SHOW_COMMANDS_BUTTON_TEXT,
                         "start_show_commands",
                         "start_show_commands",
                     )
                 ],
-                [
-                    create_button(
-                        "📚  Guida all'utilizzo", "how_to_page_0", "how_to_page_0"
-                    )
-                ],
+                [create_button(HOW_TO_BUTTON_TEXT, "how_to_page_0", "how_to_page_0")],
                 [
                     create_button(
                         build_show_notification_button(user),
@@ -562,25 +587,29 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                 ],
                 [
                     create_button(
-                        "📈  Report mensile", "expand_report", "expand_report"
+                        MONTHLY_REPORT_BUTTON_TEXT, "expand_report", "expand_report"
                     ),
                     create_button(
-                        "💡 Che cos'è?", "monthly_report_info", "monthly_report_info"
-                    ),
-                ],
-                [
-                    create_button(
-                        "📈  Report annuale",
-                        f"expand_year_report_{current_year}",
-                        f"expand_year_report_{current_year}",
-                    ),
-                    create_button(
-                        "💡 Che cos'è?", "yearly_report_info", "yearly_report_info"
+                        WHATS_THIS_BUTTON_TEXT,
+                        "monthly_report_info",
+                        "monthly_report_info",
                     ),
                 ],
                 [
                     create_button(
-                        "♥️  Lista dei desideri",
+                        YEARLY_REPORT_BUTTON_TEXT,
+                        f"expand_year_report_{current_year}",
+                        f"expand_year_report_{current_year}",
+                    ),
+                    create_button(
+                        WHATS_THIS_BUTTON_TEXT,
+                        "yearly_report_info",
+                        "yearly_report_info",
+                    ),
+                ],
+                [
+                    create_button(
+                        WISHLIST_BUTTON_TEXT,
                         "view_wishlist_element_0",
                         "view_wishlist_element_0",
                     )
@@ -588,19 +617,19 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                 admin_button,
                 [
                     create_button(
-                        "ℹ️  Info",
+                        INFO_BUTTON_TEXT,
                         "show_bot_info",
                         "show_bot_info",
                     ),
                     create_button(
-                        "⭐  Valutami",
+                        RATE_ME_BUTTON_TEXT,
                         "rating_menu",
                         "rating_menu",
                     ),
                 ],
                 [
                     create_button(
-                        "🆘  Supporto",
+                        SUPPORT_BUTTON_TEXT,
                         "send_feedback",
                         "send_feedback",
                         # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
@@ -643,10 +672,10 @@ def show_info(update: Update, context: CallbackContext):
         command_redirect("info", "show_info", update, context)
         return
     spaces = 10
-    ux_header = "🤹🏻  <i>Semplicità</i>"
-    functionality_header = "➕  <i>Funzionalità</i>"
-    ui_header = "👁‍🗨  <i>Interfaccia</i>"
-    overall_header = "🌐  <i>Generale</i>"
+    ux_header = UX_HEADER_MESSAGE
+    functionality_header = FUNCTIONALITY_HEADER_MESSAGE
+    ui_header = UI_HEADER_MESSAGE
+    overall_header = OVERALL_HEADER_MESSAGE
 
     message = update.effective_message
     message_id = message.message_id
@@ -675,22 +704,22 @@ def show_info(update: Update, context: CallbackContext):
     keyboard = [
         [
             create_button(
-                "⭐  Valutami",
+                RATE_ME_BUTTON_TEXT,
                 "rating_menu_from_info",
                 "rating_menu_from_info",
             ),
-            create_button("🐙  Link al progetto", "github_link", None, REPO_LINK),
+            create_button(LINK_TO_PROJECT_BUTTON_TEXT, "github_link", None, REPO_LINK),
         ],
         [
-            create_button("🔠  Glossario", "glossary_link", None, GLOSSARY_LINK),
+            create_button(GLOSSARY_BUTTON_TEXT, "glossary_link", None, GLOSSARY_LINK),
         ],
-        [create_button("↩️  Torna indietro", "how_to_end", "how_to_end")],
+        [create_button(GO_BACK_BUTTON_TEXT, "how_to_end", "how_to_end")],
     ]
     number_of_reviews = len(UserRating.objects().filter(approved=True))
     average_message = create_rating_moons(average)
     average_header = ux_header
     hlength = len(average_header)
-    message = f"<b><u>INFO</u>    ➔    SUL BOT</b>\n\n\n"
+    message = BOT_INFO_HEADER_MESSAGE
 
     callback = update.callback_query
 
@@ -700,20 +729,19 @@ def show_info(update: Update, context: CallbackContext):
         data = "do_not_expand"
     default_selection = 1 if data == "show_user_info" else 0
     if default_selection == 0:
-        bot_info_message = TRIANGLES_MESSAGE_BUTTON % ("🤖  Sul bot")
+        bot_info_message = TRIANGLES_MESSAGE_BUTTON % (ABOUT_BOT_BUTTON_TEXT)
         bot_info_callback = "empty_button"
-        user_info_message = "👤  Su di me"
+        user_info_message = ABOUT_ME_BUTTON_TEXT
+
         user_info_callback = "show_user_info"
     else:
-        bot_info_message = "🤖  Sul bot"
+        bot_info_message = ABOUT_BOT_BUTTON_TEXT
         bot_info_callback = "show_bot_info"
         user_info_callback = "empty_button"
-        user_info_message = TRIANGLES_MESSAGE_BUTTON % "👤  Su di me"
+        user_info_message = TRIANGLES_MESSAGE_BUTTON % ABOUT_ME_BUTTON_TEXT
     if data == "expand_info":
         button = [
-            create_button(
-                "🔺     Comprimi valutazione     🔺", "show_bot_info", "show_bot_info"
-            )
+            create_button(COMPRESS_RATING_BUTTON_TEXT, "show_bot_info", "show_bot_info")
         ]
         keyboard.insert(0, button)
         message += f"{create_rating_moons(ux_vote)}{' ' * spaces}{ux_header}\n"
@@ -726,44 +754,28 @@ def show_info(update: Update, context: CallbackContext):
         message += f"{'─' * 12}\n"
     else:
         button = [
-            create_button(
-                "🔻     Espandi valutazione     🔻", "expand_info", "expand_info"
-            )
+            create_button(EXPAND_RATING_BUTTON_TEXT, "expand_info", "expand_info")
         ]
         keyboard.insert(0, button)
     # TABS
     if default_selection == 1:
-        keyboard = [[create_button("↩️  Torna indietro", "how_to_end", "how_to_end")]]
+        keyboard = [[create_button(GO_BACK_BUTTON_TEXT, "how_to_end", "how_to_end")]]
     tabs = [
         create_button(bot_info_message, bot_info_callback, None),
         create_button(user_info_message, user_info_callback, None),
     ]
     keyboard.insert(0, tabs)
-    average_header = "⭐️  <i><b>Valutazione</b></i>"
+    average_header = AVERAGE_HEADER_MESSAGE
     message += (
         f"{average_message}{' ' * spaces}{average_header}\n" if average_message else ""
     )
     if average_message:
-        average_append = f"<i>(basata su {number_of_reviews} recensioni)</i>\n\n\n"
+        average_append = RATING_BASED_ON_MESSAGE % number_of_reviews
         message += average_append
-    message += (
-        f"🔄  Versione:  <code>{VERSION}</code>     (rilasciata il {LAST_UPDATE})\n\n"
-    )
-    message += f"☕️  Sviluppatore:  {DEVELOPER}\n"
-    message += f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
-    message += f"<i>A cura di @VGsNETWORK</i>"
+    message += VERSION_INFO_MESSAGE % (VERSION, LAST_UPDATE)
     if default_selection == 1:
-        message = f"<b><u>INFO</u>    ➔    SU DI ME</b>\n\n\n"
-        message += f"{user_reputation_chart}{' ' * spaces}🛂  Reputazione\n\n\n"
-        message += (
-            '<i>La <b>Reputazione</b> (anche indicata come "<b>REP</b>") '
-            "è un indicatore della tua condotta all'interno dei gruppi di <b>@VGsNETWORK</b>.\n"
-            "Una <b>Reputazione</b> alta ti qualifica come un membro cordiale, rispettoso, "
-            "affidabile e partecipe della community.\n"
-            'Di contro, infrangere il <a href="https://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
-            "regolamento</a> potrebbe portare, a discrezione degli amministratori, "
-            "alla perdita di uno o più punti di <b>REP</b>.</i>"
-        )
+        message = USER_INFO_HEADER_MESSAGE
+        message += USER_INFO_MESSAGE % (user_reputation_chart, (" " * spaces))
     if callback:
         context.bot.edit_message_text(
             chat_id=chat.id,

@@ -11,6 +11,8 @@ from telegram.error import BadRequest
 from root.util.telegram import TelegramSender
 from root.util.util import append_timeout_message, create_button, retrieve_key
 from root.contants.messages import (
+    HOW_TO_I_UNDERSTAND_BUTTON_TEXT,
+    HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT,
     HOW_TO_PAGES,
     HOW_TO_DEEP_LINK,
 )
@@ -61,7 +63,7 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
     first_name: str = user.first_name
     message = HOW_TO_DEEP_LINK % (user_id, first_name, bot_name)
     button = create_button(
-        message="📚  Apri la guida completa",
+        message=HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT,
         callback="help_redirect",
         query="help_redirect",
         url=f"t.me/{bot_name}?start=how_to",
@@ -158,5 +160,7 @@ def create_message(page: int):
             button = f"►     {button}     ◄"
         button = create_button(button, callback, callback)
         keyboards.append([button])
-    keyboards.append([create_button("Ho capito!", "how_to_end", "how_to_end")])
+    keyboards.append(
+        [create_button(HOW_TO_I_UNDERSTAND_BUTTON_TEXT, "how_to_end", "how_to_end")]
+    )
     return text, InlineKeyboardMarkup(keyboards)
