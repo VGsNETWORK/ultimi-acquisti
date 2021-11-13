@@ -33,3 +33,7 @@ FORMAT_ENTITIES = {
     "code": "<code>%s</code>",
     "text_link": '<a href="%s">%s</a>',
 }
+
+REPUTATION_REQUIRED_FOR_RATING = 4
+
+REPUTATION_REQUIRED_FOR_SUPPORT = 3

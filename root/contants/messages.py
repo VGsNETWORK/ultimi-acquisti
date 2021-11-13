@@ -40,6 +40,7 @@ PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT = "◄"
 NEXT_PAGE_NAVIGATION_BUTTON_TEXT = "►"
 WHATS_THIS_BUTTON_TEXT = "💡 Che cos'è?"
 MORE_DETAILS_BUTTON_TEXT = "Maggiori dettagli..."
+SECTION_LOCKED_MESSAGE = "🔒 Sezione bloccata!"
 
 # =======================================================================
 
@@ -259,7 +260,7 @@ HOW_TO_PAGES = [
 # NOTIFICATION PANEL
 NOTIFICATION_MESSAGE_FORMAT = '"%s"\n\n\n<b><i>%s</i></b>'
 NOTIFICATION_READ_FORMAT = f"\n<b>[%s]</b>  %s\n\n"
-NOTIFICATION_UNREAD_FORMAT = "\n🆕  <b>[%S]</b>  <b>%s</b>\n\n"
+NOTIFICATION_UNREAD_FORMAT = "\n🆕  <b>[%s]</b>  <b>%s</b>\n\n"
 NOTIFICATION_PANEL_MAIN_BUTTON = "📮 Centro messaggi   │   %s  %s    %s  %s"
 NOTIFICATION_COMMUNICATION_HEADER = (
     "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
@@ -398,7 +399,7 @@ RATING_TEXT_LIMIT_REACHED_MESSAGE = (
 RATING_INSERT_NEW_COMMENT_MESSAGE = (
     f"{RATING_HEADER_MENU}%s"
     "\n\n\n%s<b>Inserisci un commento (massimo %s caratteri):</b>\n"
-    "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
+    "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
 )
 
 RATING_COMMENT_AND_VOTE_INSERED_MESSAGE = (

@@ -40,6 +40,7 @@ from root.job.update_product import (
     update_products,
 )
 from root.manager.resend_communication_handler import RESEND_COMMUNICATION_CONVERSATION
+from root.manager.section_locked import show_section_locked_popup
 from root.manager.supported_notification import show_supported_notifications
 from root.manager.wishlist_element_link import (
     ADD_NEW_LINK_TO_ELEMENT_CONVERSATION,
@@ -1002,5 +1003,11 @@ class BotManager:
             CallbackQueryHandler(
                 pattern="show_supported_notification",
                 callback=show_supported_notifications,
+            )
+        )
+        self.disp.add_handler(
+            CallbackQueryHandler(
+                pattern="show_section_locked",
+                callback=show_section_locked_popup,
             )
         )

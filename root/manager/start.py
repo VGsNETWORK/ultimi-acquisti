@@ -4,6 +4,7 @@
 
 from os import environ
 import re
+from root.contants.constant import REPUTATION_REQUIRED_FOR_SUPPORT
 from root.contants.keyboard import GROUP_START_KEYBOARD
 from root.helper.notification import create_notification
 from root.helper.start_messages import (
@@ -70,6 +71,7 @@ import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 import user_reputation.helper.user_reputation as ur_helper
+from user_reputation.util.user_reputation import create_locked_button
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -343,11 +345,11 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                 ),
             ],
             [
-                create_button(
+                create_locked_button(
+                    update.effective_user.id,
                     SUPPORT_BUTTON_TEXT,
                     "send_feedback",
-                    "send_feedback",
-                    # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                    REPUTATION_REQUIRED_FOR_SUPPORT,
                 )
             ],
         ]
@@ -491,10 +493,11 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                 ),
             ],
             [
-                create_button(
+                create_locked_button(
+                    update.effective_user.id,
                     SUPPORT_BUTTON_TEXT,
                     "send_feedback",
-                    "send_feedback",
+                    REPUTATION_REQUIRED_FOR_SUPPORT,
                 )
             ],
         ]
@@ -628,11 +631,11 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                     ),
                 ],
                 [
-                    create_button(
+                    create_locked_button(
+                        user.id,
                         SUPPORT_BUTTON_TEXT,
                         "send_feedback",
-                        "send_feedback",
-                        # url="t.me/VGsNETWORK_Bot?start=leave_feedback",
+                        REPUTATION_REQUIRED_FOR_SUPPORT,
                     )
                 ],
             ]

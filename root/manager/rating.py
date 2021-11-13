@@ -23,7 +23,7 @@ from root.helper.configuration import ConfigurationHelper
 from root.contants.keyboard import (
     RATING_KEYBOARD,
     RATING_REVIEWED_KEYBOARD,
-    SHOW_RATING_KEYBOARD,
+    show_rating_keyboard,
     build_approve_keyboard,
     build_pre_poll_keyboard,
 )
@@ -330,7 +330,7 @@ class Rating:
                 message_id=message_id,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
-                reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
+                reply_markup=build_pre_poll_keyboard(user_id, approved, to_approve, data),
             )
         else:
             sender.delete_if_private(context, update.effective_message)
@@ -339,7 +339,7 @@ class Rating:
                 text=message,
                 parse_mode="HTML",
                 disable_web_page_preview=True,
-                reply_markup=build_pre_poll_keyboard(approved, to_approve, data),
+                reply_markup=build_pre_poll_keyboard(user_id, approved, to_approve, data),
             )
 
 
@@ -358,7 +358,7 @@ class Rating:
                 chat_id=chat_id,
                 message_id=message_id,
                 text=message,
-                reply_markup=SHOW_RATING_KEYBOARD,
+                reply_markup=show_rating_keyboard(user_id),
                 disable_web_page_preview=True,
                 parse_mode="HTML",
             )
@@ -426,10 +426,11 @@ class Rating:
                 else:
                     previous_comment = ""
         try:
+            text = RATING_INSERT_NEW_COMMENT_MESSAGE % (self.user_message[user_id], self.MAX_CHARACTERS_ALLOWED, previous_comment)
             context.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=self.message_id[user_id],
-                text=RATING_INSERT_NEW_COMMENT_MESSAGE % (self.user_message[user_id], self.MAX_CHARACTERS_ALLOWED, previous_comment),
+                text=text,
                 reply_markup=InlineKeyboardMarkup(RATING_KEYBOARD),
                 parse_mode="HTML",
             )

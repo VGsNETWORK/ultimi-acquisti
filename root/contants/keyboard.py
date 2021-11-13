@@ -9,7 +9,7 @@ from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
-from root.contants.constant import CATEGORIES
+from root.contants.constant import CATEGORIES, REPUTATION_REQUIRED_FOR_RATING
 from root.contants.messages import (
     BOT_NAME,
     GO_BACK_BUTTON_TEXT,
@@ -51,6 +51,7 @@ from root.util.util import (
     html_to_markdown,
 )
 from telegram import InlineKeyboardMarkup
+from user_reputation.util.user_reputation import create_locked_button
 
 BOT_NAME = environ["BOT_NAME"]
 
@@ -160,18 +161,11 @@ def create_wrong_date_keyboard(message_id: int, modified: bool):
     )
 
 
-SHOW_RATING_KEYBOARD = InlineKeyboardMarkup(
-    [
-        [
-            create_button(
-                "🔄  Aggiorna la recensione",
-                f"start_poll",
-                f"start_poll",
-            )
-        ],
+def show_rating_keyboard(user_id: int):
+    return [
+        [create_locked_button(user_id, "🔄  Aggiorna la recensione", "start_poll", REPUTATION_REQUIRED_FOR_RATING)],
         [create_button("↩️  Torna indietro", "rating_menu", "rating_menu")],
     ]
-)
 
 
 def build_approve_keyboard(code: str, user_id: int):
@@ -194,7 +188,7 @@ def build_approve_keyboard(code: str, user_id: int):
 
 
 def build_pre_poll_keyboard(
-    approved: UserRating, to_approve: UserRating, callback_data: str
+    user_id: int, approved: UserRating, to_approve: UserRating, callback_data: str
 ):
     back_callback = (
         "show_bot_info" if callback_data == "rating_menu_from_info" else "cancel_rating"
@@ -228,15 +222,7 @@ def build_pre_poll_keyboard(
             ]
         )
 
-    keyboard.append(
-        [
-            create_button(
-                message,
-                f"start_poll",
-                f"start_poll",
-            )
-        ]
-    )
+    keyboard.append([create_locked_button(user_id, message, "start_poll", REPUTATION_REQUIRED_FOR_RATING)])
 
     keyboard.append([create_button("↩️  Torna indietro", back_callback, back_callback)])
     return InlineKeyboardMarkup(keyboard)
