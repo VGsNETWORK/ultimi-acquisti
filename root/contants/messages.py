@@ -21,155 +21,37 @@ def TODAY():
     return "%s/%s/%s" % ("%02d" % T.day, "%02d" % T.month, T.year)
 
 
-TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
-
+# MISC
 BOT_NAME = environ["BOT_NAME"]
-
 BOT_ID = environ["BOT_ID"]
-
+TRIANGLES_MESSAGE_BUTTON = "►     %s     ◄"
 DEVELOPER = '<a href="tg://user?id=84872221">Edoardo Zerbo</a>'
 DESIGNER = '<a href="tg://user?id=109191781">Lorenzo Maffii</a>'
-
-UX_HEADER_MESSAGE = "🤹🏻  <i>Semplicità</i>"
-FUNCTIONALITY_HEADER_MESSAGE = "➕  <i>Funzionalità</i>"
-UI_HEADER_MESSAGE = "👁‍🗨  <i>Interfaccia</i>"
-OVERALL_HEADER_MESSAGE = "🌐  <i>Generale</i>"
-AVERAGE_HEADER_MESSAGE = "⭐️  <i><b>Valutazione</b></i>"
-RATING_HEADER_MENU = "<b><u>VALUTAZIONE</u></b>\n\n\n"
-
-RATING_BASED_ON_MESSAGE = "<i>(basata su %s recensioni)</i>\n\n\n"
-VERSION_INFO_MESSAGE = (
-    "🔄  Versione:  <code>%s</code>     (rilasciata il %s)\n\n"
-    f"☕️  Sviluppatore:  {DEVELOPER}\n"
-    f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
-    "<i>A cura di @VGsNETWORK</i>"
-)
-
-BOT_INFO_HEADER_MESSAGE = "<b><u>INFO</u>    ➔    SUL BOT</b>\n\n\n"
-USER_INFO_HEADER_MESSAGE = f"<b><u>INFO</u>    ➔    SU DI ME</b>\n\n\n"
-
-USER_INFO_MESSAGE = (
-    "%s%s🛂  Reputazione\n\n\n"
-    '<i>La <b>Reputazione</b> (anche indicata come "<b>REP</b>") '
-    "è un indicatore della tua condotta all'interno dei gruppi di <b>@VGsNETWORK</b>.\n"
-    "Una <b>Reputazione</b> alta ti qualifica come un membro cordiale, rispettoso, "
-    "affidabile e partecipe della community.\n"
-    'Di contro, infrangere il <a href="https://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
-    "regolamento</a> potrebbe portare, a discrezione degli amministratori, "
-    "alla perdita di uno o più punti di <b>REP</b>.</i>"
-)
-
-ADMIN_BUTTON_TEXT = "🎖 PANNELLO ADMIN"
-SETTINGS_BUTTON_TEXT = "⚙️  Impostazioni"
-HOW_TO_BUTTON_TEXT = "📚  Guida all'utilizzo"
-MONTHLY_REPORT_BUTTON_TEXT = "📈  Report mensile"
-YEARLY_REPORT_BUTTON_TEXT = "📈  Report annuale"
-WHATS_THIS_BUTTON_TEXT = "💡 Che cos'è?"
-WISHLIST_BUTTON_TEXT = "♥️  Lista dei desideri"
-INFO_BUTTON_TEXT = "ℹ️  Info"
-RATE_ME_BUTTON_TEXT = "⭐  Valutami"
-SUPPORT_BUTTON_TEXT = "🆘  Supporto"
-HIDE_COMMANDS_BUTTON_TEXT = "🔺     Nascondi i comandi     🔺"
-SHOW_COMMANDS_BUTTON_TEXT = "🔻     Mostra i comandi     🔻"
-COMPRESS_RATING_BUTTON_TEXT = "🔺     Comprimi valutazione     🔺"
-EXPAND_RATING_BUTTON_TEXT = "🔻     Espandi valutazione     🔻"
-
-GLOSSARY_BUTTON_TEXT = "🔠  Glossario dei termini"
-LINK_TO_PROJECT_BUTTON_TEXT = "🐙  Link al progetto"
-ABOUT_ME_BUTTON_TEXT = "👤  Su di me"
-ABOUT_BOT_BUTTON_TEXT = "🤖  Sul bot"
-
-GO_BACK_BUTTON_TEXT = "↩️  Torna indietro"
-CANCEL_BUTTON_TEXT = "❌  Annulla"
-
-HOW_TO_I_UNDERSTAND_BUTTON_TEXT = "Ho capito!"
-HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT = "📚  Apri la guida completa"
-
-RATING_TEXT_LIMIT_REACHED_MESSAGE = (
-    "\n\n\n🚫  <b>Limite superato di %s caratteri!</b>"
-    '\nEcco quello che hai inserito (tagliato a %s caratteri):\n<i>"%s"</i>'
-    "\n\n<b>Inserisci un commento (massimo %s caratteri):</b>"
-    "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
-)
-
-RATING_INSERT_NEW_COMMENT_MESSAGE = (
-    f"{RATING_HEADER_MENU}%s"
-    "\n\n\n%s<b>Inserisci un commento (massimo %s caratteri):</b>\n"
-    "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
-)
-
-RATING_COMMENT_AND_VOTE_INSERED_MESSAGE = (
-    "<b>%s</b>\n– Voto:  %s\n– Commento:  <i>%s</i>"
-)
-
-PREVIOUS_VOTE = f"\n\nVoto precedente:  %s"
-PREVIOUS_VOTE = "  (prima:  %s)"
-
-STATUS_RATING_MESSAGE = f"<b>%s</b>\n– Voto:  %s"
-RATING_PREVIOUS_COMMENT = f'Commento precedente:  <i>"%s"</i>\n\n'
-
-PUBLISHED_RATING_MESSAGE = "<b>%s</b> recensione pubblicata (✅)"
-TO_APPROVE_RATING_MESSAGE = f"<b>%s</b> recensione in fase di valutazione (⚖️)"
-RATING_NOT_APPROVED = (
-    "\n\n\n❌  <b>Non approvato da" ' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
-)
-RATING_APPROVED_MESSAGE = (
-    "\n\n\n✅  <b>Approvato da" f' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
-)
-
-RATING_COMMENT_INSERED_MESSAGE = "\n– Commento:  <i>%s</i>"
-
-GIVE_RATING_TO_MESSAGE = "\n\n\n<b>Dai un voto a...</b>"
-
-THANK_YOU_FOR_RATING_MESSAGE = "%s\n\n\n<b>Grazie per aver votato!</b>"
-
-NOT_PRESENT_MESSAGE = "<b>Non presente</b>"
-
 VGS_GROUPS_PRIMARY_LINK = "https://t.me/joinchat/T8CJkZHor02rIzVy"
-
 REPO_LINK = "https://github.com/VGsNETWORK/ultimi-acquisti"
-
 WORK_IN_PROGRESS_MESSAGE = "⚠️ Work In Progress... ⚠️"
-
 GLOSSARY_LINK = "https://telegra.ph/ultimiacquisti--Glossario-dei-termini-10-22"
+# ===
+YES_BUTTON_TEXT = "✅  Sì"
+NO_BUTTON_TEXT = "❌  No"
+GREATER_LESS_MESSAGE_BUTTON = ">     %s     <"
+NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT = "🔚"
+PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT = "◄"
+NEXT_PAGE_NAVIGATION_BUTTON_TEXT = "►"
+WHATS_THIS_BUTTON_TEXT = "💡 Che cos'è?"
+MORE_DETAILS_BUTTON_TEXT = "Maggiori dettagli..."
 
-ADMIN_PANEL_COMMUNICATION_HEADER_MESSAGE = (
-    "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
-)
-ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE = (
-    "<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n"
-)
-ADMIN_PANEL_NEW_COMMUNICATION = (
-    "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
-)
+# =======================================================================
 
-COMMUNICATION_SENT_DATE_TIME_MESSAGE = "Inviato %s%s alle %s"
-
-NEVER_INTERACTED_WITH_THE_BOT_MESSAGE = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
-
-DB_CONNECTION_ERROR = (
-    "Impossibile stabilire un collegamento con il database,"
-    " alcune funzionalità non funzioneranno come dovrebbero."
+# UNK
+START_COMMAND_LIST_WARNING_ARGS = (
+    "%0A%0A💡%20Sostituisci%20i%20campi%20in%20coda%20al%20modello%20del%20comando%20con%20i%20valori%20desiderati"
+    "%2E%20Ricordati%20di%20togliere%20i%20simboli%20%22%3C%22%20e%20%22%3E%22%20e%20questo%20avviso%21"
 )
 
-DB_CONNECTION_SUCCESS = "Connesso al database..."
+# =======================================================================
 
-DB_GENERIC_ERROR = (
-    "Errore sconosciuto durante il collegamento al database,"
-    " controlla i file di log per risolvere il problema."
-)
-
-TELEGRAM_ERROR = (
-    "Durante la gestione di un update si è verificato questo errore:"
-    "\n\n<code>%s</code>\n\nRisolviamo al più presto 😡"
-)
-
-USER_ERROR = (
-    "<i><b>Ehi!</b>\nDurante la gestione del tuo messaggio si sono verificati degli errori."
-    " I nostri sviluppatori sono stati informati:"
-    " verranno risolti il prima possibile.</i>"
-)
-
+# START MENU
 START_COMMAND = (
     'Ciao <a href="tg://user?id=%s">%s</a>, benvenuto su <b>#ultimiacquisti</b>!\n\n'
     "Sono un <b>bot di gestione della spesa personale</b>,"
@@ -190,6 +72,11 @@ PLEASE_NOTE_APPEND = (
     " gruppi di VGs NETWORK</u></a>.</i>\n\n"
 )
 
+# =======================================================================
+
+# COMMANDS LIST
+HIDE_COMMANDS_BUTTON_TEXT = "🔺     Nascondi i comandi     🔺"
+SHOW_COMMANDS_BUTTON_TEXT = "🔻     Mostra i comandi     🔻"
 START_COMMANDS_LIST_HEADER = (
     "<u><b>LISTA DEI COMANDI</b></u>\n\n\n"
     "Questo è un riepilogo di tutti i comandi che supporto.\nTieni presente che alcuni di questi"
@@ -197,11 +84,6 @@ START_COMMANDS_LIST_HEADER = (
     "<i>💡 Per lanciare un comando di gruppo da qui, clicca sul suggerimento ove indicato e seleziona un"
     f' <a href="{VGS_GROUPS_PRIMARY_LINK}"><u>gruppo in cui sono presente</u></a>: inserirò per te il comando nel campo di testo della chat indicata,'
     " così potrai completarlo con gli argomenti necessari e inviarlo in men che non si dica!</i>\n\n\n"
-)
-
-START_COMMAND_LIST_WARNING_ARGS = (
-    "%0A%0A💡%20Sostituisci%20i%20campi%20in%20coda%20al%20modello%20del%20comando%20con%20i%20valori%20desiderati"
-    "%2E%20Ricordati%20di%20togliere%20i%20simboli%20%22%3C%22%20e%20%22%3E%22%20e%20questo%20avviso%21"
 )
 
 START_COMMANDS_LIST = [
@@ -265,7 +147,172 @@ START_COMMANDS_LIST = [
     (f"<code>(👤)  </code><b>/vota</b>\n\n" f"<i>Dammi una valutazione</i>\n\n\n"),
 ]
 
+# =======================================================================
 
+# HOW_TO
+HOW_TO_BUTTON_TEXT = "📚  Guida all'utilizzo"
+HOW_TO_I_UNDERSTAND_BUTTON_TEXT = "Ho capito!"
+HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT = "📚  Apri la guida completa"
+HOW_TO_DEEP_LINK = (
+    '<a href="tg://user?id=%s">%s</a>, per visualizzare la <b>guida all\'utilizzo</b> del bot...'
+    ' <a href="t.me/%s?start=how_to"><b>clicca qui</b></a>!'
+)
+
+DEEP_LINK = '<a href="t.me/%s?start=%s">clicca qui</a>!'
+
+HOW_TO_INTRODUCTION = (
+    "<b><u>GUIDA</u>    ➔    INTRODUZIONE</b>\n\n\n"
+    "Per far sì che io possa riconoscere un tuo acquisto"
+    " è necessario che invii nel gruppo un messaggio di"
+    ' qualsiasi tipo contenente l\'<b><u>hashtag</u></b> "<code>#ultimiacquisti</code>".\n'
+    "Se il messaggio non è di tipo testuale, ma consiste in una (o più) <i>foto</i> o altro "
+    "tipo di <i><b>medium</b></i> (<i>immagine non compressa</i>, <i>audio</i>, <i>file</i>, etc.), "
+    "dovrai aggiungere il tag in <b>didascalia</b> ai suddetti media per renderli un acquisto legittimo."
+)
+
+HOW_TO_PRICE = (
+    "<b><u>GUIDA</u>    ➔   💲 GESTIONE DEL PREZZO</b>\n\n\n"
+    'Se oltre al tag "<code>#ultimiacquisti</code>" indicherai'
+    " una cifra numerica assegnerò quell'importo come <b><u>prezzo</u></b>"
+    " dell'<i>acquisto</i>. Nel caso in cui il testo – o la didascalia,"
+    " in caso di media – presentasse più di una cifra, ricorda che prenderò"
+    " in considerazione <u>soltanto la prima</u> trovata a partire dall'alto.\n"
+    "Puoi inserire l'importo in molteplici formati; ecco alcuni di quelli riconosciuti:\n\n"
+    "   •  <code>22</code>\n"
+    "   •  <code>22,50 €</code>\n"
+    "   •  <code>22.50</code>\n"
+    "   •  <code>2250,10</code>\n"
+    "   •  <code>€ 2,250.10</code>\n"
+    "   •  <code>2.250,10€</code>\n"
+    "   •  <code>2'250.10</code>\n\n"
+    "Se invece ometti l'importo, salverò il tuo <i>acquisto</i> con un importo <i>di default</i>"
+    " di  <code>0,00 €</code>; questo è utile per i regali, o se non vuoi rivelare il prezzo di un"
+    " certo acquisto – tieni presente che in questo secondo caso la scelta si rifletterà"
+    " sui totali mensili e annuali.\n\n"
+    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato,"
+    " quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
+)
+
+HOW_TO_DATE = (
+    "<b><u>GUIDA</u>    ➔    📅  ACQUISTI RETRODATATI</b>\n\n\n"
+    'Se assieme al tag "<code>#ultimiacquisti</code>" espliciti una <b><u>data</u></b>'
+    " anteriore ad oggi collocherò temporalmente l'<i>acquisto</i> a quel giorno. Tieni presente che:\n\n"
+    "   •  i formati accettati per la data sono  <code>DD/MM/YYYY</code>"
+    '  (<i>esempio:</i>  "<code>20/04/2021</code>") e  <code>DD/MM/YY</code>  (<i>esempio:</i>  "<code>20/04/21</code>")'
+    " – altri formati saranno ignorati o potrebbero generare risultati indesiderati;\n"
+    "   •  in caso di date multiple inserite correttamente, prenderò in considerazione <u>soltanto la prima</u> trovata a partire dall'alto.\n\n"
+    "Se ometti la data, o ne inserisci una futura, il tuo <i>acquisto</i> sarà collocato"
+    " <i>di default</i> alla data di oggi.\n\n"
+    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà"
+    " ignorato, quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
+)
+
+HOW_TO_TITLE = (
+    "<b><u>GUIDA</u>    ➔    🔤  DARE UN NOME ALL'ACQUISTO</b>\n\n\n"
+    "Per facilitare il riconoscimento degli <i>acquisti</i> all'interno del <b>report mensile</b>"
+    " ti è data facoltà di assegnare loro un breve <b><u>titolo</u></b> personalizzato; questo sarà"
+    " mostrato alla destra dell'importo, al posto della stringa di default con data e ora di registrazione dell'acquisto.\n"
+    'Per assegnare un titolo al tuo <i>acquisto</i>, tutto ciò che devi fare è inserire del testo racchiuso tra "<code>%...%</code>"'
+    '  (<i>esempio:</i>  "<code>%Il mio acquisto%</code>").\n\n'
+    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato, quindi sentiti pure libero di"
+    " inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
+)
+
+HOW_TO_MODIFY_A_PURCHASE = (
+    "<b><u>GUIDA</u>    ➔    ✏️  MODIFICA DI UN ACQUISTO</b>\n\n\n"
+    "Tieni presente che puoi <b>cambiare</b>, <b>aggiungere</b> o <b>rimuovere</b>"
+    " le info di un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n\n"
+    "   •  cercare il post relativo al tuo acquisto  (a tale scopo la <i>funzione di ricerca interna alla chat</i> di Telegram può tornarti utile);\n"
+    "   •  cliccarci sopra  (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
+    "   •  selezionare <b>Modifica</b>;\n"
+    "   •  dopo aver apportato le modifiche desiderate al messaggio, confermare.\n\n"
+    "💡 Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva,"
+    ' sempre con la stessa procedura: ti basterà taggare il post con "<code>#ultimiacquisti</code>" in fase di modifica del messaggio e,'
+    " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
+)
+HOW_TO_INTRODUCTION = {
+    "button_text": "Introduzione",
+    "description": HOW_TO_INTRODUCTION,
+}
+
+HOW_TO_PRICE = {"button_text": "💲 Prezzo", "description": HOW_TO_PRICE}
+
+HOW_TO_TITLE = {"button_text": "🔤  Titolo", "description": HOW_TO_TITLE}
+
+HOW_TO_DATE = {"button_text": "📅  Data", "description": HOW_TO_DATE}
+
+HOW_TO_MODIFY_A_PURCHASE = {
+    "button_text": "✏️  Modifica di un acquisto",
+    "description": HOW_TO_MODIFY_A_PURCHASE,
+}
+
+HOW_TO_PAGES = [
+    HOW_TO_INTRODUCTION,
+    HOW_TO_PRICE,
+    HOW_TO_DATE,
+    HOW_TO_TITLE,
+    HOW_TO_MODIFY_A_PURCHASE,
+]
+
+# =======================================================================
+
+# NOTIFICATION PANEL
+NOTIFICATION_MESSAGE_FORMAT = '"%s"\n\n\n<b><i>%s</i></b>'
+NOTIFICATION_READ_FORMAT = f"\n<b>[%s]</b>  %s\n\n"
+NOTIFICATION_UNREAD_FORMAT = "\n🆕  <b>[%S]</b>  <b>%s</b>\n\n"
+NOTIFICATION_PANEL_MAIN_BUTTON = "📮 Centro messaggi   │   %s  %s    %s  %s"
+NOTIFICATION_COMMUNICATION_HEADER = (
+    "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+)
+NOTIFICATION_NOTIFICATION_HEADER = "<b><u>CENTRO MESSAGGI</u>    ➔    NOTIFICHE</b>\n\n"
+COMMUNICATION_SENT_DATE_TIME_MESSAGE = "Inviato %s%s alle %s"
+NO_NOTIFICATION_TO_VIEW = "\n<i>Non hai ancora alcuna notifica da visualizzare.</i>"
+NOTIFICATION_MULTIPLE_ELEMENTS_BUTTON_TEXT = f"📬  %s nuove notifiche"
+NOTIFICATION_SINGLE_ELEMENTS_BUTTON_TEXT = f"📬  %s nuova notifica"
+NOTIFICATION_NO_ELEMENTS_BUTTON_TEXT = "📭  Nessuna notifica da leggere"
+NOTIFICATION_NO_MESSAGES_BUTTON_TEXT = "📥  Nessun messaggio da leggere"
+NOTIFICATION_SINGLE_MESSAGES_BUTTON_TEXT = "📨  %s nuovo messaggio"
+NOTIFICATION_MULTIPLE_MESSAGES_BUTTON_TEXT = f"📨  %s nuovi messaggi"
+NOTIFICATION_SUPPORTED_NOTIFICATIONS = "ℹ️  Notifiche supportate"
+NOTIFICATION_DELETE_NOTIFICATION = "🗑"
+
+
+def build_show_notification_button(user: User = None, user_id: int = None):
+    if user:
+        user_id = user.id
+    nof_notifications = count_unread_notifications(user_id)
+    nof_messages = count_unread_admin_messages_for_user(user_id)
+    if nof_notifications > 0:
+        nof_notification_icon = "📬"
+    else:
+        nof_notification_icon = "📭"
+    if nof_messages > 0:
+        nof_message_icon = "📨"
+    else:
+        nof_message_icon = "📥"
+    nof_messages = f"{nof_messages} / %s" % get_total_not_deleted_messages(user_id)
+    text = NOTIFICATION_PANEL_MAIN_BUTTON % (
+        nof_notifications,
+        nof_notification_icon,
+        nof_messages,
+        nof_message_icon,
+    )
+    return text
+
+
+# =======================================================================
+
+# MONTH REPORT
+MONTHLY_REPORT_BUTTON_TEXT = "📈  Report mensile"
+MONTHLY_REPORT_GO_TO_YEAR_START_BUTTON_TEXT = "Torna a inizio anno%s"
+MONTHLY_REPORT_GO_TO_CURRENT_MONTH_BUTTON_TEXT = "Vai al mese corrente%s"
+MONTHLY_REPORT_OPEN_YEARLY_REPORT_FOR_YEAR = "Passa al report annuale del %s"
+MONTHLY_REPORT_GO_BACK_X_YEARS = "– %s  anni"
+MONTHLY_REPORT_GO_FORWARD_X_YEARS = "– %s  anni"
+MONTH_PREVIOUS_PURCHASES_LOWER = (
+    "📈 A <i>%s</i> hai speso <code>%s €</code>, "
+    "<code>%s</code> in meno rispetto a questo mese."
+)
 MONTH_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, a '
     "<b>%s</b> hai speso un totale di <code>%s €</code>.\n\n"
@@ -286,14 +333,135 @@ MONTH_PREVIOUS_PURCHASES_SAME = (
     "➖ Anche a <i>%s</i> hai speso un totale di <code>%s €</code>."
 )
 
-MONTH_PREVIOUS_PURCHASES_LOWER = (
-    "📈 A <i>%s</i> hai speso <code>%s €</code>, "
-    "<code>%s</code> in meno rispetto a questo mese."
-)
-
 MONTH_USER_PURCHASES = "<i>%s</i> a <b>%s</b> ha speso un totale di <code>%s €</code>."
 
 MONTH_USER_PURCHASES_NONE = "<i>%s</i> a <b>%s</b> non ha registrato alcun acquisto."
+
+
+UX_HEADER_MESSAGE = "🤹🏻  <i>Semplicità</i>"
+FUNCTIONALITY_HEADER_MESSAGE = "➕  <i>Funzionalità</i>"
+UI_HEADER_MESSAGE = "👁‍🗨  <i>Interfaccia</i>"
+OVERALL_HEADER_MESSAGE = "🌐  <i>Generale</i>"
+AVERAGE_HEADER_MESSAGE = "⭐️  <i><b>Valutazione</b></i>"
+RATING_HEADER_MENU = "<b><u>VALUTAZIONE</u></b>\n\n\n"
+
+RATING_BASED_ON_MESSAGE = "<i>(basata su %s recensioni)</i>\n\n\n"
+VERSION_INFO_MESSAGE = (
+    "🔄  Versione:  <code>%s</code>     (rilasciata il %s)\n\n"
+    f"☕️  Sviluppatore:  {DEVELOPER}\n"
+    f"🎨  UX/UI Designer:  {DESIGNER}\n\n\n"
+    "<i>A cura di @VGsNETWORK</i>"
+)
+
+BOT_INFO_HEADER_MESSAGE = "<b><u>INFO</u>    ➔    SUL BOT</b>\n\n\n"
+USER_INFO_HEADER_MESSAGE = f"<b><u>INFO</u>    ➔    SU DI ME</b>\n\n\n"
+
+USER_INFO_MESSAGE = (
+    "%s%s🛂  Reputazione\n\n\n"
+    '<i>La <b>Reputazione</b> (anche indicata come "<b>REP</b>") '
+    "è un indicatore della tua condotta all'interno dei gruppi di <b>@VGsNETWORK</b>.\n"
+    "Una <b>Reputazione</b> alta ti qualifica come un membro cordiale, rispettoso, "
+    "affidabile e partecipe della community.\n"
+    'Di contro, infrangere il <a href="https://telegra.ph/Regolamento-del-gruppo-VGs-LOVE-07-03">'
+    "regolamento</a> potrebbe portare, a discrezione degli amministratori, "
+    "alla perdita di uno o più punti di <b>REP</b>.</i>"
+)
+
+
+ADMIN_BUTTON_TEXT = "🎖 PANNELLO ADMIN"
+SETTINGS_BUTTON_TEXT = "⚙️  Impostazioni"
+YEARLY_REPORT_BUTTON_TEXT = "📈  Report annuale"
+WISHLIST_BUTTON_TEXT = "♥️  Lista dei desideri"
+INFO_BUTTON_TEXT = "ℹ️  Info"
+RATE_ME_BUTTON_TEXT = "⭐  Valutami"
+SUPPORT_BUTTON_TEXT = "🆘  Supporto"
+HIDE_COMMANDS_BUTTON_TEXT = "🔺     Nascondi i comandi     🔺"
+SHOW_COMMANDS_BUTTON_TEXT = "🔻     Mostra i comandi     🔻"
+COMPRESS_RATING_BUTTON_TEXT = "🔺     Comprimi valutazione     🔺"
+EXPAND_RATING_BUTTON_TEXT = "🔻     Espandi valutazione     🔻"
+
+GLOSSARY_BUTTON_TEXT = "🔠  Glossario dei termini"
+LINK_TO_PROJECT_BUTTON_TEXT = "🐙  Link al progetto"
+ABOUT_ME_BUTTON_TEXT = "👤  Su di me"
+ABOUT_BOT_BUTTON_TEXT = "🤖  Sul bot"
+
+GO_BACK_BUTTON_TEXT = "↩️  Torna indietro"
+CANCEL_BUTTON_TEXT = "❌  Annulla"
+
+RATING_TEXT_LIMIT_REACHED_MESSAGE = (
+    "\n\n\n🚫  <b>Limite superato di %s caratteri!</b>"
+    '\nEcco quello che hai inserito (tagliato a %s caratteri):\n<i>"%s"</i>'
+    "\n\n<b>Inserisci un commento (massimo %s caratteri):</b>"
+    "\n💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>"
+)
+
+RATING_INSERT_NEW_COMMENT_MESSAGE = (
+    f"{RATING_HEADER_MENU}%s"
+    "\n\n\n%s<b>Inserisci un commento (massimo %s caratteri):</b>\n"
+    "💡 <i>Ricorda che un voto senza commento ha meno incidenza sulla <b>media pubblica</b>.</i>",
+)
+
+RATING_COMMENT_AND_VOTE_INSERED_MESSAGE = (
+    "<b>%s</b>\n– Voto:  %s\n– Commento:  <i>%s</i>"
+)
+
+PREVIOUS_VOTE = f"\n\nVoto precedente:  %s"
+PREVIOUS_VOTE = "  (prima:  %s)"
+
+STATUS_RATING_MESSAGE = f"<b>%s</b>\n– Voto:  %s"
+RATING_PREVIOUS_COMMENT = f'Commento precedente:  <i>"%s"</i>\n\n'
+
+PUBLISHED_RATING_MESSAGE = "<b>%s</b> recensione pubblicata (✅)"
+TO_APPROVE_RATING_MESSAGE = f"<b>%s</b> recensione in fase di valutazione (⚖️)"
+RATING_NOT_APPROVED = (
+    "\n\n\n❌  <b>Non approvato da" ' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
+)
+RATING_APPROVED_MESSAGE = (
+    "\n\n\n✅  <b>Approvato da" f' <a href="tg://user?id=%s">%s</a> in data %s!</b>'
+)
+
+RATING_COMMENT_INSERED_MESSAGE = "\n– Commento:  <i>%s</i>"
+
+GIVE_RATING_TO_MESSAGE = "\n\n\n<b>Dai un voto a...</b>"
+
+THANK_YOU_FOR_RATING_MESSAGE = "%s\n\n\n<b>Grazie per aver votato!</b>"
+
+NOT_PRESENT_MESSAGE = "<b>Non presente</b>"
+
+ADMIN_PANEL_COMMUNICATION_HEADER_MESSAGE = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+)
+ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    STATISTICHE</b>\n\n\n"
+)
+ADMIN_PANEL_NEW_COMMUNICATION = (
+    "<b><u>PANNELLO ADMIN</u>    ➔    NUOVA COMUNICAZIONE</b>\n\n\n"
+)
+
+NEVER_INTERACTED_WITH_THE_BOT_MESSAGE = "<i>&lt;Mai interagito con l'userbot&gt;</i>"
+
+DB_CONNECTION_ERROR = (
+    "Impossibile stabilire un collegamento con il database,"
+    " alcune funzionalità non funzioneranno come dovrebbero."
+)
+
+DB_CONNECTION_SUCCESS = "Connesso al database..."
+
+DB_GENERIC_ERROR = (
+    "Errore sconosciuto durante il collegamento al database,"
+    " controlla i file di log per risolvere il problema."
+)
+
+TELEGRAM_ERROR = (
+    "Durante la gestione di un update si è verificato questo errore:"
+    "\n\n<code>%s</code>\n\nRisolviamo al più presto 😡"
+)
+
+USER_ERROR = (
+    "<i><b>Ehi!</b>\nDurante la gestione del tuo messaggio si sono verificati degli errori."
+    " I nostri sviluppatori sono stati informati:"
+    " verranno risolti il prima possibile.</i>"
+)
 
 YEAR_PURCHASES = (
     '<a href="tg://user?id=%s">%s</a>, nel <b>%s</b> '
@@ -592,83 +760,6 @@ MESSAGE_TOO_OLD = (
     '"/" nella chat e seleziona un comando dalla lista.'
 )
 
-HOW_TO_DEEP_LINK = (
-    '<a href="tg://user?id=%s">%s</a>, per visualizzare la <b>guida all\'utilizzo</b> del bot...'
-    ' <a href="t.me/%s?start=how_to"><b>clicca qui</b></a>!'
-)
-
-DEEP_LINK = '<a href="t.me/%s?start=%s">clicca qui</a>!'
-
-HOW_TO_INTRODUCTION = (
-    "<b><u>GUIDA</u>    ➔    INTRODUZIONE</b>\n\n\n"
-    "Per far sì che io possa riconoscere un tuo acquisto"
-    " è necessario che invii nel gruppo un messaggio di"
-    ' qualsiasi tipo contenente l\'<b><u>hashtag</u></b> "<code>#ultimiacquisti</code>".\n'
-    "Se il messaggio non è di tipo testuale, ma consiste in una (o più) <i>foto</i> o altro "
-    "tipo di <i><b>medium</b></i> (<i>immagine non compressa</i>, <i>audio</i>, <i>file</i>, etc.), "
-    "dovrai aggiungere il tag in <b>didascalia</b> ai suddetti media per renderli un acquisto legittimo."
-)
-
-HOW_TO_PRICE = (
-    "<b><u>GUIDA</u>    ➔   💲 GESTIONE DEL PREZZO</b>\n\n\n"
-    'Se oltre al tag "<code>#ultimiacquisti</code>" indicherai'
-    " una cifra numerica assegnerò quell'importo come <b><u>prezzo</u></b>"
-    " dell'<i>acquisto</i>. Nel caso in cui il testo – o la didascalia,"
-    " in caso di media – presentasse più di una cifra, ricorda che prenderò"
-    " in considerazione <u>soltanto la prima</u> trovata a partire dall'alto.\n"
-    "Puoi inserire l'importo in molteplici formati; ecco alcuni di quelli riconosciuti:\n\n"
-    "   •  <code>22</code>\n"
-    "   •  <code>22,50 €</code>\n"
-    "   •  <code>22.50</code>\n"
-    "   •  <code>2250,10</code>\n"
-    "   •  <code>€ 2,250.10</code>\n"
-    "   •  <code>2.250,10€</code>\n"
-    "   •  <code>2'250.10</code>\n\n"
-    "Se invece ometti l'importo, salverò il tuo <i>acquisto</i> con un importo <i>di default</i>"
-    " di  <code>0,00 €</code>; questo è utile per i regali, o se non vuoi rivelare il prezzo di un"
-    " certo acquisto – tieni presente che in questo secondo caso la scelta si rifletterà"
-    " sui totali mensili e annuali.\n\n"
-    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato,"
-    " quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
-)
-
-HOW_TO_DATE = (
-    "<b><u>GUIDA</u>    ➔    📅  ACQUISTI RETRODATATI</b>\n\n\n"
-    'Se assieme al tag "<code>#ultimiacquisti</code>" espliciti una <b><u>data</u></b>'
-    " anteriore ad oggi collocherò temporalmente l'<i>acquisto</i> a quel giorno. Tieni presente che:\n\n"
-    "   •  i formati accettati per la data sono  <code>DD/MM/YYYY</code>"
-    '  (<i>esempio:</i>  "<code>20/04/2021</code>") e  <code>DD/MM/YY</code>  (<i>esempio:</i>  "<code>20/04/21</code>")'
-    " – altri formati saranno ignorati o potrebbero generare risultati indesiderati;\n"
-    "   •  in caso di date multiple inserite correttamente, prenderò in considerazione <u>soltanto la prima</u> trovata a partire dall'alto.\n\n"
-    "Se ometti la data, o ne inserisci una futura, il tuo <i>acquisto</i> sarà collocato"
-    " <i>di default</i> alla data di oggi.\n\n"
-    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà"
-    " ignorato, quindi sentiti pure libero di inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
-)
-
-HOW_TO_TITLE = (
-    "<b><u>GUIDA</u>    ➔    🔤  DARE UN NOME ALL'ACQUISTO</b>\n\n\n"
-    "Per facilitare il riconoscimento degli <i>acquisti</i> all'interno del <b>report mensile</b>"
-    " ti è data facoltà di assegnare loro un breve <b><u>titolo</u></b> personalizzato; questo sarà"
-    " mostrato alla destra dell'importo, al posto della stringa di default con data e ora di registrazione dell'acquisto.\n"
-    'Per assegnare un titolo al tuo <i>acquisto</i>, tutto ciò che devi fare è inserire del testo racchiuso tra "<code>%...%</code>"'
-    '  (<i>esempio:</i>  "<code>%Il mio acquisto%</code>").\n\n'
-    "<i>Tutto il testo in chiaro che aggiungerai al di fuori di prezzo, data e titolo verrà ignorato, quindi sentiti pure libero di"
-    " inserire una qualsiasi descrizione riguardante il tuo acquisto.</i>"
-)
-
-HOW_TO_MODIFY_A_PURCHASE = (
-    "<b><u>GUIDA</u>    ➔    ✏️  MODIFICA DI UN ACQUISTO</b>\n\n\n"
-    "Tieni presente che puoi <b>cambiare</b>, <b>aggiungere</b> o <b>rimuovere</b>"
-    " le info di un <i>acquisto</i> in qualsiasi momento; per farlo ti basterà:\n\n"
-    "   •  cercare il post relativo al tuo acquisto  (a tale scopo la <i>funzione di ricerca interna alla chat</i> di Telegram può tornarti utile);\n"
-    "   •  cliccarci sopra  (tasto destro del mouse se sei su <code>Telegram Desktop</code>);\n"
-    "   •  selezionare <b>Modifica</b>;\n"
-    "   •  dopo aver apportato le modifiche desiderate al messaggio, confermare.\n\n"
-    "💡 Puoi persino convertire un post normale in un <i>acquisto</i> in maniera retroattiva,"
-    ' sempre con la stessa procedura: ti basterà taggare il post con "<code>#ultimiacquisti</code>" in fase di modifica del messaggio e,'
-    " salvo diversamente specificato, provvederò ad aggiungere un acquisto alla data originale del post."
-)
 
 USER_HAS_NO_VOTE = (
     "<i>Qui potrai dare un feedback approfondito su vari aspetti del bot, aggiungendo"
@@ -709,30 +800,6 @@ USER_MESSAGE_REVIEW_NOT_APPROVED_FROM_STAFF = (
 )
 
 USER_ALREADY_VOTED_TO_APPROVE = "Se effettui un'altra votazione, la tua attuale recensione pendente verrà sostituita."
-
-HOW_TO_INTRODUCTION = {
-    "button_text": "Introduzione",
-    "description": HOW_TO_INTRODUCTION,
-}
-
-HOW_TO_PRICE = {"button_text": "💲 Prezzo", "description": HOW_TO_PRICE}
-
-HOW_TO_TITLE = {"button_text": "🔤  Titolo", "description": HOW_TO_TITLE}
-
-HOW_TO_DATE = {"button_text": "📅  Data", "description": HOW_TO_DATE}
-
-HOW_TO_MODIFY_A_PURCHASE = {
-    "button_text": "✏️  Modifica di un acquisto",
-    "description": HOW_TO_MODIFY_A_PURCHASE,
-}
-
-HOW_TO_PAGES = [
-    HOW_TO_INTRODUCTION,
-    HOW_TO_PRICE,
-    HOW_TO_DATE,
-    HOW_TO_TITLE,
-    HOW_TO_MODIFY_A_PURCHASE,
-]
 
 FEEDBACK_CHOOSE_CATEGORY = (
     "<b><u>SUPPORTO</u>    ➔    INVIA UN FEEDBACK</b>\n\n\n"
@@ -1514,29 +1581,6 @@ NOTIFICATION_ELEMENT_DELETED = (
 NOTIFICATION_MULTIPLE_ELEMENTS_REMOVED = (
     'Elementi:\n%s\ndella lista dei desideri "<i>%s</i>" cancellati.'
 )
-
-
-def build_show_notification_button(user: User = None, user_id: int = None):
-    if user:
-        user_id = user.id
-    nof_notifications = count_unread_notifications(user_id)
-    nof_messages = count_unread_admin_messages_for_user(user_id)
-    if nof_notifications > 0:
-        nof_notification_icon = "📬"
-    else:
-        nof_notification_icon = "📭"
-    if nof_messages > 0:
-        nof_message_icon = "📨"
-    else:
-        nof_message_icon = "📥"
-    nof_messages = f"{nof_messages} / %s" % get_total_not_deleted_messages(user_id)
-    text = "📮 Centro messaggi   │   %s  %s    %s  %s" % (
-        nof_notifications,
-        nof_notification_icon,
-        nof_messages,
-        nof_message_icon,
-    )
-    return text
 
 
 NOTIFICATION_WISHLIST_CHANGED = (

@@ -10,7 +10,25 @@ from telegram.ext.conversationhandler import ConversationHandler
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.contants.constant import CATEGORIES
-from root.contants.messages import BOT_NAME
+from root.contants.messages import (
+    BOT_NAME,
+    GO_BACK_BUTTON_TEXT,
+    GREATER_LESS_MESSAGE_BUTTON,
+    NEXT_PAGE_NAVIGATION_BUTTON_TEXT,
+    NO_BUTTON_TEXT,
+    NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT,
+    NOTIFICATION_DELETE_NOTIFICATION,
+    NOTIFICATION_MULTIPLE_ELEMENTS_BUTTON_TEXT,
+    NOTIFICATION_MULTIPLE_MESSAGES_BUTTON_TEXT,
+    NOTIFICATION_NO_ELEMENTS_BUTTON_TEXT,
+    NOTIFICATION_NO_MESSAGES_BUTTON_TEXT,
+    NOTIFICATION_SINGLE_ELEMENTS_BUTTON_TEXT,
+    NOTIFICATION_SINGLE_MESSAGES_BUTTON_TEXT,
+    NOTIFICATION_SUPPORTED_NOTIFICATIONS,
+    PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT,
+    TRIANGLES_MESSAGE_BUTTON,
+    YES_BUTTON_TEXT,
+)
 from root.handlers.handlers import extractor
 from root.helper.wishlist_element import (
     count_all_wishlist_elements_for_user,
@@ -1828,18 +1846,18 @@ def build_notification_choose_section(
     keyboard = []
     ############ NOF_NOTIFICATIONS
     if nof_notifications == 0:
-        button_text = "📭  Nessuna notifica da leggere"
+        button_text = NOTIFICATION_NO_ELEMENTS_BUTTON_TEXT
     else:
         if nof_notifications == 1:
-            button_text = f"📬  {nof_notifications} nuova notifica"
+            button_text = NOTIFICATION_SINGLE_ELEMENTS_BUTTON_TEXT % nof_notifications
         else:
-            button_text = f"📬  {nof_notifications} nuove notifiche"
+            button_text = NOTIFICATION_MULTIPLE_ELEMENTS_BUTTON_TEXT % nof_notifications
     if default == 0:
         keyboard.append(
             [create_button("►     📬  Notifiche     ◄", "empty_button", None)]
         )
         if not supported_notification:
-            button_text = f">     {button_text}     <"
+            button_text = GREATER_LESS_MESSAGE_BUTTON % button_text
             callback = "empty_button"
         else:
             callback = "show_notifications"
@@ -1848,30 +1866,29 @@ def build_notification_choose_section(
             keyboard.append(
                 [
                     create_button(
-                        "ℹ️  Notifiche supportate", "show_supported_notification", None
+                        NOTIFICATION_SUPPORTED_NOTIFICATIONS,
+                        "show_supported_notification",
+                        None,
                     )
                 ]
             )
         else:
-            keyboard.append(
-                [
-                    create_button(
-                        ">     ℹ️  Notifiche supportate     <", "empty_button", None
-                    )
-                ]
+            button_text = (
+                GREATER_LESS_MESSAGE_BUTTON % NOTIFICATION_SUPPORTED_NOTIFICATIONS
             )
+            keyboard.append([create_button(button_text, "empty_button", None)])
     else:
         notification_button = [create_button(button_text, "show_notifications", None)]
     ############ NOF_MESSAGES
     if nof_messages == 0:
-        button_text = "📥  Nessun messaggio da leggere"
+        button_text = NOTIFICATION_NO_MESSAGES_BUTTON_TEXT
     else:
         if nof_messages == 1:
-            button_text = f"📨  {nof_messages} nuovo messaggio"
+            button_text = NOTIFICATION_SINGLE_MESSAGES_BUTTON_TEXT % nof_messages
         else:
-            button_text = f"📨  {nof_messages} nuovi messaggi"
+            button_text = NOTIFICATION_MULTIPLE_MESSAGES_BUTTON_TEXT % nof_messages
     if default == 1:
-        button_text = f"►     {button_text}     ◄"
+        button_text = TRIANGLES_MESSAGE_BUTTON % button_text
     if admin_messages:
         messages_call = "empty_button"
     else:
@@ -1902,7 +1919,7 @@ def build_notification_choose_section(
                         None,
                     ),
                     create_button(
-                        "🗑",
+                        NOTIFICATION_DELETE_NOTIFICATION,
                         "ask_delete_communication_%s_%s"
                         % (str(admin_message.id), page),
                         None,
@@ -1917,37 +1934,57 @@ def build_notification_choose_section(
             if page == 0:
                 keyboard.append(
                     [
-                        create_button("🔚", "empty_button", None),
+                        create_button(
+                            NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT, "empty_button", None
+                        ),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", f"{callback}%s" % (page + 1), None),
+                        create_button(
+                            NEXT_PAGE_NAVIGATION_BUTTON_TEXT,
+                            f"{callback}%s" % (page + 1),
+                            None,
+                        ),
                     ]
                 )
             elif page == total_pages - 1:
                 keyboard.append(
                     [
-                        create_button("◄", f"{callback}%s" % (page - 1), None),
+                        create_button(
+                            PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT,
+                            f"{callback}%s" % (page - 1),
+                            None,
+                        ),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("🔚", "empty_button", None),
+                        create_button(
+                            NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT, "empty_button", None
+                        ),
                     ]
                 )
             else:
                 keyboard.append(
                     [
-                        create_button("◄", f"{callback}%s" % (page - 1), None),
+                        create_button(
+                            PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT,
+                            f"{callback}%s" % (page - 1),
+                            None,
+                        ),
                         create_button(
                             "%s/%s" % (page + 1, total_pages), "empty_button", None
                         ),
-                        create_button("►", f"{callback}%s" % (page + 1), None),
+                        create_button(
+                            NEXT_PAGE_NAVIGATION_BUTTON_TEXT,
+                            f"{callback}%s" % (page + 1),
+                            None,
+                        ),
                     ]
                 )
     if default == 1:
         keyboard.append(notification_button)
     keyboard.append(
-        [create_button("↩️  Torna indietro", "cancel_rating", None)],
+        [create_button(GO_BACK_BUTTON_TEXT, "cancel_rating", None)],
     )
     return InlineKeyboardMarkup(keyboard)
 
@@ -2054,8 +2091,8 @@ def build_ask_communication_delete_keyboard(
     return InlineKeyboardMarkup(
         [
             [
-                create_button("✅  Sì", yes_callback, None),
-                create_button("❌  No", no_callback, None),
+                create_button(YES_BUTTON_TEXT, yes_callback, None),
+                create_button(NO_BUTTON_TEXT, no_callback, None),
             ]
         ]
     )

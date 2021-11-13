@@ -9,8 +9,15 @@ from root.contants.keyboard import (
 )
 from root.contants.messages import (
     COMMUNICATION_DELETION_CONFIRMATION,
+    COMMUNICATION_SENT_DATE_TIME_MESSAGE,
     NO_COMMUNICATION_MESSAGE,
     NO_COMMUNICATION_SELECTED_MESSAGE,
+    NO_NOTIFICATION_TO_VIEW,
+    NOTIFICATION_COMMUNICATION_HEADER,
+    NOTIFICATION_MESSAGE_FORMAT,
+    NOTIFICATION_NOTIFICATION_HEADER,
+    NOTIFICATION_READ_FORMAT,
+    NOTIFICATION_UNREAD_FORMAT,
 )
 from root.helper.admin_message import (
     count_unread_admin_messages_for_user,
@@ -87,9 +94,9 @@ def ask_delete_communication(update: Update, context: CallbackContext):
     page = int(data.split("_")[-1])
     communication_id = data.split("_")[-2]
     communication: AdminMessage = find_admin_message_by_id(communication_id)
-    message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    message = NOTIFICATION_COMMUNICATION_HEADER
     date = communication.creation_date
-    date = "Inviato %s%s alle %s" % (
+    date = COMMUNICATION_SENT_DATE_TIME_MESSAGE % (
         get_article(date),
         format_date(date, True),
         format_time(date, True),
@@ -133,18 +140,18 @@ def show_messages(
             admin_messages: List[AdminMessage] = get_paged_unread_messages(
                 user.id, page
             )
-    message = "<b><u>CENTRO MESSAGGI</u>    ➔    COMUNICAZIONI</b>\n\n\n"
+    message = NOTIFICATION_COMMUNICATION_HEADER
     if admin_messages:
         if not communication:
             message += NO_COMMUNICATION_SELECTED_MESSAGE
         else:
             date = communication.creation_date
-            date = "Inviato %s%s alle %s" % (
+            date = COMMUNICATION_SENT_DATE_TIME_MESSAGE % (
                 get_article(date),
                 format_date(date, True),
                 format_time(date, True),
             )
-            message += f'"{communication.message}"\n\n\n<b><i>{date}</i></b>'
+            message += NOTIFICATION_MESSAGE_FORMAT % (communication.message, date)
     else:
         message += NO_COMMUNICATION_MESSAGE
     nof_notifications = count_unread_notifications(user.id)
@@ -175,7 +182,6 @@ def show_messages(
 
 
 def show_notifications(update: Update, context: CallbackContext):
-    logger.info("NOTIFICATIONS")
     user: User = update.effective_user
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
@@ -183,18 +189,18 @@ def show_notifications(update: Update, context: CallbackContext):
     notifications: List[Notification] = find_notifications_for_user(
         user.id, page_size=15
     )
-    message = "<b><u>CENTRO MESSAGGI</u>    ➔    NOTIFICHE</b>\n\n"
+    message = NOTIFICATION_NOTIFICATION_HEADER
     if notifications:
         for notification in notifications:
             date = format_date(notification.creation_date, show_year=True)
             time = format_time(notification.creation_date, True)
             date = "%s @ %s" % (date, time)
             if notification.read:
-                message += f"\n<b>[{date}]</b>  {notification.message}\n\n"
+                message += NOTIFICATION_READ_FORMAT % (date, notification.message)
             else:
-                message += f"\n🆕  <b>[{date}]</b>  <b>{notification.message}</b>\n\n"
+                message += NOTIFICATION_UNREAD_FORMAT % (date, notification.message)
     else:
-        message += "\n<i>Non hai ancora alcuna notifica da visualizzare.</i>"
+        message += NO_NOTIFICATION_TO_VIEW
     nof_notifications = count_unread_notifications(user.id)
     nof_messages = count_unread_admin_messages_for_user(user.id)
     keyboard = build_notification_choose_section(nof_notifications, nof_messages)

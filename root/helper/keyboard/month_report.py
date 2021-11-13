@@ -2,6 +2,16 @@
 
 """ Function to create the keyboard of the month report """
 
+from root.contants.messages import (
+    MONTHLY_REPORT_GO_BACK_X_YEARS,
+    MONTHLY_REPORT_GO_FORWARD_X_YEARS,
+    MONTHLY_REPORT_GO_TO_CURRENT_MONTH_BUTTON_TEXT,
+    MONTHLY_REPORT_GO_TO_YEAR_START_BUTTON_TEXT,
+    MONTHLY_REPORT_OPEN_YEARLY_REPORT_FOR_YEAR,
+    NEXT_PAGE_NAVIGATION_BUTTON_TEXT,
+    NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT,
+    PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT,
+)
 from root.util.util import get_month_string, create_button
 
 
@@ -17,16 +27,18 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
     keyboards = []
     buttons = []
     do_nothing = "empty_button"
-    end_emoji = "🔚"
+    end_emoji = NO_PREVIOUS_NEXT_PAGE_BUTTON_TEXT
+    next_nav = NEXT_PAGE_NAVIGATION_BUTTON_TEXT
+    prev_nav = PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT
 
     # ================ FIRST ROW REGARDING MONTH ================
     if month != 1:
         # Set first button to go back a month
-        btext = f"{get_month_string(month - 1, False, False )}   ◄"
+        btext = f"{get_month_string(month - 1, False, False )}   {prev_nav}"
         bcall = "month_previous_page"
     else:
         # The button goes to December of the previous year
-        btext = f"{get_month_string(12, True, False )} {year - 1}   ◄"
+        btext = f"{get_month_string(12, True, False )} {year - 1}   {prev_nav}"
         bcall = "month_previous_page"
     buttons.append([[btext, bcall]])
 
@@ -42,23 +54,23 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
             btext = end_emoji
             bcall = do_nothing
         else:
-            btext = f"►   {get_month_string(month + 1, False, False )}"
+            btext = f"{next_nav}   {get_month_string(month + 1, False, False )}"
             bcall = "month_next_page"
     else:
         # The user can pass the current month
         if month != 12:
             # The button goes to January of the next year
-            btext = f"►   {get_month_string(month + 1, False, False )}"
+            btext = f"{next_nav}   {get_month_string(month + 1, False, False )}"
             bcall = "month_next_page"
         else:
-            btext = f"►   {get_month_string(1, True, False )} {year + 1}"
+            btext = f"{next_nav}   {get_month_string(1, True, False )} {year + 1}"
             bcall = "month_next_page"
     buttons[0].append([btext, bcall])
 
     # ================ SECOND ROW REGARDING YEAR (1) ================
 
     # The user can always go back in time regarding years
-    btext = f"{year - 1}   ◄"
+    btext = f"{year - 1}   {prev_nav}"
     bcall = "month_previous_year_1"
     buttons.append([[btext, bcall]])
 
@@ -73,19 +85,19 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
         bcall = do_nothing
     else:
         # Otherwise allow him to view the next year
-        btext = f"►   {year + 1}"
+        btext = f"{next_nav}   {year + 1}"
         bcall = "month_next_year_1"
     buttons[1].append([btext, bcall])
 
     # ================ SECOND ROW REGARDING YEAR (5/10) ================
 
     # The user can always go back in time regarding years
-    btext = "– 10  anni"
+    btext = MONTHLY_REPORT_GO_BACK_X_YEARS % 10
     bcall = "month_previous_year_10"
     buttons.append([[btext, bcall]])
 
     # The user can always go back in time regarding years
-    btext = "– 5  anni"
+    btext = MONTHLY_REPORT_GO_BACK_X_YEARS % 5
     bcall = "month_previous_year_5"
     buttons[2].append([btext, bcall])
 
@@ -95,7 +107,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
         bcall = do_nothing
     else:
         # Otherwise allow it
-        btext = "+ 5  anni"
+        btext = MONTHLY_REPORT_GO_FORWARD_X_YEARS % 5
         bcall = "month_next_year_5"
     buttons[2].append([btext, bcall])
 
@@ -105,7 +117,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
         bcall = do_nothing
     else:
         # Otherwise allow it
-        btext = "+ 10  anni"
+        btext = MONTHLY_REPORT_GO_FORWARD_X_YEARS % 10
         bcall = "month_next_year_10"
     buttons[2].append([btext, bcall])
 
@@ -118,14 +130,15 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
                 bappend = f"  ({get_month_string(current_month, False, False)} {current_year})"
             else:
                 bappend = f"  ({get_month_string(current_month, False, False)})"
-            btext = f"Vai al mese corrente{bappend}"
+            btext = ""
+            btext = MONTHLY_REPORT_GO_TO_CURRENT_MONTH_BUTTON_TEXT % bappend
             bcall = f"expand_report_current_{current_year}"
             # this puts the button at the beginning of the list
             buttons = [[[btext, bcall]], *buttons]
 
     if not month == 1 and not month == 2:
         bappend = f"  ({year})" if year != current_year else ""
-        btext = f"Torna a inizio anno{bappend}"
+        btext = MONTHLY_REPORT_GO_TO_YEAR_START_BUTTON_TEXT % bappend
         bcall = "month_first_month"
         if len(buttons[0]) == 1:
             buttons[0] = [[btext, bcall], *buttons[0]]
@@ -133,7 +146,7 @@ def build_keyboard(month: int, current_month: int, year: int, current_year: int)
             buttons = [[[btext, bcall]], *buttons]
 
     # Button to pass to the year report
-    btext = f"Passa al report annuale del {year}"
+    btext = MONTHLY_REPORT_OPEN_YEARLY_REPORT_FOR_YEAR % year
     bcall = f"expand_year_report_{year}"
     buttons.append([[btext, bcall]])
 

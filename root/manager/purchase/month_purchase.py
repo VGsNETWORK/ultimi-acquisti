@@ -14,6 +14,7 @@ from root.contants.messages import (
     MONTH_PURCHASES_NONE,
     MONTH_USER_PURCHASES_NONE,
     MONTH_PREVIOUS_PURCHASES_SAME,
+    MORE_DETAILS_BUTTON_TEXT,
     NO_PURCHASE,
     NO_QUOTE_BOT,
 )
@@ -131,7 +132,7 @@ def month_purchase(update: Update, context: CallbackContext) -> None:
     )
     chat_id = telegram_message.chat.id
     keyboard = [
-        [create_button("Maggiori dettagli...", "expand_report", "expand_report")]
+        [create_button(MORE_DETAILS_BUTTON_TEXT, "expand_report", "expand_report")]
     ]
     keyboard = InlineKeyboardMarkup(keyboard)
     add_message(message_id, user_id)

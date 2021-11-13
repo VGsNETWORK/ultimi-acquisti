@@ -15,6 +15,7 @@ from root.contants.messages import (
     HOW_TO_OPEN_FULL_GUIDE_BUTTON_TEXT,
     HOW_TO_PAGES,
     HOW_TO_DEEP_LINK,
+    TRIANGLES_MESSAGE_BUTTON,
 )
 from root.helper.process_helper import create_process, stop_process
 from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
@@ -157,7 +158,7 @@ def create_message(page: int):
         callback = f"how_to_page_{index}"
         button = button["button_text"]
         if index == page:
-            button = f"►     {button}     ◄"
+            button = TRIANGLES_MESSAGE_BUTTON % {button}
         button = create_button(button, callback, callback)
         keyboards.append([button])
     keyboards.append(
