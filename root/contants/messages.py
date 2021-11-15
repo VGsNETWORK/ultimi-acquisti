@@ -40,7 +40,7 @@ PREVIOUS_PAGE_NAVIGATION_BUTTON_TEXT = "◄"
 NEXT_PAGE_NAVIGATION_BUTTON_TEXT = "►"
 WHATS_THIS_BUTTON_TEXT = "💡 Che cos'è?"
 MORE_DETAILS_BUTTON_TEXT = "Maggiori dettagli..."
-SECTION_LOCKED_MESSAGE = "🔒 Il tuo livello di Reputazione attuale  (%s)  non è sufficiente per accedere a questa funzione."
+SECTION_LOCKED_MESSAGE = "🔒 Il tuo livello di Reputazione attuale non è sufficiente per accedere a questa funzione.\n\n%s     %s"
 
 USER_REPUTATION_GRADES_LIST = [
     "Inconsistente",
