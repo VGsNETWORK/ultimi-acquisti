@@ -162,10 +162,19 @@ def create_wrong_date_keyboard(message_id: int, modified: bool):
 
 
 def show_rating_keyboard(user_id: int):
-    return [
-        [create_locked_button(user_id, "🔄  Aggiorna la recensione", "start_poll", REPUTATION_REQUIRED_FOR_RATING)],
-        [create_button("↩️  Torna indietro", "rating_menu", "rating_menu")],
-    ]
+    return InlineKeyboardMarkup(
+        [
+            [
+                create_locked_button(
+                    user_id,
+                    "🔄  Aggiorna la recensione",
+                    "start_poll",
+                    REPUTATION_REQUIRED_FOR_RATING,
+                )
+            ],
+            [create_button("↩️  Torna indietro", "rating_menu", "rating_menu")],
+        ]
+    )
 
 
 def build_approve_keyboard(code: str, user_id: int):
@@ -222,7 +231,13 @@ def build_pre_poll_keyboard(
             ]
         )
 
-    keyboard.append([create_locked_button(user_id, message, "start_poll", REPUTATION_REQUIRED_FOR_RATING)])
+    keyboard.append(
+        [
+            create_locked_button(
+                user_id, message, "start_poll", REPUTATION_REQUIRED_FOR_RATING
+            )
+        ]
+    )
 
     keyboard.append([create_button("↩️  Torna indietro", back_callback, back_callback)])
     return InlineKeyboardMarkup(keyboard)
