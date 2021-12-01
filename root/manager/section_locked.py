@@ -3,7 +3,7 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 from root.contants.messages import SECTION_LOCKED_MESSAGE, USER_REPUTATION_GRADES_LIST
-from user_reputation.helper.user_reputation import (
+from bot_util.helper.user.user_reputation import (
     get_user_reputation,
     visualize_user_reputation,
 )

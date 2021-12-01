@@ -70,8 +70,8 @@ from root.contants.message_timeout import THREE_MINUTES
 import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
-import user_reputation.helper.user_reputation as ur_helper
-from user_reputation.util.user_reputation import create_locked_button
+import bot_util.helper.user.user_reputation as ur_helper
+from bot_util.util.user_reputation import create_locked_button
 
 sender = TelegramSender()
 current_year = datetime.now().year

@@ -7,13 +7,13 @@ from operator import index
 import subprocess
 import os
 from random import random
-import random
 import re
 
 from telegram.chat import Chat
 from telegram.error import BadRequest
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
+from root.manager import user_statistics
 from root.manager.notification_hander import (
     ask_delete_communication,
     delete_communication,
@@ -29,7 +29,6 @@ from root.manager.admin_handler import (
     handle_admin,
     navigate_admin_notifications,
     show_admin_messages,
-    show_usage,
     SEND_COMUNICATION_CONVERSTATION,
     view_admin_comunication,
 )
@@ -122,6 +121,7 @@ from telegram.ext import (
     Updater,
     Filters,
 )
+from bot_util.util.callback import add_admin_panel_andlers
 
 from root.model.purchase import Purchase
 from root.manager.error import handle_error
@@ -320,7 +320,7 @@ class BotManager:
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
-                    returnp
+                    return
                 if bot == "last-purchase-quality":
                     context.bot.send_message(
                         chat_id=chat.id,
@@ -462,7 +462,9 @@ class BotManager:
         )
 
         self.disp.add_handler(
-            CallbackQueryHandler(pattern="show_usage", callback=show_usage)
+            CallbackQueryHandler(
+                pattern="show_usage", callback=user_statistics.user_statistics
+            )
         )
         self.disp.add_handler(SEND_COMUNICATION_CONVERSTATION)
 
@@ -1011,3 +1013,4 @@ class BotManager:
                 callback=show_section_locked_popup,
             )
         )
+        add_admin_panel_andlers(self.disp)

@@ -51,7 +51,7 @@ from root.util.util import (
     html_to_markdown,
 )
 from telegram import InlineKeyboardMarkup
-from user_reputation.util.user_reputation import create_locked_button
+from bot_util.util.user_reputation import create_locked_button
 
 BOT_NAME = environ["BOT_NAME"]
 

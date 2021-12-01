@@ -1,0 +1,3 @@
+use("network")
+
+db.user.find({})

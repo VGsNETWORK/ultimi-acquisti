@@ -38,19 +38,17 @@ from root.helper.admin_message import (
     get_total_admin_messages,
     purge_admin_message,
 )
-from root.helper.aggregation.user_info import USER_INFO_NATIVE_QUERY
+
 from root.helper.start_messages import delete_start_message
 from root.manager.start_messages import update_start_messages
 from root.model.admin_message import AdminMessage
 from root.model.user import User
-from root.model.wishlist import Wishlist
 from root.util.util import (
     create_button,
     format_date,
     format_time,
     generate_random_invisible_char,
     get_article,
-    retrieve_telegram_user,
     text_entities_to_html,
 )
 from telegram import Update
@@ -242,96 +240,6 @@ def handle_admin(update: Update, context: CallbackContext):
         except Exception as e:
             logger.error(e)
     return ConversationHandler.END
-
-
-def show_usage(update: Update, context: CallbackContext):
-    cursor = Wishlist.objects.aggregate(USER_INFO_NATIVE_QUERY)
-    message = ""
-    for result in cursor:
-        logger.info(result)
-        try:
-            user: User = retrieve_telegram_user(result["user_id"])
-            logger.info("This is the user [%s]" % user)
-            if user:
-                username = user.username
-                if "last_name" in result:
-                    name = "%s %s" % (user.first_name, user.last_name)
-                else:
-                    name = "%s" % (user.first_name)
-            else:
-                name = NEVER_INTERACTED_WITH_THE_BOT_MESSAGE
-                username = ""
-        except KeyError:
-            name = NEVER_INTERACTED_WITH_THE_BOT_MESSAGE
-            username = ""
-        try:
-            if username:
-                line = '<a href="tg://user?id=%s">%s  (@%s)</a>' % (
-                    result["user_id"],
-                    name,
-                    username,
-                )
-            else:
-                line = '<a href="tg://user?id=%s">%s</a>' % (
-                    result["user_id"],
-                    name,
-                )
-        except KeyError:
-            line = '<a href="tg://user?id=%s">%s</a>' % (
-                result["user_id"],
-                name,
-            )
-        line += "\n    🗃  <code>%s</code>" % result["wishlists"]
-        line += "\n     │"
-        line += "\n     └──🗂  <code>%s</code>" % result["wishlist_elements"]
-        line += "\n               │"
-        line += "\n               ├──🖼  <code>%s</code>" % result["photos"]
-        line += "\n               └──🔗  <code>%s</code>" % result["links"]
-        line += "\n                         │"
-        line += (
-            "\n                         └──💹  <code>%s</code>" % result["tracked_links"]
-        )
-        line += "\n\n\n"
-        message += line
-    message += USER_INFO_RECAP_LEGEND
-    message = f"{ADMIN_PANEL_COMMUNICATION_STATS_MESSAGE}{message}"
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                create_button(
-                    TRIANGLES_MESSAGE_BUTTON % WISHLIST_BUTTON_TEXT,
-                    "empty_button",
-                    "",
-                )
-            ],
-            [create_button(GO_BACK_BUTTON_TEXT, "show_admin_panel", "")],
-        ]
-    )
-    try:
-        context.bot.edit_message_text(
-            message_id=update.effective_message.message_id,
-            chat_id=update.effective_chat.id,
-            text=message,
-            disable_web_page_preview=True,
-            reply_markup=keyboard,
-            parse_mode="HTML",
-        )
-    except BadRequest:
-        user = update.effective_user
-        try:
-            context.bot.edit_message_text(
-                message_id=redis_helper.retrieve(
-                    "%s_%s_admin" % (user.id, user.id)
-                ).decode(),
-                chat_id=update.effective_chat.id,
-                text=message,
-                disable_web_page_preview=True,
-                reply_markup=keyboard,
-                parse_mode="HTML",
-            )
-        except Exception as e:
-            logger.error(e)
-    return context.bot.answer_callback_query(update.callback_query.id)
 
 
 def init_send_comunication(update: Update, context: CallbackContext):
