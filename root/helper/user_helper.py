@@ -7,12 +7,21 @@ from telegram import User as TelegramUser
 from mongoengine.errors import DoesNotExist
 from root.model.user import User
 import telegram_utils.utils.logger as logger
+from root.helper.wishlist import find_default_wishlist
 
 
 def get_current_wishlist_id(user_id: int):
     user: User = retrieve_user(user_id)
     if user:
-        return user.current_wishlist
+        wishlist = user.current_wishlist
+        if wishlist:
+            return wishlist
+        else:
+            def_wishlist = find_default_wishlist(user_id)
+            if def_wishlist:
+                user.current_wishlist = str(def_wishlist.id)
+                user.save()
+                return str(def_wishlist.id)
     return None
 
 

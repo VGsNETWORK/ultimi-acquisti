@@ -2,6 +2,7 @@
 
 """ Docstring """
 
+from bot_util.decorator.telegram import update_user_information
 from root.helper.redis_message import add_message
 from root.helper.start_messages import delete_start_message
 from root.manager.start import back_to_the_start
@@ -23,6 +24,7 @@ from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
 sender = TelegramSender()
 
 
+@update_user_information
 def help_init(update: Update, context: CallbackContext):
     """Initialize the help session with the user
 

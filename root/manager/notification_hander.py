@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from typing import List
+from bot_util.decorator.telegram import update_user_information
 from telegram.error import BadRequest
 
 import telegram_utils.utils.logger as logger
@@ -51,6 +52,7 @@ from telegram.message import Message
 from telegram.user import User
 
 
+@update_user_information
 def open_notification_panel(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

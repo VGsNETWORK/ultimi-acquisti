@@ -7,17 +7,19 @@ import telegram_utils.utils.logger as logger
 from mongoengine.errors import DoesNotExist
 from pymongo.command_cursor import CommandCursor
 from telegram_utils.utils.tutils import log
-from root.helper.user_helper import change_wishlist
 from root.model import user, wishlist
 from root.model.wishlist import Wishlist
 from root.model.wishlist_element import WishlistElement
+from bson.errors import InvalidId
 
 
-def find_wishlist_by_id(_id: str):
+def find_wishlist_by_id(_id: str, user_id: int = 0):
     try:
         wish: Wishlist = Wishlist.objects().get(id=_id)
         return wish
     except DoesNotExist:
+        return
+    except InvalidId:
         return
 
 

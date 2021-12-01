@@ -2,6 +2,8 @@
 # region
 import operator
 import re
+
+from bot_util.decorator.telegram import update_user_information
 from root.helper.notification import create_notification
 
 from bs4 import element
@@ -162,6 +164,7 @@ def reorder_wishlist(update: Update, context: CallbackContext):
         logger.error(e)
 
 
+@update_user_information
 def view_other_wishlists(
     update: Update,
     context: CallbackContext,

@@ -1,4 +1,5 @@
 #!/user/bin/env python3
+from bot_util.decorator.telegram import update_user_information
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -8,6 +9,7 @@ from root.helper.admin_message import count_unread_admin_messages_for_user
 from root.helper.notification import count_unread_notifications
 
 
+@update_user_information
 def show_supported_notifications(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     message_id = update.effective_message.message_id

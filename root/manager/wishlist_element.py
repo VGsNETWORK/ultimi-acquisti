@@ -5,6 +5,8 @@ import enum
 import operator
 import re
 from difflib import SequenceMatcher
+
+from bot_util.decorator.telegram import update_user_information
 from root.helper.purchase_helper import convert_to_float
 from root.helper.start_messages import delete_start_message
 from root.model import notification
@@ -837,6 +839,7 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
     view_wishlist(update, context, reset_keyboard=False)
 
 
+@update_user_information
 def view_wishlist(
     update: Update,
     context: CallbackContext,
@@ -1016,7 +1019,7 @@ def view_wishlist(
     else:
         inc = 0
         message = NO_ELEMENT_IN_WISHLIST
-    wishlist: Wishlist = find_wishlist_by_id(wishlist_id)
+    wishlist: Wishlist = find_wishlist_by_id(wishlist_id, update.effective_user.id)
     title = f"{wishlist.title.upper()}  –  "
     if total_pages > 1:
         more_pages_append = (

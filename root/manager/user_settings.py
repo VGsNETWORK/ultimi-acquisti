@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from bot_util.decorator.telegram import update_user_information
 from root.helper.start_messages import delete_start_message
 from root.manager.command_redirect import command_redirect
 from telegram_utils.utils.tutils import delete_if_private
@@ -22,6 +23,7 @@ def settings_toggle_purchase_tips(update: Update, context: CallbackContext):
     view_user_settings(update, context)
 
 
+@update_user_information
 def view_user_settings(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

@@ -4,6 +4,8 @@
 
 from os import environ
 import re
+
+from bot_util.decorator.telegram import update_user_information
 from root.contants.constant import REPUTATION_REQUIRED_FOR_SUPPORT
 from root.contants.keyboard import GROUP_START_KEYBOARD
 from root.helper.notification import create_notification
@@ -106,6 +108,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     return
 
 
+@update_user_information
 def handle_start(update: Update, context: CallbackContext) -> None:
     """Handle the command /start from the user along with some query params
 

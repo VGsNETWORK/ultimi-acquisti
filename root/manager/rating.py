@@ -2,6 +2,8 @@
 
 
 from datetime import datetime
+
+from bot_util.decorator.telegram import update_user_information
 from root.helper.start_messages import delete_start_message
 from root.manager.command_redirect import command_redirect
 
@@ -365,6 +367,7 @@ class Rating:
         except DoesNotExist:
             self.poll(update, context)
 
+    @update_user_information
     def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
         message = "%s%s" % (RATING_HEADER_MENU, RATING_PLACEHOLDER)
