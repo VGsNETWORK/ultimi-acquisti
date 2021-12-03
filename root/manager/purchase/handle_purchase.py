@@ -30,6 +30,7 @@ from telegram.callbackquery import CallbackQuery
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.update import Update
+from root.util import telegram
 import root.util.logger as logger
 from root.contants.messages import (
     CANNOT_MODIFY_OTHERS_SETTINGS,
@@ -72,6 +73,7 @@ from root.util.util import (
 )
 from root.contants.message_timeout import LONG_SERVICE_TIMEOUT, ONE_MINUTE, TWO_MINUTES
 from root.model.user import User as UserModel
+from bot_util.decorator.telegram import ignore_bot
 
 sender = TelegramSender()
 
@@ -100,6 +102,7 @@ def add_purchase(
     create_purchase(user.id, price, message_id, chat_id, creation_date, caption)
 
 
+@ignore_bot(bot_type="userbot")
 def handle_purchase(
     client: Client, message: Message, send_messages_when_finished: bool = True
 ) -> None:
@@ -391,6 +394,7 @@ def build_purchase_keyboard(user: UserModel):
     )
 
 
+@ignore_bot
 def toggle_purchase_tips(update: Update, context: CallbackContext):
     logger.info("CONFIRM_PURCHASE OR TOGGLE")
     total_tips = 0
@@ -519,7 +523,7 @@ def toggle_purchase_tips(update: Update, context: CallbackContext):
         )
         sender.delete_message(context, chat_id, message_id)
 
-
+@ignore_bot
 def confirm_purchase(update: Update, context: CallbackContext):
     callback: CallbackQuery = update.callback_query
     query: str = callback.data
@@ -544,7 +548,7 @@ def confirm_purchase(update: Update, context: CallbackContext):
             show_alert=True,
         )
 
-
+@ignore_bot
 def discard_purchase(update: Update, context: CallbackContext):
     callback: CallbackQuery = update.callback_query
     query: str = callback.data

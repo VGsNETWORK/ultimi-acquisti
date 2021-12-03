@@ -84,6 +84,8 @@ def add_purchase(client: Client, message: Message):
 def check_message(message: Message, client: Client):
     message_id = message.message_id
     chat_id = message.chat.id
+    if message.from_user.is_bot:
+        return False
     if not find_by_message_id_and_chat_id(message_id, chat_id):
         if add_purchase(client, message):
             return True
