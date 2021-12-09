@@ -24,7 +24,6 @@ from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
 sender = TelegramSender()
 
 
-@update_user_information
 def help_init(update: Update, context: CallbackContext):
     """Initialize the help session with the user
 

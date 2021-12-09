@@ -76,7 +76,6 @@ INIT_SEND_COMMUNICATION_KEYBOARD = InlineKeyboardMarkup(
 )
 
 
-@update_user_information
 def resend_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -88,7 +87,6 @@ def resend_communication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page)
 
 
-@update_user_information
 def navigate_admin_notifications(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -105,7 +103,6 @@ def navigate_admin_notifications(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, communication)
 
 
-@update_user_information
 def view_admin_comunication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -121,7 +118,6 @@ def view_admin_comunication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, admin_message)
 
 
-@update_user_information
 def ask_delete_admin_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -148,7 +144,6 @@ def ask_delete_admin_communication(update: Update, context: CallbackContext):
     )
 
 
-@update_user_information
 def delete_admin_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -158,7 +153,6 @@ def delete_admin_communication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, None)
 
 
-@update_user_information
 def show_admin_messages(
     update: Update,
     context: CallbackContext,
@@ -215,7 +209,6 @@ def show_admin_messages(
     return ConversationHandler.END
 
 
-@update_user_information
 def handle_admin(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

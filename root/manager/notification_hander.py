@@ -52,7 +52,6 @@ from telegram.message import Message
 from telegram.user import User
 
 
-@update_user_information
 def open_notification_panel(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

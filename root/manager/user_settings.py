@@ -23,7 +23,6 @@ def settings_toggle_purchase_tips(update: Update, context: CallbackContext):
     view_user_settings(update, context)
 
 
-@update_user_information
 def view_user_settings(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

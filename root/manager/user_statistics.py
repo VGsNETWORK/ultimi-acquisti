@@ -124,7 +124,6 @@ def build_cursor(user: DbUser):
     ]
 
 
-@update_user_information
 def user_statistics(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     data = update.callback_query.data

@@ -367,7 +367,7 @@ class Rating:
         except DoesNotExist:
             self.poll(update, context)
 
-    @update_user_information
+    
     def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
         message = "%s%s" % (RATING_HEADER_MENU, RATING_PLACEHOLDER)

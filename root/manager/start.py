@@ -108,7 +108,6 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     return
 
 
-@update_user_information
 def handle_start(update: Update, context: CallbackContext) -> None:
     """Handle the command /start from the user along with some query params
 

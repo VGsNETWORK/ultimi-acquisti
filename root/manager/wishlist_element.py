@@ -839,7 +839,6 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
     view_wishlist(update, context, reset_keyboard=False)
 
 
-@update_user_information
 def view_wishlist(
     update: Update,
     context: CallbackContext,

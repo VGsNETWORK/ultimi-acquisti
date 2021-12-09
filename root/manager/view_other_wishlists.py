@@ -164,7 +164,6 @@ def reorder_wishlist(update: Update, context: CallbackContext):
         logger.error(e)
 
 
-@update_user_information
 def view_other_wishlists(
     update: Update,
     context: CallbackContext,
