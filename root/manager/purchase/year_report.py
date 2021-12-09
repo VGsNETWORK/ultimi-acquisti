@@ -37,6 +37,7 @@ import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from root.util.util import (
     append_timeout_message,
+    create_button,
     format_price,
     get_month_string,
     is_group_allowed,
@@ -98,6 +99,8 @@ class YearReport:
             if not is_group_allowed(chat_id):
                 return
         keyboard = build_keyboard(self.year, self.current_year)
+        if update.effective_chat.type == "private":
+            keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", "")])
         keyboard = InlineKeyboardMarkup(keyboard)
         message = self.retrieve_purchase(user)
         purchase = get_last_purchase(user.id)
@@ -305,6 +308,8 @@ class YearReport:
         self.year -= int(year)
         message = self.retrieve_purchase(user)
         keyboard = build_keyboard(self.year, self.current_year)
+        if update.effective_chat.type == "private":
+            keyboard.append([create_button("↩️  Torna indietro", "cancel_rating", "")])
         keyboard = InlineKeyboardMarkup(keyboard)
         is_private = not update.effective_chat.type == "private"
         purchase = get_last_purchase(user.id)
