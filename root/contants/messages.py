@@ -48,8 +48,7 @@ USER_REPUTATION_GRADES_LIST = [
     "Discreta",
     "Buona",
     "Ottima",
-    "Eccellente",
-]
+    "Eccellente",Books
 
 # =======================================================================
 

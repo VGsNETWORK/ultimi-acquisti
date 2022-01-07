@@ -227,9 +227,9 @@ class BotManager:
                 timeout=10,
             )
             if is_develop():
-                os.popen("sudo systemctl restart last-purchase-quality")
+                os.popen("sudo systemctl restart ultimiacquisti-QTY")
             else:
-                os.popen("sudo systemctl restart last-purchase")
+                os.popen("sudo systemctl restart ultimiacquisti")
 
     def send_git_link(self, update: Update, context: CallbackContext):
         """Send the link to the github page of this project
@@ -297,7 +297,7 @@ class BotManager:
                         chat_id=chat.id,
                         text=(
                             "Seleziona il servizio da avviare:\n\n"
-                            "In alternativa, puoi usare il comando  <code>/switch vgs-antispam-quality</code>."
+                            "In alternativa, puoi usare il comando  <code>/switch VGsNETWORK-QTY</code>."
                         ),
                         reply_markup=keyboard,
                         disable_web_page_preview=True,
@@ -313,18 +313,18 @@ class BotManager:
                         text=(
                             "L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  <code>/switch</code>  "
                             "può avere i seguenti valori:\n"
-                            "    -  <code>vgs-antispam-quality</code>\n"
-                            "    -  <code>last-purchase-quality</code>\n\n"
+                            "    -  <code>VGsNETWORK-QTY</code>\n"
+                            "    -  <code>ultimiacquisti-QTY</code>\n\n"
                             "In alternativa, puoi usare il comando  <code>/switch</code>  senza argomenti."
                         ),
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
                     return
-                if bot == "last-purchase-quality":
+                if bot == "ultimiacquisti-QTY":
                     context.bot.send_message(
                         chat_id=chat.id,
-                        text="Il servizio  <code>last-purchase-quality</code>  è già online.",
+                        text="Il servizio  <code>ultimiacquisti-QTY</code>  è già online.",
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
