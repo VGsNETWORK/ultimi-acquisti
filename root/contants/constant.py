@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+from os import environ
+from typing import List
+from ast import literal_eval
+
+
 DO_NOT_LOWER_LINKS = [".youtube.", "/youtube.", "/youtu.be/", ".youtu.be/"]
 
 CATEGORIES = [
@@ -37,3 +42,12 @@ FORMAT_ENTITIES = {
 REPUTATION_REQUIRED_FOR_RATING = 4
 
 REPUTATION_REQUIRED_FOR_SUPPORT = 3
+
+
+
+### Comando "/switch <service-name>"
+
+# Get the value from the environment variable
+BOT_SERVICE_NAMES_TO_SWITCH_TO = environ.get("BOT_SERVICE_NAMES_TO_SWITCH_TO", "<variabile d'ambiente mancante>")
+# Parse the value
+BOT_SERVICE_NAMES_TO_SWITCH_TO: List[str] = literal_eval(BOT_SERVICE_NAMES_TO_SWITCH_TO)

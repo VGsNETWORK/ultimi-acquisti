@@ -11,6 +11,9 @@ import re
 
 from telegram.chat import Chat
 from telegram.error import BadRequest
+from root.contants.constant import (
+    BOT_SERVICE_NAMES_TO_SWITCH_TO
+)
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager import user_statistics
@@ -269,10 +272,10 @@ class BotManager:
         if is_develop():
             Purchase.objects.delete()
             context.bot.send_message(
-                chat_id=update.effective_chat.id, text="✅  Acquisti cancellati"
+                chat_id=update.effective_chat.id, text="✅  <i>Acquisti cancellati.</i>"
             )
         else:
-            logger.info("this is not a development environment, ARE YOU CRAZY?")
+            logger.info("This is not a development environment, ARE YOU CRAZY???")
 
     def switch_bot(self, update: Update, context: CallbackContext):
         logger.info("switching bot...")
@@ -297,7 +300,7 @@ class BotManager:
                         chat_id=chat.id,
                         text=(
                             "Seleziona il servizio da avviare:\n\n"
-                            "In alternativa, puoi usare il comando  <code>/switch VGsNETWORK-QTY</code>."
+                            f"💡 <i>In alternativa, puoi usare il comando  \"<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>\".</i>"
                         ),
                         reply_markup=keyboard,
                         disable_web_page_preview=True,
@@ -308,17 +311,18 @@ class BotManager:
                 if update.callback_query:
                     status = True
                 if not status:
+                    text=[]
+                    text.append("L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  \"<code>/switch</code>\"  può avere i seguenti valori:")
+                    for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                        text.append(f"    -  \"<code>{bot_service_name}</code>\"")
+                        #f"    -  \"<code>ultimiacquisti-QTY</code>\""
+                    text.append("\nIn alternativa, puoi usare il comando  \"<code>/switch</code>\"  senza argomenti.")
+
                     context.bot.send_message(
-                        chat_id=chat.id,
-                        text=(
-                            "L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  <code>/switch</code>  "
-                            "può avere i seguenti valori:\n"
-                            "    -  <code>VGsNETWORK-QTY</code>\n"
-                            "    -  <code>ultimiacquisti-QTY</code>\n\n"
-                            "In alternativa, puoi usare il comando  <code>/switch</code>  senza argomenti."
-                        ),
-                        disable_web_page_preview=True,
-                        parse_mode="HTML",
+                        chat_id = chat.id,
+                        text = "\n".join(text),
+                        disable_web_page_preview = True,
+                        parse_mode = "HTML",
                     )
                     return
                 if bot == "ultimiacquisti-QTY":
@@ -344,8 +348,7 @@ class BotManager:
         except BadRequest:
             context.bot.send_message(
                 chat_id=chat.id,
-                text="❌  Non sono riuscito a fare lo switch con il bot <code>%s</code>."
-                % bot,
+                text="❌  <i>Non sono riuscito a switchare al servizio  <code>%s</code>.</i>" % bot,
                 disable_web_page_preview=True,
                 parse_mode="HTML",
             )
