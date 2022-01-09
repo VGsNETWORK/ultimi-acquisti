@@ -11,9 +11,7 @@ import re
 
 from telegram.chat import Chat
 from telegram.error import BadRequest
-from root.contants.constant import (
-    BOT_SERVICE_NAMES_TO_SWITCH_TO
-)
+from root.contants.constant import BOT_SERVICE_NAMES_TO_SWITCH_TO
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager import user_statistics
@@ -296,33 +294,44 @@ class BotManager:
             if message.chat.type == "private":
                 if not bot:
                     keyboard = create_switch_bot_keyboard()
+                    text = ["Seleziona il servizio da avviare:"]
+                    text.append("\n💡 <i>In alternativa, puoi usare i comandi...")
+                    for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                        text.append(f'    -  "<code>/switch {bot_service_name}</code>";')
+                    text = "\n".join(text)
+                    # Sostituisco l'ultimo ";" con un "."
+                    text = text[:-1] + "."
+                    text += "</i>"
+                    
                     context.bot.send_message(
-                        chat_id=chat.id,
-                        text=(
-                            "Seleziona il servizio da avviare:\n\n"
-                            f'💡 <i>In alternativa, puoi usare il comando "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>".</i>'
-                        ),
-                        reply_markup=keyboard,
-                        disable_web_page_preview=True,
-                        parse_mode="HTML",
+                        chat_id = chat.id,
+                        text = text,
+                        reply_markup = keyboard,
+                        parse_mode = "HTML",
+                        disable_web_page_preview = True,
                     )
                     return
                 status = os.path.isfile("/etc/systemd/system/%s.service" % bot)
                 if update.callback_query:
                     status = True
                 if not status:
-                    text=[]
-                    text.append("L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  \"<code>/switch</code>\"  può avere i seguenti valori:")
+                    text = []
+                    text.append(
+                        'L\'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  "<code>/switch</code>"  può avere i seguenti valori:'
+                    )
                     for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
-                        text.append(f"    -  \"<code>{bot_service_name}</code>\"")
-                        #f"    -  \"<code>ultimiacquisti-QTY</code>\""
-                    text.append("\nIn alternativa, puoi usare il comando  \"<code>/switch</code>\"  senza argomenti.")
+                        text.append(f'    -  "<code>{bot_service_name}</code>"')
+                        #           f'    -  "<code>ultimiacquisti-QTY</code>"'
+                    text.append(
+                        f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch</code>"  senza argomenti.</i>'
+                    )
+                    text = "\n".join(text)
 
                     context.bot.send_message(
-                        chat_id = chat.id,
-                        text = "\n".join(text),
-                        disable_web_page_preview = True,
-                        parse_mode = "HTML",
+                        chat_id=chat.id,
+                        text=text,
+                        disable_web_page_preview=True,
+                        parse_mode="HTML",
                     )
                     return
                 if bot == "ultimiacquisti-QTY":
@@ -348,7 +357,8 @@ class BotManager:
         except BadRequest:
             context.bot.send_message(
                 chat_id=chat.id,
-                text="❌  <i>Non sono riuscito a switchare al servizio  <code>%s</code>.</i>" % bot,
+                text="❌  <i>Non sono riuscito a switchare al servizio  <code>%s</code>.</i>"
+                % bot,
                 disable_web_page_preview=True,
                 parse_mode="HTML",
             )
