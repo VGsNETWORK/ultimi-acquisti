@@ -7,9 +7,14 @@ from urllib.parse import quote
 import emoji
 from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.ext.conversationhandler import ConversationHandler
+from telegram.inline.inlinekeyboardbutton import InlineKeyboardButton
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
-from root.contants.constant import CATEGORIES, REPUTATION_REQUIRED_FOR_RATING
+from root.contants.constant import (
+    BOT_SERVICE_NAMES_TO_SWITCH_TO,
+    CATEGORIES,
+    REPUTATION_REQUIRED_FOR_RATING,
+)
 from root.contants.messages import (
     BOT_NAME,
     GO_BACK_BUTTON_TEXT,
@@ -1820,12 +1825,20 @@ def create_new_deal_keyboard(notification: Notification):
 
 
 def create_switch_bot_keyboard():
-    return InlineKeyboardMarkup(
-        [
-            [create_button("VGs NETWORK", "switch_bot_VGsNETWORK-QTY", None)],
-            [create_button("❌  Annulla", "delete_message", "")],
-        ]
-    )
+    if BOT_SERVICE_NAMES_TO_SWITCH_TO:
+        keyboard = []
+        for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+            keyboard.append(
+                [
+                    # TODO: fix the callback query of bot buttons
+                    create_button(
+                        f"{bot_service_name}", f"switch_bot_{bot_service_name}", None
+                    )
+                ]
+            )
+        keyboard.append([create_button("❌  Annulla", "delete_message", "")])
+        
+        return InlineKeyboardMarkup(keyboard)
 
 
 ERROR_KEYBOARD = InlineKeyboardMarkup(

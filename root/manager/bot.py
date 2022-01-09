@@ -294,14 +294,21 @@ class BotManager:
             if message.chat.type == "private":
                 if not bot:
                     keyboard = create_switch_bot_keyboard()
-                    text = ["Seleziona il servizio da avviare:"]
-                    text.append("\n💡 <i>In alternativa, puoi usare i comandi...")
-                    for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
-                        text.append(f'    -  "<code>/switch {bot_service_name}</code>";')
-                    text = "\n".join(text)
-                    # Sostituisco l'ultimo ";" con un "."
-                    text = text[:-1] + "."
-                    text += "</i>"
+                    if not BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                        text = ["❌  <i>Non ci sono servizi disponibili a cui switchare.</i>"]
+                    else:
+                        text = ["Seleziona il servizio da avviare:"]
+                    if BOT_SERVICE_NAMES_TO_SWITCH_TO.len() == 1:
+                        text.append(
+                            f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>".</i>')
+                    elif BOT_SERVICE_NAMES_TO_SWITCH_TO.len() > 1:
+                        text.append("\n💡 <i>In alternativa, puoi usare i comandi...")
+                        for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                            text.append(f'    -  "<code>/switch {bot_service_name}</code>";')
+                        text = "\n".join(text)
+                        # Sostituisco l'ultimo ";" con un "."
+                        text = text[:-1] + "."
+                        text += "</i>"
                     
                     context.bot.send_message(
                         chat_id = chat.id,
