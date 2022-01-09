@@ -300,7 +300,7 @@ class BotManager:
                         chat_id=chat.id,
                         text=(
                             "Seleziona il servizio da avviare:\n\n"
-                            f"💡 <i>In alternativa, puoi usare il comando  \"<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>\".</i>"
+                            f'💡 <i>In alternativa, puoi usare il comando "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>".</i>'
                         ),
                         reply_markup=keyboard,
                         disable_web_page_preview=True,
