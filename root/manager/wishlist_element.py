@@ -11,6 +11,7 @@ from root.helper.purchase_helper import convert_to_float
 from root.helper.start_messages import delete_start_message
 from root.model import notification
 from typing import List
+from bot_util.decorator.maintenance import check_maintenance
 
 import emoji
 import telegram_utils.helper.redis as redis_helper
@@ -839,6 +840,7 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
     view_wishlist(update, context, reset_keyboard=False)
 
 
+@check_maintenance
 def view_wishlist(
     update: Update,
     context: CallbackContext,

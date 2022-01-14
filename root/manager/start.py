@@ -74,6 +74,7 @@ from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 import bot_util.helper.user.user_reputation as ur_helper
 from bot_util.util.user_reputation import create_locked_button
+from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
 current_year = datetime.now().year
@@ -108,6 +109,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     return
 
 
+@check_maintenance
 def handle_start(update: Update, context: CallbackContext) -> None:
     """Handle the command /start from the user along with some query params
 

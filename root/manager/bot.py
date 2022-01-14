@@ -203,7 +203,7 @@ class BotManager:
         self.add_handler()
         logger.info("Il bot si sta avviando...")
         logger.info("Start polling...")
-        self.updater.start_polling(clean=True)
+        self.updater.start_polling(drop_pending_updates=True)
 
     def restart(self, update: Update, context: CallbackContext):
         """Restart the bot by using systemctl
@@ -295,27 +295,33 @@ class BotManager:
                 if not bot:
                     keyboard = create_switch_bot_keyboard()
                     if not BOT_SERVICE_NAMES_TO_SWITCH_TO:
-                        text = ["❌  <i>Non ci sono servizi disponibili a cui switchare.</i>"]
+                        text = [
+                            "❌  <i>Non ci sono servizi disponibili a cui switchare.</i>"
+                        ]
                     else:
                         text = ["Seleziona il servizio da avviare:"]
-                    if BOT_SERVICE_NAMES_TO_SWITCH_TO.len() == 1:
+                    if len(BOT_SERVICE_NAMES_TO_SWITCH_TO) == 1:
                         text.append(
-                            f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO}</code>".</i>')
-                    elif BOT_SERVICE_NAMES_TO_SWITCH_TO.len() > 1:
+                            f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO[0]}</code>".</i>'
+                        )
+                        text = "\n".join(text)
+                    elif len(BOT_SERVICE_NAMES_TO_SWITCH_TO) > 1:
                         text.append("\n💡 <i>In alternativa, puoi usare i comandi...")
                         for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
-                            text.append(f'    -  "<code>/switch {bot_service_name}</code>";')
+                            text.append(
+                                f'    -  "<code>/switch {bot_service_name}</code>";'
+                            )
                         text = "\n".join(text)
                         # Sostituisco l'ultimo ";" con un "."
                         text = text[:-1] + "."
                         text += "</i>"
-                    
+
                     context.bot.send_message(
-                        chat_id = chat.id,
-                        text = text,
-                        reply_markup = keyboard,
-                        parse_mode = "HTML",
-                        disable_web_page_preview = True,
+                        chat_id=chat.id,
+                        text=text,
+                        reply_markup=keyboard,
+                        parse_mode="HTML",
+                        disable_web_page_preview=True,
                     )
                     return
                 status = os.path.isfile("/etc/systemd/system/%s.service" % bot)

@@ -11,10 +11,11 @@ from root.helper.redis_message import reset_redis
 from telegram_utils.utils.misc import environment
 from time import sleep
 from bot_util.util.database import connect
+from bot_util.helper.bot_status import update_status
 
 
 def main():
-    """ Setup the database connection, configurations and start the bot """
+    """Setup the database connection, configurations and start the bot"""
     reset_redis()
     db_connect()
     connect()
