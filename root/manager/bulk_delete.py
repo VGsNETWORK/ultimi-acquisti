@@ -34,10 +34,10 @@ from telegram.ext import CallbackContext
 from telegram import Message
 import telegram_utils.utils.logger as logger
 from root.util.telegram import TelegramSender
-
+from bot_util.decorator.maintenance import check_maintenance
 sender = TelegramSender()
 
-
+@check_maintenance
 def bulk_delete(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     bot_name: str = retrieve_key("BOT_NAME")
@@ -148,7 +148,7 @@ def bulk_delete(update: Update, context: CallbackContext):
             disable_web_page_preview=True,
         )
 
-
+@check_maintenance
 def cancel_bulk_delete(update: Update, context: CallbackContext):
     message_id = update.effective_message.message_id
     user = update.effective_user

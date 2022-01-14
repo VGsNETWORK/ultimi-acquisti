@@ -28,6 +28,7 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
+from bot_util.decorator.maintenance import check_maintenance
 
 MAX_LINK_LENGTH = 27
 
@@ -46,6 +47,7 @@ def show_photos_and_links(wishlist_element: WishlistElement):
             return f"  •  <i>{len(wishlist_element.links)} link</i>"
 
 
+@check_maintenance
 def ask_confirm_deletion(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
@@ -131,6 +133,7 @@ def ask_confirm_deletion(update: Update, context: CallbackContext):
     redis_helper.save("%s_redis_message" % user.id, message_id)
 
 
+@check_maintenance
 def wishlist_element_confirm_convertion(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat

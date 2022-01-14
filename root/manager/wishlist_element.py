@@ -151,7 +151,8 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.user import User
 from telegram_utils.utils.tutils import delete_if_private
-
+from bot_util.decorator.maintenance import check_maintenance
+from bot_util.decorator.maintenance import check_maintenance
 sender = TelegramSender()
 
 # endregion
@@ -496,7 +497,7 @@ def has_link(wishlist_element: WishlistElement):
         return ""
     return "  •  🔗" if wishlist_element.links else ""
 
-
+@check_maintenance
 def ask_delete_all_wishlist_elements(
     update: Update, context: CallbackContext, from_wishlist=False
 ):
@@ -586,7 +587,7 @@ def ask_delete_all_wishlist_elements(
         parse_mode="HTML",
     )
 
-
+@check_maintenance
 def confirm_delete_all_wishlist_elements(
     update: Update, context: CallbackContext, from_wishlist=False
 ):
@@ -683,6 +684,7 @@ def confirm_delete_all_wishlist_elements(
         view_other_wishlists(update, context, edit=True, append=append)
 
 
+@check_maintenance
 def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext):
     from_wishlist = False
     if update.callback_query:
@@ -694,6 +696,7 @@ def abort_delete_all_wishlist_elements(update: Update, context: CallbackContext)
         view_other_wishlists(update, context, edit=True)
 
 
+@check_maintenance
 def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat
@@ -736,6 +739,7 @@ def confirm_wishlist_element_deletion(update: Update, context: CallbackContext):
     view_wishlist(update, context, reset_keyboard=True)
 
 
+@check_maintenance
 def remove_wishlist_element_item(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id = message.message_id
@@ -820,6 +824,7 @@ def remove_wishlist_element_item(update: Update, context: CallbackContext):
         redis_helper.save("%s_redis_message" % user.id, message_id)
 
 
+@check_maintenance
 def abort_delete_item_wishlist_element(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat
@@ -1172,6 +1177,7 @@ def clear_redis(user: User, toggle_cycle: bool = False):
         redis_helper.save("%s_cycle_insert" % user.id, str(False))
 
 
+@check_maintenance
 def add_in_wishlist_element(
     update: Update,
     context: CallbackContext,
@@ -1249,6 +1255,7 @@ def add_in_wishlist_element(
     return INSERT_ITEM_IN_WISHLIST
 
 
+@check_maintenance
 def handle_add_confirm(
     update: Update, context: CallbackContext, links: List[str] = None
 ):
@@ -1283,6 +1290,7 @@ def handle_add_confirm(
     return INSERT_ZELDA if not overload else INSERT_ITEM_IN_WISHLIST
 
 
+@check_maintenance
 def add_category(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
@@ -1400,6 +1408,7 @@ def add_category(update: Update, context: CallbackContext):
         return ConversationHandler.END
 
 
+@check_maintenance
 def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
     data = update.callback_query.data
     user: User = update.effective_user
@@ -1417,6 +1426,7 @@ def cancel_add_in_wishlist_element(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def handle_insert_for_link(
     update: Update, context: CallbackContext, from_call: bool = False
 ):
@@ -1583,6 +1593,7 @@ def reset_redis_wishlist_keyboard(user_id: int, total_elements: int):
         redis_helper.save("%s_element_page_%s." % (user_id, index), "1")
 
 
+@check_maintenance
 def toggle_element_action_page(update: Update, context: CallbackContext):
     user: User = update.effective_user
     index = update.callback_query.data.split("_")[-3]
@@ -1604,6 +1615,7 @@ def toggle_element_action_page(update: Update, context: CallbackContext):
     view_wishlist(update, context, reset_keyboard=False)
 
 
+@check_maintenance
 def extract_photo_from_message(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     delete_if_private(message)
@@ -1653,6 +1665,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     return INSERT_ITEM_IN_WISHLIST if is_photo or overload else INSERT_ZELDA
 
 
+@check_maintenance
 def toggle_cycle_insert(update: Update, context: CallbackContext):
     user: User = update.effective_user
     cycle_insert = redis_helper.retrieve("%s_cycle_insert" % user.id)
@@ -1670,6 +1683,7 @@ def toggle_cycle_insert(update: Update, context: CallbackContext):
     add_in_wishlist_element(update, context, cycle_insert, toggle_cycle=True)
 
 
+@check_maintenance
 def show_step_two_toast(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(
         update.callback_query.id, text=SUPPORTED_LINKS_MESSAGE, show_alert=True
@@ -1677,6 +1691,7 @@ def show_step_two_toast(update: Update, context: CallbackContext):
     return INSERT_ZELDA
 
 
+@check_maintenance
 def go_back(update: Update, context: CallbackContext):
     user: User = update.effective_user
     wishlist_id = get_current_wishlist_id(user.id)
@@ -1707,6 +1722,7 @@ def go_back(update: Update, context: CallbackContext):
             return INSERT_ZELDA
 
 
+@check_maintenance
 def create_custom_category(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
@@ -1730,6 +1746,7 @@ def create_custom_category(update: Update, context: CallbackContext):
     return CREATE_CATEGORY
 
 
+@check_maintenance
 def new_category_received(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
@@ -1836,6 +1853,7 @@ def new_category_received(update: Update, context: CallbackContext):
     return ADD_CATEGORY
 
 
+@check_maintenance
 def delete_custom_category(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if update.callback_query:
@@ -1850,6 +1868,7 @@ def delete_custom_category(update: Update, context: CallbackContext):
         return ADD_CATEGORY
 
 
+@check_maintenance
 def accept_category_modification(update: Update, context: CallbackContext):
     user: User = update.effective_user
     category_name = redis_helper.retrieve("new_category_name_%s" % user.id).decode()

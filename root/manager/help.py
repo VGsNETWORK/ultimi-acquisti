@@ -20,10 +20,12 @@ from root.contants.messages import (
 )
 from root.helper.process_helper import create_process, stop_process
 from root.contants.message_timeout import ONE_MINUTE, FIVE_MINUTES
+from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
 
 
+@check_maintenance
 def help_init(update: Update, context: CallbackContext):
     """Initialize the help session with the user
 
@@ -35,6 +37,7 @@ def help_init(update: Update, context: CallbackContext):
     bot_help(update, context, page=0)
 
 
+@check_maintenance
 def help_navigate(update: Update, context: CallbackContext):
     """Navigate in the various pages of the help section
 
@@ -51,6 +54,7 @@ def help_navigate(update: Update, context: CallbackContext):
     bot_help(update, context, page, True)
 
 
+@check_maintenance
 def send_redirect(update: Update, context: CallbackContext) -> None:
     """When is summoned
 
@@ -81,6 +85,7 @@ def send_redirect(update: Update, context: CallbackContext) -> None:
     )
 
 
+@check_maintenance
 def bot_help(
     update: Update, context: CallbackContext, page: int = 0, edit: bool = False
 ):

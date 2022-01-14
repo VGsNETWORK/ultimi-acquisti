@@ -50,7 +50,7 @@ import telegram_utils.utils.logger as logger
 import operator
 import telegram_utils.helper.redis as redis_helper
 from telegram_utils.utils.tutils import delete_if_private
-
+from bot_util.decorator.maintenance import check_maintenance
 
 ADD_PHOTO = range(1)
 
@@ -133,6 +133,7 @@ def extract_wishlist_link(links: List[str]):
     return wishlist_link
 
 
+@check_maintenance
 def ask_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
@@ -150,6 +151,7 @@ def ask_delete_all_wishlist_element_photos(update: Update, context: CallbackCont
     )
 
 
+@check_maintenance
 def confirm_delete_all_wishlist_element_photos(
     update: Update, context: CallbackContext
 ):
@@ -176,6 +178,7 @@ def confirm_delete_all_wishlist_element_photos(
     view_wishlist(update, context, reset_keyboard=False)
 
 
+@check_maintenance
 def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat
@@ -220,6 +223,7 @@ def abort_delete_all_wishlist_element_photos(update: Update, context: CallbackCo
     )
 
 
+@check_maintenance
 def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
@@ -275,6 +279,7 @@ def delete_wishlist_element_photo(update: Update, context: CallbackContext):
     )
 
 
+@check_maintenance
 def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message: Message = update.effective_message
@@ -326,6 +331,7 @@ def delete_photos_and_go_to_wishlist_element(update: Update, context: CallbackCo
     view_wishlist(update, context, page=int(page), reset_keyboard=False)
 
 
+@check_maintenance
 def view_wishlist_element_photos(
     update: Update,
     context: CallbackContext,
@@ -433,6 +439,7 @@ def view_wishlist_element_photos(
         )
 
 
+@check_maintenance
 def extract_photo_from_message(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     delete_if_private(message)
@@ -530,6 +537,7 @@ def extract_photo_from_message(update: Update, context: CallbackContext):
     return ADD_PHOTO
 
 
+@check_maintenance
 def ask_for_photo(update: Update, context: CallbackContext):
     logger.info("adding photo")
     message: Message = update.effective_message
@@ -600,6 +608,7 @@ def ask_for_photo(update: Update, context: CallbackContext):
     return ADD_PHOTO
 
 
+@check_maintenance
 def cancel_add_photo(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if not "go_back" in update.callback_query.data:
@@ -615,6 +624,7 @@ def cancel_add_photo(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def download_photo_automatically(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat

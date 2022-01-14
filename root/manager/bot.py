@@ -494,6 +494,7 @@ class BotManager:
         )
         self.disp.add_handler(SEND_COMUNICATION_CONVERSTATION)
 
+        # ? This one is using a self, update, context
         self.disp.add_handler(CommandHandler("vota", rating.poll))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
@@ -513,6 +514,7 @@ class BotManager:
                 pattern="update_wishlist_link_element", callback=update_list
             )
         )
+        # ? This one is using a self, update, context
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="previous_rating", callback=rating.go_back_rating
@@ -766,6 +768,7 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.cancel_rating, pattern="cancel_rating")
         )
+        # ? This has 3 arguments self, update, context
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.send_feedback, pattern="skip_rating")
         )

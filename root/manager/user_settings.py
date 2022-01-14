@@ -11,10 +11,12 @@ from telegram import Update
 from telegram.ext import CallbackContext
 from telegram import Message, Chat
 from root.util.telegram import TelegramSender
+from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
 
 
+@check_maintenance
 def settings_toggle_purchase_tips(update: Update, context: CallbackContext):
     user = update.effective_user
     user = retrieve_user(user.id)
@@ -23,6 +25,7 @@ def settings_toggle_purchase_tips(update: Update, context: CallbackContext):
     view_user_settings(update, context)
 
 
+@check_maintenance
 def view_user_settings(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

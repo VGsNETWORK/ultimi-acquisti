@@ -69,12 +69,14 @@ from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.handlers.handlers import extractor
+from bot_util.decorator.maintenance import check_maintenance
 
 # endregion
 
 INSERT_TITLE = range(1)
 
 
+@check_maintenance
 def reorder_wishlist(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     message: Message = update.effective_message
@@ -164,6 +166,7 @@ def reorder_wishlist(update: Update, context: CallbackContext):
         logger.error(e)
 
 
+@check_maintenance
 def view_other_wishlists(
     update: Update,
     context: CallbackContext,
@@ -313,6 +316,7 @@ def view_other_wishlists(
         return
 
 
+@check_maintenance
 def add_wishlist(
     update: Update,
     context: CallbackContext,
@@ -352,6 +356,7 @@ def add_wishlist(
     return INSERT_TITLE
 
 
+@check_maintenance
 def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = False):
     message: Message = update.effective_message
     message_id: int = message.message_id
@@ -456,6 +461,7 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
     return INSERT_TITLE if overload else ConversationHandler.END
 
 
+@check_maintenance
 def cancel_add_wishlist(update: Update, context: CallbackContext):
     logger.info("CANCEL")
     data = update.callback_query.data
@@ -469,6 +475,7 @@ def cancel_add_wishlist(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def handle_keep_confirm(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()

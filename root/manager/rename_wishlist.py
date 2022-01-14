@@ -54,12 +54,14 @@ from telegram.user import User
 import telegram_utils.helper.redis as redis_helper
 import telegram_utils.utils.logger as logger
 from root.handlers.handlers import extractor
+from bot_util.decorator.maintenance import check_maintenance
 
 # endregion
 
 EDIT_TITLE = range(1)
 
 
+@check_maintenance
 def edit_wishlist(
     update: Update,
     context: CallbackContext,
@@ -93,6 +95,7 @@ def edit_wishlist(
     return EDIT_TITLE
 
 
+@check_maintenance
 def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = False):
     message: Message = update.effective_message
     message_id: int = message.message_id
@@ -145,12 +148,14 @@ def handle_add_confirm(update: Update, context: CallbackContext, edit: bool = Fa
     return EDIT_TITLE if overload else ConversationHandler.END
 
 
+@check_maintenance
 def cancel_edit_wishlist(update: Update, context: CallbackContext):
     update.callback_query.data += "_0"
     view_other_wishlists(update, context)
     return ConversationHandler.END
 
 
+@check_maintenance
 def handle_keep_confirm(update: Update, context: CallbackContext):
     user: User = update.effective_user
     message = redis_helper.retrieve("%s_stored_wishlist" % user.id).decode()

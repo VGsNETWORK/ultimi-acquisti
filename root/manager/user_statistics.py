@@ -41,8 +41,8 @@ from root.contants.messages import (
     WISHLIST_BUTTON_TEXT,
 )
 from bot_util.model.user import User as DbUser
-
 from pymongo.command_cursor import CommandCursor
+from bot_util.decorator.maintenance import check_maintenance
 
 
 def save_to_redis(user_id: int, value: str):
@@ -50,7 +50,7 @@ def save_to_redis(user_id: int, value: str):
 
 
 def find_users(user: DbUser, index: int):
-    """ Find the previous and next user after one in the database """
+    """Find the previous and next user after one in the database"""
     prev: DbUser = find_user_paged(index + 1)
     next: DbUser = find_user_paged(index - 1)
     prev = prev[0] if prev else None
@@ -61,7 +61,7 @@ def find_users(user: DbUser, index: int):
 def build_user_wishlist_info_keyboard(
     user: DbUser, prev: DbUser, next: DbUser, index: int
 ):
-    """ Build the keyboard responsible to navigate between users """
+    """Build the keyboard responsible to navigate between users"""
     if prev:
         first_name = prev.first_name if prev.first_name else "Sconosciuto"
         prev_text = f"►   {first_name}"
@@ -124,6 +124,7 @@ def build_cursor(user: DbUser):
     ]
 
 
+@check_maintenance
 def user_statistics(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(update.callback_query.id)
     data = update.callback_query.data

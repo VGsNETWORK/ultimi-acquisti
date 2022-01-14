@@ -30,6 +30,7 @@ from root.contants.messages import (
 import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from telegram_utils.helper import redis as redis_helper
+from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
 
@@ -40,6 +41,7 @@ FEEDBACK_CATEGORY, FEEDBACK_MESSAGE = range(2)
 MESSAGE = 0
 
 
+@check_maintenance
 def start_feedback(update: Update, context: CallbackContext):
     global MESSAGE_ID
     keyboard = []
@@ -65,6 +67,7 @@ def start_feedback(update: Update, context: CallbackContext):
     return FEEDBACK_CATEGORY
 
 
+@check_maintenance
 def ask_for_message(update: Update, context: CallbackContext):
     """Start the conversation handler for the feedback
 
@@ -106,6 +109,7 @@ def ask_for_message(update: Update, context: CallbackContext):
     return FEEDBACK_MESSAGE
 
 
+@check_maintenance
 def send_feedback(update: Update, context: CallbackContext):
     """Send the message to the channel after the user typed it
 
@@ -142,6 +146,7 @@ def send_feedback(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def cancel_feedback(update: Update, context: CallbackContext):
     """Cancel the conversation handler
 
@@ -161,6 +166,7 @@ def build_keyboard():
     )
 
 
+@check_maintenance
 def select_category(update: Update, context: CallbackContext):
     logger.info("CATEGORY SELECT")
     data = update.callback_query.data

@@ -50,14 +50,17 @@ from telegram.ext import CallbackContext
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.user import User
+from bot_util.decorator.maintenance import check_maintenance
 
 
+@check_maintenance
 def open_notification_panel(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)
     show_messages(update, context)
 
 
+@check_maintenance
 def navigate_notifications(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -74,6 +77,7 @@ def navigate_notifications(update: Update, context: CallbackContext):
     show_messages(update, context, page, communication)
 
 
+@check_maintenance
 def view_comunication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -90,6 +94,7 @@ def view_comunication(update: Update, context: CallbackContext):
     show_messages(update, context, page, admin_message)
 
 
+@check_maintenance
 def ask_delete_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -114,6 +119,7 @@ def ask_delete_communication(update: Update, context: CallbackContext):
     )
 
 
+@check_maintenance
 def delete_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -122,6 +128,7 @@ def delete_communication(update: Update, context: CallbackContext):
     show_messages(update, context, page)
 
 
+@check_maintenance
 def show_messages(
     update: Update,
     context: CallbackContext,
@@ -182,6 +189,7 @@ def show_messages(
             pass
 
 
+@check_maintenance
 def show_notifications(update: Update, context: CallbackContext):
     user: User = update.effective_user
     chat: Chat = update.effective_chat
