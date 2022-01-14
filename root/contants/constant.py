@@ -4,7 +4,6 @@ from os import environ
 from typing import List
 from ast import literal_eval
 
-
 DO_NOT_LOWER_LINKS = [".youtube.", "/youtube.", "/youtu.be/", ".youtu.be/"]
 
 CATEGORIES = [
@@ -52,3 +51,6 @@ BOT_SERVICE_NAMES_TO_SWITCH_TO = environ.get(
 )
 # Parse the value
 BOT_SERVICE_NAMES_TO_SWITCH_TO: List[str] = literal_eval(BOT_SERVICE_NAMES_TO_SWITCH_TO)
+
+
+MQTT_TOPIC_NAME = environ.get("MQTT_TOPIC_NAME", "missing_topic_name")
