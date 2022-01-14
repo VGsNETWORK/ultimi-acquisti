@@ -150,6 +150,7 @@ from root.manager.feedback import FEEDBACK_CONVERSATION
 from telegram_utils.utils.tutils import log
 import root.manager.view_other_wishlists as view_other_wishlists
 import subprocess
+from bot_util.decorator.maintenance import check_class_maintenance
 
 
 ADD_NEW_WISHLIST = ConversationHandler(
@@ -205,6 +206,7 @@ class BotManager:
         logger.info("Start polling...")
         self.updater.start_polling(drop_pending_updates=True)
 
+    @check_class_maintenance
     def restart(self, update: Update, context: CallbackContext):
         """Restart the bot by using systemctl
 
@@ -232,6 +234,7 @@ class BotManager:
             else:
                 os.popen("sudo systemctl restart ultimiacquisti")
 
+    @check_class_maintenance
     def send_git_link(self, update: Update, context: CallbackContext):
         """Send the link to the github page of this project
 
@@ -252,6 +255,7 @@ class BotManager:
             text="https://github.com/VGsNETWORK/ultimi-acquisti",
         )
 
+    @check_class_maintenance
     def show_alert(self, update: Update, context: CallbackContext, message: str):
         context.bot.answer_callback_query(
             update.callback_query.id, text=message, show_alert=True
@@ -266,6 +270,7 @@ class BotManager:
         """
         context.bot.answer_callback_query(update.callback_query.id)
 
+    @check_class_maintenance
     def delete_all_purchases(self, update: Update, context: CallbackContext):
         if is_develop():
             Purchase.objects.delete()
@@ -275,6 +280,7 @@ class BotManager:
         else:
             logger.info("This is not a development environment, ARE YOU CRAZY???")
 
+    @check_class_maintenance
     def switch_bot(self, update: Update, context: CallbackContext):
         logger.info("switching bot...")
         message: Message = update.effective_message

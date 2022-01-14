@@ -66,6 +66,7 @@ from uuid import uuid4
 import root.util.logger as logger
 import re
 from root.util.telegram import TelegramSender
+from bot_util.decorator.maintenance import check_class_maintenance
 
 sender = TelegramSender()
 
@@ -129,6 +130,7 @@ class Rating:
 
         user_rating.save()
 
+    @check_class_maintenance
     def send_feedback(self, update: Update, context: CallbackContext):
         if update.effective_message.chat.type == "private":
             delete_start_message(update.effective_user.id)
@@ -259,7 +261,8 @@ class Rating:
             }
         }
         context.bot_data.update(payload)
-
+    
+    @check_class_maintenance
     def poll(self, update: Update, context: CallbackContext) -> None:
         if update.effective_message.chat.type == "private":
             delete_start_message(update.effective_user.id)
@@ -344,7 +347,7 @@ class Rating:
                 reply_markup=build_pre_poll_keyboard(user_id, approved, to_approve, data),
             )
 
-
+    @check_class_maintenance
     def show_rating(self, update: Update, context: CallbackContext):
         """ Show user rating """
         chat_id = update.effective_chat.id
@@ -367,7 +370,7 @@ class Rating:
         except DoesNotExist:
             self.poll(update, context)
 
-    
+    @check_class_maintenance
     def start_poll(self, update: Update, context: CallbackContext):
         """Sends a predefined poll"""
         message = "%s%s" % (RATING_HEADER_MENU, RATING_PLACEHOLDER)
@@ -392,6 +395,7 @@ class Rating:
             pass
         self.create_poll(f"{self.status[user_id]}", chat_id, context)
 
+    @check_class_maintenance
     def receive_poll_answer(self, update: Update, context: CallbackContext) -> None:
         answer = update.poll_answer
         poll_id, first_name = answer.poll_id, answer.user.first_name
@@ -444,6 +448,7 @@ class Rating:
         self.status_index[user_id] += 1
         logger.info(self.status_index[user_id])
 
+    @check_class_maintenance
     def go_back_rating(self, update: Update, context: CallbackContext):
         user_id = update.effective_user.id
         chat_id = update.effective_chat.id
@@ -473,12 +478,14 @@ class Rating:
         )
         return
 
+    @check_class_maintenance
     def cancel_rating(self, update: Update, context: CallbackContext):
         user_id = update.effective_user.id
         self.status_index[user_id] = 0
         self.status[user_id] = RATING_VALUES[0]
         remove_commands(update, context)
 
+    @check_class_maintenance
     def deny_rating(self, update: Update, context: CallbackContext):
         message: Message = update.effective_message
         first_name = None
@@ -528,6 +535,7 @@ class Rating:
         )
         self.calculate_weighted_average()
 
+    @check_class_maintenance
     def approve_rating(self, update: Update, context: CallbackContext):
         message: Message = update.effective_message
         first_name = None
@@ -574,6 +582,7 @@ class Rating:
         )
         self.calculate_weighted_average()
 
+    @check_class_maintenance
     def delete_reviewed_rating_message(self, update: Update, context: CallbackContext):
         context.bot.delete_message(
             chat_id=update.effective_chat.id,
