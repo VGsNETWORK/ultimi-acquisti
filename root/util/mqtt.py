@@ -20,7 +20,9 @@ def on_message(client, userdata, msg: MQTTMessage):
     # TODO: MAINTENANCE_BOT_CODE can be used in the library
     # TODO: BOT_NAME: can be retrieved from the environment BOT_NAME
     try:
-        send_update_status_message("@UltimiacquistiBot", MAINTENANCE_BOT_CODE, status)
+        send_update_status_message(
+            "#ultimiacquisti", "@UltimiacquistiBot", MAINTENANCE_BOT_CODE, status
+        )
     except Exception as e:
         logger.error(e)
 
