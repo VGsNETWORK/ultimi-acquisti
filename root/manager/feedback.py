@@ -31,6 +31,7 @@ import root.util.logger as logger
 from root.util.telegram import TelegramSender
 from telegram_utils.helper import redis as redis_helper
 from bot_util.decorator.maintenance import check_maintenance
+from telegram.error import BadRequest
 
 sender = TelegramSender()
 
@@ -56,14 +57,24 @@ def start_feedback(update: Update, context: CallbackContext):
     keyboard = InlineKeyboardMarkup(keyboard)
     message = FEEDBACK_CHOOSE_CATEGORY
     MESSAGE_ID = update.effective_message.message_id
-    context.bot.edit_message_text(
-        text=message,
-        chat_id=update.effective_user.id,
-        disable_web_page_preview=True,
-        message_id=update.effective_message.message_id,
-        reply_markup=keyboard,
-        parse_mode="HTML",
-    )
+    try:
+        context.bot.edit_message_text(
+            text=message,
+            chat_id=update.effective_user.id,
+            disable_web_page_preview=True,
+            message_id=update.effective_message.message_id,
+            reply_markup=keyboard,
+            parse_mode="HTML",
+        )
+    except BadRequest as e:
+        logger.error(e)
+        context.bot.send_message(
+            text=message,
+            chat_id=update.effective_user.id,
+            disable_web_page_preview=True,
+            reply_markup=keyboard,
+            parse_mode="HTML",
+        )
     return FEEDBACK_CATEGORY
 
 

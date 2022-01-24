@@ -5,11 +5,13 @@
 import logging
 import configparser
 from os import environ
-
+import inspect
 
 CONFIG = configparser.ConfigParser()
 CONFIG.read("logger.conf")
-FORMAT = "%(asctime)-15s %(levelname)s:%(funcName)-8s %(message)s"
+FORMAT = (
+    "%(filename)s:%(lineno)s:%(asctime)-15s %(levelname)s:%(funcName)-8s %(message)s"
+)
 FILE = "server.log"
 LEVEL = logging.INFO
 logging.basicConfig(filename=FILE, filemode="a", format=FORMAT, level=LEVEL)

@@ -51,7 +51,12 @@ class Mtbot:
             MessageHandler(handle_purchase, filters=filters.regex("#ultimiacquisti"))
         )
         self.app.add_handler(
-            MessageHandler(remove_purchase, filters=(filters.edited & purchase_filter))
+            MessageHandler(
+                remove_purchase,
+                filters=(
+                    filters.edited & purchase_filter & filters.regex("#ultimiacquisti")
+                ),
+            )
         )
 
     def setup_userbot(self):

@@ -32,8 +32,9 @@ def mqtt_listener():
         logger.error("Missing MQTT_TOPIC_NAME in environment")
         # TODO: log it to the channel
         return
-    logger.info("Starting mqtt listener")
-    t: threading.Thread = threading.Thread(
-        target=listen_for_status_change, args=(MQTT_TOPIC_NAME, on_message)
-    )
-    t.start()
+    listen_for_status_change(MQTT_TOPIC_NAME, on_message)
+    # logger.info("Starting mqtt listener")
+    # t: threading.Thread = threading.Thread(
+    #    target=listen_for_status_change, args=(MQTT_TOPIC_NAME, on_message)
+    # )
+    # t.start()

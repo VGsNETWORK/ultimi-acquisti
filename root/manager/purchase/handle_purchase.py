@@ -118,7 +118,10 @@ def handle_purchase(
     original_message = message
     edited = message.edit_date
     append_message = ["", "", ""]
-    if message.from_user.is_bot:
+    if message.from_user:
+        if message.from_user.is_bot:
+            return
+    else:
         return
     token = retrieve_key("TOKEN")
     log_channel = retrieve_key("ERROR_CHANNEL")
