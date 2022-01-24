@@ -52,7 +52,7 @@ from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
 from root.helper.process_helper import create_process
 from root.manager.start import back_to_the_start
-
+from bot_util.decorator.maintenance import check_class_maintenance
 
 class MonthReport:
     """ Class used to display the month report of a user """
@@ -185,6 +185,7 @@ class MonthReport:
             timeout=timeout,
         )
 
+    @check_class_maintenance
     def expand_report(self, update: Update, context: CallbackContext) -> None:
         """The callback to indicate to expand the month purchase message into the report
 
@@ -334,6 +335,7 @@ class MonthReport:
         return message
 
     # =========================================================================
+    @check_class_maintenance
     def previous_page(self, update: Update, context: CallbackContext):
         """Go to the previous page
 
@@ -346,6 +348,7 @@ class MonthReport:
         self.month -= 1
         self.retrieve_and_send(update, context)
 
+    @check_class_maintenance
     def next_page(self, update: Update, context: CallbackContext):
         """Go to the next page
 
@@ -358,6 +361,7 @@ class MonthReport:
         self.month += 1
         self.retrieve_and_send(update, context)
 
+    @check_class_maintenance
     def current_month_report(self, update: Update, context: CallbackContext):
         """Go to the beginning of the year
 
@@ -370,6 +374,7 @@ class MonthReport:
         self.month = 1
         self.retrieve_and_send(update, context)
 
+    @check_class_maintenance
     def previous_year(self, update: Update, context: CallbackContext):
         """Go to the previous year
 
@@ -384,6 +389,7 @@ class MonthReport:
         self.year = self.year - int(year)
         self.retrieve_and_send(update, context)
 
+    @check_class_maintenance
     def next_year(self, update: Update, context: CallbackContext):
         """Go to the next year
 
@@ -401,6 +407,7 @@ class MonthReport:
                 self.month = self.current_month
         self.retrieve_and_send(update, context)
 
+    @check_class_maintenance
     def retrieve_and_send(self, update: Update, context: CallbackContext):
         """[summary]
 

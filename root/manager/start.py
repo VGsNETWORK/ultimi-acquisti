@@ -74,11 +74,13 @@ from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 import bot_util.helper.user.user_reputation as ur_helper
 from bot_util.util.user_reputation import create_locked_button
+from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
 current_year = datetime.now().year
 
 
+@check_maintenance
 def handle_params(update: Update, context: CallbackContext, params: str) -> None:
     """handle various params recevied during the /start command
 
@@ -108,6 +110,7 @@ def handle_params(update: Update, context: CallbackContext, params: str) -> None
     return
 
 
+@check_maintenance
 def handle_start(update: Update, context: CallbackContext) -> None:
     """Handle the command /start from the user along with some query params
 
@@ -153,6 +156,7 @@ def handle_start(update: Update, context: CallbackContext) -> None:
     sender.delete_if_private(update, message)
 
 
+@check_maintenance
 def help_end(update: Update, context: CallbackContext):
     """End the help session with the user
 
@@ -177,6 +181,7 @@ def help_end(update: Update, context: CallbackContext):
         update_or_create_start_message(update.effective_user, message.message_id)
 
 
+@check_maintenance
 def conversation_main_menu(
     update: Update,
     _: CallbackContext,
@@ -225,6 +230,7 @@ def conversation_main_menu(
         logger.exception(e)
 
 
+@check_maintenance
 def append_commands(update: Update, context: CallbackContext, page: int = 0):
     """Append the list of commands to the start message
 
@@ -387,6 +393,7 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
         logger.info(f"FUCK OFF {msg.message_id}")
 
 
+@check_maintenance
 def remove_commands(update: Update, context: CallbackContext):
     """Remove the list of commands to the start message
 
@@ -410,6 +417,7 @@ def remove_commands(update: Update, context: CallbackContext):
         )
 
 
+@check_maintenance
 def rating_cancelled(update: Update, context: CallbackContext, message_id):
     answer = update.poll_answer
     poll_id, first_name = answer.poll_id, answer.user.first_name
@@ -645,6 +653,7 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
     return GROUP_START_KEYBOARD
 
 
+@check_maintenance
 def navigate_command_list(update: Update, _: CallbackContext):
     global COMMAND_MESSAGE
     callback: CallbackQuery = update.callback_query
@@ -656,6 +665,7 @@ def navigate_command_list(update: Update, _: CallbackContext):
     append_commands(update, callback, page)
 
 
+@check_maintenance
 def back_to_the_start(
     update: Update,
     context: CallbackContext,
@@ -670,6 +680,7 @@ def back_to_the_start(
     conversation_main_menu(update, context, message_id, original_message)
 
 
+@check_maintenance
 def show_info(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)

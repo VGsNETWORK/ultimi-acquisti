@@ -3,6 +3,7 @@
 """ The bot startup file """
 
 import threading
+from root.util.mqtt import mqtt_listener
 from root.util.util import db_connect
 from root.manager.bot import BotManager
 from root.helper.configuration import ConfigurationHelper
@@ -11,10 +12,12 @@ from root.helper.redis_message import reset_redis
 from telegram_utils.utils.misc import environment
 from time import sleep
 from bot_util.util.database import connect
+from bot_util.helper.bot_status import update_status
 
 
 def main():
-    """ Setup the database connection, configurations and start the bot """
+    """Setup the database connection, configurations and start the bot"""
+    mqtt_listener()
     reset_redis()
     db_connect()
     connect()

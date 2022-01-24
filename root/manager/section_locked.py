@@ -7,8 +7,10 @@ from bot_util.helper.user.user_reputation import (
     get_user_reputation,
     visualize_user_reputation,
 )
+from bot_util.decorator.maintenance import check_maintenance
 
 
+@check_maintenance
 def show_section_locked_popup(update: Update, context: CallbackContext):
     user_reputation = get_user_reputation(update.effective_user.id)
     visualization = visualize_user_reputation(user_reputation)

@@ -73,6 +73,7 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 from telegram.message import Message
 from telegram_utils.utils.tutils import delete_if_private
+from bot_util.decorator.maintenance import check_maintenance
 
 EDIT_WISHLIST_TEXT, EDIT_CATEGORY, CREATE_CATEGORY = range(3)
 
@@ -88,6 +89,7 @@ def show_photo(wishlist_element: WishlistElement):
     )
 
 
+@check_maintenance
 def edit_wishlist_element_item(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id = message.message_id
@@ -151,6 +153,7 @@ def edit_wishlist_element_item(update: Update, context: CallbackContext):
     return EDIT_WISHLIST_TEXT
 
 
+@check_maintenance
 def edit_wishlist_element_description(
     update: Update, context: CallbackContext, from_new_category: bool = False
 ):
@@ -314,6 +317,7 @@ def edit_wishlist_element_description(
     return EDIT_CATEGORY if len(text) <= 128 else EDIT_WISHLIST_TEXT
 
 
+@check_maintenance
 def edit_wishlist_element_link(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
@@ -404,6 +408,7 @@ def edit_wishlist_element_link(update: Update, context: CallbackContext):
     return EDIT_CATEGORY
 
 
+@check_maintenance
 def edit_category(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     user: User = update.effective_user
@@ -510,6 +515,7 @@ def edit_category(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def cancel_edit_wishlist_element(update: Update, context: CallbackContext):
     if update.callback_query:
         page = update.callback_query.data.split("_")[-2]
@@ -520,6 +526,7 @@ def cancel_edit_wishlist_element(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def go_back(update: Update, context: CallbackContext):
     if update.callback_query:
         if "from_category" in update.callback_query.data:
@@ -551,6 +558,7 @@ def create_custom_category(update: Update, context: CallbackContext):
     return CREATE_CATEGORY
 
 
+@check_maintenance
 def accept_category_modification(update: Update, context: CallbackContext):
     user: User = update.effective_user
     category_name = redis_helper.retrieve("new_category_name_%s" % user.id).decode()
@@ -560,6 +568,7 @@ def accept_category_modification(update: Update, context: CallbackContext):
     return EDIT_CATEGORY
 
 
+@check_maintenance
 def new_category_received(update: Update, context: CallbackContext):
     chat: Chat = update.effective_chat
     message: Message = update.effective_message
@@ -669,6 +678,7 @@ def new_category_received(update: Update, context: CallbackContext):
     return EDIT_CATEGORY
 
 
+@check_maintenance
 def delete_custom_category(update: Update, context: CallbackContext):
     user: User = update.effective_user
     if update.callback_query:
@@ -683,11 +693,13 @@ def delete_custom_category(update: Update, context: CallbackContext):
         return EDIT_CATEGORY
 
 
+@check_maintenance
 def go_to_link_session(update: Update, context: CallbackContext):
     view_wishlist_element_links(update, context)
     return ConversationHandler.END
 
 
+@check_maintenance
 def remove_element_price(update: Update, context: CallbackContext):
     logger.info("***REMOVING PRICE***")
     update.callback_query.data = update.callback_query.data.replace(

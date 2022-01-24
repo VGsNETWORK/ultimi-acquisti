@@ -72,12 +72,14 @@ from telegram.ext.messagehandler import MessageHandler
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 from telegram.update import Update
+from bot_util.decorator.maintenance import check_maintenance
 
 APPEND_LINK = range(1)
 MAX_LINK_LENGTH = 27
 MAX_LINKS_NUMBER = 10
 
 
+@check_maintenance
 def show_price_popup(update: Update, context: CallbackContext):
     logger.info("SHOW PRICE")
     user: User = update.effective_user
@@ -138,6 +140,7 @@ def show_price_popup(update: Update, context: CallbackContext):
     )
 
 
+@check_maintenance
 def delete_wishlist_element_link(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
@@ -169,6 +172,7 @@ def delete_wishlist_element_link(update: Update, context: CallbackContext):
     return
 
 
+@check_maintenance
 def update_list(update: Update, context: CallbackContext, show_update: bool = False):
     user: User = update.effective_user
     if not show_update:
@@ -202,6 +206,7 @@ def update_list(update: Update, context: CallbackContext, show_update: bool = Fa
                 return
 
 
+@check_maintenance
 def view_wishlist_element_links(
     update: Update,
     context: CallbackContext,
@@ -537,6 +542,7 @@ def view_wishlist_element_links(
         pass
 
 
+@check_maintenance
 def ask_for_new_link(update: Update, context: CallbackContext):
     logger.info("ASKING FOR NEW LINK")
     message: Message = update.effective_message
@@ -601,6 +607,7 @@ def ask_for_new_link(update: Update, context: CallbackContext):
         return APPEND_LINK
 
 
+@check_maintenance
 def append_link(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id
@@ -718,19 +725,19 @@ def append_link(update: Update, context: CallbackContext):
         return APPEND_LINK
     return APPEND_LINK
 
-
+@check_maintenance
 def complete_operation(update: Update, context: CallbackContext):
     view_wishlist_element_links(update, context)
     return ConversationHandler.END
 
-
+@check_maintenance
 def show_step_two_toast(update: Update, context: CallbackContext):
     context.bot.answer_callback_query(
         update.callback_query.id, text=SUPPORTED_LINKS_MESSAGE, show_alert=True
     )
     return APPEND_LINK
 
-
+@check_maintenance
 def cancel_link_append(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     message_id: int = message.message_id

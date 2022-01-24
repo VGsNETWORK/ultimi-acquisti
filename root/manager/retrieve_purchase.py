@@ -15,6 +15,7 @@ from telegram_utils.utils.misc import environment
 from root.helper.purchase_helper import convert_to_float, find_by_message_id_and_chat_id
 import telegram_utils.utils.logger as logger
 import json
+from bot_util.decorator.maintenance import check_maintenance
 
 
 def add_purchase(client: Client, message: Message):
@@ -129,6 +130,7 @@ def get_messages_for(chat_id: int, client: Client):
     return append
 
 
+@check_maintenance
 def update_purchases_for_chat(update: Update, context: CallbackContext):
     chat_type = update.effective_chat.type
     if chat_type == "private":

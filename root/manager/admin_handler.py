@@ -58,6 +58,7 @@ from telegram.ext import CallbackContext
 from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.message import Message
 import telegram_utils.helper.redis as redis_helper
+from bot_util.decorator.maintenance import check_maintenance
 
 SEND_COMMUNICATION = range(1)
 
@@ -76,6 +77,7 @@ INIT_SEND_COMMUNICATION_KEYBOARD = InlineKeyboardMarkup(
 )
 
 
+@check_maintenance
 def resend_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -87,6 +89,7 @@ def resend_communication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page)
 
 
+@check_maintenance
 def navigate_admin_notifications(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -103,6 +106,7 @@ def navigate_admin_notifications(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, communication)
 
 
+@check_maintenance
 def view_admin_comunication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -118,6 +122,7 @@ def view_admin_comunication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, admin_message)
 
 
+@check_maintenance
 def ask_delete_admin_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -144,6 +149,7 @@ def ask_delete_admin_communication(update: Update, context: CallbackContext):
     )
 
 
+@check_maintenance
 def delete_admin_communication(update: Update, context: CallbackContext):
     data: str = update.callback_query.data
     page = int(data.split("_")[-1])
@@ -153,6 +159,7 @@ def delete_admin_communication(update: Update, context: CallbackContext):
     show_admin_messages(update, context, page, None)
 
 
+@check_maintenance
 def show_admin_messages(
     update: Update,
     context: CallbackContext,
@@ -209,6 +216,7 @@ def show_admin_messages(
     return ConversationHandler.END
 
 
+@check_maintenance
 def handle_admin(update: Update, context: CallbackContext):
     if update.effective_message.chat.type == "private":
         delete_start_message(update.effective_user.id)
@@ -243,6 +251,7 @@ def handle_admin(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def init_send_comunication(update: Update, context: CallbackContext):
     message: Message = update.effective_message
     chat: Chat = update.effective_chat
@@ -262,6 +271,7 @@ def init_send_comunication(update: Update, context: CallbackContext):
     return SEND_COMMUNICATION
 
 
+@check_maintenance
 def send_comunication(update: Update, context: CallbackContext):
     text = update.effective_message.text
     text = text_entities_to_html(text, update.effective_message.entities)

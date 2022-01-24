@@ -29,10 +29,12 @@ from telegram.ext.callbackqueryhandler import CallbackQueryHandler
 from telegram.update import Update
 import telegram_utils.utils.logger as logger
 from time import sleep
+from bot_util.decorator.maintenance import check_maintenance
 
 CHANGE_ELEMENT_WISHLIST = range(1)
 
 
+@check_maintenance
 def ask_wishlist_change(
     update: Update,
     context: CallbackContext,
@@ -86,6 +88,7 @@ def ask_wishlist_change(
     return CHANGE_ELEMENT_WISHLIST
 
 
+@check_maintenance
 def change_wishlist(update: Update, context: CallbackContext):
     user: User = update.effective_user
     data: str = update.callback_query.data
@@ -113,6 +116,7 @@ def change_wishlist(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
+@check_maintenance
 def cancel_wishlist_change(update: Update, context: CallbackContext):
     view_wishlist(update, context, reset_keyboard=False)
     return ConversationHandler.END

@@ -11,6 +11,7 @@ import re
 
 from telegram.chat import Chat
 from telegram.error import BadRequest
+from root.contants.constant import BOT_SERVICE_NAMES_TO_SWITCH_TO
 from root.contants.keyboard import create_switch_bot_keyboard
 from root.handlers.new_group_handler import handle_new_group
 from root.manager import user_statistics
@@ -149,6 +150,7 @@ from root.manager.feedback import FEEDBACK_CONVERSATION
 from telegram_utils.utils.tutils import log
 import root.manager.view_other_wishlists as view_other_wishlists
 import subprocess
+from bot_util.decorator.maintenance import check_class_maintenance
 
 
 ADD_NEW_WISHLIST = ConversationHandler(
@@ -202,8 +204,9 @@ class BotManager:
         self.add_handler()
         logger.info("Il bot si sta avviando...")
         logger.info("Start polling...")
-        self.updater.start_polling(clean=True)
+        self.updater.start_polling(drop_pending_updates=True)
 
+    @check_class_maintenance
     def restart(self, update: Update, context: CallbackContext):
         """Restart the bot by using systemctl
 
@@ -231,6 +234,7 @@ class BotManager:
             else:
                 os.popen("sudo systemctl restart ultimiacquisti")
 
+    @check_class_maintenance
     def send_git_link(self, update: Update, context: CallbackContext):
         """Send the link to the github page of this project
 
@@ -251,6 +255,7 @@ class BotManager:
             text="https://github.com/VGsNETWORK/ultimi-acquisti",
         )
 
+    @check_class_maintenance
     def show_alert(self, update: Update, context: CallbackContext, message: str):
         context.bot.answer_callback_query(
             update.callback_query.id, text=message, show_alert=True
@@ -265,15 +270,17 @@ class BotManager:
         """
         context.bot.answer_callback_query(update.callback_query.id)
 
+    @check_class_maintenance
     def delete_all_purchases(self, update: Update, context: CallbackContext):
         if is_develop():
             Purchase.objects.delete()
             context.bot.send_message(
-                chat_id=update.effective_chat.id, text="✅  Acquisti cancellati"
+                chat_id=update.effective_chat.id, text="✅  <i>Acquisti cancellati.</i>"
             )
         else:
-            logger.info("this is not a development environment, ARE YOU CRAZY?")
+            logger.info("This is not a development environment, ARE YOU CRAZY???")
 
+    @check_class_maintenance
     def switch_bot(self, update: Update, context: CallbackContext):
         logger.info("switching bot...")
         message: Message = update.effective_message
@@ -293,30 +300,55 @@ class BotManager:
             if message.chat.type == "private":
                 if not bot:
                     keyboard = create_switch_bot_keyboard()
+                    if not BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                        text = [
+                            "❌  <i>Non ci sono servizi disponibili a cui switchare.</i>"
+                        ]
+                    else:
+                        text = ["Seleziona il servizio da avviare:"]
+                    if len(BOT_SERVICE_NAMES_TO_SWITCH_TO) == 1:
+                        text.append(
+                            f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch {BOT_SERVICE_NAMES_TO_SWITCH_TO[0]}</code>".</i>'
+                        )
+                        text = "\n".join(text)
+                    elif len(BOT_SERVICE_NAMES_TO_SWITCH_TO) > 1:
+                        text.append("\n💡 <i>In alternativa, puoi usare i comandi...")
+                        for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                            text.append(
+                                f'    -  "<code>/switch {bot_service_name}</code>";'
+                            )
+                        text = "\n".join(text)
+                        # Sostituisco l'ultimo ";" con un "."
+                        text = text[:-1] + "."
+                        text += "</i>"
+
                     context.bot.send_message(
                         chat_id=chat.id,
-                        text=(
-                            "Seleziona il servizio da avviare:\n\n"
-                            "In alternativa, puoi usare il comando  <code>/switch VGsNETWORK-QTY</code>."
-                        ),
+                        text=text,
                         reply_markup=keyboard,
-                        disable_web_page_preview=True,
                         parse_mode="HTML",
+                        disable_web_page_preview=True,
                     )
                     return
                 status = os.path.isfile("/etc/systemd/system/%s.service" % bot)
                 if update.callback_query:
                     status = True
                 if not status:
+                    text = []
+                    text.append(
+                        'L\'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  "<code>/switch</code>"  può avere i seguenti valori:'
+                    )
+                    for bot_service_name in BOT_SERVICE_NAMES_TO_SWITCH_TO:
+                        text.append(f'    -  "<code>{bot_service_name}</code>"')
+                        #           f'    -  "<code>ultimiacquisti-QTY</code>"'
+                    text.append(
+                        f'\n💡 <i>In alternativa, puoi usare il comando  "<code>/switch</code>"  senza argomenti.</i>'
+                    )
+                    text = "\n".join(text)
+
                     context.bot.send_message(
                         chat_id=chat.id,
-                        text=(
-                            "L'argomento  <code>&lt;nome-servizio&gt;</code>  del comando  <code>/switch</code>  "
-                            "può avere i seguenti valori:\n"
-                            "    -  <code>VGsNETWORK-QTY</code>\n"
-                            "    -  <code>ultimiacquisti-QTY</code>\n\n"
-                            "In alternativa, puoi usare il comando  <code>/switch</code>  senza argomenti."
-                        ),
+                        text=text,
                         disable_web_page_preview=True,
                         parse_mode="HTML",
                     )
@@ -344,7 +376,7 @@ class BotManager:
         except BadRequest:
             context.bot.send_message(
                 chat_id=chat.id,
-                text="❌  Non sono riuscito a fare lo switch con il bot <code>%s</code>."
+                text="❌  <i>Non sono riuscito a switchare al servizio  <code>%s</code>.</i>"
                 % bot,
                 disable_web_page_preview=True,
                 parse_mode="HTML",
@@ -468,6 +500,7 @@ class BotManager:
         )
         self.disp.add_handler(SEND_COMUNICATION_CONVERSTATION)
 
+        # ? This one is using a self, update, context
         self.disp.add_handler(CommandHandler("vota", rating.poll))
         self.disp.add_handler(
             CallbackQueryHandler(pattern="rating_menu", callback=rating.poll)
@@ -487,6 +520,7 @@ class BotManager:
                 pattern="update_wishlist_link_element", callback=update_list
             )
         )
+        # ? This one is using a self, update, context
         self.disp.add_handler(
             CallbackQueryHandler(
                 pattern="previous_rating", callback=rating.go_back_rating
@@ -740,6 +774,7 @@ class BotManager:
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.cancel_rating, pattern="cancel_rating")
         )
+        # ? This has 3 arguments self, update, context
         self.disp.add_handler(
             CallbackQueryHandler(callback=rating.send_feedback, pattern="skip_rating")
         )

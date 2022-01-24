@@ -47,10 +47,11 @@ from root.helper.keyboard.year_report import build_keyboard
 from root.contants.message_timeout import ONE_MINUTE, THREE_MINUTES
 from root.manager.start import back_to_the_start
 from root.helper.redis_message import add_message
+from bot_util.decorator.maintenance import check_class_maintenance
 
 
 class YearReport:
-    """ Class used to display the year report of a user """
+    """Class used to display the year report of a user"""
 
     def __init__(self):
         self.sender = TelegramSender()
@@ -179,6 +180,7 @@ class YearReport:
             timeout=timeout,
         )
 
+    @check_class_maintenance
     def expand_report(self, update: Update, context: CallbackContext) -> None:
         """The callback to indicate to expand the year purchase message into the report
 
@@ -278,6 +280,7 @@ class YearReport:
                 message = f"{message}\n{footer}"
         return message
 
+    @check_class_maintenance
     def previous_year(self, update: Update, context: CallbackContext):
         """Go to the previous year
 
@@ -330,6 +333,7 @@ class YearReport:
             parse_mode="HTML",
         )
 
+    @check_class_maintenance
     def next_year(self, update: Update, context: CallbackContext):
         """Go to the next year
 
