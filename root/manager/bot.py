@@ -123,6 +123,7 @@ from telegram.ext import (
     Filters,
 )
 from bot_util.util.callback import add_admin_panel_andlers
+import pytz
 
 from root.model.purchase import Purchase
 from root.manager.error import handle_error
@@ -402,14 +403,16 @@ class BotManager:
         self.disp.job_queue.stop()
         try:
             hours = [10, 12, 15, 17]
-            whens = [time(hour=h, minute=0) for h in hours]
+            tzinfo = pytz.timezone("Europe/Rome")
+            whens = [time(hour=h, minute=0, tzinfo=tzinfo) for h in hours]
             groups = retrieve_key("AD_GROUPS")
             if not groups:
                 logger.error("EMPTY AD GROUPS")
                 groups = []
             else:
                 groups = eval(groups)
-            days = [1, 4, 8, 12, 17, 23, 26, 30]
+            # days = [1, 4, 8, 12, 17, 23, 26, 30]
+            days = [1, 17, 4, 23, 8, 26, 12, 30]
             logger.info("TOTAL NUMBER OF GROUPS FOR ADS %s" % len(groups))
             message = []
             for index in range(0, len(groups)):
