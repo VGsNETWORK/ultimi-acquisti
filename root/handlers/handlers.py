@@ -8,5 +8,7 @@ from root.handlers.playstation import playstation_handler
 extractor: Extractor = Extractor([])
 
 extractor.add_handler(multiplayer_handler)
-extractor.add_handler(gamestop_handler)
-extractor.add_handler(playstation_handler)
+# TODO: sembra che rompa il bot quando si aggiunge questo handler
+# extractor.add_handler(gamestop_handler)
+# TODO: sembra che rompa il bot quando si aggiunge questo handler
+# extractor.add_handler(playstation_handler)

@@ -22,7 +22,15 @@ from root.model.configuration import Configuration
 from root.helper.process_helper import stop_process
 from time import sleep
 from datetime import datetime
-from telegram import Update, Message, User, InlineKeyboardMarkup, CallbackQuery, message
+from telegram import (
+    InlineKeyboardButton,
+    Update,
+    Message,
+    User,
+    InlineKeyboardMarkup,
+    CallbackQuery,
+    message,
+)
 from telegram.bot import Bot
 from telegram.ext import CallbackContext
 from root.util.telegram import TelegramSender
@@ -73,7 +81,7 @@ import root.util.logger as logger
 from root.contants.VERSION import LAST_UPDATE, VERSION
 from root.model.user_rating import UserRating
 import bot_util.helper.user.user_reputation as ur_helper
-from bot_util.util.user_reputation import create_locked_button
+from bot_util.util.user_reputation import create_locked_button_based_on_reputation
 from bot_util.decorator.maintenance import check_maintenance
 
 sender = TelegramSender()
@@ -353,12 +361,17 @@ def append_commands(update: Update, context: CallbackContext, page: int = 0):
                 ),
             ],
             [
-                create_locked_button(
+                create_locked_button_based_on_reputation(
                     update.effective_user.id,
                     SUPPORT_BUTTON_TEXT,
                     "send_feedback",
                     REPUTATION_REQUIRED_FOR_SUPPORT,
                 )
+            ],
+            [
+                create_button(
+                    "📈  Status", "show_status", "show_status", "http://t.me/VGsSTATUS"
+                ),
             ],
         ]
     )
@@ -503,12 +516,17 @@ def rating_cancelled(update: Update, context: CallbackContext, message_id):
                 ),
             ],
             [
-                create_locked_button(
+                create_locked_button_based_on_reputation(
                     update.effective_user.id,
                     SUPPORT_BUTTON_TEXT,
                     "send_feedback",
                     REPUTATION_REQUIRED_FOR_SUPPORT,
                 )
+            ],
+            [
+                create_button(
+                    "📈  Status", "show_status", "show_status", "http://t.me/VGsSTATUS"
+                ),
             ],
         ]
     )
@@ -641,12 +659,20 @@ def build_keyboard(user: User, message: Message) -> InlineKeyboardMarkup:
                     ),
                 ],
                 [
-                    create_locked_button(
+                    create_locked_button_based_on_reputation(
                         user.id,
                         SUPPORT_BUTTON_TEXT,
                         "send_feedback",
                         REPUTATION_REQUIRED_FOR_SUPPORT,
                     )
+                ],
+                [
+                    create_button(
+                        "📈  Status",
+                        "show_status",
+                        "show_status",
+                        "http://t.me/VGsSTATUS",
+                    ),
                 ],
             ]
         )
@@ -793,6 +819,15 @@ def show_info(update: Update, context: CallbackContext):
         message = USER_INFO_HEADER_MESSAGE
         message += USER_INFO_MESSAGE % (user_reputation_chart, (" " * spaces))
     if callback:
+        if not update.callback_query.data == "show_user_info":
+            keyboard.insert(
+                -1,
+                [
+                    InlineKeyboardButton(
+                        text="🆕  Canale degli update", url="https://t.me/UltimiAcquisti"
+                    )
+                ],
+            )
         context.bot.edit_message_text(
             chat_id=chat.id,
             text=message,
@@ -802,6 +837,14 @@ def show_info(update: Update, context: CallbackContext):
             disable_web_page_preview=True,
         )
     else:
+        keyboard.insert(
+            -1,
+            [
+                InlineKeyboardButton(
+                    text="🆕  Canale degli update", url="https://t.me/UltimiAcquisti"
+                )
+            ],
+        )
         sender.delete_if_private(context, update.effective_message)
         context.bot.send_message(
             chat_id=chat.id,

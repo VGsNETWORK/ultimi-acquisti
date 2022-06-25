@@ -56,7 +56,7 @@ from root.util.util import (
     html_to_markdown,
 )
 from telegram import InlineKeyboardMarkup
-from bot_util.util.user_reputation import create_locked_button
+from bot_util.util.user_reputation import create_locked_button_based_on_reputation
 
 BOT_NAME = environ["BOT_NAME"]
 
@@ -170,7 +170,7 @@ def show_rating_keyboard(user_id: int):
     return InlineKeyboardMarkup(
         [
             [
-                create_locked_button(
+                create_locked_button_based_on_reputation(
                     user_id,
                     "🔄  Aggiorna la recensione",
                     "start_poll",
@@ -238,7 +238,7 @@ def build_pre_poll_keyboard(
 
     keyboard.append(
         [
-            create_locked_button(
+            create_locked_button_based_on_reputation(
                 user_id, message, "start_poll", REPUTATION_REQUIRED_FOR_RATING
             )
         ]
@@ -1837,7 +1837,7 @@ def create_switch_bot_keyboard():
                 ]
             )
         keyboard.append([create_button("❌  Annulla", "delete_message", "")])
-        
+
         return InlineKeyboardMarkup(keyboard)
 
 

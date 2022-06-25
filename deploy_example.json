@@ -1,10 +1,26 @@
 {
-    "profile": {
-        "package": "package-name",
-        "host": "hostname",
-        "username": "username",
-        "destination": "destination",
-        "service": "service-name",
-        "ssh": "ssh_key_path"
+    "production": {
+        "package": "NOME_PACCHETTO_CHE_VIENE_CREATO",
+        "host": "INDIRIZZO_VPS",
+        "username": "vgs",
+        "destination": "DOVE_VA_IL_FILE_COMPRESO_DI_FILENAME",
+        "service": "NOME_SERVIZIO_DA_RIAVVIARE_DOPO_IL_CARICAMENTO",
+        "ssh": "PERCORSO_COMPLETO_COMPRESO_DI_FILENAME_ALLA_CHIAVE_SSH"
+    },
+    "quality": {
+        "package": "NOME_PACCHETTO_CHE_VIENE_CREATO",
+        "host": "INDIRIZZO_VPS",
+        "username": "vgs",
+        "destination": "DOVE_VA_IL_FILE_COMPRESO_DI_FILENAME",
+        "service": "NOME_SERVIZIO_DA_RIAVVIARE_DOPO_IL_CARICAMENTO",
+        "ssh": "PERCORSO_COMPLETO_COMPRESO_DI_FILENAME_ALLA_CHIAVE_SSH"
+    },
+    "quality-ultimiacquisti": {
+        "package": "ultimiacquisti-qty",
+        "host": "194.163.162.233",
+        "username": "vgs",
+        "destination": "/opt/bot/network/quality/ultimiacquisti/ultimiacquisti-qty",
+        "service": "ultimiacquisti-QTY",
+        "ssh": "/home/edoardo/.ssh/ppb_rsa"
     }
 }

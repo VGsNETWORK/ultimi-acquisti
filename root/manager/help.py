@@ -164,7 +164,7 @@ def create_message(page: int):
         callback = f"how_to_page_{index}"
         button = button["button_text"]
         if index == page:
-            button = TRIANGLES_MESSAGE_BUTTON % {button}
+            button = TRIANGLES_MESSAGE_BUTTON % button
         button = create_button(button, callback, callback)
         keyboards.append([button])
     keyboards.append(

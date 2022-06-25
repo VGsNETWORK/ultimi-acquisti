@@ -153,6 +153,8 @@ from telegram.user import User
 from telegram_utils.utils.tutils import delete_if_private
 from bot_util.decorator.maintenance import check_maintenance
 from bot_util.decorator.maintenance import check_maintenance
+from root.decorator.try_decorator import try_catch
+
 sender = TelegramSender()
 
 # endregion
@@ -187,9 +189,12 @@ def retrieve_photos_append(user: User, links: List[str] = None, user_price=0):
         if not links:
             append = f"     (<code>%s</code> / 10  foto{price})" % len(rphotos)
         else:
-            append = f"     (<code>%s</code> / 10  foto  •  <code>%s</code> / 10  link{price})" % (
-                len(rphotos),
-                len(links),
+            append = (
+                f"     (<code>%s</code> / 10  foto  •  <code>%s</code> / 10  link{price})"
+                % (
+                    len(rphotos),
+                    len(links),
+                )
             )
     else:
         if not links:
@@ -497,6 +502,7 @@ def has_link(wishlist_element: WishlistElement):
         return ""
     return "  •  🔗" if wishlist_element.links else ""
 
+
 @check_maintenance
 def ask_delete_all_wishlist_elements(
     update: Update, context: CallbackContext, from_wishlist=False
@@ -586,6 +592,7 @@ def ask_delete_all_wishlist_elements(
         disable_web_page_preview=True,
         parse_mode="HTML",
     )
+
 
 @check_maintenance
 def confirm_delete_all_wishlist_elements(
@@ -846,6 +853,7 @@ def abort_delete_item_wishlist_element(update: Update, context: CallbackContext)
 
 
 @check_maintenance
+@try_catch
 def view_wishlist(
     update: Update,
     context: CallbackContext,
@@ -942,6 +950,8 @@ def view_wishlist(
         else:
             add_space = False
         for index, wish in enumerate(wishlist_elements):
+            logger.info("parsing %s" % wish.description)
+            # region # TODO: i link di gamestop rompono del tutto il bot da qui
             index = ((index) + (5 * page + 1)) + inc
             if index == int(last):
                 space = ""
@@ -1013,12 +1023,14 @@ def view_wishlist(
                 user_price = "  •  🎯  <i>%s €</i>" % format_price(wish.user_price)
             else:
                 user_price = ""
+            # endregion # TODO: A QUI
             logger.info(wish.description)
             msgs.append(
                 f"<b>{space}{index}.</b>  {wish.description.replace('%', '%%')}\n"
                 f"{price}{category_emoji}  <i><u>{category_name}</u></i>{user_price}{has_media(wish)}{show_new_line(price, has_media(wish))}<i>Aggiunto %s{wish.creation_date.strftime('%d/%m/%Y')}</i>{new_line}"
                 % (get_article(wish.creation_date))
             )
+            logger.info("finished parsing %s" % wish.description)
         message += "\n".join(msgs)
         if append and under_first:
             wishlist_elements.insert(0, wish)
@@ -1038,6 +1050,10 @@ def view_wishlist(
     first_page = page + 1 == 1
     last_page = page + 1 == total_pages
     total_wishlists = count_all_wishlists_for_user(user.id)
+    logger.info(
+        "Checking if [%s] has tracked links [%s]"
+        % (wish.description, has_tracked_links)
+    )
     if has_tracked_links:
         message += WISHLIST_ELEMENT_PRICE_OUTDATED_WARNING
     # #############################################################################

@@ -111,6 +111,9 @@ def handle_purchase(
         message (Message): The message received
     """
     logger.info(send_messages_when_finished)
+    if bool(message.reactions):
+        logger.info("Reaction detected, ignoring...")
+        return
     # me di un mese fa, avevi tanto torto...
     if message.forward_from_chat or message.forward_from:
         logger.info("the message has been forwarded")
